@@ -1,5 +1,8 @@
 package com.replaybox.app.ui
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,6 +26,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -198,6 +208,64 @@ private fun PlayerSurface(
 
     var showResumeChoice by remember(manifestUrl) { mutableStateOf(resumeAtMs != null) }
 
+    // Sous-titres FR activés par défaut (choix produit PRD), toggle un
+    // appui. The chip only appears when a text track exists — TF1 keeps
+    // captions inside the manifest, France TV via the side-loaded WebVTT.
+    var hasTextTracks by remember(manifestUrl) { mutableStateOf(false) }
+    var subtitlesOn by remember(manifestUrl) { mutableStateOf(true) }
+
+    fun selectFirstTextTrack() {
+        val group = player.currentTracks.groups
+            .firstOrNull { it.type == C.TRACK_TYPE_TEXT } ?: return
+        // Prefer the French track: France TV captions carry lang "qsm",
+        // TF1 exposes "fr"; fall back to the first track.
+        var index = 0
+        for (i in 0 until group.length) {
+            val language = group.getTrackFormat(i).language
+            if (language == "qsm" || language?.startsWith("fr") == true) {
+                index = i
+                break
+            }
+        }
+        player.trackSelectionParameters = player.trackSelectionParameters
+            .buildUpon()
+            .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
+            .addOverride(
+                androidx.media3.common.TrackSelectionOverride(group.mediaTrackGroup, index),
+            )
+            .build()
+    }
+
+    fun toggleSubtitles() {
+        subtitlesOn = !subtitlesOn
+        if (subtitlesOn) {
+            selectFirstTextTrack()
+        } else {
+            player.trackSelectionParameters = player.trackSelectionParameters
+                .buildUpon()
+                .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
+                .build()
+        }
+    }
+
+    DisposableEffect(player) {
+        val listener = object : androidx.media3.common.Player.Listener {
+            override fun onTracksChanged(tracks: androidx.media3.common.Tracks) {
+                hasTextTracks = tracks.containsType(C.TRACK_TYPE_TEXT)
+                val selected = tracks.groups
+                    .filter { it.type == C.TRACK_TYPE_TEXT }
+                    .any { group -> (0 until group.length).any { group.isTrackSelected(it) } }
+                // Guarantee the default-on product choice even when the
+                // Chaîne does not flag the caption track as default.
+                if (hasTextTracks && subtitlesOn && !selected) {
+                    selectFirstTextTrack()
+                }
+            }
+        }
+        player.addListener(listener)
+        onDispose { player.removeListener(listener) }
+    }
+
     fun saveProgress() {
         if (playerReleased || player.currentPosition <= 0) return
         val durationSeconds = player.duration.takeIf { it > 0 }?.let { (it / 1000).toInt() }
@@ -237,7 +305,33 @@ private fun PlayerSurface(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    val playerViewRef = remember { mutableStateOf<PlayerView?>(null) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            // TV remote, one press: OK toggles subtitles while the player
+            // controls are hidden (the captions key is unreliable across
+            // remotes; the Android player view swallows D-pad focus, so the
+            // chip alone is not reachable either). With controls shown, OK
+            // keeps its play/pause meaning.
+            .onPreviewKeyEvent { event ->
+                val ok = event.type == KeyEventType.KeyDown &&
+                    event.nativeKeyEvent.repeatCount == 0 &&
+                    (
+                        event.key == Key.DirectionCenter ||
+                            event.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_CAPTIONS
+                        )
+                if (ok && !showResumeChoice && hasTextTracks &&
+                    playerViewRef.value?.isControllerFullyVisible != true
+                ) {
+                    toggleSubtitles()
+                    true
+                } else {
+                    false
+                }
+            },
+    ) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { viewContext ->
@@ -245,6 +339,7 @@ private fun PlayerSurface(
                     this.player = player
                     useController = true
                     controllerShowTimeoutMs = 5000
+                    playerViewRef.value = this
                 }
             },
         )
@@ -262,8 +357,42 @@ private fun PlayerSurface(
                     showResumeChoice = false
                 },
             )
+        } else if (hasTextTracks) {
+            SubtitleChip(
+                enabled = subtitlesOn,
+                onToggle = { toggleSubtitles() },
+                modifier = Modifier.align(Alignment.TopEnd),
+            )
         }
     }
+}
+
+@Composable
+private fun SubtitleChip(enabled: Boolean, onToggle: () -> Unit, modifier: Modifier) {
+    var focused by remember { mutableStateOf(false) }
+    Text(
+        text = stringResource(R.string.subtitle_toggle),
+        style = MaterialTheme.typography.labelMedium,
+        color = when {
+            enabled -> MaterialTheme.colorScheme.primary
+            focused -> MaterialTheme.colorScheme.onSurface
+            else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+        },
+        modifier = modifier
+            .padding(24.dp)
+            .clickable { onToggle() }
+            .focusable()
+            .onFocusChanged { focused = it.isFocused }
+            .border(
+                width = 2.dp,
+                color = when {
+                    enabled || focused -> MaterialTheme.colorScheme.primary
+                    else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                },
+                shape = RoundedCornerShape(16.dp),
+            )
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    )
 }
 
 @Composable

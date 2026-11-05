@@ -19,6 +19,7 @@
     <string name="resume_button">Reprendre</string>
     <string name="start_over">Débuter</string>
     <string name="resume_position">Reprendre à %1$s ?</string>
+    <string name="subtitle_toggle">Sous-titres</string>
     <string name="player_error_title">Flux indisponible</string>
     <string name="player_error_generic">Impossible de résoudre le Flux pour cet Épisode.</string>
     <string name="player_error_tf1_account">TF1 exige désormais un compte connecté pour ce Programme. Ouvre « Compte TF1+ » en haut de l\u0027écran d\u0027accueil pour te connecter.</string>
