@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,14 +39,31 @@ import androidx.tv.foundation.lazy.list.items
 import coil.compose.AsyncImage
 import com.replaybox.R
 import com.replaybox.app.ReplayboxApplication
+import com.replaybox.core.data.CatalogStore
 import com.replaybox.core.model.Genre
 import com.replaybox.core.model.Show
 import com.replaybox.core.model.ShowId
 import com.replaybox.provider.api.Provider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun HomeScreen(onOpenShow: (ShowId, String) -> Unit, onOpenLogin: () -> Unit) {
     var selectedGenre by remember { mutableStateOf<Genre?>(null) }
+    val updates by Providers.catalog.updates.collectAsState()
+
+    // ADR 0002: background refresh at startup, Home listings first. Rows
+    // compose instantly from the cache; this only re-ticks them with fresher
+    // data (catalog.updates) once the Chaînes answered.
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            Providers.catalog.refreshListings(Providers.all)
+        }
+    }
+
     TvLazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = 24.dp),
@@ -70,7 +88,7 @@ fun HomeScreen(onOpenShow: (ShowId, String) -> Unit, onOpenLogin: () -> Unit) {
             GenreFilterRow(selected = selectedGenre, onSelect = { selectedGenre = it })
         }
         items(Providers.all) { provider ->
-            ProviderRow(provider = provider, genre = selectedGenre, onOpenShow = onOpenShow)
+            ProviderRow(provider = provider, genre = selectedGenre, updates = updates, onOpenShow = onOpenShow)
         }
     }
 }
@@ -144,12 +162,16 @@ private fun AccountButton(onOpenLogin: () -> Unit) {
 private fun ProviderRow(
     provider: Provider,
     genre: Genre?,
+    updates: Int,
     onOpenShow: (ShowId, String) -> Unit,
 ) {
     var state by remember(provider.channel.id) { mutableStateOf<RowState>(RowState.Loading) }
-    LaunchedEffect(provider.channel.id, genre) {
+    LaunchedEffect(provider.channel.id, genre, updates) {
         state = try {
-            RowState.Loaded(provider.shows(genre))
+            val shows = provider.shows(genre)
+            val asOf = Providers.catalog.listingAt(provider.channel.id)
+            val stale = asOf != null && System.currentTimeMillis() - asOf > CatalogStore.TTL_MS
+            RowState.Loaded(shows, if (stale) asOf else null)
         } catch (error: Exception) {
             RowState.Failed(error.message ?: "error")
         }
@@ -169,6 +191,11 @@ private fun ProviderRow(
                 is RowState.Failed -> Text(current.message, style = MaterialTheme.typography.bodySmall)
                 is RowState.Loaded -> if (current.shows.isEmpty()) {
                     Text(stringResource(R.string.empty_shows), style = MaterialTheme.typography.bodySmall)
+                } else if (current.staleAsOf != null) {
+                    Text(
+                        stringResource(R.string.stale_data, staleDate(current.staleAsOf)),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
                 }
             }
         }
@@ -188,9 +215,15 @@ private fun ProviderRow(
 
 private sealed interface RowState {
     object Loading : RowState
-    data class Loaded(val shows: List<Show>) : RowState
+    data class Loaded(val shows: List<Show>, val staleAsOf: Long? = null) : RowState
     data class Failed(val message: String) : RowState
 }
+
+/** ADR 0002: stale cache is served with its date — "Données du JJ/MM". */
+private fun staleDate(asOf: Long): String =
+    DateTimeFormatter.ofPattern("dd/MM")
+        .withZone(ZoneId.of("Europe/Paris"))
+        .format(Instant.ofEpochMilli(asOf))
 
 @Composable
 private fun ShowCard(show: Show, onOpenShow: (ShowId, String) -> Unit) {
