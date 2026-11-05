@@ -1,0 +1,1 @@
+lis AGENTS.md ce fichier remplace CLAUDE.md
