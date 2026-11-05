@@ -20,18 +20,26 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaSession
 import androidx.media3.ui.PlayerView
 import com.replaybox.R
+import com.replaybox.app.ReplayboxApplication
 import com.replaybox.core.model.EpisodeId
 import com.replaybox.core.model.StreamType
 import com.replaybox.provider.tf1.StreamResolutionException
 
 private sealed interface PlayerState {
     object Resolving : PlayerState
-    data class Ready(val manifestUrl: String, val type: StreamType) : PlayerState
+    data class Ready(
+        val manifestUrl: String,
+        val type: StreamType,
+        val licenseUrl: String?,
+        val licenseHeaders: Map<String, String>,
+    ) : PlayerState
     data class Error(val message: String, val accountRequired: Boolean) : PlayerState
 }
 
@@ -47,7 +55,7 @@ fun PlayerScreen(episodeId: EpisodeId, title: String) {
         while (true) {
             try {
                 val stream = provider.stream(episodeId)
-                state = PlayerState.Ready(stream.manifestUrl, stream.type)
+                state = PlayerState.Ready(stream.manifestUrl, stream.type, stream.licenseUrl, stream.licenseHeaders)
                 return
             } catch (error: Exception) {
                 failures += 1
@@ -72,10 +80,10 @@ fun PlayerScreen(episodeId: EpisodeId, title: String) {
             Text(title, style = MaterialTheme.typography.titleMedium)
             Text(stringResource(R.string.player_error_title), style = MaterialTheme.typography.headlineSmall)
             Text(
-                text = if (current.accountRequired) {
-                    stringResource(R.string.player_error_tf1_account)
-                } else {
-                    current.message.ifBlank { stringResource(R.string.player_error_generic) }
+                text = when {
+                    !current.accountRequired -> current.message.ifBlank { stringResource(R.string.player_error_generic) }
+                    ReplayboxApplication.tf1Auth.hasCredentials() -> stringResource(R.string.player_error_tf1_content)
+                    else -> stringResource(R.string.player_error_tf1_account)
                 },
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(vertical = 16.dp),
@@ -84,7 +92,12 @@ fun PlayerScreen(episodeId: EpisodeId, title: String) {
                 Text(stringResource(R.string.retry))
             }
         }
-        is PlayerState.Ready -> PlayerSurface(manifestUrl = current.manifestUrl, type = current.type)
+        is PlayerState.Ready -> PlayerSurface(
+            manifestUrl = current.manifestUrl,
+            type = current.type,
+            licenseUrl = current.licenseUrl,
+            licenseHeaders = current.licenseHeaders,
+        )
     }
 }
 
@@ -100,21 +113,40 @@ private fun CenteredMessage(message: String) {
 }
 
 @Composable
-private fun PlayerSurface(manifestUrl: String, type: StreamType) {
+private fun PlayerSurface(manifestUrl: String, type: StreamType, licenseUrl: String?, licenseHeaders: Map<String, String>) {
     val context = LocalContext.current
     val player = remember(manifestUrl) {
-        ExoPlayer.Builder(context).build().apply {
-            val mime = when (type) {
-                StreamType.DASH -> MimeTypes.APPLICATION_MPD
-                StreamType.HLS -> MimeTypes.APPLICATION_M3U8
+        ExoPlayer.Builder(context)
+            .setSeekBackIncrementMs(10_000)
+            .setSeekForwardIncrementMs(10_000)
+            .build()
+            .apply {
+                val media = MediaItem.Builder().setUri(manifestUrl).setMimeType(
+                    when (type) {
+                        StreamType.DASH -> MimeTypes.APPLICATION_MPD
+                        StreamType.HLS -> MimeTypes.APPLICATION_M3U8
+                    },
+                )
+                if (licenseUrl != null) {
+                    media.setDrmConfiguration(
+                        MediaItem.DrmConfiguration.Builder(C.WIDEVINE_UUID)
+                            .setLicenseUri(licenseUrl)
+                            .setLicenseRequestHeaders(licenseHeaders)
+                            .build(),
+                    )
+                }
+                setMediaItem(media.build())
+                prepare()
+                playWhenReady = true
             }
-            setMediaItem(MediaItem.Builder().setUri(manifestUrl).setMimeType(mime).build())
-            prepare()
-            playWhenReady = true
-        }
     }
-    DisposableEffect(manifestUrl) {
-        onDispose { player.release() }
+    // Routes the TV remote media keys (play/pause/ffwd/rewind) to the player.
+    DisposableEffect(player) {
+        val session = MediaSession.Builder(context, player).build()
+        onDispose {
+            session.release()
+            player.release()
+        }
     }
     AndroidView(
         modifier = Modifier.fillMaxSize(),
@@ -122,6 +154,7 @@ private fun PlayerSurface(manifestUrl: String, type: StreamType) {
             PlayerView(viewContext).apply {
                 this.player = player
                 useController = true
+                controllerShowTimeoutMs = 5000
             }
         },
     )
