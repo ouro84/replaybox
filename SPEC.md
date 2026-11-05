@@ -100,9 +100,37 @@ Listing — `GET https://api-mobile.yatta.francetv.fr/apps/channels/<slug>?platf
 `type: integrale` ; `/apps/program/meta/<path>` donne `category` + `sub_categories` (→ Genres
 canoniques ; mapping natif riche : séries-policieres, thriller, comédie, drame, doc histoire…).
 
+Détails mesurés le 2026-11-05 (lot 1 M1, fixtures `ftv_*.json`) :
+- `program_path` peut être préfixé par un slug de **navigation** (`info_nous-les-europeens`,
+  `series-et-fictions_series-drame_les-disparus-des-argonnes`) et pas seulement par la chaîne —
+  ne jamais déduire la Chaîne du préfixe du path.
+- Images : `images[]` = dicts `{urls: {"w:N": url}, type}` (types `vignette_3x4`, `vignette_2x3`,
+  `vignette_16x9`, `background_16x9`, `logo`…). Clé `w:0` = image vide, à ignorer ; prendre la
+  largeur max de la première forme utile (portrait pour l'affiche, 16x9 pour les vignettes).
+- Programmes non numérotés (magazines) : plusieurs collections `playlist_video` **thématiques**
+  (« Les Émissions », « Histoires de… ») avec recouvrement — mesuré sur « Ça commence
+  aujourd'hui » : 399 intégrales, 274 `si_id` uniques → **déduplication par `si_id`
+  obligatoire**. `playlist_audio` (podcasts) et items `extrait`/`article` sont hors périmètre :
+  filtrer `type == "integrale"` et ne considérer que `playlist_video`. Modèle de Saisons :
+  collections « Saison N » = une Saison numérotée chacune ; sinon **une seule** Saison non
+  numérotée regroupant tous les integrales dédupliqués (glossaire : Saison absent quand la
+  chaîne ne numérote pas).
+- Le champ `login: true` de yatta (épisodes « compte requis » de l'app officielle) **ne bloque
+  pas** la résolution anonyme : k7 répond 200 avec URL + sous-titres (mesuré Simon Coleman S4,
+  « Ça commence aujourd'hui »). `markers.pub` = config CSAI du player officiel, absente du
+  manifest brut — ignorée.
+
 Flux — `GET https://k7.ftven.fr/videos/<si_id>?country_code=FR&capabilities=drm&os=androidtv&offline=false`
-→ `video.url` → signer via `GET https://hdfauth.ftven.fr/esi/TA?format=json&url=<url>` → URL signée
-courte durée. Sans DRM sur les contenus vérifiés.
+→ `video.url` (format `dash`, `drm: false`) → signer via la base donnée dans la réponse
+`video.token` (= `https://hdfauth.ftven.fr/esi/TA?format=json`) + `&url=<url encodée>` → `{"url":
+<URL signée courte durée>}`. Sans DRM sur les contenus vérifiés.
+
+Sous-titres — mesuré sur 3 épisodes (fiction ancienne, fiction récente, magazine) :
+`video.text_tracks` est **toujours vide**, et le MPD signé **supprime lui-même** les pistes texte
+(en-tête `manifest_edit … element_remove contentType: text, mimeType: text/vtt`). Les
+sous-titres FR sont donc **side-loadés** depuis `meta.subtitles[]` (`{url: *.vtt, lang: "qsm"}`
+— `qsm` est le code France TV pour le français) via `MediaItem.SubtitleConfiguration` (Media3).
+Ne jamais attendre une piste texte du manifest France TV.
 
 ## Cache et mode dégradé (ADR 0002)
 

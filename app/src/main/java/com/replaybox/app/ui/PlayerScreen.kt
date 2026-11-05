@@ -45,7 +45,7 @@ private sealed interface PlayerState {
 
 @Composable
 fun PlayerScreen(episodeId: EpisodeId, title: String) {
-    val provider = Providers.all.first()
+    val provider = Providers.resolveEpisode(episodeId.value)
     var state by remember { mutableStateOf<PlayerState>(PlayerState.Resolving) }
     var attempt by remember { mutableStateOf(0) }
 

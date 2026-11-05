@@ -1,0 +1,3859 @@
+{
+  "label": "France 2",
+  "item": {
+    "id": 1,
+    "label": "France 2",
+    "type": "channel",
+    "channel_path": "france-2",
+    "images": [
+      {
+        "urls": {
+          "w:800": "https://medias.france.tv/mLqXUD7pGPZMQDNu6nAHm1HRS4M/800x450/filters:quality(85)/1/k/m/phppfemk1.jpg",
+          "w:1024": "https://medias.france.tv/wPgCVt5lCy78c0Dz87UTaVb2tfU/1024x576/filters:quality(85)/1/k/m/phppfemk1.jpg",
+          "w:2500": "https://medias.france.tv/Wd3atkIPrSuUXyP5SPease6wKZs/2500x1406/filters:quality(85)/1/k/m/phppfemk1.jpg"
+        },
+        "type": "background_16x9"
+      },
+      {
+        "urls": {
+          "w:265": "https://medias.france.tv/ANKNqY3gzyyG5GIAyePKRrZiMdA/265x265/filters:quality(85)/c/7/t/php6kjt7c.png",
+          "w:300": "https://medias.france.tv/Hvxatu-k_sKN-NBK-X6Hg1tjVco/300x300/filters:quality(85)/c/7/t/php6kjt7c.png",
+          "w:400": "https://medias.france.tv/v25lgE50IPcm5SkmaN7WLDiOuEo/400x400/filters:quality(85)/c/7/t/php6kjt7c.png",
+          "w:800": "https://medias.france.tv/3UhtTybWFPZvEotF2qlav8OWrW8/800x800/filters:quality(85)/c/7/t/php6kjt7c.png",
+          "w:1024": "https://medias.france.tv/6oz4Bmu7itJjIT1Mnh3asxClwPc/1024x1024/filters:quality(85)/c/7/t/php6kjt7c.png"
+        },
+        "type": "carre"
+      },
+      {
+        "urls": {
+          "w:0": "https://medias.france.tv/debMOnbWg8TetTZhLF-K56IQ2Mo/0x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+          "w:25": "https://medias.france.tv/wtQQS-esm6t16I6olBef3VTJQIg/25x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+          "w:150": "https://medias.france.tv/jKWZKoynXaOcxrbmGmpPM66U3E0/150x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+          "w:300": "https://medias.france.tv/mUab8olpguMyPRii8N425DQmlIs/300x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+          "w:450": "https://medias.france.tv/tv2YD3WsEHwdY7ySwWlfWGXzB2w/450x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+          "w:1024": "https://medias.france.tv/p2KkmucENa0CMGIvA_1KWC4SBFc/1024x0/filters:quality(85)/a/c/h/phpi0hhca.png"
+        },
+        "type": "logo"
+      },
+      {
+        "urls": {
+          "w:400": "https://medias.france.tv/7iMGREATX7UsKTEq35pMallmdy8/400x0/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+          "w:800": "https://medias.france.tv/vDTl5ncJJEu6Jd11KR-TY4xF1fA/800x450/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+          "w:1024": "https://medias.france.tv/Q-4oPgpeaL6wMcE6r6-SxXB_mnQ/1024x576/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+          "w:2500": "https://medias.france.tv/SyuTNozmt9jee_kyUHzHfSbI8MI/2500x1406/filters:quality(85)/j/k/s/phpn0qskj.jpg"
+        },
+        "type": "vignette_16x9"
+      },
+      {
+        "urls": {
+          "w:400": "https://medias.france.tv/KFtHQ8BAnDpwElwFdcBvZlQ6OM0/400x533/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+          "w:800": "https://medias.france.tv/ftci3wQ-G6qjjN9c1-ToTJV4iX4/800x1066/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+          "w:1024": "https://medias.france.tv/eRwxerP2BRgddRX72HBRRZVkEwU/1024x1365/filters:quality(85)/3/d/y/phpkiyyd3.jpg"
+        },
+        "type": "vignette_3x4"
+      }
+    ],
+    "channel_url": "france-2",
+    "marker": {
+      "level_2": null,
+      "page": null,
+      "indicators": null,
+      "custom_variables": null
+    },
+    "marker_piano": {
+      "contextual_properties": {
+        "page": "france_2",
+        "page_type": "chaine"
+      },
+      "additional_properties": {
+        "channel": "france_2",
+        "channel_type": "premium",
+        "sub_channel": null,
+        "region": null,
+        "category": null,
+        "sub_category": null,
+        "content_type": null,
+        "content_title": null,
+        "content_status": null,
+        "content_format": null,
+        "program": null,
+        "program_id": null,
+        "highlight": null,
+        "tag": null,
+        "sub_tag": null,
+        "season": null,
+        "content_id": null,
+        "content_sponsored": null,
+        "content_logged": null,
+        "audiomeans_id": null,
+        "last_update_date": null,
+        "first_publication_date": null,
+        "author": null,
+        "partner": null
+      }
+    },
+    "call_to_action": "",
+    "call_to_action_url": "",
+    "synopsis": null,
+    "offer": "france-2"
+  },
+  "collections": [
+    {
+      "id": 24017962,
+      "type": "mise_en_avant",
+      "label": "Notre sélection",
+      "display": null,
+      "items": [
+        {
+          "id": 9028087,
+          "title": "Au Nom du Père",
+          "label_edito": "Nouvel épisode",
+          "type": "integrale",
+          "headline_title": "C'est jour de mariage... mais le prêtre a disparu.",
+          "season": 1,
+          "episode": 8,
+          "description": "C’est un jour de fête. La Capitaine Martha Grönberg a exceptionnellement laissé tomber l’uniforme pour être témoin au mariage de sa meilleure amie. Seulement, alors que le couple s’apprête à échanger ses vœux sous les auspices de Père Rodolphe, celui-ci s’évapore. Le prêtre semble avoir été enlevé. Qui peut en vouloir à un homme de foi ? Cette statuette miraculeuse de Sainte-Rita est-elle en lien avec cette disparition ? Aidée de son adjoint Fred Marquez, Martha Grönberg se plonge alors dans une enquête qui l’amènera à se questionner sur les miracles. Et si Croire était la clé ?",
+          "broadcast_begin_date": 1795464600,
+          "broadcast_end_date": 1795470126,
+          "begin_date": 1793854800,
+          "end_date": 1859065199,
+          "duration": 5526,
+          "rating_csa": "Déconseillé aux -10 ans",
+          "si_id": "b1450a7e-e05c-4ed2-98d7-881bfa2b47cf",
+          "downloadable": true,
+          "episode_title": "S1 E8 - Au Nom du Père",
+          "program": {
+            "id": 10085,
+            "label": "Disparition inquiétante",
+            "description": "",
+            "type": "program",
+            "program_path": "france-2_disparition-inquietante",
+            "link": {
+              "url": "/apps/program/meta/france-2_disparition-inquietante?platform=apps",
+              "type": "tab"
+            },
+            "color": null,
+            "sound": null,
+            "headline_title": null,
+            "images": [
+              {
+                "urls": {
+                  "w:800": "https://medias.france.tv/eIWhR9ANRf37tb-zHkftHO4P3zg/800x450/filters:quality(85)/9/l/f/phpan2fl9.jpg",
+                  "w:1024": "https://medias.france.tv/PhntwZO6qdvXPxmYkKeOiR97BLw/1024x576/filters:quality(85)/9/l/f/phpan2fl9.jpg",
+                  "w:2500": "https://medias.france.tv/-QevpBTvEEBqL0Z_p07fQ_8XWEc/2500x1406/filters:quality(85)/9/l/f/phpan2fl9.jpg"
+                },
+                "type": "background_16x9"
+              },
+              {
+                "urls": {
+                  "w:265": "https://medias.france.tv/u1SWCUdBO3V9W6-3dcXNj9DDXg4/265x265/filters:quality(85)/2/u/j/phpcptju2.jpg",
+                  "w:300": "https://medias.france.tv/VHyMC6kszWRHMWJv_2onzwzvofE/300x300/filters:quality(85)/2/u/j/phpcptju2.jpg",
+                  "w:400": "https://medias.france.tv/etVPzwJLagE4lmIonHxGj7JkhLo/400x400/filters:quality(85)/2/u/j/phpcptju2.jpg",
+                  "w:800": "https://medias.france.tv/kZ-2qk6JFpyVCLF-qLjrhkrvD9c/800x800/filters:quality(85)/2/u/j/phpcptju2.jpg",
+                  "w:1024": "https://medias.france.tv/O5MDdF2rXS4c25_YcQwpAG4oAMw/1024x1024/filters:quality(85)/2/u/j/phpcptju2.jpg"
+                },
+                "type": "carre"
+              },
+              {
+                "urls": {
+                  "w:0": "https://medias.france.tv/nC3JZYsDPPSSuMvuCas6RdDZ7MA/0x0/filters:quality(85)/q/2/l/phpgdll2q.png",
+                  "w:25": "https://medias.france.tv/Y385s_dlyxy9Teh5yuy5NIO2Jqw/25x0/filters:quality(85)/q/2/l/phpgdll2q.png",
+                  "w:150": "https://medias.france.tv/Aw8iB9MzqiGECnQd0BnOAenApJw/150x0/filters:quality(85)/q/2/l/phpgdll2q.png",
+                  "w:300": "https://medias.france.tv/DnEeEwVRloCttHixBta249zXioc/300x0/filters:quality(85)/q/2/l/phpgdll2q.png",
+                  "w:450": "https://medias.france.tv/gVTDEajEKTWIgq1HSHyJJfaH6QI/450x0/filters:quality(85)/q/2/l/phpgdll2q.png",
+                  "w:1024": "https://medias.france.tv/CC5YcDmFO5PDT1auTQYNA4G2SRI/1024x0/filters:quality(85)/q/2/l/phpgdll2q.png"
+                },
+                "type": "logo"
+              },
+              {
+                "urls": {
+                  "w:1280": "https://medias.france.tv/PklwyAPLAPZGUvDEHow4a8MV95I/1920x1080/filters:quality(85)/9/x/p/phpq3vpx9.jpg"
+                },
+                "type": "lt_16x9"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/4trawFX-7XgiorjXgctY7H_phQ4/400x0/filters:quality(85)/1/t/5/phpcdi5t1.jpg",
+                  "w:800": "https://medias.france.tv/-rgGofMCbG1KAnnFzYRFJoG1a7o/800x450/filters:quality(85)/1/t/5/phpcdi5t1.jpg",
+                  "w:1024": "https://medias.france.tv/4bqzoVhdEvdt_XKDJYfnJboh9kw/1024x576/filters:quality(85)/1/t/5/phpcdi5t1.jpg",
+                  "w:2500": "https://medias.france.tv/GHvV_tdUu-DsTFAV6lF9NwPfn3g/2500x1406/filters:quality(85)/1/t/5/phpcdi5t1.jpg"
+                },
+                "type": "vignette_16x9"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/MwbUBZvfzAEDPQH6Jp3b25Yv1GY/400x533/filters:quality(85)/7/5/c/phpqchc57.jpg",
+                  "w:800": "https://medias.france.tv/8uxaIr5OS7lAjpPWsDlQ5TAZKrI/800x1066/filters:quality(85)/7/5/c/phpqchc57.jpg",
+                  "w:1024": "https://medias.france.tv/AQpoOFitVeXjERYPAUgzJPPgkmk/1024x1365/filters:quality(85)/7/5/c/phpqchc57.jpg"
+                },
+                "type": "vignette_3x4"
+              },
+              {
+                "urls": {
+                  "w:1600": "https://medias.france.tv/YTIqbSaT4OFzj0LU_V9km0M1ED4/1600x1200/filters:quality(85)/q/g/c/phpvbicgq.jpg"
+                },
+                "type": "vignette_4x3"
+              }
+            ],
+            "integral_counter": 0,
+            "ads_blocked": false,
+            "broadcast_box": null,
+            "recommendation": true,
+            "partner": null,
+            "sponsored": false,
+            "channel": "france-2",
+            "marker": {
+              "level_2": null,
+              "page": null,
+              "indicators": null,
+              "custom_variables": null
+            },
+            "marker_piano": {
+              "contextual_properties": null,
+              "additional_properties": {
+                "category": null,
+                "sub_category": null
+              }
+            },
+            "age_min": null,
+            "age_max": null,
+            "saison": null,
+            "call_to_action": null,
+            "call_to_action_url": null,
+            "synopsis": "Une collection d'enquêtes",
+            "label_edito": "nouvel épisode",
+            "casting": null,
+            "characters": null,
+            "director": null,
+            "scenarists": null,
+            "palmares": null,
+            "production_countries": null,
+            "number_of_episodes": null,
+            "number_of_seasons": null,
+            "categories": [],
+            "sub_categories": [],
+            "category": null,
+            "podcast_url": null,
+            "offer": "francetv",
+            "sort_seasons": null,
+            "sort_episodes": null
+          },
+          "images": [
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/4LbOgZ2qxJN61fNW0DlYdzucHBQ/400x0/filters:quality(85)/1/f/d/59a818c5ea5241c4b01f30b4e20b9df1.jpg",
+                "w:800": "https://medias.france.tv/Y1HoXGUEagDt0Q8rLxX7oMCfLJI/800x450/filters:quality(85)/1/f/d/59a818c5ea5241c4b01f30b4e20b9df1.jpg",
+                "w:1024": "https://medias.france.tv/6ZVM9hUfnnCkjiadSGvzYm7UH3k/1024x576/filters:quality(85)/1/f/d/59a818c5ea5241c4b01f30b4e20b9df1.jpg",
+                "w:2500": "https://medias.france.tv/SgT7XMHxuuCPU_nH63zhMExkdFU/2500x1406/filters:quality(85)/1/f/d/59a818c5ea5241c4b01f30b4e20b9df1.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/dAjAcY79zLuDO62MontagtLyAMY/400x533/filters:quality(85)/m/m/g/phpg4vgmm.jpg",
+                "w:800": "https://medias.france.tv/X4lEUIK4st26e7oy-rzURdb-8XI/800x1066/filters:quality(85)/m/m/g/phpg4vgmm.jpg",
+                "w:1024": "https://medias.france.tv/2Vjqe31ioUbBh0ab8dk9AmOxYDg/1024x1365/filters:quality(85)/m/m/g/phpg4vgmm.jpg"
+              },
+              "type": "vignette_3x4"
+            }
+          ],
+          "channel": {
+            "id": 1,
+            "label": "France 2",
+            "type": "channel",
+            "channel_path": "france-2",
+            "images": [
+              {
+                "urls": {
+                  "w:800": "https://medias.france.tv/mLqXUD7pGPZMQDNu6nAHm1HRS4M/800x450/filters:quality(85)/1/k/m/phppfemk1.jpg",
+                  "w:1024": "https://medias.france.tv/wPgCVt5lCy78c0Dz87UTaVb2tfU/1024x576/filters:quality(85)/1/k/m/phppfemk1.jpg",
+                  "w:2500": "https://medias.france.tv/Wd3atkIPrSuUXyP5SPease6wKZs/2500x1406/filters:quality(85)/1/k/m/phppfemk1.jpg"
+                },
+                "type": "background_16x9"
+              },
+              {
+                "urls": {
+                  "w:265": "https://medias.france.tv/ANKNqY3gzyyG5GIAyePKRrZiMdA/265x265/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:300": "https://medias.france.tv/Hvxatu-k_sKN-NBK-X6Hg1tjVco/300x300/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:400": "https://medias.france.tv/v25lgE50IPcm5SkmaN7WLDiOuEo/400x400/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:800": "https://medias.france.tv/3UhtTybWFPZvEotF2qlav8OWrW8/800x800/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:1024": "https://medias.france.tv/6oz4Bmu7itJjIT1Mnh3asxClwPc/1024x1024/filters:quality(85)/c/7/t/php6kjt7c.png"
+                },
+                "type": "carre"
+              },
+              {
+                "urls": {
+                  "w:0": "https://medias.france.tv/debMOnbWg8TetTZhLF-K56IQ2Mo/0x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:25": "https://medias.france.tv/wtQQS-esm6t16I6olBef3VTJQIg/25x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:150": "https://medias.france.tv/jKWZKoynXaOcxrbmGmpPM66U3E0/150x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:300": "https://medias.france.tv/mUab8olpguMyPRii8N425DQmlIs/300x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:450": "https://medias.france.tv/tv2YD3WsEHwdY7ySwWlfWGXzB2w/450x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:1024": "https://medias.france.tv/p2KkmucENa0CMGIvA_1KWC4SBFc/1024x0/filters:quality(85)/a/c/h/phpi0hhca.png"
+                },
+                "type": "logo"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/7iMGREATX7UsKTEq35pMallmdy8/400x0/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:800": "https://medias.france.tv/vDTl5ncJJEu6Jd11KR-TY4xF1fA/800x450/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:1024": "https://medias.france.tv/Q-4oPgpeaL6wMcE6r6-SxXB_mnQ/1024x576/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:2500": "https://medias.france.tv/SyuTNozmt9jee_kyUHzHfSbI8MI/2500x1406/filters:quality(85)/j/k/s/phpn0qskj.jpg"
+                },
+                "type": "vignette_16x9"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/KFtHQ8BAnDpwElwFdcBvZlQ6OM0/400x533/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+                  "w:800": "https://medias.france.tv/ftci3wQ-G6qjjN9c1-ToTJV4iX4/800x1066/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+                  "w:1024": "https://medias.france.tv/eRwxerP2BRgddRX72HBRRZVkEwU/1024x1365/filters:quality(85)/3/d/y/phpkiyyd3.jpg"
+                },
+                "type": "vignette_3x4"
+              }
+            ],
+            "si_id": "006194ea-117d-4bcf-94a9-153d999c59ae",
+            "channel_url": "france-2",
+            "marker": {
+              "level_2": null,
+              "page": null,
+              "indicators": null,
+              "custom_variables": null
+            },
+            "marker_piano": {
+              "contextual_properties": null,
+              "additional_properties": {
+                "category": null,
+                "sub_category": null
+              }
+            },
+            "call_to_action": null,
+            "call_to_action_url": null,
+            "synopsis": null,
+            "offer": "france-2"
+          },
+          "category": {
+            "id": 49,
+            "type": "categorie",
+            "label": "séries & fictions",
+            "url_complete": "series-et-fictions"
+          },
+          "event": null,
+          "partner": null,
+          "ads_blocked": false,
+          "sponsored": false,
+          "is_live": false,
+          "is_published": true,
+          "production_year": null,
+          "is_audio_descripted": true,
+          "is_multi_lingual": false,
+          "casting": "Annelise Hesme, Pierre-François Martin Laval, François-Dominique Blin, Aude Candela, Stéphane Rideau, Youcef Agal, Florine Mullard, Charlie Joirkin, Josué Ndofusu, ",
+          "director": "Sylvie Ayme",
+          "producer": null,
+          "presenter": "",
+          "characters": "Martha Gröenberg, Fred Marquez, Père Rodolphe, Gabriel Borgo, Audrey Laville, Medhi Jaouen, Jen, Juliette",
+          "visible": true,
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "content_status": "replay",
+              "content_diffusion_date": "23112026",
+              "video_factory_id": "b1450a7e-e05c-4ed2-98d7-881bfa2b47cf",
+              "channel": "france_2",
+              "channel_type": "premium"
+            }
+          },
+          "is_recommended": false,
+          "rating_csa_code": "10",
+          "is_subtitled": true,
+          "login": true,
+          "broadcast_channel": "france-2",
+          "medium_description": null,
+          "production_company": "Decaelis Procuction / France Télévisions",
+          "production_countries": "France",
+          "production_language": "Français",
+          "palmares": "",
+          "creator": "",
+          "voice_off": "",
+          "release_date": null,
+          "scenarists": "Johanne Rigoulot",
+          "reviewers": "",
+          "upcoming_live": false,
+          "text": null,
+          "reading_time": null,
+          "offer": "francetv",
+          "format": "landscape"
+        },
+        {
+          "id": 101060,
+          "label": "Les disparus des Argonnes",
+          "description": "Découvrez Les disparus des Argonnes, la mini-série de France Télévisions adaptée du roman de Julie Peyr, avec Alix Poisson, Anne Charrier, Felix Moati et Mehdi Nebbou. ",
+          "type": "program",
+          "program_path": "series-et-fictions_series-drame_les-disparus-des-argonnes",
+          "link": {
+            "url": "/apps/program/meta/series-et-fictions_series-drame_les-disparus-des-argonnes?platform=apps",
+            "type": "tab"
+          },
+          "color": null,
+          "sound": null,
+          "headline_title": "Son fils a disparu, mais pas sa détermination. Inspiré de faits réels",
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/5QjsLB6J6mHixiXo8sOY5WKNk40/800x450/filters:quality(85)/y/s/r/phpjbyrsy.jpg",
+                "w:1024": "https://medias.france.tv/oE57hEJoPUYIOtkqIKjR9T4cGu4/1024x576/filters:quality(85)/y/s/r/phpjbyrsy.jpg",
+                "w:2500": "https://medias.france.tv/34JxXco5ZtLd8Yoy0CTPbSWtb8k/2500x1406/filters:quality(85)/y/s/r/phpjbyrsy.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:0": "https://medias.france.tv/cKvFLsXVahQkff4jJnF8TVXcSw0/0x0/filters:quality(85)/k/h/y/php5e9yhk.png",
+                "w:25": "https://medias.france.tv/NDoA93hy3uyAJRAN-xr3fe7A95A/25x0/filters:quality(85)/k/h/y/php5e9yhk.png",
+                "w:150": "https://medias.france.tv/wBCi45Yhd6p5HouStlS722g4zwQ/150x0/filters:quality(85)/k/h/y/php5e9yhk.png",
+                "w:300": "https://medias.france.tv/bBnCpi9F9UcULR_D1jCN6cylIvs/300x0/filters:quality(85)/k/h/y/php5e9yhk.png",
+                "w:450": "https://medias.france.tv/hg4cFimWxCMsworCNSOXgflFs-o/450x0/filters:quality(85)/k/h/y/php5e9yhk.png",
+                "w:1024": "https://medias.france.tv/_R0K3bqAmOzouqbyCmeS_i7Gi5g/1024x0/filters:quality(85)/k/h/y/php5e9yhk.png"
+              },
+              "type": "logo"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/Zh_rncJ9fxAlRGw1sTC0R_yqEzU/1920x1080/filters:quality(85)/c/u/6/phpmrh6uc.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/OxnTOqA6arPHcYmXBqClhaCoWO0/400x0/filters:quality(85)/r/7/n/phpepqn7r.jpg",
+                "w:800": "https://medias.france.tv/u0sKxlySlA4ZKM_Gb2yR9i3bCbY/800x450/filters:quality(85)/r/7/n/phpepqn7r.jpg",
+                "w:1024": "https://medias.france.tv/fvUDTj4bK7axtyohmozr1eym67M/1024x576/filters:quality(85)/r/7/n/phpepqn7r.jpg",
+                "w:2500": "https://medias.france.tv/6Tqm7LTaidxAvLq5MtaaPWpqiWg/2500x1406/filters:quality(85)/r/7/n/phpepqn7r.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/EJQkt8BeBKa2xXrSo5gdDWQSc9w/2000x0/filters:quality(85)/c/d/x/phpwrexdc.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/IeltReKKbfwtgpKfFRtAIcQ_9G8/400x533/filters:quality(85)/j/1/d/php1ktd1j.jpg",
+                "w:800": "https://medias.france.tv/i4BiZzuCiAe6MUgRu94dfny1bkU/800x1066/filters:quality(85)/j/1/d/php1ktd1j.jpg",
+                "w:1024": "https://medias.france.tv/YcRaNc9y2TmQrisC_YTrlWvE1LY/1024x1365/filters:quality(85)/j/1/d/php1ktd1j.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/X7fS4rEOaduGYaYLhDQj3CQyUZ0/1600x1200/filters:quality(85)/p/m/p/phpw5ipmp.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "integral_counter": 4,
+          "ads_blocked": false,
+          "broadcast_box": null,
+          "recommendation": true,
+          "partner": null,
+          "sponsored": false,
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "category": null,
+              "sub_category": null
+            }
+          },
+          "age_min": null,
+          "age_max": null,
+          "saison": null,
+          "call_to_action": null,
+          "call_to_action_url": null,
+          "synopsis": "Un combat contre le silence de l’armée, contre les institutions et les carcans de la société de l’époque.",
+          "label_edito": "Nouveau",
+          "downloadable": false,
+          "casting": "Alix Poisson, Vincent Deniard, Anne Charrier, Félix Moati, Camille Claris, Cyril Lecomte, Xaverine Lefevre, Isabelle Côte-Willem, Aïssa Maïga et Mehdi Nebbou",
+          "characters": null,
+          "director": "Safy Nebbou ",
+          "scenarists": "Julie Peyr, Safy Nebbou, Sonia Mohammed-Chérif et Mary Arnaud",
+          "palmares": "Prix de la meilleure série drama / suspense au Festival de la fiction de La Rochelle 2026",
+          "production_countries": null,
+          "number_of_episodes": null,
+          "number_of_seasons": null,
+          "categories": [
+            {
+              "id": 49,
+              "type": "categorie",
+              "label": "séries & fictions",
+              "url_complete": "series-et-fictions",
+              "images": [],
+              "marker": {
+                "level_2": null,
+                "page": null,
+                "indicators": null,
+                "custom_variables": null
+              },
+              "marker_piano": {
+                "contextual_properties": null,
+                "additional_properties": null
+              },
+              "call_to_action": null,
+              "call_to_action_url": null,
+              "synopsis": null,
+              "headline_title": null,
+              "label_edito": null,
+              "parent": null
+            }
+          ],
+          "sub_categories": [
+            {
+              "id": 49920,
+              "type": "sous_categorie",
+              "label": "Séries drame",
+              "url_complete": "series-et-fictions/series-drame"
+            }
+          ],
+          "category": {
+            "label": "séries & fictions",
+            "url_complete": "series-et-fictions",
+            "id": 49,
+            "type": "categorie"
+          },
+          "podcast_url": null,
+          "offer": "francetv",
+          "sort_seasons": null,
+          "sort_episodes": null
+        },
+        {
+          "id": 8970347,
+          "title": "The Apprentice",
+          "label_edito": null,
+          "type": "unitaire",
+          "headline_title": "L'ascension d'une créature politique hors limite",
+          "season": null,
+          "episode": null,
+          "description": "Au début des années 70, à New York. Après avoir étudié à la Wharton School, une des écoles de commerce les plus prestigieuses au monde, Donald Trump rejoint l'entreprise dirigée par son père, spécialisée dans la location de logements aux classes modestes. Le jeune homme fait immédiatement preuve d'une grande habileté dans la gestion de ses affaires. Visé par une enquête pour discrimination parce qu'il ne loue ses biens qu'aux blancs, il s'offre les services de Roy Cohn, un redoutable avocat qui parvient à lui éviter une condamnation en signant un accord avec la justice. Ravi de l'issue du procès, Donald Trump en fait alors son conseiller juridique...",
+          "broadcast_begin_date": 1793736672,
+          "broadcast_end_date": 1793743356,
+          "begin_date": 1793743284,
+          "end_date": 1796335284,
+          "duration": 6684,
+          "rating_csa": "Déconseillé aux -10 ans",
+          "si_id": "34e2ffa9-cce5-4230-af53-43f2c694b5c9",
+          "downloadable": false,
+          "episode_title": "The Apprentice",
+          "program": null,
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/tFir2l37t9yBngLAjC5NSlA1xZI/800x450/filters:quality(85)/7/a/l/php37zla7.jpg",
+                "w:1024": "https://medias.france.tv/yLwc-6pXqGXA-TvaDgQXKPkcsQI/1024x576/filters:quality(85)/7/a/l/php37zla7.jpg",
+                "w:2500": "https://medias.france.tv/XWRQmyelNZ5WMulp9aPkoDRvhIM/2500x1406/filters:quality(85)/7/a/l/php37zla7.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/0qF8sED5foGIjy3XhpbOs1K8ULg/1920x1080/filters:quality(85)/b/3/1/phpefw13b.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/FqbGOP4lDDax_2632Wxh4pT1x1Y/400x0/filters:quality(85)/s/y/p/phpg7upys.jpg",
+                "w:800": "https://medias.france.tv/8TvXWsp3YqcylkW85hZYhu4XqeE/800x450/filters:quality(85)/s/y/p/phpg7upys.jpg",
+                "w:1024": "https://medias.france.tv/KpU6qd484anSo3esMvyooIJLpfI/1024x576/filters:quality(85)/s/y/p/phpg7upys.jpg",
+                "w:2500": "https://medias.france.tv/xFUsb4nWlh-nFFOssYlEGkBTHuQ/2500x1406/filters:quality(85)/s/y/p/phpg7upys.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/xwBVaHUqgnFnYz1detDX25Xd0lU/2000x0/filters:quality(85)/c/r/w/php7fcwrc.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/ZljRdGXpmcDL9LmofdjJbpu_lVE/400x533/filters:quality(85)/j/s/b/phpbzmbsj.jpg",
+                "w:800": "https://medias.france.tv/tzTsR3eEqNlAsOo37vDk7mqXIyo/800x1066/filters:quality(85)/j/s/b/phpbzmbsj.jpg",
+                "w:1024": "https://medias.france.tv/_aBllW3hrshG9u7Yd_I9qRcz2SE/1024x1365/filters:quality(85)/j/s/b/phpbzmbsj.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/QcbnI5l5M0RQ5GFweG4ptghu_7w/1600x1200/filters:quality(85)/i/j/5/phpmn15ji.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "channel": {
+            "id": 1,
+            "label": "France 2",
+            "type": "channel",
+            "channel_path": "france-2",
+            "images": [
+              {
+                "urls": {
+                  "w:800": "https://medias.france.tv/mLqXUD7pGPZMQDNu6nAHm1HRS4M/800x450/filters:quality(85)/1/k/m/phppfemk1.jpg",
+                  "w:1024": "https://medias.france.tv/wPgCVt5lCy78c0Dz87UTaVb2tfU/1024x576/filters:quality(85)/1/k/m/phppfemk1.jpg",
+                  "w:2500": "https://medias.france.tv/Wd3atkIPrSuUXyP5SPease6wKZs/2500x1406/filters:quality(85)/1/k/m/phppfemk1.jpg"
+                },
+                "type": "background_16x9"
+              },
+              {
+                "urls": {
+                  "w:265": "https://medias.france.tv/ANKNqY3gzyyG5GIAyePKRrZiMdA/265x265/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:300": "https://medias.france.tv/Hvxatu-k_sKN-NBK-X6Hg1tjVco/300x300/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:400": "https://medias.france.tv/v25lgE50IPcm5SkmaN7WLDiOuEo/400x400/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:800": "https://medias.france.tv/3UhtTybWFPZvEotF2qlav8OWrW8/800x800/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:1024": "https://medias.france.tv/6oz4Bmu7itJjIT1Mnh3asxClwPc/1024x1024/filters:quality(85)/c/7/t/php6kjt7c.png"
+                },
+                "type": "carre"
+              },
+              {
+                "urls": {
+                  "w:0": "https://medias.france.tv/debMOnbWg8TetTZhLF-K56IQ2Mo/0x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:25": "https://medias.france.tv/wtQQS-esm6t16I6olBef3VTJQIg/25x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:150": "https://medias.france.tv/jKWZKoynXaOcxrbmGmpPM66U3E0/150x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:300": "https://medias.france.tv/mUab8olpguMyPRii8N425DQmlIs/300x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:450": "https://medias.france.tv/tv2YD3WsEHwdY7ySwWlfWGXzB2w/450x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:1024": "https://medias.france.tv/p2KkmucENa0CMGIvA_1KWC4SBFc/1024x0/filters:quality(85)/a/c/h/phpi0hhca.png"
+                },
+                "type": "logo"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/7iMGREATX7UsKTEq35pMallmdy8/400x0/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:800": "https://medias.france.tv/vDTl5ncJJEu6Jd11KR-TY4xF1fA/800x450/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:1024": "https://medias.france.tv/Q-4oPgpeaL6wMcE6r6-SxXB_mnQ/1024x576/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:2500": "https://medias.france.tv/SyuTNozmt9jee_kyUHzHfSbI8MI/2500x1406/filters:quality(85)/j/k/s/phpn0qskj.jpg"
+                },
+                "type": "vignette_16x9"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/KFtHQ8BAnDpwElwFdcBvZlQ6OM0/400x533/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+                  "w:800": "https://medias.france.tv/ftci3wQ-G6qjjN9c1-ToTJV4iX4/800x1066/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+                  "w:1024": "https://medias.france.tv/eRwxerP2BRgddRX72HBRRZVkEwU/1024x1365/filters:quality(85)/3/d/y/phpkiyyd3.jpg"
+                },
+                "type": "vignette_3x4"
+              }
+            ],
+            "si_id": "006194ea-117d-4bcf-94a9-153d999c59ae",
+            "channel_url": "france-2",
+            "marker": {
+              "level_2": null,
+              "page": null,
+              "indicators": null,
+              "custom_variables": null
+            },
+            "marker_piano": {
+              "contextual_properties": null,
+              "additional_properties": {
+                "category": null,
+                "sub_category": null
+              }
+            },
+            "call_to_action": null,
+            "call_to_action_url": null,
+            "synopsis": null,
+            "offer": "france-2"
+          },
+          "category": {
+            "id": 33,
+            "type": "categorie",
+            "label": "Cinéma",
+            "url_complete": "films"
+          },
+          "event": null,
+          "partner": null,
+          "ads_blocked": false,
+          "sponsored": false,
+          "is_live": false,
+          "is_published": true,
+          "production_year": 2024,
+          "is_audio_descripted": true,
+          "is_multi_lingual": true,
+          "casting": "Sebastian Stan, Jeremy Strong, Maria Bakalova, Martin Donovan, Catherine McNally, Charlie Carrick, Ben Sullivan, Jason Blicker",
+          "director": "Ali Abbasi",
+          "producer": null,
+          "presenter": "",
+          "characters": "Donald Trump, Roy Cohn, Ivana Trump, Fred Trump, Mary Anne Trump, Freddy Trump, Russell Eldridge, George Steinbrenner",
+          "visible": true,
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "content_status": "replay",
+              "content_diffusion_date": "03112026",
+              "video_factory_id": "34e2ffa9-cce5-4230-af53-43f2c694b5c9",
+              "channel": "france_2",
+              "channel_type": "premium"
+            }
+          },
+          "is_recommended": false,
+          "rating_csa_code": "10",
+          "is_subtitled": true,
+          "login": true,
+          "broadcast_channel": "france-2",
+          "medium_description": null,
+          "production_company": "Scythia Films / Profile Pictures / Tailored Films / Film Institute / Kinematics / Head Gear Films / Metrol Technology / LB Entertainment / AC Films / Film i Väst / Gidden Media / Rocket Science / Fís Éireann / Screen Ireland / DR Danish Broadcasting ",
+          "production_countries": "Canada, États-Unis d'Amérique, Danemark, Irlande",
+          "production_language": "Anglais",
+          "palmares": "",
+          "creator": "",
+          "voice_off": "Axel Kiener, Jérémie Covillault, Macha Petina, François-Eric Gendron, Annie Sinigalia, Thomas Roditi, Jérémie Bédrune, Loïc Guingand, Xavier Fagnon",
+          "release_date": 1728424800,
+          "scenarists": "Gabriel Sherman",
+          "reviewers": "",
+          "upcoming_live": false,
+          "text": null,
+          "reading_time": null,
+          "offer": "francetv",
+          "format": "landscape"
+        }
+      ],
+      "sponsored": false
+    },
+    {
+      "label": "En direct",
+      "type": "live",
+      "items": [
+        {
+          "id": 9008539,
+          "title": "Comment se relever du harcèlement scolaire ?",
+          "label_edito": null,
+          "type": "integrale",
+          "headline_title": null,
+          "season": null,
+          "episode": null,
+          "description": "Toute une classe de 4e est exceptionnellement réunie sur le plateau de Faustine pour aborder un sujet ô combien sensible dans de nombreuses familles : les adolescents et les écrans. Téléphones, tablettes, réseaux sociaux… Les parents, et parfois les grands-parents, redoutent les dérives et la dépendance. Les adolescents présents sur le plateau t...",
+          "broadcast_begin_date": 1793883339,
+          "broadcast_end_date": 1793887539,
+          "begin_date": 1793887500,
+          "end_date": 1856095500,
+          "duration": 4200,
+          "rating_csa": "Tous publics",
+          "si_id": "6bfe1ae5-c9ae-4d3d-b5a5-8e159c71ee7f",
+          "downloadable": true,
+          "episode_title": "Comment se relever du harcèlement scolaire ?",
+          "program": {
+            "id": 4333,
+            "label": "Ça commence aujourd'hui",
+            "description": "",
+            "type": "program",
+            "program_path": "france-2_ca-commence-aujourd-hui",
+            "link": {
+              "url": "/apps/program/meta/france-2_ca-commence-aujourd-hui?platform=apps",
+              "type": "tab"
+            },
+            "color": null,
+            "sound": null,
+            "headline_title": "Des témoignages en toute intimité",
+            "images": [
+              {
+                "urls": {
+                  "w:800": "https://medias.france.tv/t-Iy-yAHJwwr7U6-O6GisdHhNCg/800x450/filters:quality(85)/s/z/4/phprsf4zs.jpg",
+                  "w:1024": "https://medias.france.tv/hBlft55ZDmqj3DpekE8m9pSFibo/1024x576/filters:quality(85)/s/z/4/phprsf4zs.jpg",
+                  "w:2500": "https://medias.france.tv/FghnoQLLHf01NCKdwkUrBRjBbUE/2500x1406/filters:quality(85)/s/z/4/phprsf4zs.jpg"
+                },
+                "type": "background_16x9"
+              },
+              {
+                "urls": {
+                  "w:265": "https://medias.france.tv/XrQGqCQg3GEl6z3urDsDXGlVAGo/265x265/filters:quality(85)/t/s/g/phprqygst.jpg",
+                  "w:300": "https://medias.france.tv/KtZ1X2xrmyFFKpIsCUXyEkZjjJ4/300x300/filters:quality(85)/t/s/g/phprqygst.jpg",
+                  "w:400": "https://medias.france.tv/_Xziy2xKjfE0p3xlmrKRT83IQIk/400x400/filters:quality(85)/t/s/g/phprqygst.jpg",
+                  "w:800": "https://medias.france.tv/G1ROPhNs3GHaTPG4e6tDCINv2jw/800x800/filters:quality(85)/t/s/g/phprqygst.jpg",
+                  "w:1024": "https://medias.france.tv/w8PoUhnWam_b6fo1TALNcPYS2fU/1024x1024/filters:quality(85)/t/s/g/phprqygst.jpg"
+                },
+                "type": "carre"
+              },
+              {
+                "urls": {
+                  "w:0": "https://medias.france.tv/4BRzd8QG7NAgmi_-BG1monj-ZUE/0x0/filters:quality(85)/e/i/r/phpg4hrie.png",
+                  "w:25": "https://medias.france.tv/avet-RJb7oc8VpW1HmvzkMyNCc0/25x0/filters:quality(85)/e/i/r/phpg4hrie.png",
+                  "w:150": "https://medias.france.tv/oKmewXRTILxpLr6bxmb1Sam9TVk/150x0/filters:quality(85)/e/i/r/phpg4hrie.png",
+                  "w:300": "https://medias.france.tv/3X5ZsGd_B2IVy0Jgw3ZROJVsD5M/300x0/filters:quality(85)/e/i/r/phpg4hrie.png",
+                  "w:450": "https://medias.france.tv/IUYQCpLqALok6T0wRqzl0zkcxx0/450x0/filters:quality(85)/e/i/r/phpg4hrie.png",
+                  "w:1024": "https://medias.france.tv/z2pqhDZThJU5Kv9TC2AeYyeWuzE/1024x0/filters:quality(85)/e/i/r/phpg4hrie.png"
+                },
+                "type": "logo"
+              },
+              {
+                "urls": {
+                  "w:1280": "https://medias.france.tv/SesmGwE0n9gnqEA9gIGyTO9UE2o/1920x1080/filters:quality(85)/q/l/v/php76vvlq.jpg"
+                },
+                "type": "lt_16x9"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/Zw2eo_IxSxq54UQgSiGT8gxw7BY/400x0/filters:quality(85)/s/r/l/phpwo5lrs.jpg",
+                  "w:800": "https://medias.france.tv/qLQx7Ty99d-BaorR7c3PieRP3gA/800x450/filters:quality(85)/s/r/l/phpwo5lrs.jpg",
+                  "w:1024": "https://medias.france.tv/7QVFNyh_f1EuEJ_I4HJ99f6f_30/1024x576/filters:quality(85)/s/r/l/phpwo5lrs.jpg",
+                  "w:2500": "https://medias.france.tv/AT3HfJFXR3tqFNesTGDQ6mS3msE/2500x1406/filters:quality(85)/s/r/l/phpwo5lrs.jpg"
+                },
+                "type": "vignette_16x9"
+              },
+              {
+                "urls": {
+                  "w:2000": "https://medias.france.tv/BgsZzr_QO_ccTEeGiMiKGWfFTU0/2000x0/filters:quality(85)/n/e/i/php2coien.jpg"
+                },
+                "type": "vignette_2x3"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/f7-g4Tjv1m8jipswH20j17wyTPg/400x533/filters:quality(85)/s/u/f/phpqe7fus.jpg",
+                  "w:800": "https://medias.france.tv/ANwRMnIDcWbjY8R5HcvYNsIBrwc/800x1066/filters:quality(85)/s/u/f/phpqe7fus.jpg",
+                  "w:1024": "https://medias.france.tv/8xoQLBkakzFRMGOwzdKA-DzrXVI/1024x1365/filters:quality(85)/s/u/f/phpqe7fus.jpg"
+                },
+                "type": "vignette_3x4"
+              },
+              {
+                "urls": {
+                  "w:1600": "https://medias.france.tv/e12UZjNjz8obythNYFRcwbu7bUE/1600x1200/filters:quality(85)/8/z/t/php5xmtz8.jpg"
+                },
+                "type": "vignette_4x3"
+              }
+            ],
+            "integral_counter": 497,
+            "ads_blocked": false,
+            "broadcast_box": null,
+            "recommendation": true,
+            "partner": null,
+            "sponsored": false,
+            "channel": "france-2",
+            "marker": {
+              "level_2": null,
+              "page": null,
+              "indicators": null,
+              "custom_variables": null
+            },
+            "marker_piano": {
+              "contextual_properties": null,
+              "additional_properties": {
+                "category": null,
+                "sub_category": null
+              }
+            },
+            "age_min": 3,
+            "age_max": 12,
+            "saison": null,
+            "call_to_action": "Assistez ou Participez à l'émission",
+            "call_to_action_url": "https://www.francetelevisions.fr/et-vous/participer-a-une-emission/ca-commence-aujourdhui-980",
+            "synopsis": "Tous les jours, Faustine Bollaert accueille sur le plateau de \"Ça commence aujourd'hui\" des hommes et des femmes qui évoquent des événements marquants de leur existence, pour permettre à d'autres d'avancer dans leur parcours : un rendez-vous positif et optimiste.",
+            "label_edito": null,
+            "casting": null,
+            "characters": null,
+            "director": null,
+            "scenarists": null,
+            "palmares": null,
+            "production_countries": null,
+            "number_of_episodes": null,
+            "number_of_seasons": null,
+            "categories": [],
+            "sub_categories": [],
+            "category": null,
+            "podcast_url": null,
+            "offer": "francetv",
+            "sort_seasons": null,
+            "sort_episodes": null
+          },
+          "images": [
+            {
+              "urls": {
+                "w:265": "https://medias.france.tv/9IMzYrkOnoQFms-S6cVxECjKuFg/265x265/filters:quality(85)/9/a/9/phpkah9a9.jpg",
+                "w:300": "https://medias.france.tv/gMBmTlXklqe0HIpPnRMHvlvijgY/300x300/filters:quality(85)/9/a/9/phpkah9a9.jpg",
+                "w:400": "https://medias.france.tv/2Hg94C7SffsVfM1swKNNNHwGGEY/400x400/filters:quality(85)/9/a/9/phpkah9a9.jpg",
+                "w:800": "https://medias.france.tv/Vwrmhwof7u6mykvNa5D-LqeCAhA/800x800/filters:quality(85)/9/a/9/phpkah9a9.jpg",
+                "w:1024": "https://medias.france.tv/JzFOCQCCth03vYXH_JxC38Dnk3Q/1024x1024/filters:quality(85)/9/a/9/phpkah9a9.jpg"
+              },
+              "type": "carre"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/7g0Y2XDhcjoPxRaH_yCxUKhTG9Q/400x0/filters:quality(85)/s/q/x/php0pwxqs.jpg",
+                "w:800": "https://medias.france.tv/zuwWabozIkhqRSJ46UnG0QYg1PI/800x450/filters:quality(85)/s/q/x/php0pwxqs.jpg",
+                "w:1024": "https://medias.france.tv/Qo1MCFvt3f6NYr8NU61jJXphiM4/1024x576/filters:quality(85)/s/q/x/php0pwxqs.jpg",
+                "w:2500": "https://medias.france.tv/nZcf6sEevd8PK8XsKH6FmF5oXjA/2500x1406/filters:quality(85)/s/q/x/php0pwxqs.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/xG71KR0QpjrHDBZj9gU5EnzkMzY/400x533/filters:quality(85)/u/a/5/phppdk5au.jpg",
+                "w:800": "https://medias.france.tv/znnZQDlOiWNWaSqqSe9JLXwZ4qA/800x1066/filters:quality(85)/u/a/5/phppdk5au.jpg",
+                "w:1024": "https://medias.france.tv/5BY7nl0z_M3Oe2RD2yhvyb5oUbk/1024x1365/filters:quality(85)/u/a/5/phppdk5au.jpg"
+              },
+              "type": "vignette_3x4"
+            }
+          ],
+          "channel": {
+            "id": 1,
+            "label": "France 2",
+            "type": "channel",
+            "channel_path": "france-2",
+            "images": [
+              {
+                "urls": {
+                  "w:800": "https://medias.france.tv/mLqXUD7pGPZMQDNu6nAHm1HRS4M/800x450/filters:quality(85)/1/k/m/phppfemk1.jpg",
+                  "w:1024": "https://medias.france.tv/wPgCVt5lCy78c0Dz87UTaVb2tfU/1024x576/filters:quality(85)/1/k/m/phppfemk1.jpg",
+                  "w:2500": "https://medias.france.tv/Wd3atkIPrSuUXyP5SPease6wKZs/2500x1406/filters:quality(85)/1/k/m/phppfemk1.jpg"
+                },
+                "type": "background_16x9"
+              },
+              {
+                "urls": {
+                  "w:265": "https://medias.france.tv/ANKNqY3gzyyG5GIAyePKRrZiMdA/265x265/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:300": "https://medias.france.tv/Hvxatu-k_sKN-NBK-X6Hg1tjVco/300x300/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:400": "https://medias.france.tv/v25lgE50IPcm5SkmaN7WLDiOuEo/400x400/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:800": "https://medias.france.tv/3UhtTybWFPZvEotF2qlav8OWrW8/800x800/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:1024": "https://medias.france.tv/6oz4Bmu7itJjIT1Mnh3asxClwPc/1024x1024/filters:quality(85)/c/7/t/php6kjt7c.png"
+                },
+                "type": "carre"
+              },
+              {
+                "urls": {
+                  "w:0": "https://medias.france.tv/debMOnbWg8TetTZhLF-K56IQ2Mo/0x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:25": "https://medias.france.tv/wtQQS-esm6t16I6olBef3VTJQIg/25x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:150": "https://medias.france.tv/jKWZKoynXaOcxrbmGmpPM66U3E0/150x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:300": "https://medias.france.tv/mUab8olpguMyPRii8N425DQmlIs/300x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:450": "https://medias.france.tv/tv2YD3WsEHwdY7ySwWlfWGXzB2w/450x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:1024": "https://medias.france.tv/p2KkmucENa0CMGIvA_1KWC4SBFc/1024x0/filters:quality(85)/a/c/h/phpi0hhca.png"
+                },
+                "type": "logo"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/7iMGREATX7UsKTEq35pMallmdy8/400x0/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:800": "https://medias.france.tv/vDTl5ncJJEu6Jd11KR-TY4xF1fA/800x450/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:1024": "https://medias.france.tv/Q-4oPgpeaL6wMcE6r6-SxXB_mnQ/1024x576/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:2500": "https://medias.france.tv/SyuTNozmt9jee_kyUHzHfSbI8MI/2500x1406/filters:quality(85)/j/k/s/phpn0qskj.jpg"
+                },
+                "type": "vignette_16x9"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/KFtHQ8BAnDpwElwFdcBvZlQ6OM0/400x533/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+                  "w:800": "https://medias.france.tv/ftci3wQ-G6qjjN9c1-ToTJV4iX4/800x1066/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+                  "w:1024": "https://medias.france.tv/eRwxerP2BRgddRX72HBRRZVkEwU/1024x1365/filters:quality(85)/3/d/y/phpkiyyd3.jpg"
+                },
+                "type": "vignette_3x4"
+              }
+            ],
+            "si_id": "006194ea-117d-4bcf-94a9-153d999c59ae",
+            "channel_url": "france-2",
+            "marker": {
+              "level_2": null,
+              "page": null,
+              "indicators": null,
+              "custom_variables": null
+            },
+            "marker_piano": {
+              "contextual_properties": null,
+              "additional_properties": {
+                "category": null,
+                "sub_category": null
+              }
+            },
+            "call_to_action": "",
+            "call_to_action_url": "",
+            "synopsis": null,
+            "offer": "france-2"
+          },
+          "category": {
+            "id": 49908,
+            "type": "categorie",
+            "label": "Société",
+            "url_complete": "societe",
+            "images": [
+              {
+                "urls": {
+                  "w:800": "https://medias.france.tv/Rn8IoRc_8ePs2NFmV5otR3h2Vpw/800x450/filters:quality(85)/5/d/v/phpi7rvd5.png",
+                  "w:1024": "https://medias.france.tv/bPsQKwt7u-xS_VMAMY5XblZ20dg/1024x576/filters:quality(85)/5/d/v/phpi7rvd5.png",
+                  "w:2500": "https://medias.france.tv/gJ4MXGfIMukTFeSR-aj_nb83onY/2500x1406/filters:quality(85)/5/d/v/phpi7rvd5.png"
+                },
+                "type": "background_16x9"
+              },
+              {
+                "urls": {
+                  "w:265": "https://medias.france.tv/9jFyJJC4AfzmJX5tep_o0p-_rfY/265x265/filters:quality(85)/f/2/8/phpnxi82f.png",
+                  "w:300": "https://medias.france.tv/oJ8R5G07BOPzakkl1oyjvawnfsM/300x300/filters:quality(85)/f/2/8/phpnxi82f.png",
+                  "w:400": "https://medias.france.tv/WQBXOHjNGCYYKNJ88cH66Xxj5Hg/400x400/filters:quality(85)/f/2/8/phpnxi82f.png",
+                  "w:800": "https://medias.france.tv/SivBE6ui2QyHIQj9hzZO8UXkkiI/800x800/filters:quality(85)/f/2/8/phpnxi82f.png",
+                  "w:1024": "https://medias.france.tv/IBygkXv7bx0npgpJf3vdi0y7L8k/1024x1024/filters:quality(85)/f/2/8/phpnxi82f.png"
+                },
+                "type": "carre"
+              },
+              {
+                "urls": {
+                  "w:0": "https://medias.france.tv/FjccbY7Jb_F24m4SBGGqGseehi8/0x0/filters:quality(85)/n/a/8/phpxwh8an.png",
+                  "w:25": "https://medias.france.tv/PVRZsjMGxFGagLu_Cwuyz34avS0/25x0/filters:quality(85)/n/a/8/phpxwh8an.png",
+                  "w:150": "https://medias.france.tv/7EpC6aEEcoYbfvQBru89btSgIyU/150x0/filters:quality(85)/n/a/8/phpxwh8an.png",
+                  "w:300": "https://medias.france.tv/wukB2QhQ3Zm-fuB64Q8aoqGxVjU/300x0/filters:quality(85)/n/a/8/phpxwh8an.png",
+                  "w:450": "https://medias.france.tv/NAhMK3NJyGRGPXXIRv7pzC-TO0k/450x0/filters:quality(85)/n/a/8/phpxwh8an.png",
+                  "w:1024": "https://medias.france.tv/6VhFCk0Nmol3vNEAY_jUwppEc1Y/1024x0/filters:quality(85)/n/a/8/phpxwh8an.png"
+                },
+                "type": "logo"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/68Bnjhm2RTzPEezkeLmpwA_AprI/400x0/filters:quality(85)/t/z/q/phptgnqzt.png",
+                  "w:800": "https://medias.france.tv/sNMoQhuuWU84agHVrjCMeDA_u7E/800x450/filters:quality(85)/t/z/q/phptgnqzt.png",
+                  "w:1024": "https://medias.france.tv/ADbraktHWnC8uH4z9AqLsuEkA6o/1024x576/filters:quality(85)/t/z/q/phptgnqzt.png",
+                  "w:2500": "https://medias.france.tv/sLq3xZuX7wJdtcf54I2Y_9Rd8TM/2500x1406/filters:quality(85)/t/z/q/phptgnqzt.png"
+                },
+                "type": "vignette_16x9"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/87DX9aXwsiv0Kth3b2x4ODFIco8/400x533/filters:quality(85)/k/3/r/php5jdr3k.png",
+                  "w:800": "https://medias.france.tv/BWJaQJDx_P-4CWkas0LLQpVpEvY/800x1066/filters:quality(85)/k/3/r/php5jdr3k.png",
+                  "w:1024": "https://medias.france.tv/tWgq3v6yDg71xN4sXetaNKLO_pM/1024x1365/filters:quality(85)/k/3/r/php5jdr3k.png"
+                },
+                "type": "vignette_3x4"
+              }
+            ],
+            "integral_counter": 0,
+            "marker": {
+              "level_2": null,
+              "page": null,
+              "indicators": null,
+              "custom_variables": null
+            },
+            "marker_piano": {
+              "contextual_properties": null,
+              "additional_properties": null
+            },
+            "call_to_action": "",
+            "call_to_action_url": "",
+            "synopsis": null,
+            "headline_title": null,
+            "label_edito": null,
+            "parent": null
+          },
+          "event": null,
+          "partner": null,
+          "ads_blocked": false,
+          "sponsored": false,
+          "is_live": true,
+          "is_published": true,
+          "production_year": null,
+          "is_audio_descripted": false,
+          "is_multi_lingual": false,
+          "casting": "",
+          "director": "",
+          "producer": null,
+          "presenter": "Faustine Bollaert",
+          "characters": "",
+          "visible": true,
+          "marker": {
+            "level_2": 51,
+            "page": "player::direct::france_2",
+            "indicators": {
+              "4": "[france_2]",
+              "23": "0"
+            },
+            "custom_variables": {
+              "titre_video": "comment_se_relever_du_harcelement_scolaire",
+              "nom_programme": "cacommenceaujourdhui",
+              "id_video_offre": "9008539"
+            }
+          },
+          "marker_piano": {
+            "contextual_properties": {
+              "page": "comment_se_relever_du_harcelement_scolaire",
+              "page_type": "video"
+            },
+            "additional_properties": {
+              "channel": "france_2",
+              "channel_type": "premium",
+              "sub_channel": null,
+              "region": null,
+              "category": "societe",
+              "sub_category": "magazines_d_actualite",
+              "content_type": "video",
+              "content_title": "comment_se_relever_du_harcelement_scolaire",
+              "content_status": "direct",
+              "content_format": "integrale",
+              "program": "ca_commence_aujourd_hui",
+              "program_id": 4333,
+              "highlight": null,
+              "tag": null,
+              "sub_tag": null,
+              "season": null,
+              "content_id": 9008539,
+              "content_sponsored": false,
+              "content_logged": true,
+              "audiomeans_id": null,
+              "last_update_date": null,
+              "first_publication_date": null,
+              "author": null,
+              "partner": null,
+              "content_diffusion_date": "05112026",
+              "video_factory_id": "6bfe1ae5-c9ae-4d3d-b5a5-8e159c71ee7f"
+            }
+          },
+          "is_recommended": false,
+          "rating_csa_code": "TP",
+          "is_subtitled": false,
+          "login": true,
+          "broadcast_channel": "france-2",
+          "medium_description": null,
+          "production_company": null,
+          "production_countries": "France",
+          "production_language": "Français",
+          "palmares": "",
+          "creator": "",
+          "voice_off": "",
+          "release_date": null,
+          "scenarists": "",
+          "reviewers": "",
+          "upcoming_live": false,
+          "intro": null,
+          "text": null,
+          "reading_time": null,
+          "offer": "france-2",
+          "format": "landscape"
+        }
+      ]
+    },
+    {
+      "id": 24017932,
+      "type": "playlist_mixed",
+      "label": "Séries et fictions",
+      "display": null,
+      "items": [
+        {
+          "id": 101060,
+          "label": "Les disparus des Argonnes",
+          "description": "Découvrez Les disparus des Argonnes, la mini-série de France Télévisions adaptée du roman de Julie Peyr, avec Alix Poisson, Anne Charrier, Felix Moati et Mehdi Nebbou. ",
+          "type": "program",
+          "program_path": "series-et-fictions_series-drame_les-disparus-des-argonnes",
+          "link": {
+            "url": "/apps/program/meta/series-et-fictions_series-drame_les-disparus-des-argonnes?platform=apps",
+            "type": "tab"
+          },
+          "color": null,
+          "sound": null,
+          "headline_title": "Son fils a disparu, mais pas sa détermination. Inspiré de faits réels",
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/5QjsLB6J6mHixiXo8sOY5WKNk40/800x450/filters:quality(85)/y/s/r/phpjbyrsy.jpg",
+                "w:1024": "https://medias.france.tv/oE57hEJoPUYIOtkqIKjR9T4cGu4/1024x576/filters:quality(85)/y/s/r/phpjbyrsy.jpg",
+                "w:2500": "https://medias.france.tv/34JxXco5ZtLd8Yoy0CTPbSWtb8k/2500x1406/filters:quality(85)/y/s/r/phpjbyrsy.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:0": "https://medias.france.tv/cKvFLsXVahQkff4jJnF8TVXcSw0/0x0/filters:quality(85)/k/h/y/php5e9yhk.png",
+                "w:25": "https://medias.france.tv/NDoA93hy3uyAJRAN-xr3fe7A95A/25x0/filters:quality(85)/k/h/y/php5e9yhk.png",
+                "w:150": "https://medias.france.tv/wBCi45Yhd6p5HouStlS722g4zwQ/150x0/filters:quality(85)/k/h/y/php5e9yhk.png",
+                "w:300": "https://medias.france.tv/bBnCpi9F9UcULR_D1jCN6cylIvs/300x0/filters:quality(85)/k/h/y/php5e9yhk.png",
+                "w:450": "https://medias.france.tv/hg4cFimWxCMsworCNSOXgflFs-o/450x0/filters:quality(85)/k/h/y/php5e9yhk.png",
+                "w:1024": "https://medias.france.tv/_R0K3bqAmOzouqbyCmeS_i7Gi5g/1024x0/filters:quality(85)/k/h/y/php5e9yhk.png"
+              },
+              "type": "logo"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/Zh_rncJ9fxAlRGw1sTC0R_yqEzU/1920x1080/filters:quality(85)/c/u/6/phpmrh6uc.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/OxnTOqA6arPHcYmXBqClhaCoWO0/400x0/filters:quality(85)/r/7/n/phpepqn7r.jpg",
+                "w:800": "https://medias.france.tv/u0sKxlySlA4ZKM_Gb2yR9i3bCbY/800x450/filters:quality(85)/r/7/n/phpepqn7r.jpg",
+                "w:1024": "https://medias.france.tv/fvUDTj4bK7axtyohmozr1eym67M/1024x576/filters:quality(85)/r/7/n/phpepqn7r.jpg",
+                "w:2500": "https://medias.france.tv/6Tqm7LTaidxAvLq5MtaaPWpqiWg/2500x1406/filters:quality(85)/r/7/n/phpepqn7r.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/EJQkt8BeBKa2xXrSo5gdDWQSc9w/2000x0/filters:quality(85)/c/d/x/phpwrexdc.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/IeltReKKbfwtgpKfFRtAIcQ_9G8/400x533/filters:quality(85)/j/1/d/php1ktd1j.jpg",
+                "w:800": "https://medias.france.tv/i4BiZzuCiAe6MUgRu94dfny1bkU/800x1066/filters:quality(85)/j/1/d/php1ktd1j.jpg",
+                "w:1024": "https://medias.france.tv/YcRaNc9y2TmQrisC_YTrlWvE1LY/1024x1365/filters:quality(85)/j/1/d/php1ktd1j.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/X7fS4rEOaduGYaYLhDQj3CQyUZ0/1600x1200/filters:quality(85)/p/m/p/phpw5ipmp.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "integral_counter": 4,
+          "ads_blocked": false,
+          "broadcast_box": null,
+          "recommendation": true,
+          "partner": null,
+          "sponsored": false,
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "category": null,
+              "sub_category": null
+            }
+          },
+          "age_min": null,
+          "age_max": null,
+          "saison": null,
+          "call_to_action": null,
+          "call_to_action_url": null,
+          "synopsis": "Un combat contre le silence de l’armée, contre les institutions et les carcans de la société de l’époque.",
+          "label_edito": "Nouveau",
+          "downloadable": false,
+          "casting": "Alix Poisson, Vincent Deniard, Anne Charrier, Félix Moati, Camille Claris, Cyril Lecomte, Xaverine Lefevre, Isabelle Côte-Willem, Aïssa Maïga et Mehdi Nebbou",
+          "characters": null,
+          "director": "Safy Nebbou ",
+          "scenarists": "Julie Peyr, Safy Nebbou, Sonia Mohammed-Chérif et Mary Arnaud",
+          "palmares": "Prix de la meilleure série drama / suspense au Festival de la fiction de La Rochelle 2026",
+          "production_countries": null,
+          "number_of_episodes": null,
+          "number_of_seasons": null,
+          "categories": [
+            {
+              "id": 49,
+              "type": "categorie",
+              "label": "séries & fictions",
+              "url_complete": "series-et-fictions",
+              "images": [],
+              "marker": {
+                "level_2": null,
+                "page": null,
+                "indicators": null,
+                "custom_variables": null
+              },
+              "marker_piano": {
+                "contextual_properties": null,
+                "additional_properties": null
+              },
+              "call_to_action": null,
+              "call_to_action_url": null,
+              "synopsis": null,
+              "headline_title": null,
+              "label_edito": null,
+              "parent": null
+            }
+          ],
+          "sub_categories": [
+            {
+              "id": 49920,
+              "type": "sous_categorie",
+              "label": "Séries drame",
+              "url_complete": "series-et-fictions/series-drame"
+            }
+          ],
+          "category": {
+            "label": "séries & fictions",
+            "url_complete": "series-et-fictions",
+            "id": 49,
+            "type": "categorie"
+          },
+          "podcast_url": null,
+          "offer": "francetv",
+          "sort_seasons": null,
+          "sort_episodes": null
+        },
+        {
+          "id": 8920062,
+          "title": "Harceleurs",
+          "label_edito": null,
+          "type": "unitaire",
+          "headline_title": "Que faire lorsque le suspect est son propre fils ?",
+          "season": null,
+          "episode": null,
+          "description": "<p>Camille est professeure dans un collège d'une ville pavillonnaire, son fils Mathias est en 3e dans le même établissement. Des faits de harcèlement lui sont signalés et, avant qu'elle n'ait le temps d'en comprendre l'ampleur et d'agir, l'élève harcelé fait une tentative de suicide et tombe dans le coma. Les parents, les autres élèves, tout le monde est sous le choc. En attendant le verdict autour du sort de la victime, les efforts se concentrent sur la recherche du coupable, et tout tend à croire que c'est le fils de Camille. Qui est vraiment son fils, que cache-t-il ? Comment gérer la situation ? Et surtout pourquoi n'a-t-elle rien vu ? Camille se retrouve prise en étau entre son rôle de professeure et de mère...</p>",
+          "broadcast_begin_date": 1792609890,
+          "broadcast_end_date": 1792615268,
+          "begin_date": 1792036800,
+          "end_date": 1900960778,
+          "duration": 5378,
+          "rating_csa": "Tous publics",
+          "si_id": "08e3db78-74c3-4b24-b99c-aef89a91c7d7",
+          "downloadable": true,
+          "episode_title": "Harceleurs",
+          "program": null,
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/-hvWDY7dKHphCAHfH845mBk9vWE/800x450/filters:quality(85)/q/r/b/phpt7kbrq.jpg",
+                "w:1024": "https://medias.france.tv/9gXyfnyvrakL6k5lme89avR8_SQ/1024x576/filters:quality(85)/q/r/b/phpt7kbrq.jpg",
+                "w:2500": "https://medias.france.tv/jsXj8_3ScFhcgpi-CHf_xrlXlF8/2500x1406/filters:quality(85)/q/r/b/phpt7kbrq.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/BAgbrA7tjMtOd7YstzbAXFc2Ftg/1920x1080/filters:quality(85)/4/2/d/phpeygd24.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/Qm1iwB5FYKwz55jYRGhXOxWHPLQ/400x0/filters:quality(85)/w/v/c/phpdg4cvw.jpg",
+                "w:800": "https://medias.france.tv/YCC9pZo5dSMPoLMkm563wp177_4/800x450/filters:quality(85)/w/v/c/phpdg4cvw.jpg",
+                "w:1024": "https://medias.france.tv/4pyYSP1a3pO1vUj-ORKJTftOvXU/1024x576/filters:quality(85)/w/v/c/phpdg4cvw.jpg",
+                "w:2500": "https://medias.france.tv/masri1emetQSZC8sGVHtqbQjoHU/2500x1406/filters:quality(85)/w/v/c/phpdg4cvw.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/N5eOct30qWWxaQ0y-7LKR1RrxzU/2000x0/filters:quality(85)/k/g/m/phpyhcmgk.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/ErAN_yhtkjpNz_n2hN57WzbEs9s/400x533/filters:quality(85)/v/x/g/phpqpngxv.jpg",
+                "w:800": "https://medias.france.tv/7M0TiuzYukLqO__I0B3UcE_XQH8/800x1066/filters:quality(85)/v/x/g/phpqpngxv.jpg",
+                "w:1024": "https://medias.france.tv/CW-it4t-aF0z8vfpqcHZYzzmnU0/1024x1365/filters:quality(85)/v/x/g/phpqpngxv.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/BKDLFYLP-W9XCzIeVnAPw6qAkXI/1600x1200/filters:quality(85)/b/p/p/phpl4oppb.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "channel": {
+            "id": 1,
+            "label": "France 2",
+            "type": "channel",
+            "channel_path": "france-2",
+            "images": [
+              {
+                "urls": {
+                  "w:800": "https://medias.france.tv/mLqXUD7pGPZMQDNu6nAHm1HRS4M/800x450/filters:quality(85)/1/k/m/phppfemk1.jpg",
+                  "w:1024": "https://medias.france.tv/wPgCVt5lCy78c0Dz87UTaVb2tfU/1024x576/filters:quality(85)/1/k/m/phppfemk1.jpg",
+                  "w:2500": "https://medias.france.tv/Wd3atkIPrSuUXyP5SPease6wKZs/2500x1406/filters:quality(85)/1/k/m/phppfemk1.jpg"
+                },
+                "type": "background_16x9"
+              },
+              {
+                "urls": {
+                  "w:265": "https://medias.france.tv/ANKNqY3gzyyG5GIAyePKRrZiMdA/265x265/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:300": "https://medias.france.tv/Hvxatu-k_sKN-NBK-X6Hg1tjVco/300x300/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:400": "https://medias.france.tv/v25lgE50IPcm5SkmaN7WLDiOuEo/400x400/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:800": "https://medias.france.tv/3UhtTybWFPZvEotF2qlav8OWrW8/800x800/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:1024": "https://medias.france.tv/6oz4Bmu7itJjIT1Mnh3asxClwPc/1024x1024/filters:quality(85)/c/7/t/php6kjt7c.png"
+                },
+                "type": "carre"
+              },
+              {
+                "urls": {
+                  "w:0": "https://medias.france.tv/debMOnbWg8TetTZhLF-K56IQ2Mo/0x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:25": "https://medias.france.tv/wtQQS-esm6t16I6olBef3VTJQIg/25x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:150": "https://medias.france.tv/jKWZKoynXaOcxrbmGmpPM66U3E0/150x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:300": "https://medias.france.tv/mUab8olpguMyPRii8N425DQmlIs/300x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:450": "https://medias.france.tv/tv2YD3WsEHwdY7ySwWlfWGXzB2w/450x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:1024": "https://medias.france.tv/p2KkmucENa0CMGIvA_1KWC4SBFc/1024x0/filters:quality(85)/a/c/h/phpi0hhca.png"
+                },
+                "type": "logo"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/7iMGREATX7UsKTEq35pMallmdy8/400x0/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:800": "https://medias.france.tv/vDTl5ncJJEu6Jd11KR-TY4xF1fA/800x450/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:1024": "https://medias.france.tv/Q-4oPgpeaL6wMcE6r6-SxXB_mnQ/1024x576/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:2500": "https://medias.france.tv/SyuTNozmt9jee_kyUHzHfSbI8MI/2500x1406/filters:quality(85)/j/k/s/phpn0qskj.jpg"
+                },
+                "type": "vignette_16x9"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/KFtHQ8BAnDpwElwFdcBvZlQ6OM0/400x533/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+                  "w:800": "https://medias.france.tv/ftci3wQ-G6qjjN9c1-ToTJV4iX4/800x1066/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+                  "w:1024": "https://medias.france.tv/eRwxerP2BRgddRX72HBRRZVkEwU/1024x1365/filters:quality(85)/3/d/y/phpkiyyd3.jpg"
+                },
+                "type": "vignette_3x4"
+              }
+            ],
+            "si_id": "006194ea-117d-4bcf-94a9-153d999c59ae",
+            "channel_url": "france-2",
+            "marker": {
+              "level_2": null,
+              "page": null,
+              "indicators": null,
+              "custom_variables": null
+            },
+            "marker_piano": {
+              "contextual_properties": null,
+              "additional_properties": {
+                "category": null,
+                "sub_category": null
+              }
+            },
+            "call_to_action": null,
+            "call_to_action_url": null,
+            "synopsis": null,
+            "offer": "france-2"
+          },
+          "category": {
+            "id": 49,
+            "type": "categorie",
+            "label": "séries & fictions",
+            "url_complete": "series-et-fictions"
+          },
+          "event": null,
+          "partner": null,
+          "ads_blocked": false,
+          "sponsored": false,
+          "is_live": false,
+          "is_published": true,
+          "production_year": 2026,
+          "is_audio_descripted": true,
+          "is_multi_lingual": false,
+          "casting": "Virginie Ledoyen, Cyril Descours, Caroline Anglade, Honorat Bellet, Christine Brücher, Ninon Veys, Constantin Vidal, Olivia Kuy",
+          "director": "Julie Rohart",
+          "producer": null,
+          "presenter": "",
+          "characters": "Camille, Julien, Johanne, Mathias, Roseline, Lou, Théo, Amida",
+          "visible": true,
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "content_status": "replay",
+              "content_diffusion_date": "21102026",
+              "video_factory_id": "08e3db78-74c3-4b24-b99c-aef89a91c7d7",
+              "channel": "france_2",
+              "channel_type": "premium"
+            }
+          },
+          "is_recommended": false,
+          "rating_csa_code": "TP",
+          "is_subtitled": true,
+          "login": true,
+          "broadcast_channel": "france-2",
+          "medium_description": null,
+          "production_company": "Troisième Oeil Story / Imagissime",
+          "production_countries": "France",
+          "production_language": "Français",
+          "palmares": "",
+          "creator": "",
+          "voice_off": "",
+          "release_date": null,
+          "scenarists": "Marine Josset",
+          "reviewers": "",
+          "upcoming_live": false,
+          "text": null,
+          "reading_time": null,
+          "offer": "francetv",
+          "format": "landscape"
+        },
+        {
+          "id": 8897007,
+          "title": "On aboie en silence",
+          "label_edito": null,
+          "type": "unitaire",
+          "headline_title": "Deux frères face aux troubles psychotiques",
+          "season": null,
+          "episode": null,
+          "description": "<p>À 17 ans, Jérémy rêve de devenir cinéaste et partage une relation fusionnelle avec son grand frère Théo, rappeur en pleine ascension. Mais l’apparition de troubles psychotiques fait vaciller l’équilibre familial. Entre déni, crises et tentatives de création commune, les deux frères luttent pour préserver leur lien.</p><p>Jérémy doit accepter la maladie, vivre avec et finalement renoncer à une vie qu’il imaginait.<br><br></p>",
+          "broadcast_begin_date": 1792005042,
+          "broadcast_end_date": 1792010878,
+          "begin_date": 1791432000,
+          "end_date": 1899751636,
+          "duration": 5836,
+          "rating_csa": "Déconseillé aux -10 ans",
+          "si_id": "3befdb64-81ae-4ff5-86d3-da05fca21fd8",
+          "downloadable": false,
+          "episode_title": "On aboie en silence",
+          "program": null,
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/grEohPwdhLP10b-jhR1qa7c3hNY/800x450/filters:quality(85)/z/7/s/phpmgss7z.jpg",
+                "w:1024": "https://medias.france.tv/maEMSOfqFxdxhvpZgtttzQECKBA/1024x576/filters:quality(85)/z/7/s/phpmgss7z.jpg",
+                "w:2500": "https://medias.france.tv/jWo9TycwP7fVHMQV1i0Q87ZoPoQ/2500x1406/filters:quality(85)/z/7/s/phpmgss7z.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/UdbVyxOrBDK4Ru2z5qnJuPjibJg/1920x1080/filters:quality(85)/w/b/8/phprvc8bw.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/CZiJAmqvYEn0K-lBzbTjFh1gjGU/400x0/filters:quality(85)/k/g/j/php5mhjgk.jpg",
+                "w:800": "https://medias.france.tv/RGTL9zMPDT29ge2O0coGYdb-W3w/800x450/filters:quality(85)/k/g/j/php5mhjgk.jpg",
+                "w:1024": "https://medias.france.tv/V12OdRsWRPZNhXXi63EnoEezDxY/1024x576/filters:quality(85)/k/g/j/php5mhjgk.jpg",
+                "w:2500": "https://medias.france.tv/rZLI80fNcnkcWW1yXEF5prMQApc/2500x1406/filters:quality(85)/k/g/j/php5mhjgk.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/54FV9wfT24866o_Vw2SsPzB-1Fo/2000x0/filters:quality(85)/s/f/1/phpk3u1fs.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/H39W5dbIUpQLBJsqapzvV_F3cl4/400x533/filters:quality(85)/a/u/x/phpglwxua.jpg",
+                "w:800": "https://medias.france.tv/i8kuwBbP3uT4tFbnJSpAYJwVFXc/800x1066/filters:quality(85)/a/u/x/phpglwxua.jpg",
+                "w:1024": "https://medias.france.tv/AmX_1sn6ehcIizJhLBeJX0Ou6J8/1024x1365/filters:quality(85)/a/u/x/phpglwxua.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/dMfonKrA4MfaBBBYnpJ7RY9bkSs/1600x1200/filters:quality(85)/n/c/c/php2o1ccn.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "channel": {
+            "id": 1,
+            "label": "France 2",
+            "type": "channel",
+            "channel_path": "france-2",
+            "images": [
+              {
+                "urls": {
+                  "w:800": "https://medias.france.tv/mLqXUD7pGPZMQDNu6nAHm1HRS4M/800x450/filters:quality(85)/1/k/m/phppfemk1.jpg",
+                  "w:1024": "https://medias.france.tv/wPgCVt5lCy78c0Dz87UTaVb2tfU/1024x576/filters:quality(85)/1/k/m/phppfemk1.jpg",
+                  "w:2500": "https://medias.france.tv/Wd3atkIPrSuUXyP5SPease6wKZs/2500x1406/filters:quality(85)/1/k/m/phppfemk1.jpg"
+                },
+                "type": "background_16x9"
+              },
+              {
+                "urls": {
+                  "w:265": "https://medias.france.tv/ANKNqY3gzyyG5GIAyePKRrZiMdA/265x265/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:300": "https://medias.france.tv/Hvxatu-k_sKN-NBK-X6Hg1tjVco/300x300/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:400": "https://medias.france.tv/v25lgE50IPcm5SkmaN7WLDiOuEo/400x400/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:800": "https://medias.france.tv/3UhtTybWFPZvEotF2qlav8OWrW8/800x800/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:1024": "https://medias.france.tv/6oz4Bmu7itJjIT1Mnh3asxClwPc/1024x1024/filters:quality(85)/c/7/t/php6kjt7c.png"
+                },
+                "type": "carre"
+              },
+              {
+                "urls": {
+                  "w:0": "https://medias.france.tv/debMOnbWg8TetTZhLF-K56IQ2Mo/0x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:25": "https://medias.france.tv/wtQQS-esm6t16I6olBef3VTJQIg/25x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:150": "https://medias.france.tv/jKWZKoynXaOcxrbmGmpPM66U3E0/150x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:300": "https://medias.france.tv/mUab8olpguMyPRii8N425DQmlIs/300x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:450": "https://medias.france.tv/tv2YD3WsEHwdY7ySwWlfWGXzB2w/450x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:1024": "https://medias.france.tv/p2KkmucENa0CMGIvA_1KWC4SBFc/1024x0/filters:quality(85)/a/c/h/phpi0hhca.png"
+                },
+                "type": "logo"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/7iMGREATX7UsKTEq35pMallmdy8/400x0/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:800": "https://medias.france.tv/vDTl5ncJJEu6Jd11KR-TY4xF1fA/800x450/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:1024": "https://medias.france.tv/Q-4oPgpeaL6wMcE6r6-SxXB_mnQ/1024x576/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:2500": "https://medias.france.tv/SyuTNozmt9jee_kyUHzHfSbI8MI/2500x1406/filters:quality(85)/j/k/s/phpn0qskj.jpg"
+                },
+                "type": "vignette_16x9"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/KFtHQ8BAnDpwElwFdcBvZlQ6OM0/400x533/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+                  "w:800": "https://medias.france.tv/ftci3wQ-G6qjjN9c1-ToTJV4iX4/800x1066/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+                  "w:1024": "https://medias.france.tv/eRwxerP2BRgddRX72HBRRZVkEwU/1024x1365/filters:quality(85)/3/d/y/phpkiyyd3.jpg"
+                },
+                "type": "vignette_3x4"
+              }
+            ],
+            "si_id": "006194ea-117d-4bcf-94a9-153d999c59ae",
+            "channel_url": "france-2",
+            "marker": {
+              "level_2": null,
+              "page": null,
+              "indicators": null,
+              "custom_variables": null
+            },
+            "marker_piano": {
+              "contextual_properties": null,
+              "additional_properties": {
+                "category": null,
+                "sub_category": null
+              }
+            },
+            "call_to_action": null,
+            "call_to_action_url": null,
+            "synopsis": null,
+            "offer": "france-2"
+          },
+          "category": {
+            "id": 49,
+            "type": "categorie",
+            "label": "séries & fictions",
+            "url_complete": "series-et-fictions"
+          },
+          "event": null,
+          "partner": null,
+          "ads_blocked": false,
+          "sponsored": false,
+          "is_live": false,
+          "is_published": true,
+          "production_year": 2026,
+          "is_audio_descripted": true,
+          "is_multi_lingual": false,
+          "casting": "Théo Augier, Marvin Dubart, Mélanie Doutey, Louisiane Gouverneur, Sam Chemoul, Mexianu Medenou, Sirine Lomprez, Abdallah Charki",
+          "director": "Shirley Monsarrat",
+          "producer": null,
+          "presenter": "",
+          "characters": "Jérémy, Théo, Marthe, Mina, Sancho, Denis, Sirine, Abdallah",
+          "visible": true,
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "content_status": "replay",
+              "content_diffusion_date": "14102026",
+              "video_factory_id": "3befdb64-81ae-4ff5-86d3-da05fca21fd8",
+              "channel": "france_2",
+              "channel_type": "premium"
+            }
+          },
+          "is_recommended": false,
+          "rating_csa_code": "10",
+          "is_subtitled": true,
+          "login": true,
+          "broadcast_channel": "france-2",
+          "medium_description": null,
+          "production_company": "Nolita TV / Wagram Productions",
+          "production_countries": "France",
+          "production_language": "Français",
+          "palmares": "Festival de la Fiction de La Rochelle 2026 : Prix de la meilleure musique pour Owlle, Prix de la meilleure interprétation masculine pour Théo Augier",
+          "creator": "",
+          "voice_off": "",
+          "release_date": null,
+          "scenarists": "Maxime Cormier, Guillaume Scaillet",
+          "reviewers": "",
+          "upcoming_live": false,
+          "text": null,
+          "reading_time": null,
+          "offer": "francetv",
+          "format": "landscape"
+        }
+      ],
+      "sponsored": false
+    },
+    {
+      "id": 24017917,
+      "type": "playlist_program",
+      "label": "Magazines",
+      "display": null,
+      "items": [
+        {
+          "id": 4333,
+          "label": "Ça commence aujourd'hui",
+          "description": "Ça commence aujourd’hui sur France 2 avec Faustine Bollaert : témoignages marquants, récits inspirants et parcours de vie. ",
+          "type": "program",
+          "program_path": "france-2_ca-commence-aujourd-hui",
+          "link": {
+            "url": "/apps/program/meta/france-2_ca-commence-aujourd-hui?platform=apps",
+            "type": "tab"
+          },
+          "color": null,
+          "sound": null,
+          "headline_title": "Des témoignages en toute intimité",
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/t-Iy-yAHJwwr7U6-O6GisdHhNCg/800x450/filters:quality(85)/s/z/4/phprsf4zs.jpg",
+                "w:1024": "https://medias.france.tv/hBlft55ZDmqj3DpekE8m9pSFibo/1024x576/filters:quality(85)/s/z/4/phprsf4zs.jpg",
+                "w:2500": "https://medias.france.tv/FghnoQLLHf01NCKdwkUrBRjBbUE/2500x1406/filters:quality(85)/s/z/4/phprsf4zs.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:265": "https://medias.france.tv/XrQGqCQg3GEl6z3urDsDXGlVAGo/265x265/filters:quality(85)/t/s/g/phprqygst.jpg",
+                "w:300": "https://medias.france.tv/KtZ1X2xrmyFFKpIsCUXyEkZjjJ4/300x300/filters:quality(85)/t/s/g/phprqygst.jpg",
+                "w:400": "https://medias.france.tv/_Xziy2xKjfE0p3xlmrKRT83IQIk/400x400/filters:quality(85)/t/s/g/phprqygst.jpg",
+                "w:800": "https://medias.france.tv/G1ROPhNs3GHaTPG4e6tDCINv2jw/800x800/filters:quality(85)/t/s/g/phprqygst.jpg",
+                "w:1024": "https://medias.france.tv/w8PoUhnWam_b6fo1TALNcPYS2fU/1024x1024/filters:quality(85)/t/s/g/phprqygst.jpg"
+              },
+              "type": "carre"
+            },
+            {
+              "urls": {
+                "w:0": "https://medias.france.tv/4BRzd8QG7NAgmi_-BG1monj-ZUE/0x0/filters:quality(85)/e/i/r/phpg4hrie.png",
+                "w:25": "https://medias.france.tv/avet-RJb7oc8VpW1HmvzkMyNCc0/25x0/filters:quality(85)/e/i/r/phpg4hrie.png",
+                "w:150": "https://medias.france.tv/oKmewXRTILxpLr6bxmb1Sam9TVk/150x0/filters:quality(85)/e/i/r/phpg4hrie.png",
+                "w:300": "https://medias.france.tv/3X5ZsGd_B2IVy0Jgw3ZROJVsD5M/300x0/filters:quality(85)/e/i/r/phpg4hrie.png",
+                "w:450": "https://medias.france.tv/IUYQCpLqALok6T0wRqzl0zkcxx0/450x0/filters:quality(85)/e/i/r/phpg4hrie.png",
+                "w:1024": "https://medias.france.tv/z2pqhDZThJU5Kv9TC2AeYyeWuzE/1024x0/filters:quality(85)/e/i/r/phpg4hrie.png"
+              },
+              "type": "logo"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/SesmGwE0n9gnqEA9gIGyTO9UE2o/1920x1080/filters:quality(85)/q/l/v/php76vvlq.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/Zw2eo_IxSxq54UQgSiGT8gxw7BY/400x0/filters:quality(85)/s/r/l/phpwo5lrs.jpg",
+                "w:800": "https://medias.france.tv/qLQx7Ty99d-BaorR7c3PieRP3gA/800x450/filters:quality(85)/s/r/l/phpwo5lrs.jpg",
+                "w:1024": "https://medias.france.tv/7QVFNyh_f1EuEJ_I4HJ99f6f_30/1024x576/filters:quality(85)/s/r/l/phpwo5lrs.jpg",
+                "w:2500": "https://medias.france.tv/AT3HfJFXR3tqFNesTGDQ6mS3msE/2500x1406/filters:quality(85)/s/r/l/phpwo5lrs.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/BgsZzr_QO_ccTEeGiMiKGWfFTU0/2000x0/filters:quality(85)/n/e/i/php2coien.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/f7-g4Tjv1m8jipswH20j17wyTPg/400x533/filters:quality(85)/s/u/f/phpqe7fus.jpg",
+                "w:800": "https://medias.france.tv/ANwRMnIDcWbjY8R5HcvYNsIBrwc/800x1066/filters:quality(85)/s/u/f/phpqe7fus.jpg",
+                "w:1024": "https://medias.france.tv/8xoQLBkakzFRMGOwzdKA-DzrXVI/1024x1365/filters:quality(85)/s/u/f/phpqe7fus.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/e12UZjNjz8obythNYFRcwbu7bUE/1600x1200/filters:quality(85)/8/z/t/php5xmtz8.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "integral_counter": 497,
+          "ads_blocked": false,
+          "broadcast_box": null,
+          "recommendation": true,
+          "partner": null,
+          "sponsored": false,
+          "channel": "france-2",
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "category": null,
+              "sub_category": null
+            }
+          },
+          "age_min": 3,
+          "age_max": 12,
+          "saison": null,
+          "call_to_action": null,
+          "call_to_action_url": null,
+          "synopsis": "Tous les jours, Faustine Bollaert accueille sur le plateau de \"Ça commence aujourd'hui\" des hommes et des femmes qui évoquent des événements marquants de leur existence, pour permettre à d'autres d'avancer dans leur parcours : un rendez-vous positif et optimiste.",
+          "label_edito": null,
+          "downloadable": false,
+          "casting": null,
+          "characters": null,
+          "director": null,
+          "scenarists": null,
+          "palmares": null,
+          "production_countries": null,
+          "number_of_episodes": null,
+          "number_of_seasons": null,
+          "categories": [
+            {
+              "id": 49908,
+              "type": "categorie",
+              "label": "Société",
+              "url_complete": "societe",
+              "images": [],
+              "marker": {
+                "level_2": null,
+                "page": null,
+                "indicators": null,
+                "custom_variables": null
+              },
+              "marker_piano": {
+                "contextual_properties": null,
+                "additional_properties": null
+              },
+              "call_to_action": null,
+              "call_to_action_url": null,
+              "synopsis": null,
+              "headline_title": null,
+              "label_edito": null,
+              "parent": null
+            }
+          ],
+          "sub_categories": [
+            {
+              "id": 49968,
+              "type": "sous_categorie",
+              "label": "Magazines d'actualité",
+              "url_complete": "societe/magazine-d-actualites"
+            }
+          ],
+          "category": {
+            "label": "Société",
+            "url_complete": "societe",
+            "id": 49908,
+            "type": "categorie"
+          },
+          "podcast_url": null,
+          "offer": "francetv",
+          "sort_seasons": null,
+          "sort_episodes": null
+        },
+        {
+          "id": 1379,
+          "label": "La maison des Maternelles",
+          "description": "La maison des Maternelles, animée par Marie Portolano et Houssem Loussaief, explore parentalité, éducation et vie de famille avec conseils d’experts et témoignages. ",
+          "type": "program",
+          "program_path": "societe_la-maison-des-maternelles",
+          "link": {
+            "url": "/apps/program/meta/societe_la-maison-des-maternelles?platform=apps",
+            "type": "tab"
+          },
+          "color": null,
+          "sound": null,
+          "headline_title": "Le grand rendez-vous pour toute la famille",
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/DjJFaHVauBuCjXFuitDTRR_yHqY/800x450/filters:quality(85)/h/s/p/phpkimpsh.jpg",
+                "w:1024": "https://medias.france.tv/RstSPYiPkt1n3AvEhFCgbe3qBn0/1024x576/filters:quality(85)/h/s/p/phpkimpsh.jpg",
+                "w:2500": "https://medias.france.tv/gpBlR1xUyGE1G9_TWWKIxf4CAnw/2500x1406/filters:quality(85)/h/s/p/phpkimpsh.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:265": "https://medias.france.tv/kYzVOrDSGFCyyVvx7FzazUVFcpY/265x265/filters:quality(85)/n/8/6/phpxx168n.jpg",
+                "w:300": "https://medias.france.tv/McVu4ROin8EGvjYywpqLBoh-IO8/300x300/filters:quality(85)/n/8/6/phpxx168n.jpg",
+                "w:400": "https://medias.france.tv/jZpNKJt2HjnXPwOV5x1ibOZYmqQ/400x400/filters:quality(85)/n/8/6/phpxx168n.jpg",
+                "w:800": "https://medias.france.tv/wiTZv0MZ7kBQnMAJ_DmZ6GhfezQ/800x800/filters:quality(85)/n/8/6/phpxx168n.jpg",
+                "w:1024": "https://medias.france.tv/Lu7HY4Ogf1kLIwmOjLMmeHMsGJE/1024x1024/filters:quality(85)/n/8/6/phpxx168n.jpg"
+              },
+              "type": "carre"
+            },
+            {
+              "urls": {
+                "w:0": "https://medias.france.tv/TUN0TlbrcMFT55uD8MMAzZYMUwE/0x0/filters:quality(85)/u/g/s/phpst1sgu.png",
+                "w:25": "https://medias.france.tv/svODWgYA_yNZrRK6Am9xUJCVWq8/25x0/filters:quality(85)/u/g/s/phpst1sgu.png",
+                "w:150": "https://medias.france.tv/pNabmqpjflG7Ftj9swFIB-h3yOE/150x0/filters:quality(85)/u/g/s/phpst1sgu.png",
+                "w:300": "https://medias.france.tv/II0RsT8--3lzsxWVYDPKFXSbmZM/300x0/filters:quality(85)/u/g/s/phpst1sgu.png",
+                "w:450": "https://medias.france.tv/tOByS3S1NJEITE4omcIaeexVk-g/450x0/filters:quality(85)/u/g/s/phpst1sgu.png",
+                "w:1024": "https://medias.france.tv/0UdK7H8y2jl-88vACB53_RlVa1k/1024x0/filters:quality(85)/u/g/s/phpst1sgu.png"
+              },
+              "type": "logo"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/7bqMPRTrFdQlbEvoK0kh36dYYMo/1920x1080/filters:quality(85)/x/i/h/phpquahix.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/Fnu7VNzO5F6gI6YUmg88bQPgojg/400x0/filters:quality(85)/s/w/h/phpbtthws.jpg",
+                "w:800": "https://medias.france.tv/XSpr3MK6H3YFUM4iMR1X5bCyeoQ/800x450/filters:quality(85)/s/w/h/phpbtthws.jpg",
+                "w:1024": "https://medias.france.tv/wKOy4WiVKAOPrJJ97u9Ee0cXjXA/1024x576/filters:quality(85)/s/w/h/phpbtthws.jpg",
+                "w:2500": "https://medias.france.tv/IHZUNNN8v2xGkJq2u1u1tl-yWr4/2500x1406/filters:quality(85)/s/w/h/phpbtthws.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/NXTP8F95EhYql8maHdsL_bTigIw/2000x0/filters:quality(85)/5/c/v/phphinvc5.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/cW_54Ijhnqu9YrzmLjDeG7fwJ0w/400x533/filters:quality(85)/w/u/z/phpg5mzuw.jpg",
+                "w:800": "https://medias.france.tv/f6IiPGekqPnEZ-0ebIs5hYvhpso/800x1066/filters:quality(85)/w/u/z/phpg5mzuw.jpg",
+                "w:1024": "https://medias.france.tv/HcP-zZtfjGDgKHFW3UpGu-btumE/1024x1365/filters:quality(85)/w/u/z/phpg5mzuw.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/fcb-j68hMWdIM6zCXie0P7wFcGE/1600x1200/filters:quality(85)/k/j/p/php2rnpjk.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "integral_counter": 96,
+          "ads_blocked": false,
+          "broadcast_box": null,
+          "recommendation": true,
+          "partner": null,
+          "sponsored": false,
+          "channel": "france-4",
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "category": null,
+              "sub_category": null
+            }
+          },
+          "age_min": null,
+          "age_max": null,
+          "saison": null,
+          "call_to_action": null,
+          "call_to_action_url": null,
+          "synopsis": "Témoignages, décryptages, conseils pratiques, experts et grandes conversations autour de tout ce qui fait le quotidien des parents. Marie Portolano, accompagnée par Houssem Loussaïef et toute la bande de la Maison des Maternelles, explore la vie de famille sous toutes ses formes et de manière interactive.",
+          "label_edito": null,
+          "downloadable": false,
+          "casting": null,
+          "characters": null,
+          "director": null,
+          "scenarists": null,
+          "palmares": null,
+          "production_countries": null,
+          "number_of_episodes": null,
+          "number_of_seasons": null,
+          "categories": [
+            {
+              "id": 49908,
+              "type": "categorie",
+              "label": "Société",
+              "url_complete": "societe",
+              "images": [],
+              "marker": {
+                "level_2": null,
+                "page": null,
+                "indicators": null,
+                "custom_variables": null
+              },
+              "marker_piano": {
+                "contextual_properties": null,
+                "additional_properties": null
+              },
+              "call_to_action": null,
+              "call_to_action_url": null,
+              "synopsis": null,
+              "headline_title": null,
+              "label_edito": null,
+              "parent": null
+            }
+          ],
+          "sub_categories": [
+            {
+              "id": 49968,
+              "type": "sous_categorie",
+              "label": "Magazines d'actualité",
+              "url_complete": "societe/magazine-d-actualites"
+            }
+          ],
+          "category": {
+            "label": "Société",
+            "url_complete": "societe",
+            "id": 49908,
+            "type": "categorie"
+          },
+          "podcast_url": null,
+          "offer": "francetv",
+          "sort_seasons": null,
+          "sort_episodes": null
+        },
+        {
+          "id": 1257,
+          "label": "Le Mag de la santé",
+          "description": "Chaque jour, Flavie Flament est accompagné du Dr Diana Kadouch et du Dr Gilbert Bou Jaoudé pour décrypter l’actualité et les grands enjeux santé. ",
+          "type": "program",
+          "program_path": "societe_le-mag-de-la-sante",
+          "link": {
+            "url": "/apps/program/meta/societe_le-mag-de-la-sante?platform=apps",
+            "type": "tab"
+          },
+          "color": null,
+          "sound": null,
+          "headline_title": " Interrogations, préoccupations et attentes, toute l'équipe vous répond !",
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/KITDayc2zmHQGOrQgRoSuJnsdBU/800x450/filters:quality(85)/c/3/t/phpmjmt3c.jpg",
+                "w:1024": "https://medias.france.tv/R4Otg2JcmL42e38f6S-uNUbLKnU/1024x576/filters:quality(85)/c/3/t/phpmjmt3c.jpg",
+                "w:2500": "https://medias.france.tv/E0zlCIsiRIR4a43hoMINqaZz7ss/2500x1406/filters:quality(85)/c/3/t/phpmjmt3c.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:0": "https://medias.france.tv/uH60GMVcbqEiTqT9VaCglVEnDz4/0x0/filters:quality(85)/9/k/8/php8228k9.png",
+                "w:25": "https://medias.france.tv/f-6vU2NOPkR4Ysb0IUTXIhKqT_c/25x0/filters:quality(85)/9/k/8/php8228k9.png",
+                "w:150": "https://medias.france.tv/GdnuhnK-F1eAtxpVpltp3he_9FE/150x0/filters:quality(85)/9/k/8/php8228k9.png",
+                "w:300": "https://medias.france.tv/TJZLOdptlKwdQBWrIY_Yc4GCBCU/300x0/filters:quality(85)/9/k/8/php8228k9.png",
+                "w:450": "https://medias.france.tv/QouHMOihB-DRdRirAsKlaK0nwM0/450x0/filters:quality(85)/9/k/8/php8228k9.png",
+                "w:1024": "https://medias.france.tv/McYbaW4i16mTalyZpPCd5RV4u4I/1024x0/filters:quality(85)/9/k/8/php8228k9.png"
+              },
+              "type": "logo"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/XWY1Nho6gcNE2Vqq0odlHTrxwMs/1920x1080/filters:quality(85)/i/d/v/phpdr5vdi.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/QIEdYNLb5LbRUyVEXmn4Hb0_pJo/400x0/filters:quality(85)/f/f/h/phpyzdhff.jpg",
+                "w:800": "https://medias.france.tv/ow16-R8iFW3FuwNdsZ_bf165jM0/800x450/filters:quality(85)/f/f/h/phpyzdhff.jpg",
+                "w:1024": "https://medias.france.tv/C4umanhGYTP1XlRsKNFslp-vpaM/1024x576/filters:quality(85)/f/f/h/phpyzdhff.jpg",
+                "w:2500": "https://medias.france.tv/caofn_yzMEsOzUgrRsDv0HS96CE/2500x1406/filters:quality(85)/f/f/h/phpyzdhff.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/lljjUQ6PTQeiAfhYuVbynst_YGI/2000x0/filters:quality(85)/x/v/w/phpa1pwvx.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/y6EHvtPZE85M8nHXcrDxTo8zmHY/400x533/filters:quality(85)/t/x/b/phptqsbxt.jpg",
+                "w:800": "https://medias.france.tv/d4KDZHwkjQFEcaKsCLYjfUlx9I4/800x1066/filters:quality(85)/t/x/b/phptqsbxt.jpg",
+                "w:1024": "https://medias.france.tv/cjOdLTwUYWOJvoYqw6r0jZj_XiI/1024x1365/filters:quality(85)/t/x/b/phptqsbxt.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/sAGLEzSmLYFFqbnUNlugc3i3IiM/1600x1200/filters:quality(85)/q/3/q/phpakpq3q.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "integral_counter": 139,
+          "ads_blocked": false,
+          "broadcast_box": null,
+          "recommendation": true,
+          "partner": null,
+          "sponsored": false,
+          "channel": "france-5",
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "category": null,
+              "sub_category": null
+            }
+          },
+          "age_min": 3,
+          "age_max": 12,
+          "saison": null,
+          "call_to_action": null,
+          "call_to_action_url": null,
+          "synopsis": "Chaque jour, Flavie Flament et  le Gilbert Bou Jaoudé décryptent l’actualité et les grands enjeux santé. La journaliste Rym Ben Ameur se fait le relais des téléspectateurs et répond à leurs questions.",
+          "label_edito": null,
+          "downloadable": false,
+          "casting": null,
+          "characters": null,
+          "director": null,
+          "scenarists": null,
+          "palmares": null,
+          "production_countries": null,
+          "number_of_episodes": null,
+          "number_of_seasons": null,
+          "categories": [
+            {
+              "id": 49908,
+              "type": "categorie",
+              "label": "Société",
+              "url_complete": "societe",
+              "images": [],
+              "marker": {
+                "level_2": null,
+                "page": null,
+                "indicators": null,
+                "custom_variables": null
+              },
+              "marker_piano": {
+                "contextual_properties": null,
+                "additional_properties": null
+              },
+              "call_to_action": null,
+              "call_to_action_url": null,
+              "synopsis": null,
+              "headline_title": null,
+              "label_edito": null,
+              "parent": null
+            }
+          ],
+          "sub_categories": [
+            {
+              "id": 49974,
+              "type": "sous_categorie",
+              "label": "Santé & bien être",
+              "url_complete": "societe/sante-et-bien-etre"
+            }
+          ],
+          "category": {
+            "label": "Société",
+            "url_complete": "societe",
+            "id": 49908,
+            "type": "categorie"
+          },
+          "podcast_url": null,
+          "offer": "francetv",
+          "sort_seasons": null,
+          "sort_episodes": null
+        }
+      ],
+      "sponsored": false
+    },
+    {
+      "id": 24017974,
+      "type": "playlist_mixed",
+      "label": "Documentaires",
+      "display": null,
+      "items": [
+        {
+          "id": 8968472,
+          "title": "La foil histoire de la Route du Rhum",
+          "label_edito": null,
+          "type": "unitaire",
+          "headline_title": "Que restera-t-il de la course originelle ?",
+          "season": null,
+          "episode": null,
+          "description": "Depuis quelques années, une aile invisible soulève la mer. Le foil, une lame d'ingénierie, permet aux bateaux de ne plus flotter, mais de voler au-dessus des vagues. Et en quelques années, la Route du Rhum est devenue un laboratoire de l'avenir où la mer se dématérialise et où le marin devient pilote. L'édition 2026 sera le rendez-vous des bateaux volants : 70 %des bateaux inscrits au départ seront équipés de foils. Retour sur cette métamorphose spectaculaire du temps des marins poètes aux pilotes d'aujourd'hui, en suivant la trace de ceux qui ont fait basculer la légende.",
+          "broadcast_begin_date": 1793116537,
+          "broadcast_end_date": 1793119717,
+          "begin_date": 1793329500,
+          "end_date": 1871236799,
+          "duration": 3180,
+          "rating_csa": "Tous publics",
+          "si_id": "d1d8f2e0-553b-4b15-a654-5e67061257a2",
+          "downloadable": false,
+          "episode_title": "La foil histoire de la Route du Rhum",
+          "program": null,
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/XuaMuJ-qZTwAUUbMVTs9Opk7ugg/800x450/filters:quality(85)/t/v/d/php2uidvt.jpg",
+                "w:1024": "https://medias.france.tv/x8KBuhfihBxtLAC0OKtjU1HqQlA/1024x576/filters:quality(85)/t/v/d/php2uidvt.jpg",
+                "w:2500": "https://medias.france.tv/OWmVyP_4fncC5eVaYirm_LhnlS8/2500x1406/filters:quality(85)/t/v/d/php2uidvt.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/qn1bmAfg7R5BbMMgr-r2SSQ3_aA/1920x1080/filters:quality(85)/j/r/r/phpsykrrj.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/5lciH3BpXZjU5K1GnPGZ0n9QS9o/400x0/filters:quality(85)/i/6/a/phpa90a6i.jpg",
+                "w:800": "https://medias.france.tv/fyDTwEm5EhTUC7OTo_ryKy4KDzI/800x450/filters:quality(85)/i/6/a/phpa90a6i.jpg",
+                "w:1024": "https://medias.france.tv/SqgiU0NXTKx_vjDfxq63gDHjw7M/1024x576/filters:quality(85)/i/6/a/phpa90a6i.jpg",
+                "w:2500": "https://medias.france.tv/eAxoc_n2kqyuVECp467yK0CoYDI/2500x1406/filters:quality(85)/i/6/a/phpa90a6i.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/m6dLZMXYV09d9m-r5bLogoy4G18/2000x0/filters:quality(85)/k/q/u/phpqm3uqk.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/BvHaTq33zzIp4asFzcaKjeLCNDQ/400x533/filters:quality(85)/g/z/d/phpsczdzg.jpg",
+                "w:800": "https://medias.france.tv/D4tFEBw26INvGFix5OpBye3wp6U/800x1066/filters:quality(85)/g/z/d/phpsczdzg.jpg",
+                "w:1024": "https://medias.france.tv/rfQibYrEpHYYWaik2RGm8stITWo/1024x1365/filters:quality(85)/g/z/d/phpsczdzg.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/pMzDVkqVKX5TrkFcBiLdTTGOAoo/1600x1200/filters:quality(85)/l/c/g/phpve6gcl.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "channel": null,
+          "category": {
+            "id": 19,
+            "type": "categorie",
+            "label": "Documentaires",
+            "url_complete": "documentaires"
+          },
+          "event": null,
+          "partner": null,
+          "ads_blocked": false,
+          "sponsored": false,
+          "is_live": false,
+          "is_published": true,
+          "production_year": 2026,
+          "is_audio_descripted": false,
+          "is_multi_lingual": false,
+          "casting": "",
+          "director": "Hervé Corbière",
+          "producer": null,
+          "presenter": "",
+          "characters": "",
+          "visible": true,
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "content_status": "replay",
+              "content_diffusion_date": "27102026",
+              "video_factory_id": "d1d8f2e0-553b-4b15-a654-5e67061257a2",
+              "channel": "francetv",
+              "channel_type": "autre"
+            }
+          },
+          "is_recommended": false,
+          "rating_csa_code": "TP",
+          "is_subtitled": true,
+          "login": true,
+          "broadcast_channel": null,
+          "medium_description": null,
+          "production_company": null,
+          "production_countries": "France",
+          "production_language": "Français",
+          "palmares": "",
+          "creator": "",
+          "voice_off": "",
+          "release_date": null,
+          "scenarists": "",
+          "reviewers": "",
+          "upcoming_live": false,
+          "text": null,
+          "reading_time": null,
+          "offer": "francetv",
+          "format": "landscape"
+        },
+        {
+          "id": 100320,
+          "label": "Vendée Globe, Seuls autour du monde",
+          "description": "Plongez dans le Vendée Globe sur france.tv avec la série documentaire et le magazine consacrés à la course autour du monde en solitaire, sans escale et sans assistance. ",
+          "type": "program",
+          "program_path": "documentaires_documentaires-sport_vendee-globe-seuls-autour-du-monde",
+          "link": {
+            "url": "/apps/program/meta/documentaires_documentaires-sport_vendee-globe-seuls-autour-du-monde?platform=apps",
+            "type": "tab"
+          },
+          "color": null,
+          "sound": null,
+          "headline_title": "La série événement au cœur de la mythique course de voile en solitaire",
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/S0sFpjK5_ZI6NQY5bw_lqGu2cZw/800x450/filters:quality(85)/c/6/p/phplpkp6c.jpg",
+                "w:1024": "https://medias.france.tv/yiWGm96GhCVaC_nyluJ3IHJybrc/1024x576/filters:quality(85)/c/6/p/phplpkp6c.jpg",
+                "w:2500": "https://medias.france.tv/zYZnRFmSWTNEYuvknwkvaVgx4gs/2500x1406/filters:quality(85)/c/6/p/phplpkp6c.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:0": "https://medias.france.tv/9Sx26AllHS0jFFq3d3WgHumoUsE/0x0/filters:quality(85)/y/l/i/phppbjily.png",
+                "w:25": "https://medias.france.tv/qUS1-rtEUaqCw5HGuxxCd9QrJnc/25x0/filters:quality(85)/y/l/i/phppbjily.png",
+                "w:150": "https://medias.france.tv/JQlDNrvhZQ8l4EOVntoHlTkFVlE/150x0/filters:quality(85)/y/l/i/phppbjily.png",
+                "w:300": "https://medias.france.tv/Y59X2MJ_RIe2gHIikVZv3gGyd9Q/300x0/filters:quality(85)/y/l/i/phppbjily.png",
+                "w:450": "https://medias.france.tv/yjX3wzBfFF19RfTevZwINNy6OTE/450x0/filters:quality(85)/y/l/i/phppbjily.png",
+                "w:1024": "https://medias.france.tv/M57Kn09-hoUbYsdNfFWIarnTEdI/1024x0/filters:quality(85)/y/l/i/phppbjily.png"
+              },
+              "type": "logo"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/cVAdObAX7yZl_k6Fdm9ynkgE4Zg/1920x1080/filters:quality(85)/f/7/d/phpirgd7f.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/rphRNJC4Epta3xqIyWtGVzSI8gI/400x0/filters:quality(85)/x/y/d/phpco9dyx.jpg",
+                "w:800": "https://medias.france.tv/4xjFut7xCjmQfJT9NPAsj3k-gAI/800x450/filters:quality(85)/x/y/d/phpco9dyx.jpg",
+                "w:1024": "https://medias.france.tv/-5kJ727bwUQjJ-0BDdDjvHUX8Uo/1024x576/filters:quality(85)/x/y/d/phpco9dyx.jpg",
+                "w:2500": "https://medias.france.tv/v1q2Hwm7Lmn62ySYMR2LdmbrfpY/2500x1406/filters:quality(85)/x/y/d/phpco9dyx.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/pCeIDv0G-j79xg4z7kLz4Ozq6dw/2000x0/filters:quality(85)/p/l/l/phpenkllp.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/x22M9Y__zWjlSpLrAM6UpmNhZw0/400x533/filters:quality(85)/9/d/v/phpgzpvd9.jpg",
+                "w:800": "https://medias.france.tv/d9DGxMRXIWB6qYUBThMp7xgZRP4/800x1066/filters:quality(85)/9/d/v/phpgzpvd9.jpg",
+                "w:1024": "https://medias.france.tv/TzE_6Ic_ao92sHwc6n-2f7IeCu8/1024x1365/filters:quality(85)/9/d/v/phpgzpvd9.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/Lm-Pss-5QetmpPMm2HHddoT8FBE/1600x1200/filters:quality(85)/j/b/u/phpdrzubj.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "integral_counter": 6,
+          "ads_blocked": false,
+          "broadcast_box": null,
+          "recommendation": true,
+          "partner": null,
+          "sponsored": false,
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "category": null,
+              "sub_category": null
+            }
+          },
+          "age_min": null,
+          "age_max": null,
+          "saison": null,
+          "call_to_action": null,
+          "call_to_action_url": null,
+          "synopsis": "Une plongée au cœur de l’aventure humaine et sportive moderne la plus intense, entre terre et mer, entre larmes de frustration et explosions de joie",
+          "label_edito": "Nouveau",
+          "downloadable": false,
+          "casting": null,
+          "characters": null,
+          "director": "Thomas Sametin co-écrite avec Emile Rabaté et Mitchell Rosenbaum",
+          "scenarists": null,
+          "palmares": null,
+          "production_countries": null,
+          "number_of_episodes": null,
+          "number_of_seasons": null,
+          "categories": [
+            {
+              "id": 19,
+              "type": "categorie",
+              "label": "Documentaires",
+              "url_complete": "documentaires",
+              "images": [],
+              "marker": {
+                "level_2": null,
+                "page": null,
+                "indicators": null,
+                "custom_variables": null
+              },
+              "marker_piano": {
+                "contextual_properties": null,
+                "additional_properties": null
+              },
+              "call_to_action": null,
+              "call_to_action_url": null,
+              "synopsis": null,
+              "headline_title": null,
+              "label_edito": null,
+              "parent": null
+            },
+            {
+              "id": 49,
+              "type": "categorie",
+              "label": "séries & fictions",
+              "url_complete": "series-et-fictions",
+              "images": [],
+              "marker": {
+                "level_2": null,
+                "page": null,
+                "indicators": null,
+                "custom_variables": null
+              },
+              "marker_piano": {
+                "contextual_properties": null,
+                "additional_properties": null
+              },
+              "call_to_action": null,
+              "call_to_action_url": null,
+              "synopsis": null,
+              "headline_title": null,
+              "label_edito": null,
+              "parent": null
+            }
+          ],
+          "sub_categories": [
+            {
+              "id": 49956,
+              "type": "sous_categorie",
+              "label": "Documentaires sport",
+              "url_complete": "documentaires/documentaires-sport"
+            }
+          ],
+          "category": {
+            "label": "Documentaires",
+            "url_complete": "documentaires",
+            "id": 19,
+            "type": "categorie"
+          },
+          "podcast_url": null,
+          "offer": "francetv",
+          "sort_seasons": null,
+          "sort_episodes": null
+        },
+        {
+          "id": 8949924,
+          "title": "De plomb et de charbon",
+          "label_edito": null,
+          "type": "integrale",
+          "headline_title": null,
+          "season": null,
+          "episode": null,
+          "description": "A l'Est du Maroc, des hommes continuent de creuser dans les mines désaffectées datant du protectorat français. Pour survivre dans un monde en ruines, ils s'enfoncent sous le sol à la recherche de minerais épuisés. Du fond des gouffres, les rêves perdus de la mine continuent de hanter leur imaginaire…",
+          "broadcast_begin_date": 1793229530,
+          "broadcast_end_date": 1793234569,
+          "begin_date": 1793234339,
+          "end_date": 1809471540,
+          "duration": 5039,
+          "rating_csa": "Tous publics",
+          "si_id": "4e53b5f2-4970-4730-a910-32af845927cb",
+          "downloadable": false,
+          "episode_title": "De plomb et de charbon",
+          "program": {
+            "id": 12835,
+            "label": "25 nuances de doc",
+            "description": "Des documentaires uniques, français, européens ou d’ailleurs, des films inédits ou encore anciens. Des œuvres singulières et fortes, pour donner à voir un monde tout en nuances.",
+            "type": "program",
+            "program_path": "france-2_25-nuances-de-doc",
+            "link": {
+              "url": "/apps/program/meta/france-2_25-nuances-de-doc?platform=apps",
+              "type": "tab"
+            },
+            "color": null,
+            "sound": null,
+            "headline_title": null,
+            "images": [
+              {
+                "urls": {
+                  "w:800": "https://medias.france.tv/IBv9vkWYNy3t_vVu1uxH4gK3qWI/800x450/filters:quality(85)/5/i/t/phps9mti5.png",
+                  "w:1024": "https://medias.france.tv/N_mtArbwEAjFlO-mZwNjD0dlB3E/1024x576/filters:quality(85)/5/i/t/phps9mti5.png",
+                  "w:2500": "https://medias.france.tv/kN4jRqC55NyShLsxgYyjQ9rb504/2500x1406/filters:quality(85)/5/i/t/phps9mti5.png"
+                },
+                "type": "background_16x9"
+              },
+              {
+                "urls": {
+                  "w:265": "https://medias.france.tv/sNYgviLVJhE3WAPEbEUeS_CYE4E/265x265/filters:quality(85)/d/l/l/php4zmlld.png",
+                  "w:300": "https://medias.france.tv/FoaCXU0gFlkkCQRIeO6nahSP3gQ/300x300/filters:quality(85)/d/l/l/php4zmlld.png",
+                  "w:400": "https://medias.france.tv/2miP3Uy560WtL1oCgJTezfdMtrY/400x400/filters:quality(85)/d/l/l/php4zmlld.png",
+                  "w:800": "https://medias.france.tv/HDXt24QLHr4zn4sCsL_x8LCpUg4/800x800/filters:quality(85)/d/l/l/php4zmlld.png",
+                  "w:1024": "https://medias.france.tv/MbEhdMImKRotS0zneKgYe86rweo/1024x1024/filters:quality(85)/d/l/l/php4zmlld.png"
+                },
+                "type": "carre"
+              },
+              {
+                "urls": {
+                  "w:0": "https://medias.france.tv/fhNu-oUE9BcmqDqNID6xWAZlfHg/0x0/filters:quality(85)/d/p/6/phpin66pd.png",
+                  "w:25": "https://medias.france.tv/RaiCQ1wN1ASw_LyWwe-ssWTM3AI/25x0/filters:quality(85)/d/p/6/phpin66pd.png",
+                  "w:150": "https://medias.france.tv/xwL1wi0O4VKm1qYQUWQKWJkfHZA/150x0/filters:quality(85)/d/p/6/phpin66pd.png",
+                  "w:300": "https://medias.france.tv/6KiX_AnsHDV2IfFs88w5ezOZ9QU/300x0/filters:quality(85)/d/p/6/phpin66pd.png",
+                  "w:450": "https://medias.france.tv/hdPNcZuFpVh3r9VUGd1quyUSDYk/450x0/filters:quality(85)/d/p/6/phpin66pd.png",
+                  "w:1024": "https://medias.france.tv/Dz3-5Yh-5pzSj5f7-TpuG3zmrsA/1024x0/filters:quality(85)/d/p/6/phpin66pd.png"
+                },
+                "type": "logo"
+              },
+              {
+                "urls": {
+                  "w:1280": "https://medias.france.tv/NKFV_e9uafeMMVwRByNwkTejmuQ/1920x1080/filters:quality(85)/d/q/c/phpuvocqd.jpg"
+                },
+                "type": "lt_16x9"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/GWDHCEFQj3TnHKMQYpQEqjDmqWM/400x0/filters:quality(85)/5/g/8/phpucg8g5.png",
+                  "w:800": "https://medias.france.tv/_ChaI1x1fuAENtlbel4UxsJ2qK4/800x450/filters:quality(85)/5/g/8/phpucg8g5.png",
+                  "w:1024": "https://medias.france.tv/XgEvfqG9tBXyA5X7-K4YnvZg9hY/1024x576/filters:quality(85)/5/g/8/phpucg8g5.png",
+                  "w:2500": "https://medias.france.tv/LFKZoLmfoIvDWN0iA2KbJbsE5ik/2500x1406/filters:quality(85)/5/g/8/phpucg8g5.png"
+                },
+                "type": "vignette_16x9"
+              },
+              {
+                "urls": {
+                  "w:2000": "https://medias.france.tv/o-bYbpnLMQanRsarOifdDoNhWFg/2000x0/filters:quality(85)/i/c/9/phpmvb9ci.jpg"
+                },
+                "type": "vignette_2x3"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/ZpBFeSCMQ5-ZGkwrsvFpTQVi2cU/400x533/filters:quality(85)/f/c/s/phpj3sscf.jpg",
+                  "w:800": "https://medias.france.tv/r4CFJtUDFZbNuyGKVn4khgCOcCA/800x1066/filters:quality(85)/f/c/s/phpj3sscf.jpg",
+                  "w:1024": "https://medias.france.tv/ImfgR6nObC-Zc_19FD_Fgi7oAwY/1024x1365/filters:quality(85)/f/c/s/phpj3sscf.jpg"
+                },
+                "type": "vignette_3x4"
+              },
+              {
+                "urls": {
+                  "w:1600": "https://medias.france.tv/rZH6JsvabXqAhsSgmaWSXomAKzk/1600x1200/filters:quality(85)/z/a/r/php2jyraz.jpg"
+                },
+                "type": "vignette_4x3"
+              }
+            ],
+            "integral_counter": 8,
+            "ads_blocked": false,
+            "broadcast_box": null,
+            "recommendation": true,
+            "partner": null,
+            "sponsored": false,
+            "channel": "france-2",
+            "marker": {
+              "level_2": null,
+              "page": null,
+              "indicators": null,
+              "custom_variables": null
+            },
+            "marker_piano": {
+              "contextual_properties": null,
+              "additional_properties": {
+                "category": null,
+                "sub_category": null
+              }
+            },
+            "age_min": 3,
+            "age_max": 12,
+            "saison": null,
+            "call_to_action": null,
+            "call_to_action_url": null,
+            "synopsis": "Des documentaires uniques, français, européens ou d’ailleurs, des films inédits ou encore anciens. Des œuvres singulières et fortes, pour donner à voir un monde tout en nuances.",
+            "label_edito": null,
+            "casting": null,
+            "characters": null,
+            "director": null,
+            "scenarists": null,
+            "palmares": null,
+            "production_countries": null,
+            "number_of_episodes": null,
+            "number_of_seasons": null,
+            "categories": [
+              {
+                "id": 19,
+                "type": "categorie",
+                "label": "Documentaires",
+                "url_complete": "documentaires",
+                "images": [],
+                "marker": {
+                  "level_2": null,
+                  "page": null,
+                  "indicators": null,
+                  "custom_variables": null
+                },
+                "marker_piano": {
+                  "contextual_properties": null,
+                  "additional_properties": null
+                },
+                "call_to_action": null,
+                "call_to_action_url": null,
+                "synopsis": null,
+                "headline_title": null,
+                "label_edito": null,
+                "parent": null
+              },
+              {
+                "id": 49911,
+                "type": "categorie",
+                "label": "Info",
+                "url_complete": "info",
+                "images": [],
+                "marker": {
+                  "level_2": null,
+                  "page": null,
+                  "indicators": null,
+                  "custom_variables": null
+                },
+                "marker_piano": {
+                  "contextual_properties": null,
+                  "additional_properties": null
+                },
+                "call_to_action": null,
+                "call_to_action_url": null,
+                "synopsis": null,
+                "headline_title": null,
+                "label_edito": null,
+                "parent": null
+              }
+            ],
+            "sub_categories": [
+              {
+                "id": 49941,
+                "type": "sous_categorie",
+                "label": "Documentaires société",
+                "url_complete": "documentaires/documentaires-societe"
+              }
+            ],
+            "category": {
+              "label": "Documentaires",
+              "url_complete": "documentaires",
+              "id": 19,
+              "type": "categorie"
+            },
+            "podcast_url": null,
+            "offer": "francetv",
+            "sort_seasons": null,
+            "sort_episodes": null
+          },
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/IFaO6yLILfdju3GLbUxMHiqeVno/800x450/filters:quality(85)/g/q/q/phpzwdqqg.jpg",
+                "w:1024": "https://medias.france.tv/966yY3UXqBMe8x-vscU3t9_8KEY/1024x576/filters:quality(85)/g/q/q/phpzwdqqg.jpg",
+                "w:2500": "https://medias.france.tv/K3iLyFuxBlbF6D8xo-I3UPAw3ug/2500x1406/filters:quality(85)/g/q/q/phpzwdqqg.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/HklvGdFUe5wHzl2mgfxmWcNHDWY/1920x1080/filters:quality(85)/3/c/f/phpgkmfc3.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/--Ht68arjm_qnmsNrphyjSCW7d0/400x0/filters:quality(85)/h/h/f/phpv83fhh.jpg",
+                "w:800": "https://medias.france.tv/FJMPX-w04jKU_tq3VDDJ-k6SqUw/800x450/filters:quality(85)/h/h/f/phpv83fhh.jpg",
+                "w:1024": "https://medias.france.tv/dNNPqZrbUzJGnSrcFlecPppdEsw/1024x576/filters:quality(85)/h/h/f/phpv83fhh.jpg",
+                "w:2500": "https://medias.france.tv/pP1tsD3JlxHjxjxg3j9Ilpm6Kv4/2500x1406/filters:quality(85)/h/h/f/phpv83fhh.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/KJ8tMGI492grZgLlXIQuUTTwZIo/2000x0/filters:quality(85)/v/s/9/php22s9sv.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/iddcI6RNxhH1wPBO89EKOfZ56Hg/400x533/filters:quality(85)/v/p/e/phpncxepv.jpg",
+                "w:800": "https://medias.france.tv/QK5W7xodnbSkQelEVQO5UHSZ4yk/800x1066/filters:quality(85)/v/p/e/phpncxepv.jpg",
+                "w:1024": "https://medias.france.tv/633Z0m5wX72a5WYf4dAOck3wqaU/1024x1365/filters:quality(85)/v/p/e/phpncxepv.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/9hP67piC6Vb5uX4PpOKRJTlAm-g/1600x1200/filters:quality(85)/d/l/8/phppfy8ld.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "channel": {
+            "id": 1,
+            "label": "France 2",
+            "type": "channel",
+            "channel_path": "france-2",
+            "images": [
+              {
+                "urls": {
+                  "w:800": "https://medias.france.tv/mLqXUD7pGPZMQDNu6nAHm1HRS4M/800x450/filters:quality(85)/1/k/m/phppfemk1.jpg",
+                  "w:1024": "https://medias.france.tv/wPgCVt5lCy78c0Dz87UTaVb2tfU/1024x576/filters:quality(85)/1/k/m/phppfemk1.jpg",
+                  "w:2500": "https://medias.france.tv/Wd3atkIPrSuUXyP5SPease6wKZs/2500x1406/filters:quality(85)/1/k/m/phppfemk1.jpg"
+                },
+                "type": "background_16x9"
+              },
+              {
+                "urls": {
+                  "w:265": "https://medias.france.tv/ANKNqY3gzyyG5GIAyePKRrZiMdA/265x265/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:300": "https://medias.france.tv/Hvxatu-k_sKN-NBK-X6Hg1tjVco/300x300/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:400": "https://medias.france.tv/v25lgE50IPcm5SkmaN7WLDiOuEo/400x400/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:800": "https://medias.france.tv/3UhtTybWFPZvEotF2qlav8OWrW8/800x800/filters:quality(85)/c/7/t/php6kjt7c.png",
+                  "w:1024": "https://medias.france.tv/6oz4Bmu7itJjIT1Mnh3asxClwPc/1024x1024/filters:quality(85)/c/7/t/php6kjt7c.png"
+                },
+                "type": "carre"
+              },
+              {
+                "urls": {
+                  "w:0": "https://medias.france.tv/debMOnbWg8TetTZhLF-K56IQ2Mo/0x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:25": "https://medias.france.tv/wtQQS-esm6t16I6olBef3VTJQIg/25x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:150": "https://medias.france.tv/jKWZKoynXaOcxrbmGmpPM66U3E0/150x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:300": "https://medias.france.tv/mUab8olpguMyPRii8N425DQmlIs/300x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:450": "https://medias.france.tv/tv2YD3WsEHwdY7ySwWlfWGXzB2w/450x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+                  "w:1024": "https://medias.france.tv/p2KkmucENa0CMGIvA_1KWC4SBFc/1024x0/filters:quality(85)/a/c/h/phpi0hhca.png"
+                },
+                "type": "logo"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/7iMGREATX7UsKTEq35pMallmdy8/400x0/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:800": "https://medias.france.tv/vDTl5ncJJEu6Jd11KR-TY4xF1fA/800x450/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:1024": "https://medias.france.tv/Q-4oPgpeaL6wMcE6r6-SxXB_mnQ/1024x576/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+                  "w:2500": "https://medias.france.tv/SyuTNozmt9jee_kyUHzHfSbI8MI/2500x1406/filters:quality(85)/j/k/s/phpn0qskj.jpg"
+                },
+                "type": "vignette_16x9"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/KFtHQ8BAnDpwElwFdcBvZlQ6OM0/400x533/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+                  "w:800": "https://medias.france.tv/ftci3wQ-G6qjjN9c1-ToTJV4iX4/800x1066/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+                  "w:1024": "https://medias.france.tv/eRwxerP2BRgddRX72HBRRZVkEwU/1024x1365/filters:quality(85)/3/d/y/phpkiyyd3.jpg"
+                },
+                "type": "vignette_3x4"
+              }
+            ],
+            "si_id": "006194ea-117d-4bcf-94a9-153d999c59ae",
+            "channel_url": "france-2",
+            "marker": {
+              "level_2": null,
+              "page": null,
+              "indicators": null,
+              "custom_variables": null
+            },
+            "marker_piano": {
+              "contextual_properties": null,
+              "additional_properties": {
+                "category": null,
+                "sub_category": null
+              }
+            },
+            "call_to_action": null,
+            "call_to_action_url": null,
+            "synopsis": null,
+            "offer": "france-2"
+          },
+          "category": {
+            "id": 19,
+            "type": "categorie",
+            "label": "Documentaires",
+            "url_complete": "documentaires"
+          },
+          "event": null,
+          "partner": {
+            "id": 61271,
+            "label": "TV5 monde",
+            "type": "partner",
+            "partner_path": "tv5-monde",
+            "images": [
+              {
+                "urls": {
+                  "w:265": "https://medias.france.tv/Oesw4ZcRwBNPFVSKMv2dclpJvB0/265x265/filters:quality(85)/n/9/o/phpplvo9n.jpg",
+                  "w:300": "https://medias.france.tv/ENWqP2_ZclZ8KLvV23Vc688Kxqk/300x300/filters:quality(85)/n/9/o/phpplvo9n.jpg",
+                  "w:400": "https://medias.france.tv/gky_T4ERU0ImeLxI-7piK08RJ14/400x400/filters:quality(85)/n/9/o/phpplvo9n.jpg",
+                  "w:800": "https://medias.france.tv/meXXVwYzEsz2n5_CxAYP4Q1f6Wo/800x800/filters:quality(85)/n/9/o/phpplvo9n.jpg",
+                  "w:1024": "https://medias.france.tv/2rmDeRfUxda7aEJyrJGCTgpHpkM/1024x1024/filters:quality(85)/n/9/o/phpplvo9n.jpg"
+                },
+                "type": "carre"
+              },
+              {
+                "urls": {
+                  "w:0": "https://medias.france.tv/S70bqiUKt2XTPIQDEshcQT59SZE/0x0/filters:quality(85)/g/r/l/phpthllrg.png",
+                  "w:25": "https://medias.france.tv/_AFKhRNqK1OmD6Kq4E8sMozYwvQ/25x0/filters:quality(85)/g/r/l/phpthllrg.png",
+                  "w:150": "https://medias.france.tv/ISRQSo4nnrccAEENkMBsgSCDFGE/150x0/filters:quality(85)/g/r/l/phpthllrg.png",
+                  "w:300": "https://medias.france.tv/DkgjPtoHhedFWOmgweYOorW7B7I/300x0/filters:quality(85)/g/r/l/phpthllrg.png",
+                  "w:450": "https://medias.france.tv/rL0TXbNLjjOPzp3SX8vtVX1MiyI/450x0/filters:quality(85)/g/r/l/phpthllrg.png",
+                  "w:1024": "https://medias.france.tv/rD3dzuhNUaWZmrt6p8fudSQB9Z0/1024x0/filters:quality(85)/g/r/l/phpthllrg.png"
+                },
+                "type": "logo"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/IWh8zeaDXTqwjyBMHTaZ0ZfSBdk/400x0/filters:quality(85)/w/5/p/phpxsgp5w.jpg",
+                  "w:800": "https://medias.france.tv/0yGc77xqGLGX23-sk8xqd3NV_TQ/800x450/filters:quality(85)/w/5/p/phpxsgp5w.jpg",
+                  "w:1024": "https://medias.france.tv/pzRUTsph8hxTph3iprBC4ZYOotE/1024x576/filters:quality(85)/w/5/p/phpxsgp5w.jpg",
+                  "w:2500": "https://medias.france.tv/RskQCZ9PfOt1poCi3ZQ0yAd1mQc/2500x1406/filters:quality(85)/w/5/p/phpxsgp5w.jpg"
+                },
+                "type": "vignette_16x9"
+              },
+              {
+                "urls": {
+                  "w:400": "https://medias.france.tv/6d_28vcEJ-wI4e8tXEWTtbCKFPM/400x533/filters:quality(85)/g/p/c/phpxagcpg.jpg",
+                  "w:800": "https://medias.france.tv/IdS726a4OMK_z1ZvQ7nuia6Cmso/800x1066/filters:quality(85)/g/p/c/phpxagcpg.jpg",
+                  "w:1024": "https://medias.france.tv/tug319tZ4nwRYxRbtK5eO28ihK8/1024x1365/filters:quality(85)/g/p/c/phpxagcpg.jpg"
+                },
+                "type": "vignette_3x4"
+              }
+            ],
+            "headline_title": null,
+            "si_id": "c2b61cd9-4923-44e9-820b-b7365734d507",
+            "marker_piano": {
+              "contextual_properties": null,
+              "additional_properties": {
+                "category": null,
+                "sub_category": null
+              }
+            },
+            "offer": "tv5-monde"
+          },
+          "ads_blocked": false,
+          "sponsored": false,
+          "is_live": false,
+          "is_published": true,
+          "production_year": 2026,
+          "is_audio_descripted": false,
+          "is_multi_lingual": false,
+          "casting": "",
+          "director": "Thomas Uzan",
+          "producer": null,
+          "presenter": null,
+          "characters": "",
+          "visible": true,
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "content_status": "replay",
+              "content_diffusion_date": "29102026",
+              "video_factory_id": "4e53b5f2-4970-4730-a910-32af845927cb",
+              "channel": "france_2",
+              "channel_type": "premium"
+            }
+          },
+          "is_recommended": false,
+          "rating_csa_code": "TP",
+          "is_subtitled": false,
+          "login": true,
+          "broadcast_channel": "france-2",
+          "medium_description": null,
+          "production_company": null,
+          "production_countries": "France",
+          "production_language": "Français",
+          "palmares": "",
+          "creator": "",
+          "voice_off": "",
+          "release_date": null,
+          "scenarists": "",
+          "reviewers": "",
+          "upcoming_live": false,
+          "text": null,
+          "reading_time": null,
+          "offer": "francetv",
+          "format": "landscape"
+        }
+      ],
+      "sponsored": false
+    },
+    {
+      "id": 24017953,
+      "type": "playlist_program",
+      "label": "Info et société",
+      "display": null,
+      "items": [
+        {
+          "id": 2461,
+          "label": "Envoyé spécial",
+          "description": "Entre enquêtes, témoignages et grands reportages, Envoyé spécial décrypte l’actualité. Découvrez les dernières émissions sur France 2 et accédez aux vidéos gratuites sur france.tv. ",
+          "type": "program",
+          "program_path": "france-2_envoye-special",
+          "link": {
+            "url": "/apps/program/meta/france-2_envoye-special?platform=apps",
+            "type": "tab"
+          },
+          "color": null,
+          "sound": null,
+          "headline_title": "Raconter le monde tel qu'il est, en France et bien au-delà",
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/8lviv1jlzmiMZRKxRKuCaOb7O5k/800x450/filters:quality(85)/p/d/n/php2cnndp.jpg",
+                "w:1024": "https://medias.france.tv/B9HwSJrdqZ7SFjGpI6-kMd7Tl-0/1024x576/filters:quality(85)/p/d/n/php2cnndp.jpg",
+                "w:2500": "https://medias.france.tv/ealJcCiKU3YdZAiE6EeT2pfn4TM/2500x1406/filters:quality(85)/p/d/n/php2cnndp.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:265": "https://medias.france.tv/ot3Ivn2N7qmqcOuPFmVwLAHPokw/265x265/filters:quality(85)/e/x/b/phpnakbxe.jpg",
+                "w:300": "https://medias.france.tv/-kHM9ECcM63pkurmHcsownXfpM0/300x300/filters:quality(85)/e/x/b/phpnakbxe.jpg",
+                "w:400": "https://medias.france.tv/UC8DQwqFS_bfO2kODQWCaEhlOlU/400x400/filters:quality(85)/e/x/b/phpnakbxe.jpg",
+                "w:800": "https://medias.france.tv/OxJauecwnqdjIW56NvzvJBIB9nc/800x800/filters:quality(85)/e/x/b/phpnakbxe.jpg",
+                "w:1024": "https://medias.france.tv/CG7GjpWuItL45guNnnK9s3qI1Nw/1024x1024/filters:quality(85)/e/x/b/phpnakbxe.jpg"
+              },
+              "type": "carre"
+            },
+            {
+              "urls": {
+                "w:0": "https://medias.france.tv/ZeYhM1jwt3lIerLw-CrSRn4TtSk/0x0/filters:quality(85)/o/k/m/phpykjmko.png",
+                "w:25": "https://medias.france.tv/iaebsUmgCxclBjOR99DOJapFY7A/25x0/filters:quality(85)/o/k/m/phpykjmko.png",
+                "w:150": "https://medias.france.tv/5-T5SQ4LeCboge2GAdIX1iRzunE/150x0/filters:quality(85)/o/k/m/phpykjmko.png",
+                "w:300": "https://medias.france.tv/MzfXG2kBfprzgAQDMap6WhI2R8s/300x0/filters:quality(85)/o/k/m/phpykjmko.png",
+                "w:450": "https://medias.france.tv/20MeJJZG58nE0Y2TuZt39jaS8fA/450x0/filters:quality(85)/o/k/m/phpykjmko.png",
+                "w:1024": "https://medias.france.tv/FvjOslBuxyytlgIbPwwLS67Tvtg/1024x0/filters:quality(85)/o/k/m/phpykjmko.png"
+              },
+              "type": "logo"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/oJ220zwPGR6DjD_vpYpBKGXKTLY/1920x1080/filters:quality(85)/t/j/q/phpv0mqjt.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/xuuezLcNC5bgVSd9pkzQ9PvHx2k/400x0/filters:quality(85)/f/x/4/phprcy4xf.jpg",
+                "w:800": "https://medias.france.tv/IJ6IPrLjL-xYYDqbeHBwCkJw9dM/800x450/filters:quality(85)/f/x/4/phprcy4xf.jpg",
+                "w:1024": "https://medias.france.tv/sRDZoj3UfxgceOectzdtHP50TiU/1024x576/filters:quality(85)/f/x/4/phprcy4xf.jpg",
+                "w:2500": "https://medias.france.tv/Wi_IyF1n61gYjnWCoCKf9vDvFgE/2500x1406/filters:quality(85)/f/x/4/phprcy4xf.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/AOlJ68MaPNLLSaAAWE5zAtEsG80/2000x0/filters:quality(85)/9/u/e/phpqmheu9.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/4iVDDhkn6nT2zwsViWdMBDmLYSg/400x533/filters:quality(85)/6/r/3/phpaal3r6.jpg",
+                "w:800": "https://medias.france.tv/hs7NbjBvDQxzupg-Zzqasxd6x3Q/800x1066/filters:quality(85)/6/r/3/phpaal3r6.jpg",
+                "w:1024": "https://medias.france.tv/gzUKXdA6JJJET-aGR9etfs24_Qo/1024x1365/filters:quality(85)/6/r/3/phpaal3r6.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/Ka_M-RlhDMqkzu6GDZ1yZZQQ7G0/1600x1200/filters:quality(85)/p/x/b/phpgojbxp.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "integral_counter": 108,
+          "ads_blocked": false,
+          "broadcast_box": null,
+          "recommendation": true,
+          "partner": null,
+          "sponsored": false,
+          "channel": "france-2",
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "category": null,
+              "sub_category": null
+            }
+          },
+          "age_min": 3,
+          "age_max": 12,
+          "saison": null,
+          "call_to_action": null,
+          "call_to_action_url": null,
+          "synopsis": "L’équipe d'Envoyé spécial nous entraîne dans ses aventures journalistiques, avec de l’investigation, des rencontres inédites, des face-à-face, des focus, du grand reportage, des portraits fouillés…",
+          "label_edito": null,
+          "downloadable": false,
+          "casting": null,
+          "characters": null,
+          "director": null,
+          "scenarists": null,
+          "palmares": null,
+          "production_countries": null,
+          "number_of_episodes": null,
+          "number_of_seasons": null,
+          "categories": [
+            {
+              "id": 49911,
+              "type": "categorie",
+              "label": "Info",
+              "url_complete": "info",
+              "images": [],
+              "marker": {
+                "level_2": null,
+                "page": null,
+                "indicators": null,
+                "custom_variables": null
+              },
+              "marker_piano": {
+                "contextual_properties": null,
+                "additional_properties": null
+              },
+              "call_to_action": null,
+              "call_to_action_url": null,
+              "synopsis": null,
+              "headline_title": null,
+              "label_edito": null,
+              "parent": null
+            }
+          ],
+          "sub_categories": [
+            {
+              "id": 49986,
+              "type": "sous_categorie",
+              "label": "Décryptage & investigation",
+              "url_complete": "info/decryptage-et-investigation"
+            }
+          ],
+          "category": {
+            "label": "Info",
+            "url_complete": "info",
+            "id": 49911,
+            "type": "categorie"
+          },
+          "podcast_url": null,
+          "offer": "francetv",
+          "sort_seasons": null,
+          "sort_episodes": null
+        },
+        {
+          "id": 2407,
+          "label": "Complément d'enquête",
+          "description": "Complément d’enquête dévoile les affaires et secrets qui font l’actualité française. Découvrez des enquêtes exclusives sur France 2 et en replay sur france.tv. ",
+          "type": "program",
+          "program_path": "france-2_complement-d-enquete",
+          "link": {
+            "url": "/apps/program/meta/france-2_complement-d-enquete?platform=apps",
+            "type": "tab"
+          },
+          "color": null,
+          "sound": null,
+          "headline_title": "Complément d’enquête dévoile les affaires et secrets qui font l’actualité",
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/x-Jcoq11W_wiUUEU0KU3r0Qzr1c/800x450/filters:quality(85)/p/e/f/phpvnlfep.jpg",
+                "w:1024": "https://medias.france.tv/Jj3MUIR6pjq3yiS62ge0ZKaoDLw/1024x576/filters:quality(85)/p/e/f/phpvnlfep.jpg",
+                "w:2500": "https://medias.france.tv/KNLw5v91LIXBTFxqiBE69yGeeGc/2500x1406/filters:quality(85)/p/e/f/phpvnlfep.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:265": "https://medias.france.tv/D_KzsyALRQ7biCqes12gZ5kgVp4/265x265/filters:quality(85)/l/o/p/phpzjqpol.jpg",
+                "w:300": "https://medias.france.tv/0spua1rp_A635BjGl6W0WhDyR9Y/300x300/filters:quality(85)/l/o/p/phpzjqpol.jpg",
+                "w:400": "https://medias.france.tv/CBMxB-taI4pZ6leDM-JH-zI5FIU/400x400/filters:quality(85)/l/o/p/phpzjqpol.jpg",
+                "w:800": "https://medias.france.tv/y5MQdobZxYOq9A-0sKc8PzE8Mdg/800x800/filters:quality(85)/l/o/p/phpzjqpol.jpg",
+                "w:1024": "https://medias.france.tv/aWdXTFog6sqeQRVc1QZL6amWGww/1024x1024/filters:quality(85)/l/o/p/phpzjqpol.jpg"
+              },
+              "type": "carre"
+            },
+            {
+              "urls": {
+                "w:0": "https://medias.france.tv/mRQp9MKEDBDE4Yhf3OYQp_ONQ8Q/0x0/filters:quality(85)/g/d/i/phpzakidg.png",
+                "w:25": "https://medias.france.tv/T1FszVs453qzfguwpQiOtgwhg2o/25x0/filters:quality(85)/g/d/i/phpzakidg.png",
+                "w:150": "https://medias.france.tv/ZT9b5qsNkXw-_c81PQ6q5tLUrw8/150x0/filters:quality(85)/g/d/i/phpzakidg.png",
+                "w:300": "https://medias.france.tv/gjmWxg_D2D4EUH9Q0cfRI5Vmpyo/300x0/filters:quality(85)/g/d/i/phpzakidg.png",
+                "w:450": "https://medias.france.tv/oo7bHPakz4CQM0291l1LbhZ2XQw/450x0/filters:quality(85)/g/d/i/phpzakidg.png",
+                "w:1024": "https://medias.france.tv/Y2DNmRNNuUrlo6jOh6AEj-4j0UA/1024x0/filters:quality(85)/g/d/i/phpzakidg.png"
+              },
+              "type": "logo"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/U-QchHVmuHvFIJ0OrnDjWIisYZY/1920x1080/filters:quality(85)/m/f/d/phpjfodfm.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/10gJGMHPOXy5vowm0Xeoa81HCwM/400x0/filters:quality(85)/5/4/l/phpq8hl45.jpg",
+                "w:800": "https://medias.france.tv/_LE1sw2Bhuk7syI9ZGl9EkvFdGc/800x450/filters:quality(85)/5/4/l/phpq8hl45.jpg",
+                "w:1024": "https://medias.france.tv/BIm_yS5Oz9mzSxJxhyxhYDfbR38/1024x576/filters:quality(85)/5/4/l/phpq8hl45.jpg",
+                "w:2500": "https://medias.france.tv/jGGJRTxuIOAorbmBcoQqYQX-o-o/2500x1406/filters:quality(85)/5/4/l/phpq8hl45.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/NglM0Pir-5F9u6l6QTgX3T09avM/2000x0/filters:quality(85)/1/j/s/php2kisj1.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/g0Vkc7IUeECQYRLRvQgTIN2e44k/400x533/filters:quality(85)/i/g/b/phpl9ybgi.jpg",
+                "w:800": "https://medias.france.tv/eT_eHgXkVlKiUT-9YlJQ9fTg-zc/800x1066/filters:quality(85)/i/g/b/phpl9ybgi.jpg",
+                "w:1024": "https://medias.france.tv/4NBsjxDZYJU_DfeMuDxdxJmt8l4/1024x1365/filters:quality(85)/i/g/b/phpl9ybgi.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/_q6Do68bgqCuqKD9g_zRu9QPpzw/1600x1200/filters:quality(85)/0/j/2/phpdge2j0.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "integral_counter": 34,
+          "ads_blocked": false,
+          "broadcast_box": null,
+          "recommendation": true,
+          "partner": null,
+          "sponsored": false,
+          "channel": "france-2",
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "category": null,
+              "sub_category": null
+            }
+          },
+          "age_min": 3,
+          "age_max": 12,
+          "saison": null,
+          "call_to_action": null,
+          "call_to_action_url": null,
+          "synopsis": "Le magazine d'investigation hebdomadaire propose, chaque jeudi, 90 minutes d'enquêtes autour d’un thème d’actualité, alternant reportages et invités en plateau.",
+          "label_edito": null,
+          "downloadable": false,
+          "casting": null,
+          "characters": null,
+          "director": null,
+          "scenarists": null,
+          "palmares": null,
+          "production_countries": null,
+          "number_of_episodes": null,
+          "number_of_seasons": null,
+          "categories": [
+            {
+              "id": 49911,
+              "type": "categorie",
+              "label": "Info",
+              "url_complete": "info",
+              "images": [],
+              "marker": {
+                "level_2": null,
+                "page": null,
+                "indicators": null,
+                "custom_variables": null
+              },
+              "marker_piano": {
+                "contextual_properties": null,
+                "additional_properties": null
+              },
+              "call_to_action": null,
+              "call_to_action_url": null,
+              "synopsis": null,
+              "headline_title": null,
+              "label_edito": null,
+              "parent": null
+            }
+          ],
+          "sub_categories": [
+            {
+              "id": 49986,
+              "type": "sous_categorie",
+              "label": "Décryptage & investigation",
+              "url_complete": "info/decryptage-et-investigation"
+            }
+          ],
+          "category": {
+            "label": "Info",
+            "url_complete": "info",
+            "id": 49911,
+            "type": "categorie"
+          },
+          "podcast_url": null,
+          "offer": "francetv",
+          "sort_seasons": null,
+          "sort_episodes": null
+        },
+        {
+          "id": 98976,
+          "label": "Franc-jeu",
+          "description": "",
+          "type": "program",
+          "program_path": "france-2_franc-jeu",
+          "link": {
+            "url": "/apps/program/meta/france-2_franc-jeu?platform=apps",
+            "type": "tab"
+          },
+          "color": null,
+          "sound": null,
+          "headline_title": "La nouvelle grande émission politique",
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/CLURxr4DthFYeXeAnN5DFxTzixU/800x450/filters:quality(85)/6/n/w/phppyqwn6.jpg",
+                "w:1024": "https://medias.france.tv/qJ6bauY9frjeilUtfjYeSeXRE-I/1024x576/filters:quality(85)/6/n/w/phppyqwn6.jpg",
+                "w:2500": "https://medias.france.tv/Azd6tNhpGu9ulVHBlzH1vTYF-y0/2500x1406/filters:quality(85)/6/n/w/phppyqwn6.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:265": "https://medias.france.tv/3TX8t4yT9muISDznW8Q3IYQMIz0/265x265/filters:quality(85)/p/n/n/phpkflnnp.jpg",
+                "w:300": "https://medias.france.tv/3RIjvf1pwIE3-EChsK6jxykxmNE/300x300/filters:quality(85)/p/n/n/phpkflnnp.jpg",
+                "w:400": "https://medias.france.tv/rDIg8b1B1runUG-dcZzJ2zM0cio/400x400/filters:quality(85)/p/n/n/phpkflnnp.jpg",
+                "w:800": "https://medias.france.tv/wXLPk-dUDDz4u0v2FHMO9kxmURI/800x800/filters:quality(85)/p/n/n/phpkflnnp.jpg",
+                "w:1024": "https://medias.france.tv/QBMEeVBdbtlfVZHXalt1Y_bZO1c/1024x1024/filters:quality(85)/p/n/n/phpkflnnp.jpg"
+              },
+              "type": "carre"
+            },
+            {
+              "urls": {
+                "w:0": "https://medias.france.tv/SwaSaI4rbAikQb0ePOvOoAbqysI/0x0/filters:quality(85)/t/4/n/phplren4t.png",
+                "w:25": "https://medias.france.tv/VSEkP3R3PAuUwz3I_V2AUHMEy5o/25x0/filters:quality(85)/t/4/n/phplren4t.png",
+                "w:150": "https://medias.france.tv/58EzOuOTEjT0ur1bY4BJn5ihC90/150x0/filters:quality(85)/t/4/n/phplren4t.png",
+                "w:300": "https://medias.france.tv/UP-4Qy3woeAZoacD2WEx-RGwqcM/300x0/filters:quality(85)/t/4/n/phplren4t.png",
+                "w:450": "https://medias.france.tv/QTegAmMmuAANuawiXifGqODKnhY/450x0/filters:quality(85)/t/4/n/phplren4t.png",
+                "w:1024": "https://medias.france.tv/_mYFD2Fm_IdKslx_E98FVeYn9hY/1024x0/filters:quality(85)/t/4/n/phplren4t.png"
+              },
+              "type": "logo"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/G5bTTCYHzDHC_dU-NEVUsrc55AE/1920x1080/filters:quality(85)/g/v/y/phpwwayvg.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/79LGEN8rd9aXWucMdDf4kCcElpo/400x0/filters:quality(85)/u/s/x/php7ckxsu.jpg",
+                "w:800": "https://medias.france.tv/eqeXF4rx57dp9bzIp7GDlo33OvI/800x450/filters:quality(85)/u/s/x/php7ckxsu.jpg",
+                "w:1024": "https://medias.france.tv/kGoGu_kj-kMKhevFNSfey0rg3B4/1024x576/filters:quality(85)/u/s/x/php7ckxsu.jpg",
+                "w:2500": "https://medias.france.tv/A_hhkoaRUGm23Ni6UeOE4GBM8Vs/2500x1406/filters:quality(85)/u/s/x/php7ckxsu.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/sUX16zyksq6EOVY0UFzlbC3AtGE/2000x0/filters:quality(85)/o/j/h/php3jrhjo.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/X_BkFNdP4BHQSbR8lyXJMV11fGQ/400x533/filters:quality(85)/d/v/6/phpsrw6vd.jpg",
+                "w:800": "https://medias.france.tv/wU67igNtltvIO-nP4rA5oRoyqS4/800x1066/filters:quality(85)/d/v/6/phpsrw6vd.jpg",
+                "w:1024": "https://medias.france.tv/R2tldiqHinhU_fhMB9I4EVG8yAg/1024x1365/filters:quality(85)/d/v/6/phpsrw6vd.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/uoNQKzwbxQJPZ6m65IN-S8XA394/1600x1200/filters:quality(85)/s/g/o/phpupjogs.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "integral_counter": 9,
+          "ads_blocked": false,
+          "broadcast_box": null,
+          "recommendation": true,
+          "partner": null,
+          "sponsored": false,
+          "channel": "france-2",
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "category": null,
+              "sub_category": null
+            }
+          },
+          "age_min": null,
+          "age_max": null,
+          "saison": null,
+          "call_to_action": null,
+          "call_to_action_url": null,
+          "synopsis": "La nouvelle grande émission politique hebdomadaire du service public",
+          "label_edito": null,
+          "downloadable": false,
+          "casting": "",
+          "characters": "",
+          "director": "",
+          "scenarists": "",
+          "palmares": "",
+          "production_countries": null,
+          "number_of_episodes": null,
+          "number_of_seasons": null,
+          "categories": [
+            {
+              "id": 49911,
+              "type": "categorie",
+              "label": "Info",
+              "url_complete": "info",
+              "images": [],
+              "marker": {
+                "level_2": null,
+                "page": null,
+                "indicators": null,
+                "custom_variables": null
+              },
+              "marker_piano": {
+                "contextual_properties": null,
+                "additional_properties": null
+              },
+              "call_to_action": null,
+              "call_to_action_url": null,
+              "synopsis": null,
+              "headline_title": null,
+              "label_edito": null,
+              "parent": null
+            }
+          ],
+          "sub_categories": [
+            {
+              "id": 49989,
+              "type": "sous_categorie",
+              "label": "Émission politique",
+              "url_complete": "info/emission-politique"
+            }
+          ],
+          "category": {
+            "label": "Info",
+            "url_complete": "info",
+            "id": 49911,
+            "type": "categorie"
+          },
+          "podcast_url": null,
+          "offer": "francetv",
+          "sort_seasons": null,
+          "sort_episodes": null
+        }
+      ],
+      "sponsored": false
+    },
+    {
+      "id": 24017902,
+      "type": "playlist_program",
+      "label": "Divertissements",
+      "display": null,
+      "items": [
+        {
+          "id": 46968,
+          "label": "The Floor - À la conquête du sol",
+          "description": "Un sol géant, 100 cases, 100 candidats et des duels de quiz sous tension : The Floor saison 4 revient sur France 2 avec Cyril Féraud. ",
+          "type": "program",
+          "program_path": "france-2_the-floor-a-la-conquete-du-sol",
+          "link": {
+            "url": "/apps/program/meta/france-2_the-floor-a-la-conquete-du-sol?platform=apps",
+            "type": "tab"
+          },
+          "color": null,
+          "sound": null,
+          "headline_title": "Un seul objectif : conquérir la totalité du sol !",
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/JLOXw0m1EWbsPsd6lCtezU3l_Q4/800x450/filters:quality(85)/c/c/w/phpilpwcc.jpg",
+                "w:1024": "https://medias.france.tv/O5bXjIrbh_dHkeNToEA6aO2wWD8/1024x576/filters:quality(85)/c/c/w/phpilpwcc.jpg",
+                "w:2500": "https://medias.france.tv/ufv3tY95rCPe8IFUziHRlbaQ2JA/2500x1406/filters:quality(85)/c/c/w/phpilpwcc.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:0": "https://medias.france.tv/7nSSPxJF7YkZ5-ajvw8JKhmbsK4/0x0/filters:quality(85)/q/x/g/phpps4gxq.png",
+                "w:25": "https://medias.france.tv/lWcFN47RCywctbtGQYcJKXW09AY/25x0/filters:quality(85)/q/x/g/phpps4gxq.png",
+                "w:150": "https://medias.france.tv/VzfUxUVGEF9z3hDmuyA4RMvwGSU/150x0/filters:quality(85)/q/x/g/phpps4gxq.png",
+                "w:300": "https://medias.france.tv/QNNz9D9NYJFqn6RnKqv3BW2GmjM/300x0/filters:quality(85)/q/x/g/phpps4gxq.png",
+                "w:450": "https://medias.france.tv/zvYYYD3emO11UqgW_4Sxx_EkoWc/450x0/filters:quality(85)/q/x/g/phpps4gxq.png",
+                "w:1024": "https://medias.france.tv/7kVizAS4RHSnAr06VKHHLfK3DvE/1024x0/filters:quality(85)/q/x/g/phpps4gxq.png"
+              },
+              "type": "logo"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/9kubCyuFoenPX19DHix19auohGQ/1920x1080/filters:quality(85)/q/6/a/phpdkea6q.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/gJ1wgGIVJLj73GYL-LEPND7DghY/400x0/filters:quality(85)/v/e/d/phpdcgdev.jpg",
+                "w:800": "https://medias.france.tv/Mvg2nI-UZqq1d7NNMFWoHfdh98Y/800x450/filters:quality(85)/v/e/d/phpdcgdev.jpg",
+                "w:1024": "https://medias.france.tv/gwwVYlt9IUxjWs7xPt_WMOU5--A/1024x576/filters:quality(85)/v/e/d/phpdcgdev.jpg",
+                "w:2500": "https://medias.france.tv/No1lut8vM90QJI8JUl1iaQAlgaA/2500x1406/filters:quality(85)/v/e/d/phpdcgdev.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/Te6BtudMuHSIYftZx8RhdabBUOc/2000x0/filters:quality(85)/y/9/0/phpbbg09y.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/2qjp6l2DACDMmBVIwTeXyJ-ZVqE/400x533/filters:quality(85)/2/7/p/phpp1gp72.jpg",
+                "w:800": "https://medias.france.tv/dgLcTxev5E0c56GoEOBJIdzLLmw/800x1066/filters:quality(85)/2/7/p/phpp1gp72.jpg",
+                "w:1024": "https://medias.france.tv/rIy4n6PWV3o27BBxGiLK8GTLH8o/1024x1365/filters:quality(85)/2/7/p/phpp1gp72.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/De0bj4ttlfGxRtIHhVWn7LgkqVI/1600x1200/filters:quality(85)/k/i/y/phpgdwyik.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "integral_counter": 9,
+          "ads_blocked": false,
+          "broadcast_box": null,
+          "recommendation": true,
+          "partner": null,
+          "sponsored": false,
+          "channel": "france-2",
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "category": null,
+              "sub_category": null
+            }
+          },
+          "age_min": null,
+          "age_max": null,
+          "saison": null,
+          "call_to_action": null,
+          "call_to_action_url": null,
+          "synopsis": "Un sol géant constitué de 100 cases, 100 candidats,  et des duels de quiz sous tension. Dans ce grand quiz, les participants vont se défier chaque semaine dans des face-à-face tout en images. Leur objectif ? Conquérir la totalité du sol pour repartir avec le jackpot.",
+          "label_edito": null,
+          "downloadable": false,
+          "casting": "",
+          "characters": "",
+          "director": "",
+          "scenarists": "",
+          "palmares": "",
+          "production_countries": null,
+          "number_of_episodes": null,
+          "number_of_seasons": null,
+          "categories": [
+            {
+              "id": 45,
+              "type": "categorie",
+              "label": "Divertissement",
+              "url_complete": "jeux-et-divertissements",
+              "images": [],
+              "marker": {
+                "level_2": null,
+                "page": null,
+                "indicators": null,
+                "custom_variables": null
+              },
+              "marker_piano": {
+                "contextual_properties": null,
+                "additional_properties": null
+              },
+              "call_to_action": null,
+              "call_to_action_url": null,
+              "synopsis": null,
+              "headline_title": null,
+              "label_edito": null,
+              "parent": null
+            }
+          ],
+          "sub_categories": [
+            {
+              "id": 48,
+              "type": "sous_categorie",
+              "label": "Jeux",
+              "url_complete": "jeux-et-divertissements/jeux"
+            }
+          ],
+          "category": {
+            "label": "Divertissement",
+            "url_complete": "jeux-et-divertissements",
+            "id": 45,
+            "type": "categorie"
+          },
+          "podcast_url": null,
+          "offer": "francetv",
+          "sort_seasons": null,
+          "sort_episodes": null
+        },
+        {
+          "id": 35392,
+          "label": "Drag Race France",
+          "description": "Drag Race France est de retour avec une quatrième saison… et cette fois encore, ça va faire des étincelles ! Nouvelle ère, nouvelles queens, nouvelles règles, nouvel atelier ! Rendez-vous le 8 juillet.",
+          "type": "program",
+          "program_path": "france-2_drag-race-france",
+          "link": {
+            "url": "/apps/program/meta/france-2_drag-race-france?platform=apps",
+            "type": "tab"
+          },
+          "color": null,
+          "sound": null,
+          "headline_title": "Nouvelle ère, nouvelles reines !",
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/n0S0hrcjE8OWGifnsG2NlAdWtP4/800x450/filters:quality(85)/8/5/b/phpysfb58.jpg",
+                "w:1024": "https://medias.france.tv/UBxrM5cXsYBm3LO5KXMMZ7qmPqQ/1024x576/filters:quality(85)/8/5/b/phpysfb58.jpg",
+                "w:2500": "https://medias.france.tv/5ECP-cvoV_tn9c_hJ4BFHnevl5Q/2500x1406/filters:quality(85)/8/5/b/phpysfb58.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:265": "https://medias.france.tv/p90m_E24honoeIMsF8zah1trqAk/265x265/filters:quality(85)/j/r/q/phpu19qrj.jpg",
+                "w:300": "https://medias.france.tv/O1JWqCA3wN48CvTr3Bco8cZm14U/300x300/filters:quality(85)/j/r/q/phpu19qrj.jpg",
+                "w:400": "https://medias.france.tv/vxwyyi-jfDB2YfRz16aGBXdN8NE/400x400/filters:quality(85)/j/r/q/phpu19qrj.jpg",
+                "w:800": "https://medias.france.tv/yrP4cvbhRyVVtgASlqwp3Ue1Quo/800x800/filters:quality(85)/j/r/q/phpu19qrj.jpg",
+                "w:1024": "https://medias.france.tv/o6i9hwVtoXdScZLI6Zj1J2Z-uwk/1024x1024/filters:quality(85)/j/r/q/phpu19qrj.jpg"
+              },
+              "type": "carre"
+            },
+            {
+              "urls": {
+                "w:0": "https://medias.france.tv/HYsPrThbe4f657MPEIF_mGRBaaw/0x0/filters:quality(85)/v/f/y/phplnfyfv.png",
+                "w:25": "https://medias.france.tv/OIxxW7T7uq81z1UW2wAuEVxyIa8/25x0/filters:quality(85)/v/f/y/phplnfyfv.png",
+                "w:150": "https://medias.france.tv/vUL1VJkUyqU2NMH7ahp3R5Ev7gQ/150x0/filters:quality(85)/v/f/y/phplnfyfv.png",
+                "w:300": "https://medias.france.tv/oIx00MZ4_Frwfu090WBAxsJmMF4/300x0/filters:quality(85)/v/f/y/phplnfyfv.png",
+                "w:450": "https://medias.france.tv/X1PVN6pNNKULoyjoqyN0EgxNkgw/450x0/filters:quality(85)/v/f/y/phplnfyfv.png",
+                "w:1024": "https://medias.france.tv/Y9Y5RDj1Q1_DVdxZovANhi__aB0/1024x0/filters:quality(85)/v/f/y/phplnfyfv.png"
+              },
+              "type": "logo"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/0wcghOUXjVD0MqqqnrclWn1mQu8/1920x1080/filters:quality(85)/h/d/k/php7ypkdh.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/MlYuKGsIqXceFhBYnQxJCXvglD8/400x0/filters:quality(85)/l/y/4/php5hz4yl.jpg",
+                "w:800": "https://medias.france.tv/Zd1c74Gq-b3uWUV2KTJ0ChrBGFk/800x450/filters:quality(85)/l/y/4/php5hz4yl.jpg",
+                "w:1024": "https://medias.france.tv/QAyBC3VNB-Rib2hnXwpbUe7SEFs/1024x576/filters:quality(85)/l/y/4/php5hz4yl.jpg",
+                "w:2500": "https://medias.france.tv/A_LY9fU5afQA2nOUedx3Pih9X1g/2500x1406/filters:quality(85)/l/y/4/php5hz4yl.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/MBgP2MHUeV5MhBGTUOHJ9R8plPo/2000x0/filters:quality(85)/v/z/f/php3idfzv.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/FYTzUboG7ErKRghqfbvTeo68XgU/400x533/filters:quality(85)/p/0/i/php4aji0p.jpg",
+                "w:800": "https://medias.france.tv/aT2fndC2z-tRyCWrkWkAZBxY2iQ/800x1066/filters:quality(85)/p/0/i/php4aji0p.jpg",
+                "w:1024": "https://medias.france.tv/kMAEvT6MSl1JdEXcce0OEeb0gpw/1024x1365/filters:quality(85)/p/0/i/php4aji0p.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/mwwEmM3VqmCGC42Kn_C13_llJVY/1600x1200/filters:quality(85)/i/r/p/phpeyopri.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "integral_counter": 44,
+          "ads_blocked": false,
+          "broadcast_box": null,
+          "recommendation": true,
+          "partner": null,
+          "sponsored": false,
+          "channel": "france-2",
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "category": null,
+              "sub_category": null
+            }
+          },
+          "age_min": null,
+          "age_max": null,
+          "saison": null,
+          "call_to_action": null,
+          "call_to_action_url": null,
+          "synopsis": "Drag Race France est de retour avec une quatrième saison… et cette fois encore, ça va faire des étincelles ! Nouvelle ère, nouvelles queens, nouvelles règles, nouvel atelier ! Rendez-vous le 8 juillet.",
+          "label_edito": null,
+          "downloadable": false,
+          "casting": null,
+          "characters": null,
+          "director": null,
+          "scenarists": null,
+          "palmares": null,
+          "production_countries": null,
+          "number_of_episodes": null,
+          "number_of_seasons": 3,
+          "categories": [
+            {
+              "id": 45,
+              "type": "categorie",
+              "label": "Divertissement",
+              "url_complete": "jeux-et-divertissements",
+              "images": [],
+              "marker": {
+                "level_2": null,
+                "page": null,
+                "indicators": null,
+                "custom_variables": null
+              },
+              "marker_piano": {
+                "contextual_properties": null,
+                "additional_properties": null
+              },
+              "call_to_action": null,
+              "call_to_action_url": null,
+              "synopsis": null,
+              "headline_title": null,
+              "label_edito": null,
+              "parent": null
+            }
+          ],
+          "sub_categories": [
+            {
+              "id": 50016,
+              "type": "sous_categorie",
+              "label": "Émissions de divertissement",
+              "url_complete": "jeux-et-divertissements/emissions-de-divertissement"
+            }
+          ],
+          "category": {
+            "label": "Divertissement",
+            "url_complete": "jeux-et-divertissements",
+            "id": 45,
+            "type": "categorie"
+          },
+          "podcast_url": null,
+          "offer": "francetv",
+          "sort_seasons": null,
+          "sort_episodes": null
+        },
+        {
+          "id": 97692,
+          "label": "Qui ment ?",
+          "description": "Dans \"Qui ment ?\", le mensonge n'est pas un vilain défaut mais un jeu. Quiz, bluff, humour et enquête sont au centre de ce jeu où la culture générale ne suffit pas : il faut aussi savoir observer, écouter et faire confiance à son instinct. Les candidats doivent identifier les personnalités qui disent vrai et démasquer celles qui inventent leurs réponses pour mieux les piéger. Dans ce jeu de stratégie et de manipulation bienveillante, chaque réponse peut être un indice, chaque hésitation un signal et où le plus convaincant des menteurs peut être celui que personne ne soupçonne. Deux binômes de candidats s'affrontent dans un quiz où chaque réponse est suspecte.",
+          "type": "program",
+          "program_path": "france-2_qui-ment",
+          "link": {
+            "url": "/apps/program/meta/france-2_qui-ment?platform=apps",
+            "type": "tab"
+          },
+          "color": null,
+          "sound": null,
+          "headline_title": "Mentir n’est pas un vilain défaut ! C’est un jeu !",
+          "images": [
+            {
+              "urls": {
+                "w:800": "https://medias.france.tv/3B0GI0SwoInJ1Kg55N1vbHe5R7Y/800x450/filters:quality(85)/r/0/f/phpiohf0r.jpg",
+                "w:1024": "https://medias.france.tv/D98hk6y67KKAxucKFjQrCdWV_R4/1024x576/filters:quality(85)/r/0/f/phpiohf0r.jpg",
+                "w:2500": "https://medias.france.tv/BfKgvWpavTz5A3Xc5iBoSJlwS4Q/2500x1406/filters:quality(85)/r/0/f/phpiohf0r.jpg"
+              },
+              "type": "background_16x9"
+            },
+            {
+              "urls": {
+                "w:265": "https://medias.france.tv/gaYPnj2P1XLBi589_jkBCXF1kVU/265x265/filters:quality(85)/0/b/o/php3enob0.jpg",
+                "w:300": "https://medias.france.tv/5M2jqgcgjzFK03nWtGZQDub8kL4/300x300/filters:quality(85)/0/b/o/php3enob0.jpg",
+                "w:400": "https://medias.france.tv/4Ii2C4-M6zml6LA_ZpNwYcM5Y54/400x400/filters:quality(85)/0/b/o/php3enob0.jpg",
+                "w:800": "https://medias.france.tv/A7A14aMG87I8wOk-9Mj3f5Ff7dY/800x800/filters:quality(85)/0/b/o/php3enob0.jpg",
+                "w:1024": "https://medias.france.tv/lxRHxThiDS0n4STC0NFhi8qeTd4/1024x1024/filters:quality(85)/0/b/o/php3enob0.jpg"
+              },
+              "type": "carre"
+            },
+            {
+              "urls": {
+                "w:0": "https://medias.france.tv/176fOKVuDoZR-rrazp22mAZzOCY/0x0/filters:quality(85)/0/9/w/phpzmtw90.png",
+                "w:25": "https://medias.france.tv/1P_RrAnQ0KglHMlE5-DuotDBUDA/25x0/filters:quality(85)/0/9/w/phpzmtw90.png",
+                "w:150": "https://medias.france.tv/_8b5hJyqx97EgnU_9nERZYkva14/150x0/filters:quality(85)/0/9/w/phpzmtw90.png",
+                "w:300": "https://medias.france.tv/cAcSH06mm_d70Hw-Z82pzV85hwM/300x0/filters:quality(85)/0/9/w/phpzmtw90.png",
+                "w:450": "https://medias.france.tv/6vNs7nLAPz4n8-Ap4e_tjw8bs7c/450x0/filters:quality(85)/0/9/w/phpzmtw90.png",
+                "w:1024": "https://medias.france.tv/Vc9yrITiH9pXCUmSm2mfyEm-J04/1024x0/filters:quality(85)/0/9/w/phpzmtw90.png"
+              },
+              "type": "logo"
+            },
+            {
+              "urls": {
+                "w:1280": "https://medias.france.tv/3hK6wncxEp-IvcfuZxvWOAvR8jE/1920x1080/filters:quality(85)/p/e/m/php36vmep.jpg"
+              },
+              "type": "lt_16x9"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/LbLM0IEoNTeFz2g34MYfPJkmxAE/400x0/filters:quality(85)/r/4/t/php0pjt4r.jpg",
+                "w:800": "https://medias.france.tv/OW7ufXMq4Vg-YtMOWprKNB9c8o8/800x450/filters:quality(85)/r/4/t/php0pjt4r.jpg",
+                "w:1024": "https://medias.france.tv/RqEAXoTXVYIqX5yle3MPZY4e4N4/1024x576/filters:quality(85)/r/4/t/php0pjt4r.jpg",
+                "w:2500": "https://medias.france.tv/Co7N7UNb_vzaHp3u3R6jHZt2jk4/2500x1406/filters:quality(85)/r/4/t/php0pjt4r.jpg"
+              },
+              "type": "vignette_16x9"
+            },
+            {
+              "urls": {
+                "w:2000": "https://medias.france.tv/rPqzhXaz25LO51iJhcp2wkQMtJI/2000x0/filters:quality(85)/f/j/d/php5lvdjf.jpg"
+              },
+              "type": "vignette_2x3"
+            },
+            {
+              "urls": {
+                "w:400": "https://medias.france.tv/CoCrTO9n2zVQsnJ4rJQpNxVosJA/400x533/filters:quality(85)/5/e/h/phpldhhe5.jpg",
+                "w:800": "https://medias.france.tv/kC9IQdXbpNaUZmLK-mTWshTf8qQ/800x1066/filters:quality(85)/5/e/h/phpldhhe5.jpg",
+                "w:1024": "https://medias.france.tv/NLd8BuGTNxTZyAoj_DKB8rhQRcg/1024x1365/filters:quality(85)/5/e/h/phpldhhe5.jpg"
+              },
+              "type": "vignette_3x4"
+            },
+            {
+              "urls": {
+                "w:1600": "https://medias.france.tv/wxAqj4tRsX29_lVl9FjeQsgy-rc/1600x1200/filters:quality(85)/y/f/j/php71yjfy.jpg"
+              },
+              "type": "vignette_4x3"
+            }
+          ],
+          "integral_counter": 2,
+          "ads_blocked": false,
+          "broadcast_box": null,
+          "recommendation": true,
+          "partner": null,
+          "sponsored": false,
+          "channel": "france-2",
+          "marker": {
+            "level_2": null,
+            "page": null,
+            "indicators": null,
+            "custom_variables": null
+          },
+          "marker_piano": {
+            "contextual_properties": null,
+            "additional_properties": {
+              "category": null,
+              "sub_category": null
+            }
+          },
+          "age_min": null,
+          "age_max": null,
+          "saison": null,
+          "call_to_action": null,
+          "call_to_action_url": null,
+          "synopsis": "Le nouveau jeu événement où démêler le vrai du faux n’a jamais été aussi difficile !",
+          "label_edito": null,
+          "downloadable": false,
+          "casting": "",
+          "characters": "",
+          "director": "",
+          "scenarists": "",
+          "palmares": "",
+          "production_countries": null,
+          "number_of_episodes": null,
+          "number_of_seasons": null,
+          "categories": [
+            {
+              "id": 45,
+              "type": "categorie",
+              "label": "Divertissement",
+              "url_complete": "jeux-et-divertissements",
+              "images": [],
+              "marker": {
+                "level_2": null,
+                "page": null,
+                "indicators": null,
+                "custom_variables": null
+              },
+              "marker_piano": {
+                "contextual_properties": null,
+                "additional_properties": null
+              },
+              "call_to_action": null,
+              "call_to_action_url": null,
+              "synopsis": null,
+              "headline_title": null,
+              "label_edito": null,
+              "parent": null
+            }
+          ],
+          "sub_categories": [
+            {
+              "id": 48,
+              "type": "sous_categorie",
+              "label": "Jeux",
+              "url_complete": "jeux-et-divertissements/jeux"
+            }
+          ],
+          "category": {
+            "label": "Divertissement",
+            "url_complete": "jeux-et-divertissements",
+            "id": 45,
+            "type": "categorie"
+          },
+          "podcast_url": null,
+          "offer": "francetv",
+          "sort_seasons": null,
+          "sort_episodes": null
+        }
+      ],
+      "sponsored": false
+    }
+  ]
+}
