@@ -35,7 +35,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -116,9 +116,10 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 24.dp)
-            // The focused TextField swallows D-pad events; unhandled DOWN
-            // bubbles here — move to the first result card (TV remote flow).
-            .onKeyEvent { event ->
+            // Capture phase: the focused TextField consumes D-pad events
+            // before bubbling, so DOWN is intercepted here to move focus to
+            // the first result card (TV remote flow).
+            .onPreviewKeyEvent { event ->
                 event.type == KeyEventType.KeyDown &&
                     event.key == Key.DirectionDown &&
                     results.isNotEmpty() &&

@@ -137,12 +137,21 @@ Ne jamais attendre une piste texte du manifest France TV.
 Room : `shows`, `seasons`, `episodes`, `genre_map` + `progress`, `favorites`. TTL 12 h, refresh au
 démarrage en arrière-plan, priorité Home. Provider KO au refresh → servir le cache + bannière
 « Données du [date] ». La résolution du Flux reste toujours live (URLs signées, courte durée).
-
 ## Player
 
 Media3/ExoPlayer, DASH et HLS auto-détectés. **Sous-titres FR activés par défaut** quand la piste
 existe (choix produit, PRD §utilisateurs), toggle en un appui. Erreur de résolution → 1 retry →
-écran d'erreur avec bouton Réessayer. Reprendre : position sauvegardée à 5 s d'intervalle + à la pause.
+écran d'erreur avec bouton Réessayer. Reprendre : position sauvegardée à 5 s d'intervalle + à la
+pause.
+
+Sous-titres (mesuré, lot 5/6 M1) : France TV → WebVTT side-loadé (`Stream.subtitleUrl`,
+`SELECTION_FLAG_DEFAULT`, le manifest retire lui-même ses pistes texte, cf. §Provider France TV) ;
+TF1 → pistes dans le manifest MPD (mesuré M0, flag default non vérifié contenu par contenu).
+Garantie « activé par défaut » : à `onTracksChanged`, si une piste texte existe et n'est pas
+sélectionnée → override Media3 sur la première piste texte. Toggle un appui : chip « Sous-titres »
+sur le player (visible seulement si une piste texte existe — pas de chip = pas de promesse),
+`setTrackTypeDisabled(TRACK_TYPE_TEXT, …)` + ré-sélection. Pas de piste pour un contenu → pas de
+chip, pas d'échec.
 
 ## Recherche
 
