@@ -1,0 +1,11 @@
+{
+  "callId": "01a1abccaee5705999cd3fce3ee0684a",
+  "errorCode": 400006,
+  "errorDetails": "Your request is blocked because of security issues.",
+  "errorMessage": "Invalid parameter value",
+  "apiVersion": 2,
+  "statusCode": 400,
+  "statusReason": "Bad Request",
+  "time": "2026-11-05T13:01:20.496Z",
+  "errorFlags": "missingKey"
+}

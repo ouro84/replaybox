@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Replaybox</string>
+    <string name="home_title">Replaybox</string>
+    <string name="row_tf1">TF1+</string>
+    <string name="loading">Chargement…</string>
+    <string name="seasons_title">Saisons</string>
+    <string name="episodes_title">Épisodes</string>
+    <string name="misc_season">Divers</string>
+    <string name="player_error_title">Flux indisponible</string>
+    <string name="player_error_generic">Impossible de résoudre le Flux pour cet Épisode.</string>
+    <string name="player_error_tf1_account">TF1 exige désormais un compte connecté pour ce Programme. Ouvre « Compte TF1+ » en haut de l\u0027écran d\u0027accueil pour te connecter.</string>
+    <string name="player_error_tf1_content">Ce contenu reste indisponible avec ce compte (droits TF1 ou zone).</string>
+    <string name="player_error_geoblocked">Ce contenu est bloqué dans votre zone.</string>
+    <string name="retry">Réessayer</string>
+    <string name="back">Retour</string>
+    <string name="empty_shows">Aucun Programme disponible pour l\u0027instant.</string>
+    <string name="empty_episodes">Aucun Épisode disponible.</string>
+    <string name="account_button">Compte TF1+</string>
+    <string name="account_connected">Connecté</string>
+    <string name="login_title">Connexion TF1+</string>
+    <string name="login_hint">Le compte se stocke chiffré sur le boîtier, jamais ailleurs.</string>
+    <string name="login_email">Adresse e-mail</string>
+    <string name="login_password">Mot de passe</string>
+    <string name="login_submit">Se connecter</string>
+    <string name="login_signout">Se déconnecter</string>
+</resources>
