@@ -15,6 +15,18 @@ class Tf1AuthParserTest {
     }
 
     @Test
+    fun `documents the gigya cookie requirement on login`() {
+        // Measured 2026-11-05: accounts.login without the webSdkBootstrap cookies
+        // (gmid/ucid) is blocked with 400006 "Invalid parameter value"; with them
+        // the same shape fails on credentials only (403042) — hence the CookieJar.
+        val blocked = TestFixtures.load("tf1_login_missing_cookies.json")
+        assertThat(Tf1Json.int(blocked, "errorCode")).isEqualTo(400006)
+        val badCredentials = TestFixtures.load("tf1_login_invalid_credentials.json")
+        assertThat(Tf1Json.int(badCredentials, "errorCode")).isEqualTo(403042)
+        assertThat(Tf1Json.str(badCredentials, "errorDetails")).isEqualTo("invalid loginID or password")
+    }
+
+    @Test
     fun `extracts gigya identity from login payload`() {
         // Contract shape of compte.tf1.fr accounts.login ( userInfo block );
         // cannot be captured as a fixture without credentials.

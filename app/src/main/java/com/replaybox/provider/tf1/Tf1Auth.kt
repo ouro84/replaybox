@@ -8,7 +8,10 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
+import okhttp3.Cookie
+import okhttp3.CookieJar
 import okhttp3.FormBody
+import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -150,6 +153,10 @@ class Tf1Auth(
         fun defaultClient(): OkHttpClient = OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
+            // Gigya blocks accounts.login with 400006 "Invalid parameter value"
+            // unless the gmid/ucid cookies from webSdkBootstrap travel with it
+            // (measured 2026-11-05, fixture tf1_login_missing_cookies.json).
+            .cookieJar(MemoryCookieJar())
             .build()
 
         /** exp claim of the JWT payload, in epoch ms; null when unparsable. */
@@ -161,6 +168,20 @@ class Tf1Auth(
                 ?.let { (it * 1000).toLong() }
         }.getOrNull()
     }
+}
+
+/** In-memory cookie jar so the bootstrap cookies reach accounts.login. */
+private class MemoryCookieJar : CookieJar {
+    private val cookies = LinkedHashMap<String, Cookie>()
+
+    @Synchronized
+    override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
+        cookies.forEach { this.cookies[it.domain + "/" + it.name] = it }
+    }
+
+    @Synchronized
+    override fun loadForRequest(url: HttpUrl): List<Cookie> =
+        cookies.values.filter { it.matches(url) }
 }
 
 class Tf1AuthException(message: String) : Exception(message)
