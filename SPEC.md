@@ -34,28 +34,53 @@ interface Provider {
 ## Provider TF1+
 
 Listing — graphql web à persisted IDs (GET, headers : `referer: https://www.tf1.fr/programmes-tv`
-+ UA navigateur) :
-- `id=909c68c0` variables `{}` → catégories racine
++ UA navigateur). Mesuré le 2026-11-05 : les préfixes courts d'ID sont acceptés ; le client web
+envoie aussi la forme complète `id=sha256:<hex>` :
+- `id=909c68c0` variables `{}` → catégories racine (GT_SERIES_AND_FICTIONS, GT_MOVIES,
+  GT_ENTERTAINMENT, GT_INFOS_MAG_AND_SPORT, GT_YOUTH ; `event: null` avec erreur
+  « category MAIN_EVENT not found » est une réponse normale)
+- `id=483ce0f` variables `{"context":{"persona":"PERSONA_2","application":"WEB","device":"DESKTOP",
+  "os":"WINDOWS"},"filter":{"channel":"tf1"},"offset":N,"limit":N}` → `programs.items[]` (listing
+  catalogue, découvert/mesuré 2026-11-05)
 - `id=e78b188` variables `{"query":…}` → searchPrograms
 - `id=b2dc9439` variables `{"query":…}` → searchVideos
-- vidéos d'un programme : `programBySlug` avec variables `{"programSlug":…,"offset":N,
-  "types":["REPLAY"],"sort":{"type":"DATE","order":"DESC"}}`
+- vidéos d'un programme : `id=a6f9cf0e` (mesuré 2026-11-05) variables `{"programSlug":…,"offset":N,
+  "limit":20,"types":["REPLAY"],"sort":{"type":"DATE","order":"DESC"}}` → `programBySlug.videos`
+  {items, total} (pagination par 20)
+- détail d'une vidéo + id média interne : hash yt-dlp
+  `9b80783950b85247541dd1d851f9cc7fa36574af015621f853ab111a679ce26f` variables
+  `{"programSlug":…,"slug":…}` → `videoBySlug.streamId` (id numérique wat)
 
 Ne garder que `type: REPLAY` (les `EXTRACT`/`BONUS` sont hors périmètre). La taxonomie
 `GT_*`/`SGT_*` de `program.categories[]` mappe vers les Genres canoniques (table en code ;
 pas de policier/thriller natif TF1 → retombe sur Séries/Action).
 
-Flux — résoudre l'id média interne puis suivre la chaîne de l'**extracteur `wat` de yt-dlp**
-(api.wat.tv delivery, source de vérité : `yt_dlp/extractor/wat.py`). Sortie : manifest DASH sans DRM
-+ piste sous-titres VTT. Porter fidèlement, ne pas réinventer.
+Flux — résoudre l'id média interne (`videoBySlug.streamId`) puis suivre la chaîne de
+l'**extracteur `wat` de yt-dlp** : `GET https://mediainfo.tf1.fr/mediainfocombo/<streamId>?pver=5010000`
+(source de vérité : `yt_dlp/extractor/wat.py`, master @ bc6ff877dd). Sortie : manifest DASH sans
+DRM (host `vod-das.cdn-*.diff.tf1.fr` ou `das-q1(-ssl).tf1.fr`, MPD statique à 1 Period, zéro
+marqueur pub) + sous-titres dans le manifest. Porter fidèlement, ne pas réinventer.
+
+**⚠️ Dérive mesurée le 2026-11-05** : TF1 exige un compte connecté (token Gigya) pour le replay
+depuis ~janvier 2026 — en anonyme, `mediainfocombo` répond `delivery.code=403` avec
+`media.error_code=DELIVERY_ERROR` (« Contenu non disponible sur le site », cf. yt-dlp #15647) ou
+`PERMISSION_DENIED` (« Permission insuffisante ») selon les paramètres. Le player web affiche
+« il vous suffit de vous connecter ». Seule une partie du catalogue reste jouable anonymement
+(vérifié : « Les 12 coups de midi », flux DASH nodrm 200). Conséquence produit : V1 « sans
+compte » ne couvre que ce sous-ensemble TF1 tant qu'Arnaud ne tranche pas (compte TF1+ gratuit +
+Widevine L3 en M1 ?). Les erreurs se mappent : `GEOBLOCKED` → zone, `PERMISSION_DENIED` /
+`DELIVERY_ERROR` 403-500 → compte requis, autre → indisponible.
 
 ## Provider France TV
 
 Listing — `GET https://api-mobile.yatta.francetv.fr/apps/channels/<slug>?platform=apps`
 (france-2, france-3, france-4, france-5, franceinfo) → collections `playlist_program`/
-`playlist_mixed` → `items[].item` (title, si_id). Détail programme :
-`/apps/program/meta/<path>?platform=apps` (category + sub_categories → Genres canoniques ; mapping
-natif riche : séries-policieres, thriller, comédie, drame, doc histoire…).
+`playlist_mixed` → `items[]` **plats** (label, description, `program_path`, images) — pas de
+`items[].item` (corrigé après mesure 2026-11-05). Détail programme :
+`GET /apps/program/<program_path>?platform=apps` → collections étiquetées « Saison N »
+(type `playlist_video`) → `items[]` plats avec `si_id`, `season`, `episode`, `duration`,
+`type: integrale` ; `/apps/program/meta/<path>` donne `category` + `sub_categories` (→ Genres
+canoniques ; mapping natif riche : séries-policieres, thriller, comédie, drame, doc histoire…).
 
 Flux — `GET https://k7.ftven.fr/videos/<si_id>?country_code=FR&capabilities=drm&os=androidtv&offline=false`
 → `video.url` → signer via `GET https://hdfauth.ftven.fr/esi/TA?format=json&url=<url>` → URL signée
