@@ -148,6 +148,16 @@ private fun PlayerSurface(manifestUrl: String, type: StreamType, licenseUrl: Str
             player.release()
         }
     }
+    // Home on the remote backgrounds the activity without leaving the composition:
+    // pause on lifecycle pause so no audio leaks behind the launcher.
+    val lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+    DisposableEffect(player, lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_PAUSE) player.pause()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
     AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = { viewContext ->
