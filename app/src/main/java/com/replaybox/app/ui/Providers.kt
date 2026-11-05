@@ -1,5 +1,6 @@
 package com.replaybox.app.ui
 
+import com.replaybox.app.ReplayboxApplication
 import com.replaybox.provider.api.Provider
 import com.replaybox.provider.tf1.Tf1Provider
 
@@ -9,6 +10,6 @@ import com.replaybox.provider.tf1.Tf1Provider
  */
 object Providers {
     val all: List<Provider> = listOf(
-        Tf1Provider(),
+        Tf1Provider(tokenProvider = { forceRefresh -> ReplayboxApplication.tf1Auth.token(forceRefresh) }),
     )
 }

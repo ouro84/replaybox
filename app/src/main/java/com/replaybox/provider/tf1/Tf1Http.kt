@@ -28,12 +28,13 @@ open class Tf1Http(private val client: OkHttpClient = defaultClient()) {
         referer = REFERER,
     )
 
-    suspend fun mediainfo(mediaId: String): JsonObject =
-        get("$MEDIAINFO/${WatDelivery.normalizeMediaId(mediaId)}?pver=5010000", referer = null)
+    suspend fun mediainfo(mediaId: String, token: String? = null): JsonObject =
+        get("$MEDIAINFO/${WatDelivery.normalizeMediaId(mediaId)}?pver=5010000", referer = null, token = token)
 
-    private suspend fun get(url: String, referer: String?): JsonObject = withContext(Dispatchers.IO) {
+    private suspend fun get(url: String, referer: String?, token: String? = null): JsonObject = withContext(Dispatchers.IO) {
         val builder = Request.Builder().url(url).header("User-Agent", BROWSER_UA)
         referer?.let { builder.header("Referer", it) }
+        token?.let { builder.header("Authorization", "Bearer $it") }
         client.newCall(builder.build()).execute().use { response ->
             val body = response.body?.string()
             if (!response.isSuccessful || body == null) {

@@ -15,13 +15,14 @@ import kotlinx.coroutines.sync.withLock
 
 /**
  * TF1+ provider. Catalogue over graphql persisted queries; Flux resolution follows
- * the wat.tv chain of yt-dlp (mediainfocombo, anonymous, no DRM).
- *
- * Measured 2026-11-05: TF1 requires a signed-in account for most replay fiction;
- * only a subset (e.g. "Les 12 coups de midi") still delivers anonymously.
- * Account-gated content surfaces as StreamResolutionException(accountOrDrmRequired).
+ * the wat.tv chain of yt-dlp (mediainfocombo, anonymous, no DRM). When a TF1
+ * account is configured (tokenProvider), the Flux carries a Bearer token and
+ * DRM-protected fictions resolve with their Widevine license.
  */
-class Tf1Provider(private val http: Tf1Http = Tf1Http()) : Provider {
+class Tf1Provider(
+    private val http: Tf1Http = Tf1Http(),
+    private val tokenProvider: (suspend (forceRefresh: Boolean) -> String?)? = null,
+) : Provider {
 
     override val channel: Channel = Channel("tf1", "TF1+")
 
@@ -73,7 +74,26 @@ class Tf1Provider(private val http: Tf1Http = Tf1Http()) : Provider {
             ?: throw StreamResolutionException(
                 Tf1Parsers.Delivery.Failure(null, null, "No internal media id", false, false),
             )
-        return Tf1Parsers.streamFrom(Tf1Parsers.delivery(http.mediainfo(mediaId)))
+
+        var lastFailure: Tf1Parsers.Delivery.Failure? = null
+        for (attempt in 0 until 2) {
+            val token = tokenProvider?.invoke(attempt > 0)
+            try {
+                val delivery = Tf1Parsers.delivery(http.mediainfo(mediaId, token))
+                when (delivery) {
+                    is Tf1Parsers.Delivery.Ok -> return Tf1Parsers.streamFrom(delivery)
+                    is Tf1Parsers.Delivery.Failure -> {
+                        lastFailure = delivery
+                        if (tokenProvider == null) throw StreamResolutionException(delivery)
+                    }
+                }
+            } catch (error: Tf1HttpException) {
+                if (tokenProvider == null || attempt > 0) throw error
+            }
+        }
+        throw StreamResolutionException(
+            lastFailure ?: Tf1Parsers.Delivery.Failure(null, null, "TF1 delivery failed", false, false),
+        )
     }
 
     private suspend fun loadReplayVideos(show: ShowId): List<Tf1Parsers.ReplayVideo> {

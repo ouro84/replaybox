@@ -13,6 +13,7 @@ sealed interface Screen {
     object Home : Screen
     data class ShowDetail(val showId: ShowId, val title: String) : Screen
     data class Player(val episodeId: EpisodeId, val title: String) : Screen
+    object Login : Screen
 }
 
 class MainActivity : ComponentActivity() {
@@ -26,6 +27,7 @@ class MainActivity : ComponentActivity() {
                 when (val current = backStack.last()) {
                     is Screen.Home -> HomeScreen(
                         onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
+                        onOpenLogin = { backStack.add(Screen.Login) },
                     )
                     is Screen.ShowDetail -> ShowScreen(
                         showId = current.showId,
@@ -36,6 +38,7 @@ class MainActivity : ComponentActivity() {
                         episodeId = current.episodeId,
                         title = current.title,
                     )
+                    Screen.Login -> LoginScreen(onDone = { backStack.removeAt(backStack.lastIndex) })
                 }
             }
         }

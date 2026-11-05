@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,28 +37,51 @@ import androidx.tv.foundation.lazy.list.TvLazyRow
 import androidx.tv.foundation.lazy.list.items
 import coil.compose.AsyncImage
 import com.replaybox.R
+import com.replaybox.app.ReplayboxApplication
 import com.replaybox.core.model.Genre
 import com.replaybox.core.model.Show
 import com.replaybox.core.model.ShowId
 import com.replaybox.provider.api.Provider
 
 @Composable
-fun HomeScreen(onOpenShow: (ShowId, String) -> Unit) {
+fun HomeScreen(onOpenShow: (ShowId, String) -> Unit, onOpenLogin: () -> Unit) {
     TvLazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         item {
-            Text(
-                text = stringResource(R.string.home_title),
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.padding(horizontal = 32.dp),
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(R.string.home_title),
+                    style = MaterialTheme.typography.headlineLarge,
+                )
+                AccountButton(onOpenLogin = onOpenLogin)
+            }
         }
         items(Providers.all) { provider ->
             ProviderRow(provider = provider, onOpenShow = onOpenShow)
         }
+    }
+}
+
+@Composable
+private fun AccountButton(onOpenLogin: () -> Unit) {
+    val connected = remember { ReplayboxApplication.tf1Auth.hasCredentials() }
+    Button(onClick = onOpenLogin) {
+        Text(
+            text = if (connected) {
+                stringResource(R.string.account_connected)
+            } else {
+                stringResource(R.string.account_button)
+            },
+        )
     }
 }
 

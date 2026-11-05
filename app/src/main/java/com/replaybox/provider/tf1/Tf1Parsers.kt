@@ -163,7 +163,12 @@ object Tf1Parsers {
     // ---- mediainfo delivery (faithful port of yt-dlp yt_dlp/extractor/wat.py) ----
 
     sealed interface Delivery {
-        data class Ok(val manifestUrl: String, val type: StreamType) : Delivery
+        data class Ok(
+            val manifestUrl: String,
+            val type: StreamType,
+            val licenseUrl: String? = null,
+            val licenseHeaders: Map<String, String> = emptyMap(),
+        ) : Delivery
         data class Failure(
             val httpDeliveryCode: Int?,
             val errorCode: String?,
@@ -191,13 +196,56 @@ object Tf1Parsers {
             Tf1Json.int(delivery, "code"), null, null, false, false,
         )
         val format = (Tf1Json.str(delivery, "format") ?: "").lowercase()
-        if (format == "hls") return Delivery.Ok(url, StreamType.HLS)
-        // yt-dlp: dash and mpd are both DASH; das-q1 is rewritten to its ssl host.
-        return Delivery.Ok(url.replace("://das-q1.tf1.fr/", "://das-q1-ssl.tf1.fr/"), StreamType.DASH)
+        val type = if (format == "hls") StreamType.HLS else StreamType.DASH
+        val manifest = if (type == StreamType.DASH) {
+            // yt-dlp: dash and mpd are both DASH; das-q1 is rewritten to its ssl host.
+            url.replace("://das-q1.tf1.fr/", "://das-q1-ssl.tf1.fr/")
+        } else {
+            url
+        }
+        val license = licenseFrom(delivery)
+        return Delivery.Ok(manifest, type, license?.first, license?.second ?: emptyMap())
+    }
+
+    /**
+     * Widevine license attached by TF1 when the content is DRM-protected
+     * (delivery.drms[0]: {name: "widevine", url, h: [{k, v}]} — contract of the
+     * authenticated mediainfo response, cf. cloudstream TF1PlaybackPayload).
+     */
+    fun licenseFrom(delivery: JsonObject?): Pair<String, Map<String, String>>? {
+        val drms = Tf1Json.objects(Tf1Json.array(delivery, "drms"))
+        val widevine = drms.firstOrNull {
+            (Tf1Json.str(it, "name") ?: "").equals("widevine", ignoreCase = true)
+        } ?: return null
+        val licenseUrl = Tf1Json.str(widevine, "url") ?: return null
+        val headers = Tf1Json.objects(Tf1Json.array(widevine, "h"))
+            .mapNotNull { header ->
+                val key = Tf1Json.str(header, "k") ?: Tf1Json.str(header, "key") ?: return@mapNotNull null
+                val value = Tf1Json.str(header, "v") ?: Tf1Json.str(header, "value") ?: return@mapNotNull null
+                key to value
+            }
+            .toMap()
+        return licenseUrl to headers
+    }
+
+    // ---- Gigya login payloads (compte.tf1.fr) ----
+
+    data class GigyaIdentity(val uid: String, val signature: String, val timestamp: Long)
+
+    fun gigyaIdentity(login: JsonObject): GigyaIdentity {
+        if (Tf1Json.int(login, "errorCode") != 0) {
+            throw Tf1AuthException("TF1 sign-in rejected: " + (Tf1Json.str(login, "errorMessage") ?: "invalid credentials"))
+        }
+        val user = Tf1Json.obj(login, "userInfo") ?: login
+        val uid = Tf1Json.str(user, "UID") ?: throw Tf1AuthException("Missing TF1 user id")
+        val signature = Tf1Json.str(user, "UIDSignature") ?: throw Tf1AuthException("Missing TF1 signature")
+        val timestamp = (Tf1Json.str(user, "signatureTimestamp") ?: "").toDoubleOrNull()?.toLong()
+            ?: throw Tf1AuthException("Missing TF1 signature timestamp")
+        return GigyaIdentity(uid, signature, timestamp)
     }
 
     fun streamFrom(delivery: Delivery): Stream = when (delivery) {
-        is Delivery.Ok -> Stream(delivery.manifestUrl, delivery.type)
+        is Delivery.Ok -> Stream(delivery.manifestUrl, delivery.type, delivery.licenseUrl, delivery.licenseHeaders)
         is Delivery.Failure -> throw StreamResolutionException(delivery)
     }
 }
