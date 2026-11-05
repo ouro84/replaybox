@@ -84,10 +84,17 @@ class Tf1Provider(
                     is Tf1Parsers.Delivery.Ok -> return Tf1Parsers.streamFrom(delivery)
                     is Tf1Parsers.Delivery.Failure -> {
                         lastFailure = delivery
+                        android.util.Log.w(
+                            TAG,
+                            "delivery refused mediaId=$mediaId attempt=$attempt code=${delivery.httpDeliveryCode}" +
+                                " error=${delivery.errorCode} desc=${delivery.description} geo=${delivery.geoBlocked}" +
+                                " accountOrDrm=${delivery.accountOrDrm} withToken=${token != null}",
+                        )
                         if (tokenProvider == null) throw StreamResolutionException(delivery)
                     }
                 }
             } catch (error: Tf1HttpException) {
+                android.util.Log.w(TAG, "mediainfo HTTP ${error.message}")
                 if (tokenProvider == null || attempt > 0) throw error
             }
         }
@@ -121,5 +128,6 @@ class Tf1Provider(
 
     private companion object {
         const val MAX_VIDEOS = 1000
+        const val TAG = "Tf1Provider"
     }
 }

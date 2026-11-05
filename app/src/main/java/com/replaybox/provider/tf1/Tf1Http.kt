@@ -29,7 +29,19 @@ open class Tf1Http(private val client: OkHttpClient = defaultClient()) {
     )
 
     suspend fun mediainfo(mediaId: String, token: String? = null): JsonObject =
-        get("$MEDIAINFO/${WatDelivery.normalizeMediaId(mediaId)}?pver=5010000", referer = null, token = token)
+        get(mediainfoUrl(mediaId), referer = REFERER, token = token)
+
+    /**
+     * mediainfocombo with the full web-player parameter set (same contract as
+     * cloudstream TF1Playback / the tf1.fr player). With only pver, the
+     * authenticated delivery answers "Erreur de syndication"; with the app
+     * context it returns the manifest (or the real rights error).
+     */
+    fun mediainfoUrl(mediaId: String): String =
+        "$MEDIAINFO/${WatDelivery.normalizeMediaId(mediaId)}" +
+            "?context=MYTF1&pver=5010000&platform=web&device=desktop&os=linux&osVersion=unknown" +
+            "&topDomain=${encode("https://www.tf1.fr")}&playerVersion=5.19.0" +
+            "&productName=mytf1&productVersion=3.22.0"
 
     private suspend fun get(url: String, referer: String?, token: String? = null): JsonObject = withContext(Dispatchers.IO) {
         val builder = Request.Builder().url(url).header("User-Agent", BROWSER_UA)

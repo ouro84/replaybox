@@ -66,10 +66,28 @@ depuis ~janvier 2026 — en anonyme, `mediainfocombo` répond `delivery.code=403
 `media.error_code=DELIVERY_ERROR` (« Contenu non disponible sur le site », cf. yt-dlp #15647) ou
 `PERMISSION_DENIED` (« Permission insuffisante ») selon les paramètres. Le player web affiche
 « il vous suffit de vous connecter ». Seule une partie du catalogue reste jouable anonymement
-(vérifié : « Les 12 coups de midi », flux DASH nodrm 200). Conséquence produit : V1 « sans
-compte » ne couvre que ce sous-ensemble TF1 tant qu'Arnaud ne tranche pas (compte TF1+ gratuit +
-Widevine L3 en M1 ?). Les erreurs se mappent : `GEOBLOCKED` → zone, `PERMISSION_DENIED` /
-`DELIVERY_ERROR` 403-500 → compte requis, autre → indisponible.
+(vérifié : « Les 12 coups de midi », « Le 20h », flux DASH nodrm 200, MPD à 1 Period). Décision
+produit du 05/11 : sign-in TF1+ embarqué (M0.5). Les erreurs se mappent : `GEOBLOCKED` → zone,
+`PERMISSION_DENIED` / `DELIVERY_ERROR` 403-500 → compte requis, autre → indisponible.
+
+Chaîne authentifiée (mesurée, validée en lecture réelle le 05/11) :
+1. `GET https://compte.tf1.fr/accounts.webSdkBootstrap?apiKey=<gigya key du login web>&pageURL=…
+   &sdk=js_latest&sdkBuild=13987&format=json` — dépose les cookies `gmid`/`ucid`, **obligatoires** :
+   sans eux `accounts.login` répond `400006 Invalid parameter value` (fixtures
+   `tf1_login_missing_cookies.json` / `tf1_login_invalid_credentials.json`).
+2. `POST https://compte.tf1.fr/accounts.login` (form Gigya standard : loginID, password,
+   sessionExpiration, targetEnv=jssdk, include, APIKey, authMode=cookie…) → `userInfo`
+   {UID, UIDSignature, signatureTimestamp}.
+3. `POST https://www.tf1.fr/token/gigya/web` {UID, signature, timestamp, **consent_ids**} →
+   {token (JWT), ttl}. **Les `consent_ids` sont obligatoires** : liste vide = équivalent
+   « cookies refusés » sur le web et le Flux reste verrouillé malgré le compte. Les ids sont
+   ceux du registre Didomi du bundle web : `technique-HWZ9HRWz`, `publicite-cidJFbya`,
+   `personnali-yf2njgbr`, `mesureda-mn4zfWU6` (Replaybox envoie les 4, état « TOUT ACCEPTER »).
+4. `mediainfocombo` avec **le jeu complet de paramètres du player web**
+   (context=MYTF1, platform=web, device=desktop, os=linux, osVersion, topDomain, playerVersion,
+   productName=mytf1, productVersion) + `Authorization: Bearer <token>` → `delivery.code=200`,
+   manifest DASH + `delivery.drms[]` (widevine : license url + headers) quand le contenu est DRM.
+   Re-login silencieux à l'expiration du JWT (exp) ; sur 401/403, régénérer le token une fois.
 
 ## Provider France TV
 

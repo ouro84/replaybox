@@ -5,6 +5,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
@@ -99,7 +100,14 @@ class Tf1Auth(
                 put("UID", identity.uid)
                 put("signature", identity.signature)
                 put("timestamp", identity.timestamp)
-                putJsonArray("consent_ids") { }
+                putJsonArray("consent_ids") {
+                    // Didomi purpose ids from the tf1.fr web bundle CONSENTS registry.
+                    // Sending an empty list is the "all cookies refused" state: TF1
+                    // then gates the Flux (same symptom as declining on the web,
+                    // measured via Playwright + reported 2026-11-05). We mirror the
+                    // "TOUT ACCEPTER" state of the account the user signs in with.
+                    Companion.CONSENT_IDS.forEach { add(it) }
+                }
             },
         )
         val token = Tf1Json.str(exchange, "token")
@@ -149,6 +157,14 @@ class Tf1Auth(
         const val BOOTSTRAP = "https://compte.tf1.fr/accounts.webSdkBootstrap"
         const val LOGIN = "https://compte.tf1.fr/accounts.login"
         const val TOKEN_EXCHANGE = "https://www.tf1.fr/token/gigya/web"
+
+        /** Didomi purpose ids, "TOUT ACCEPTER" equivalent (tf1.fr web bundle, 2026-11-05). */
+        val CONSENT_IDS = listOf(
+            "technique-HWZ9HRWz",
+            "publicite-cidJFbya",
+            "personnali-yf2njgbr",
+            "mesureda-mn4zfWU6",
+        )
 
         fun defaultClient(): OkHttpClient = OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
