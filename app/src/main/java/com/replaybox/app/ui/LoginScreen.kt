@@ -3,7 +3,12 @@ package com.replaybox.app.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -44,68 +49,75 @@ fun LoginScreen(onDone: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 240.dp),
+            .verticalScroll(rememberScrollState())
+            .imePadding()
+            .padding(horizontal = 32.dp, vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(stringResource(R.string.login_title), style = MaterialTheme.typography.headlineSmall)
-        Text(
-            text = stringResource(R.string.login_hint),
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(vertical = 8.dp),
-        )
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text(stringResource(R.string.login_email)) },
-            singleLine = true,
+        Column(
             modifier = Modifier
-                .fillMaxSize()
-                .focusRequester(emailFocus),
-        )
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text(stringResource(R.string.login_password)) },
-            singleLine = true,
-            visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxSize(),
-        )
-        status?.let {
-            Text(
-                text = it,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(vertical = 8.dp),
-            )
-        }
-        Button(
-            onClick = {
-                busy = true
-                status = null
-                scope.launch {
-                    try {
-                        auth.signIn(email.trim(), password)
-                        onDone()
-                    } catch (error: Tf1AuthException) {
-                        status = error.message
-                    } catch (error: Exception) {
-                        status = error.message ?: "error"
-                    }
-                    busy = false
-                }
-            },
-            enabled = !busy && email.isNotBlank() && password.isNotBlank(),
-            modifier = Modifier.padding(vertical = 8.dp),
+                .widthIn(max = 480.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(stringResource(R.string.login_submit))
-        }
-        if (auth.hasCredentials()) {
-            TextButton(onClick = {
-                auth.signOut()
-                onDone()
-            }) {
-                Text(stringResource(R.string.login_signout))
+            Text(stringResource(R.string.login_title), style = MaterialTheme.typography.headlineSmall)
+            Text(
+                text = stringResource(R.string.login_hint),
+                style = MaterialTheme.typography.bodySmall,
+            )
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text(stringResource(R.string.login_email)) },
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(emailFocus),
+            )
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text(stringResource(R.string.login_password)) },
+                singleLine = true,
+                visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            status?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+            Button(
+                onClick = {
+                    busy = true
+                    status = null
+                    scope.launch {
+                        try {
+                            auth.signIn(email.trim(), password)
+                            onDone()
+                        } catch (error: Tf1AuthException) {
+                            status = error.message
+                        } catch (error: Exception) {
+                            status = error.message ?: "error"
+                        }
+                        busy = false
+                    }
+                },
+                enabled = !busy && email.isNotBlank() && password.isNotBlank(),
+            ) {
+                Text(stringResource(R.string.login_submit))
+            }
+            if (auth.hasCredentials()) {
+                TextButton(onClick = {
+                    auth.signOut()
+                    onDone()
+                }) {
+                    Text(stringResource(R.string.login_signout))
+                }
             }
         }
     }
