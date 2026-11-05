@@ -1,7 +1,9 @@
 ﻿package com.replaybox.core.data
 
 import com.replaybox.core.model.Episode
+import com.replaybox.core.model.EpisodeId
 import com.replaybox.core.model.Genre
+import com.replaybox.core.model.Progress
 import com.replaybox.core.model.Season
 import com.replaybox.core.model.Show
 import com.replaybox.core.model.ShowId
@@ -121,10 +123,62 @@ class CatalogStore(
         _updates.value = _updates.value + 1
     }
 
+    // ---- Progress (device-local, never synchronized — glossary) ----
+
+    suspend fun saveProgress(episodeId: EpisodeId, positionSeconds: Long, durationSeconds: Int?) {
+        if (positionSeconds <= 0) return
+        dao.putProgress(episodeId.value, positionSeconds, durationSeconds, clock())
+    }
+
+    suspend fun progressFor(episodeId: EpisodeId): Progress? {
+        val saved = dao.progress(episodeId.value) ?: return null
+        return Progress(episodeId, saved.positionSeconds, saved.updatedAt)
+    }
+
+    /** Resume position for this Épisode, or null to start from zero (SPEC §Player). */
+    suspend fun resumeAtFor(episodeId: EpisodeId): Long? {
+        val saved = dao.progress(episodeId.value) ?: return null
+        return ResumePolicy.resumeAt(
+            Progress(episodeId, saved.positionSeconds, saved.updatedAt),
+            saved.durationSeconds,
+        )
+    }
+
+    /**
+     * Favorites rendered on the Home row, most recent first. Only shows
+     * still present in the cached listings are returned.
+     */
+    suspend fun favoriteShows(channelIds: List<String>): List<Show> {
+        val ids = dao.favoriteIds()
+        if (ids.isEmpty()) return emptyList()
+        val wanted = ids.toSet()
+        val byId = HashMap<String, Show>()
+        for (channelId in channelIds) {
+            for (show in dao.shows(channelId)) {
+                if (show.id.value in wanted) byId[show.id.value] = show
+            }
+        }
+        return ids.mapNotNull { byId[it] }
+    }
+
+    suspend fun isFavorite(showId: ShowId): Boolean =
+        dao.favoriteIds().contains(showId.value)
+
+    /** Returns the new state: true when the show is now pinned. */
+    suspend fun toggleFavorite(showId: ShowId): Boolean {
+        val pinned = !isFavorite(showId)
+        if (pinned) dao.putFavorite(showId.value, clock()) else dao.removeFavorite(showId.value)
+        tick()
+        return pinned
+    }
+
     private fun filter(shows: List<Show>, genre: Genre?): List<Show> =
         if (genre == null) shows else shows.filter { genre in it.genres }
 
     companion object {
         const val TTL_MS: Long = 12 * 60 * 60 * 1000
+
+        /** Channels carrying France TV listings (SPEC §Provider France TV). */
+        val FTV_CHANNEL_IDS = listOf("france-2", "france-3", "france-4", "france-5", "franceinfo")
     }
 }
