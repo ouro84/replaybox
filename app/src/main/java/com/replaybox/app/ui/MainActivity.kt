@@ -14,6 +14,7 @@ sealed interface Screen {
     data class ShowDetail(val showId: ShowId, val title: String) : Screen
     data class Player(val episodeId: EpisodeId, val title: String) : Screen
     object Login : Screen
+    object Search : Screen
 }
 
 class MainActivity : ComponentActivity() {
@@ -28,6 +29,7 @@ class MainActivity : ComponentActivity() {
                     is Screen.Home -> HomeScreen(
                         onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
                         onOpenLogin = { backStack.add(Screen.Login) },
+                        onOpenSearch = { backStack.add(Screen.Search) },
                     )
                     is Screen.ShowDetail -> ShowScreen(
                         showId = current.showId,
@@ -39,6 +41,9 @@ class MainActivity : ComponentActivity() {
                         title = current.title,
                     )
                     Screen.Login -> LoginScreen(onDone = { backStack.removeAt(backStack.lastIndex) })
+                    Screen.Search -> SearchScreen(
+                        onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
+                    )
                 }
             }
         }

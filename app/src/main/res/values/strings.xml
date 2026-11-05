@@ -9,6 +9,10 @@
     <string name="misc_season">Divers</string>
     <string name="all_genres">Tous</string>
     <string name="stale_data">Données du %1$s</string>
+    <string name="search_button">Rechercher</string>
+    <string name="search_hint">Titre du Programme…</string>
+    <string name="search_min_chars">Saisissez au moins 3 caractères.</string>
+    <string name="search_no_results">Aucun Programme trouvé.</string>
     <string name="player_error_title">Flux indisponible</string>
     <string name="player_error_generic">Impossible de résoudre le Flux pour cet Épisode.</string>
     <string name="player_error_tf1_account">TF1 exige désormais un compte connecté pour ce Programme. Ouvre « Compte TF1+ » en haut de l\u0027écran d\u0027accueil pour te connecter.</string>

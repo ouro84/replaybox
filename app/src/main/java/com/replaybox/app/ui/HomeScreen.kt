@@ -51,7 +51,11 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun HomeScreen(onOpenShow: (ShowId, String) -> Unit, onOpenLogin: () -> Unit) {
+fun HomeScreen(
+    onOpenShow: (ShowId, String) -> Unit,
+    onOpenLogin: () -> Unit,
+    onOpenSearch: () -> Unit,
+) {
     var selectedGenre by remember { mutableStateOf<Genre?>(null) }
     val updates by Providers.catalog.updates.collectAsState()
 
@@ -81,7 +85,12 @@ fun HomeScreen(onOpenShow: (ShowId, String) -> Unit, onOpenLogin: () -> Unit) {
                     text = stringResource(R.string.home_title),
                     style = MaterialTheme.typography.headlineLarge,
                 )
-                AccountButton(onOpenLogin = onOpenLogin)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Button(onClick = onOpenSearch, modifier = Modifier.padding(end = 16.dp)) {
+                        Text(stringResource(R.string.search_button))
+                    }
+                    AccountButton(onOpenLogin = onOpenLogin)
+                }
             }
         }
         item {
