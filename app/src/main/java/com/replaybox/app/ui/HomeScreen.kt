@@ -96,6 +96,11 @@ fun HomeScreen(
         item {
             GenreFilterRow(selected = selectedGenre, onSelect = { selectedGenre = it })
         }
+        if (selectedGenre == null) {
+            item {
+                FavoritesRow(updates = updates, onOpenShow = onOpenShow)
+            }
+        }
         items(Providers.all) { provider ->
             ProviderRow(provider = provider, genre = selectedGenre, updates = updates, onOpenShow = onOpenShow)
         }
@@ -164,6 +169,30 @@ private fun AccountButton(onOpenLogin: () -> Unit) {
                 stringResource(R.string.account_button)
             },
         )
+    }
+}
+
+@Composable
+private fun FavoritesRow(updates: Int, onOpenShow: (ShowId, String) -> Unit) {
+    var favorites by remember { mutableStateOf<List<Show>>(emptyList()) }
+    LaunchedEffect(updates) {
+        favorites = Providers.catalog.favoriteShows(CatalogStore.FTV_CHANNEL_IDS + "tf1")
+    }
+    if (favorites.isEmpty()) return
+    Column {
+        Text(
+            text = stringResource(R.string.favorites_row),
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = 32.dp),
+        )
+        TvLazyRow(
+            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            items(favorites) { show ->
+                ShowCard(show = show, onOpenShow = onOpenShow)
+            }
+        }
     }
 }
 

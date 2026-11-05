@@ -28,7 +28,7 @@ object Providers {
         ReplayboxApplication.catalog,
     )
     private val ftvSearch: (suspend (String) -> List<Show>) = { query ->
-        ReplayboxApplication.catalog.searchShows(FTV_CHANNEL_IDS, query)
+        ReplayboxApplication.catalog.searchShows(CatalogStore.FTV_CHANNEL_IDS, query)
     }
 
     private val ftv: List<CachedProvider> = listOf(
@@ -40,8 +40,6 @@ object Providers {
     ).map { CachedProvider(it, ReplayboxApplication.catalog) }
 
     val all: List<Provider> = listOf(tf1) + ftv
-
-    private val FTV_CHANNEL_IDS = listOf("france-2", "france-3", "france-4", "france-5", "franceinfo")
 
     /** Routes a France TV namespaced id back to its provider; TF1 keeps bare ids. */
     fun resolveShow(id: String): Provider =

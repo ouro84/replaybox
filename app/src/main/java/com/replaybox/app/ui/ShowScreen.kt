@@ -1,5 +1,6 @@
 package com.replaybox.app.ui
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +41,7 @@ import com.replaybox.core.model.EpisodeId
 import com.replaybox.core.model.Season
 import com.replaybox.core.model.SeasonId
 import com.replaybox.core.model.ShowId
+import kotlinx.coroutines.launch
 
 @Composable
 fun ShowScreen(showId: ShowId, title: String, onOpenEpisode: (EpisodeId, String) -> Unit) {
@@ -47,11 +50,14 @@ fun ShowScreen(showId: ShowId, title: String, onOpenEpisode: (EpisodeId, String)
     var error by remember { mutableStateOf<String?>(null) }
     var selectedSeason by remember { mutableStateOf<SeasonId?>(null) }
     var episodes by remember { mutableStateOf<List<Episode>>(emptyList()) }
+    var pinned by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(showId) {
         try {
             seasons = provider.seasons(showId)
             selectedSeason = seasons?.firstOrNull()?.id
+            pinned = Providers.catalog.isFavorite(showId)
         } catch (e: Exception) {
             error = e.message
         }
@@ -71,11 +77,19 @@ fun ShowScreen(showId: ShowId, title: String, onOpenEpisode: (EpisodeId, String)
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineMedium,
+            Row(
                 modifier = Modifier.padding(horizontal = 32.dp),
-            )
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                PinButton(pinned = pinned, onToggle = {
+                    scope.launch { pinned = Providers.catalog.toggleFavorite(showId) }
+                })
+            }
             error?.let {
                 Text(
                     text = it,
@@ -128,6 +142,30 @@ fun ShowScreen(showId: ShowId, title: String, onOpenEpisode: (EpisodeId, String)
             }
         }
     }
+}
+
+@Composable
+private fun PinButton(pinned: Boolean, onToggle: () -> Unit) {
+    var focused by remember { mutableStateOf(false) }
+    Text(
+        text = stringResource(if (pinned) R.string.pin_remove else R.string.pin_add),
+        style = MaterialTheme.typography.bodyMedium,
+        color = when {
+            pinned -> MaterialTheme.colorScheme.primary
+            focused -> MaterialTheme.colorScheme.onSurface
+            else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        },
+        modifier = Modifier
+            .clickable { onToggle() }
+            .focusable()
+            .onFocusChanged { focused = it.isFocused }
+            .border(
+                width = 1.dp,
+                color = if (pinned || focused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(16.dp),
+            )
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    )
 }
 
 @Composable
