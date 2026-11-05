@@ -6,6 +6,7 @@ import com.replaybox.core.model.Season
 import com.replaybox.core.model.Show
 import com.replaybox.core.model.ShowId
 import com.replaybox.core.model.SeasonId
+import com.replaybox.core.model.Titles
 import com.replaybox.provider.api.Provider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
  * Room with a 12 h TTL and refreshed in the background at startup, Home rows
  * first. When a Provider is down, the stale cache is served and the row is
  * marked with its date instead of failing the evening. Flux resolution is
- * never cached â€” signed manifests stay live.
+ * never cached — signed manifests stay live.
  */
 class CatalogStore(
     private val dao: CatalogDao,
@@ -78,7 +79,7 @@ class CatalogStore(
 
     /**
      * Forced background refresh of the Home listings (startup priority,
-     * ADR 0002). A failing ChaÃ®ne is skipped â€” the evening never blocks on
+     * ADR 0002). A failing Chaîne is skipped — the evening never blocks on
      * the network; its stale date surfaces in the Home banner instead.
      */
     suspend fun refreshListings(providers: List<Provider>) {
@@ -93,8 +94,28 @@ class CatalogStore(
         }
     }
 
-    /** Freshness of a ChaÃ®ne listing, for the dated degraded-mode banner. */
+    /** Freshness of a Chaîne listing, for the dated degraded-mode banner. */
     suspend fun listingAt(channelId: String): Long? = dao.listingAt(channelId)
+
+    /**
+     * Local search over the cached listings of the given Chaînes (SPEC
+     * §Recherche: France TV has no discovered search route — its search is a
+     * cache filter by normalized title). Cache-only: what was never listed
+     * cannot be found.
+     */
+    suspend fun searchShows(channelIds: List<String>, query: String): List<Show> {
+        val wanted = Titles.normalize(query)
+        if (wanted.isEmpty()) return emptyList()
+        val matches = LinkedHashMap<String, Show>()
+        for (channelId in channelIds) {
+            for (show in dao.shows(channelId)) {
+                if (Titles.normalize(show.title).contains(wanted)) {
+                    matches.putIfAbsent(show.id.value, show)
+                }
+            }
+        }
+        return matches.values.toList()
+    }
 
     private fun tick() {
         _updates.value = _updates.value + 1

@@ -3,6 +3,7 @@ package com.replaybox.app.ui
 import com.replaybox.app.ReplayboxApplication
 import com.replaybox.core.data.CatalogStore
 import com.replaybox.core.model.Channel
+import com.replaybox.core.model.Show
 import com.replaybox.provider.api.CachedProvider
 import com.replaybox.provider.api.Provider
 import com.replaybox.provider.francetv.FtvHttp
@@ -26,15 +27,21 @@ object Providers {
         Tf1Provider(tokenProvider = { forceRefresh -> ReplayboxApplication.tf1Auth.token(forceRefresh) }),
         ReplayboxApplication.catalog,
     )
+    private val ftvSearch: (suspend (String) -> List<Show>) = { query ->
+        ReplayboxApplication.catalog.searchShows(FTV_CHANNEL_IDS, query)
+    }
+
     private val ftv: List<CachedProvider> = listOf(
-        FtvProvider("france-2", Channel("france-2", "France 2"), ftvHttp),
-        FtvProvider("france-3", Channel("france-3", "France 3"), ftvHttp),
-        FtvProvider("france-4", Channel("france-4", "France 4"), ftvHttp),
-        FtvProvider("france-5", Channel("france-5", "France 5"), ftvHttp),
-        FtvProvider("franceinfo", Channel("franceinfo", "franceinfo"), ftvHttp),
+        FtvProvider("france-2", Channel("france-2", "France 2"), ftvHttp, ftvSearch),
+        FtvProvider("france-3", Channel("france-3", "France 3"), ftvHttp, ftvSearch),
+        FtvProvider("france-4", Channel("france-4", "France 4"), ftvHttp, ftvSearch),
+        FtvProvider("france-5", Channel("france-5", "France 5"), ftvHttp, ftvSearch),
+        FtvProvider("franceinfo", Channel("franceinfo", "franceinfo"), ftvHttp, ftvSearch),
     ).map { CachedProvider(it, ReplayboxApplication.catalog) }
 
     val all: List<Provider> = listOf(tf1) + ftv
+
+    private val FTV_CHANNEL_IDS = listOf("france-2", "france-3", "france-4", "france-5", "franceinfo")
 
     /** Routes a France TV namespaced id back to its provider; TF1 keeps bare ids. */
     fun resolveShow(id: String): Provider =

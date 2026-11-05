@@ -25,6 +25,7 @@ class FtvProvider(
     private val listingChannel: String,
     override val channel: Channel,
     private val http: FtvHttp = FtvHttp(),
+    private val localSearch: (suspend (String) -> List<Show>)? = null,
 ) : Provider {
 
     private val programCache = HashMap<String, JsonObject>()
@@ -49,10 +50,11 @@ class FtvProvider(
 
     /**
      * SPEC §Recherche: France TV has no discovered search route — search is
-     * served from the local cache (Room lot) by normalized title. Until the
-     * cache exists, this stays empty.
+     * served from the local cache (Room) by normalized title, wired by the
+     * app layer. Without a wired cache this stays empty.
      */
-    override suspend fun search(query: String): List<Show> = emptyList()
+    override suspend fun search(query: String): List<Show> =
+        localSearch?.invoke(query) ?: emptyList()
 
     override suspend fun stream(episode: EpisodeId): Stream {
         val siId = FtvParsers.siIdOf(episode)
