@@ -1,6 +1,7 @@
 package com.replaybox.provider.francetv
 
 import com.google.common.truth.Truth.assertThat
+import com.replaybox.core.model.Genre
 import org.junit.Test
 
 class FtvChannelParserTest {
@@ -31,5 +32,16 @@ class FtvChannelParserTest {
         val first = shows.first()
         assertThat(first.posterUrl)
             .isEqualTo("https://medias.france.tv/YcRaNc9y2TmQrisC_YTrlWvE1LY/1024x1365/filters:quality(85)/j/1/d/php1ktd1j.jpg")
+    }
+
+    @Test
+    fun `maps listing genres`() {
+        val shows = FtvParsers.showsFromChannel(FtvTestFixtures.load("ftv_channel_france-2.json"))
+        val drama = shows.first { it.id.value.endsWith("les-disparus-des-argonnes") }
+        assertThat(drama.genres).containsAtLeast(Genre.SERIES, Genre.DRAMA)
+        val magazine = shows.first { it.id.value.endsWith("ca-commence-aujourd-hui") }
+        assertThat(magazine.genres).containsExactly(Genre.DOCUMENTARY)
+        val game = shows.first { it.id.value.endsWith("the-floor-a-la-conquete-du-sol") }
+        assertThat(game.genres).containsExactly(Genre.ENTERTAINMENT)
     }
 }

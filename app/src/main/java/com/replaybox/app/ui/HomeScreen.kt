@@ -45,6 +45,7 @@ import com.replaybox.provider.api.Provider
 
 @Composable
 fun HomeScreen(onOpenShow: (ShowId, String) -> Unit, onOpenLogin: () -> Unit) {
+    var selectedGenre by remember { mutableStateOf<Genre?>(null) }
     TvLazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = 24.dp),
@@ -65,10 +66,64 @@ fun HomeScreen(onOpenShow: (ShowId, String) -> Unit, onOpenLogin: () -> Unit) {
                 AccountButton(onOpenLogin = onOpenLogin)
             }
         }
+        item {
+            GenreFilterRow(selected = selectedGenre, onSelect = { selectedGenre = it })
+        }
         items(Providers.all) { provider ->
-            ProviderRow(provider = provider, onOpenShow = onOpenShow)
+            ProviderRow(provider = provider, genre = selectedGenre, onOpenShow = onOpenShow)
         }
     }
+}
+
+@Composable
+private fun GenreFilterRow(selected: Genre?, onSelect: (Genre?) -> Unit) {
+    TvLazyRow(
+        contentPadding = PaddingValues(horizontal = 32.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item {
+            GenreChip(
+                label = stringResource(R.string.all_genres),
+                selected = selected == null,
+                onSelect = { onSelect(null) },
+            )
+        }
+        items(Genre.values().toList()) { genre ->
+            GenreChip(
+                label = genre.genreLabel(),
+                selected = selected == genre,
+                onSelect = { onSelect(genre) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun GenreChip(label: String, selected: Boolean, onSelect: () -> Unit) {
+    var focused by remember { mutableStateOf(false) }
+    Text(
+        text = label,
+        style = MaterialTheme.typography.bodyMedium,
+        color = when {
+            selected -> MaterialTheme.colorScheme.primary
+            focused -> MaterialTheme.colorScheme.onSurface
+            else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        },
+        modifier = Modifier
+            .clickable { onSelect() }
+            .focusable()
+            .onFocusChanged { focused = it.isFocused }
+            .border(
+                width = 1.dp,
+                color = when {
+                    selected -> MaterialTheme.colorScheme.primary
+                    focused -> MaterialTheme.colorScheme.onSurface
+                    else -> MaterialTheme.colorScheme.surface
+                },
+                shape = RoundedCornerShape(16.dp),
+            )
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    )
 }
 
 @Composable
@@ -86,11 +141,15 @@ private fun AccountButton(onOpenLogin: () -> Unit) {
 }
 
 @Composable
-private fun ProviderRow(provider: Provider, onOpenShow: (ShowId, String) -> Unit) {
+private fun ProviderRow(
+    provider: Provider,
+    genre: Genre?,
+    onOpenShow: (ShowId, String) -> Unit,
+) {
     var state by remember(provider.channel.id) { mutableStateOf<RowState>(RowState.Loading) }
-    LaunchedEffect(provider.channel.id) {
+    LaunchedEffect(provider.channel.id, genre) {
         state = try {
-            RowState.Loaded(provider.shows(null))
+            RowState.Loaded(provider.shows(genre))
         } catch (error: Exception) {
             RowState.Failed(error.message ?: "error")
         }
