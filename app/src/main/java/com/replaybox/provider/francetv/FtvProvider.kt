@@ -32,8 +32,6 @@ class FtvProvider(
 
     override suspend fun shows(genre: Genre?): List<Show> {
         val shows = FtvParsers.showsFromChannel(http.channel(listingChannel))
-        // Canonical Genre mapping of sub_categories lands with the Genre filter
-        // lot; until then France TV shows carry no genres.
         return if (genre == null) shows else shows.filter { genre in it.genres }
     }
 

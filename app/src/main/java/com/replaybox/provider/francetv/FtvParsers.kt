@@ -44,7 +44,11 @@ object FtvParsers {
                     title = FtvJson.str(item, "label") ?: "",
                     posterUrl = posterFrom(item),
                     synopsis = FtvJson.str(item, "synopsis") ?: FtvJson.str(item, "description"),
-                    genres = emptySet(),
+                    genres = FtvGenres.map(
+                        FtvJson.str(item, "category", "url_complete"),
+                        FtvJson.objects(item["sub_categories"])
+                            .mapNotNull { FtvJson.str(it, "url_complete") },
+                    ),
                 )
             }
         }
