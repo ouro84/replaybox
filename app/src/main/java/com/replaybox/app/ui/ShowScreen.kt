@@ -42,7 +42,7 @@ import com.replaybox.core.model.ShowId
 
 @Composable
 fun ShowScreen(showId: ShowId, title: String, onOpenEpisode: (EpisodeId, String) -> Unit) {
-    val provider = Providers.all.first()
+    val provider = Providers.resolveShow(showId.value)
     var seasons by remember { mutableStateOf<List<Season>?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
     var selectedSeason by remember { mutableStateOf<SeasonId?>(null) }
