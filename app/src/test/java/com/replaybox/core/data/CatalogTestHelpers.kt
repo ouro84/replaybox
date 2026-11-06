@@ -75,6 +75,9 @@ class FakeCatalogDao : CatalogDao {
         progress.remove(episodeId)
     }
 
+    override suspend fun progressFor(episodeIds: List<String>): List<ProgressEntity> =
+        episodeIds.mapNotNull { progress[it] }
+
     override suspend fun putFavorite(showId: String, at: Long) {
         favorites[showId] = at
     }

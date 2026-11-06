@@ -80,6 +80,9 @@ interface RoomRawDao {
     @Query("DELETE FROM progress WHERE episodeId = :episodeId")
     suspend fun deleteProgress(episodeId: String)
 
+    @Query("SELECT * FROM progress WHERE episodeId IN (:episodeIds)")
+    suspend fun progressFor(episodeIds: List<String>): List<ProgressEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFavorite(favorite: FavoriteEntity)
 
@@ -191,6 +194,10 @@ class RoomCatalogDao(
     override suspend fun recentProgress(limit: Int): List<ProgressEntity> = raw.recentProgress(limit)
 
     override suspend fun deleteProgress(episodeId: String) = raw.deleteProgress(episodeId)
+
+    override suspend fun progressFor(episodeIds: List<String>): List<ProgressEntity> =
+        // SQLite caps bound parameters (999 on old versions): query in chunks.
+        episodeIds.chunked(500).flatMap { raw.progressFor(it) }
 
     override suspend fun putFavorite(showId: String, at: Long) {
         raw.insertFavorite(FavoriteEntity(showId, at))
