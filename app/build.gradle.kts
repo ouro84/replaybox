@@ -16,6 +16,11 @@ val replayboxVersionCode: Int = replayboxVersionName.split(".").let { parts ->
     parts[0].toInt() * 10000 + parts[1].toInt() * 100 + parts[2].toInt()
 }
 
+// Nightly health-check (SPEC §CI): real network, so its sources
+// (src/healthCheck) are compiled and run only with -PhealthCheck, never as
+// part of the unit test suite (AGENTS.md: zero network in unit tests).
+val healthCheck: Boolean = providers.gradleProperty("healthCheck").isPresent
+
 android {
     namespace = "com.replaybox"
     compileSdk = 33
@@ -53,6 +58,27 @@ android {
     }
     packagingOptions {
         resources.excludes.add("META-INF/{AL2.0,LGPL2.1}")
+    }
+    if (healthCheck) {
+        sourceSets.getByName("test").java.srcDir("src/healthCheck/java")
+    }
+}
+
+tasks.withType<Test>().configureEach {
+    if (healthCheck) {
+        filter.includeTestsMatching("com.replaybox.healthcheck.*")
+        // Real network: never up-to-date, never served from the build cache.
+        outputs.upToDateWhen { false }
+        outputs.cacheIf { false }
+        systemProperty("healthcheck.out", layout.buildDirectory.dir("healthcheck").get().asFile.path)
+        testLogging {
+            events("passed", "failed")
+            showStandardStreams = true
+        }
+    } else {
+        // Classes compiled by an earlier -PhealthCheck run can linger in the
+        // test output dir: never let the unit suite execute them.
+        filter.excludeTestsMatching("com.replaybox.healthcheck.*")
     }
 }
 

@@ -1,0 +1,106 @@
+# Nightly health-check (SPEC §CI, ADR 0002): one Épisode per Provider pushed
+# through the real Provider chain up to its Flux. The only real-network test of
+# the project. On failure, opens (or updates) the « health-check KO » issue.
+name: health-check
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # 03:00 Paris (winter) / 04:00 (summer)
+  workflow_dispatch:
+    inputs:
+      simulate_failure:
+        description: "Force a KO on one Provider to exercise the alert"
+        type: choice
+        default: none
+        options: [none, tf1, francetv]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: health-check
+  cancel-in-progress: false
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "11"
+          cache: gradle
+
+      - name: Run Provider chains
+        id: run
+        continue-on-error: true
+        env:
+          HEALTHCHECK_SIMULATE_FAILURE: ${{ inputs.simulate_failure }}
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon testDebugUnitTest -PhealthCheck
+
+      - name: Open, update or close the alert issue
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          RUN_OUTCOME: ${{ steps.run.outcome }}
+        with:
+          script: |
+            const fs = require('fs');
+            const dir = 'app/build/healthcheck';
+            let results = fs.existsSync(dir)
+              ? fs.readdirSync(dir).filter(f => f.endsWith('.json'))
+                  .map(f => JSON.parse(fs.readFileSync(`${dir}/${f}`, 'utf8')))
+              : [];
+            if (results.length === 0) {
+              results = [{ provider: 'build', label: 'Gradle', ok: false, step: 'build',
+                error: `aucun résultat produit (outcome ${process.env.RUN_OUTCOME}) — compilation ou setup en échec, voir le run`,
+                detail: null }];
+            }
+            const failures = results.filter(r => !r.ok);
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const day = new Date().toISOString().slice(0, 10);
+            const cell = s => String(s ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ');
+            const table = '| Provider | Statut | Étape | Détail |\n|---|---|---|---|\n' + results
+              .map(r => `| ${cell(r.label)} | ${r.ok ? 'OK' : '**KO**'} | ${r.ok ? '' : '`' + cell(r.step) + '`'} | ${cell(r.ok ? r.detail : r.error)} |`)
+              .join('\n');
+
+            const TITLE = 'health-check KO';
+            const open = await github.paginate(github.rest.issues.listForRepo,
+              { ...context.repo, state: 'open', labels: 'alerte', per_page: 100 });
+            const existing = open.find(i => !i.pull_request && i.title.startsWith(TITLE));
+
+            if (failures.length > 0) {
+              for (const [name, color, description] of [
+                ['ci', '1d76db', 'Intégration continue'],
+                ['alerte', 'b60205', 'Alerte automatique du health-check'],
+              ]) {
+                try { await github.rest.issues.createLabel({ ...context.repo, name, color, description }); }
+                catch (e) { if (e.status !== 422) throw e; } // 422 = already exists
+              }
+              const report = `### ${day} — KO : ${failures.map(f => `${f.label} à l'étape \`${f.step}\``).join(', ')}\n\n${table}\n\nRun : ${runUrl}`;
+              if (existing) {
+                await github.rest.issues.createComment({ ...context.repo, issue_number: existing.number, body: report });
+                core.notice(`Updated issue #${existing.number}`);
+              } else {
+                const created = await github.rest.issues.create({ ...context.repo, title: TITLE, labels: ['ci', 'alerte'],
+                  body: `Le health-check nocturne (chaîne Provider complète jusqu'au Flux) a échoué. ` +
+                        `Cette issue est commentée à chaque nuit KO et se ferme seule au premier run OK.\n\n${report}` });
+                core.notice(`Opened issue #${created.data.number}`);
+              }
+            } else if (existing) {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: existing.number,
+                body: `### ${day} — rétabli, tous les Providers sont OK\n\n${table}\n\nRun : ${runUrl}` });
+              await github.rest.issues.update({ ...context.repo, issue_number: existing.number,
+                state: 'closed', state_reason: 'completed' });
+              core.notice(`Closed issue #${existing.number}`);
+            }
+
+      - name: Fail the job on KO
+        if: steps.run.outcome != 'success'
+        run: exit 1
