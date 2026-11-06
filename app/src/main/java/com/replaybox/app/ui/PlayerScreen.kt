@@ -1,5 +1,7 @@
 package com.replaybox.app.ui
 
+import androidx.compose.runtime.withFrameNanos
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.foundation.background
 import com.replaybox.core.model.Episode
 import com.replaybox.core.data.NextEpisodePolicy
@@ -126,24 +128,39 @@ fun PlayerScreen(
 
     when (val current = state) {
         is PlayerState.Resolving -> CenteredMessage(stringResource(R.string.loading))
-        is PlayerState.Error -> Column(
-            modifier = Modifier.fillMaxSize().padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Text(title, style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(R.string.player_error_title), style = MaterialTheme.typography.headlineSmall)
-            Text(
-                text = when {
-                    !current.accountRequired -> current.message.ifBlank { stringResource(R.string.player_error_generic) }
-                    ReplayboxApplication.tf1Auth.hasCredentials() -> stringResource(R.string.player_error_tf1_content)
-                    else -> stringResource(R.string.player_error_tf1_account)
-                },
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(vertical = 16.dp),
-            )
-            Button(onClick = { attempt += 1 }) {
-                Text(stringResource(R.string.retry))
+        is PlayerState.Error -> {
+            val retry = remember { FocusRequester() }
+            LaunchedEffect(current) { runCatching { retry.requestFocus() } }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = Rb.contentStart, end = Rb.safeHorizontal, top = Rb.safeVertical + 72.dp),
+            ) {
+                Text(title, style = RbType.bodyStrong, color = Rb.textSecondary, maxLines = 1)
+                Text(
+                    stringResource(R.string.player_error_title),
+                    style = RbType.displayCompact,
+                    color = Rb.text,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
+                Text(
+                    text = when {
+                        !current.accountRequired -> current.message.ifBlank { stringResource(R.string.player_error_generic) }
+                        ReplayboxApplication.tf1Auth.hasCredentials() -> stringResource(R.string.player_error_tf1_content)
+                        else -> stringResource(R.string.player_error_tf1_account)
+                    },
+                    style = RbType.body,
+                    color = Rb.textSecondary,
+                    modifier = Modifier.padding(top = 12.dp).width(640.dp),
+                )
+                Box(Modifier.padding(top = 24.dp)) {
+                    PanelButton(
+                        label = stringResource(R.string.retry),
+                        icon = Icons.Filled.Refresh,
+                        requester = retry,
+                        onClick = { attempt += 1 },
+                    )
+                }
             }
         }
         is PlayerState.Ready -> PlayerSurface(
@@ -170,7 +187,7 @@ private fun CenteredMessage(message: String) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(message, style = MaterialTheme.typography.titleMedium)
+        Text(message, style = RbType.body, color = Rb.textSecondary)
     }
 }
 
@@ -355,38 +372,94 @@ private fun PlayerSurface(
     }
     BackHandler(enabled = nextUp) { nextUp = false }
 
+    // Controls (decisions Q26–Q30): a Compose overlay replaces the Media3 touch
+    // controller. Hidden, the root holds focus and reads the remote keys.
+    val rootFocus = remember { FocusRequester() }
+    val playFocus = remember { FocusRequester() }
+    var controlsVisible by remember(manifestUrl) { mutableStateOf(false) }
+    var interaction by remember { mutableStateOf(0) }
+    var isPlaying by remember(manifestUrl) { mutableStateOf(false) }
+    var positionMs by remember(manifestUrl) { mutableStateOf(0L) }
+    var durationMs by remember(manifestUrl) { mutableStateOf(0L) }
+    DisposableEffect(player) {
+        val playingListener = object : androidx.media3.common.Player.Listener {
+            override fun onIsPlayingChanged(playing: Boolean) {
+                isPlaying = playing
+            }
+        }
+        player.addListener(playingListener)
+        onDispose { player.removeListener(playingListener) }
+    }
+
+    fun showControls() {
+        positionMs = player.currentPosition
+        durationMs = player.duration.coerceAtLeast(0)
+        controlsVisible = true
+        interaction++
+    }
+    LaunchedEffect(controlsVisible) {
+        while (controlsVisible) {
+            positionMs = player.currentPosition
+            durationMs = player.duration.coerceAtLeast(0)
+            delay(500)
+        }
+    }
+    // Auto-hide 5 s after the last key while playing; paused, they stay.
+    LaunchedEffect(controlsVisible, interaction, isPlaying) {
+        if (controlsVisible && isPlaying) {
+            delay(5_000)
+            controlsVisible = false
+        }
+    }
+    LaunchedEffect(controlsVisible, nextUp, showResumeChoice) {
+        withFrameNanos { }
+        if (nextUp || showResumeChoice) return@LaunchedEffect
+        runCatching { if (controlsVisible) playFocus.requestFocus() else rootFocus.requestFocus() }
+    }
+    BackHandler(enabled = controlsVisible && !nextUp) { controlsVisible = false }
+    // Captions climb above the controls panel while it is shown, never under it.
+    // France TV WebVTT cues carry explicit line positions, which ignore the
+    // SubtitleView bottom padding: the whole caption layer is lifted instead.
+    LaunchedEffect(controlsVisible) {
+        playerViewRef.value?.subtitleView?.let { captions ->
+            captions.animate()
+                .translationY(if (controlsVisible) -captions.height * CAPTIONS_ABOVE_CONTROLS else 0f)
+                .setDuration(Rb.FOCUS_MS.toLong())
+                .start()
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            // TV remote, one press: OK toggles subtitles while the player
-            // controls are hidden (the captions key is unreliable across
-            // remotes; the Android player view swallows D-pad focus, so the
-            // chip alone is not reachable either). With controls shown, OK
-            // keeps its play/pause meaning.
             .onPreviewKeyEvent { event ->
-                val ok = event.type == KeyEventType.KeyDown &&
-                    event.nativeKeyEvent.repeatCount == 0 &&
-                    (
-                        event.key == Key.DirectionCenter ||
-                            event.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_CAPTIONS
-                        )
-                if (ok && !showResumeChoice && !nextUp && hasTextTracks &&
-                    playerViewRef.value?.isControllerFullyVisible != true
-                ) {
-                    toggleSubtitles()
-                    true
-                } else {
-                    false
+                if (event.type != KeyEventType.KeyDown || showResumeChoice || nextUp) return@onPreviewKeyEvent false
+                interaction++
+                when (PlayerKeys.action(event.nativeKeyEvent.keyCode, controlsVisible)) {
+                    PlayerKeys.Action.NONE -> false
+                    PlayerKeys.Action.SHOW -> { showControls(); true }
+                    PlayerKeys.Action.SEEK_BACK -> { player.seekBack(); showControls(); true }
+                    PlayerKeys.Action.SEEK_FORWARD -> { player.seekForward(); showControls(); true }
+                    PlayerKeys.Action.PLAY_PAUSE -> {
+                        if (player.isPlaying) player.pause() else player.play()
+                        showControls()
+                        true
+                    }
+                    PlayerKeys.Action.TOGGLE_SUBTITLES -> hasTextTracks.also { if (it) toggleSubtitles() }
                 }
-            },
+            }
+            .focusRequester(rootFocus)
+            .focusable(),
     ) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { viewContext ->
                 PlayerView(viewContext).apply {
                     this.player = player
-                    useController = true
-                    controllerShowTimeoutMs = 5000
+                    // Compose draws the controls; the view only renders video and captions.
+                    useController = false
+                    isFocusable = false
+                    descendantFocusability = android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS
                     playerViewRef.value = this
                 }
             },
@@ -412,67 +485,55 @@ private fun PlayerSurface(
                     showResumeChoice = false
                 },
             )
-        } else if (hasTextTracks) {
-            SubtitleChip(
-                enabled = subtitlesOn,
-                onToggle = { toggleSubtitles() },
-                modifier = Modifier.align(Alignment.TopEnd),
+        } else if (controlsVisible) {
+            PlayerControls(
+                showTitle = progressContext?.showTitle,
+                episodeTitle = progressContext?.episodeTitle ?: "",
+                positionMs = positionMs,
+                durationMs = durationMs,
+                isPlaying = isPlaying,
+                subtitlesOn = if (hasTextTracks) subtitlesOn else null,
+                playRequester = playFocus,
+                onInteract = { interaction++ },
+                onPlayPause = { if (player.isPlaying) player.pause() else player.play() },
+                onSeekBack = { player.seekBack(); positionMs = player.currentPosition },
+                onSeekForward = { player.seekForward(); positionMs = player.currentPosition },
+                onRestart = { player.seekTo(0); player.play(); positionMs = 0 },
+                onToggleSubtitles = { toggleSubtitles() },
+                modifier = Modifier.align(Alignment.BottomStart),
             )
         }
     }
 }
 
 @Composable
-private fun SubtitleChip(enabled: Boolean, onToggle: () -> Unit, modifier: Modifier) {
-    var focused by remember { mutableStateOf(false) }
-    Text(
-        text = stringResource(R.string.subtitle_toggle),
-        style = MaterialTheme.typography.labelMedium,
-        color = when {
-            enabled -> MaterialTheme.colorScheme.primary
-            focused -> MaterialTheme.colorScheme.onSurface
-            else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-        },
-        modifier = modifier
-            .padding(24.dp)
-            .clickable { onToggle() }
-            .focusable()
-            .onFocusChanged { focused = it.isFocused }
-            .border(
-                width = 2.dp,
-                color = when {
-                    enabled || focused -> MaterialTheme.colorScheme.primary
-                    else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                },
-                shape = RoundedCornerShape(16.dp),
-            )
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-    )
-}
-
-@Composable
 private fun ResumeChoice(resumeAtMs: Long, onResume: () -> Unit, onStartOver: () -> Unit) {
     val resumeButton = remember { FocusRequester() }
-    LaunchedEffect(Unit) { resumeButton.requestFocus() }
+    LaunchedEffect(Unit) { runCatching { resumeButton.requestFocus() } }
     val formatted = Playhead.format(resumeAtMs)
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            text = stringResource(R.string.resume_position, formatted),
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Spacer(Modifier.height(16.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            Button(onClick = onResume, modifier = Modifier.focusRequester(resumeButton)) {
-                Text(stringResource(R.string.resume_button))
-            }
-            Button(onClick = onStartOver) {
-                Text(stringResource(R.string.start_over))
+    // Same panel as Épisode suivant: bottom left, slate surface, safe frame.
+    Box(Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = Rb.safeHorizontal, bottom = Rb.safeVertical + 24.dp)
+                .background(Rb.surface, Rb.cardShape)
+                .padding(24.dp),
+        ) {
+            Text(stringResource(R.string.resume_position, formatted), style = RbType.railTitle, color = Rb.text)
+            Row(Modifier.padding(top = 20.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                PanelButton(
+                    label = stringResource(R.string.resume_button),
+                    icon = Icons.Filled.PlayArrow,
+                    requester = resumeButton,
+                    onClick = onResume,
+                )
+                PanelButton(
+                    label = stringResource(R.string.start_over),
+                    icon = null,
+                    requester = remember { FocusRequester() },
+                    onClick = onStartOver,
+                )
             }
         }
     }
@@ -546,3 +607,6 @@ private fun NextUp(episode: Episode, onPlay: () -> Unit, onCancel: () -> Unit, m
         }
     }
 }
+
+/** Share of the screen height the captions rise by while the controls show (panel ≈ 30 %). */
+private const val CAPTIONS_ABOVE_CONTROLS = 0.34f
