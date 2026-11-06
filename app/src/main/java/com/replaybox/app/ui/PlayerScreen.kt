@@ -283,9 +283,13 @@ private fun PlayerSurface(
     }
 
     fun saveProgress() {
-        if (playerReleased || player.currentPosition <= 0) return
+        if (playerReleased) return
+        // Snapshot now (the player may be released right after), write on the
+        // application scope so leaving the screen never cancels the write.
+        val positionSeconds = player.currentPosition / 1000
+        if (positionSeconds <= 0) return
         val durationSeconds = player.duration.takeIf { it > 0 }?.let { (it / 1000).toInt() }
-        scope.launch { catalog.saveProgress(episodeId, player.currentPosition / 1000, durationSeconds, progressContext) }
+        ReplayboxApplication.progress.record(episodeId, positionSeconds, durationSeconds, progressContext)
     }
 
     // Progression (glossary): device-local playhead, saved every 5 s while

@@ -22,6 +22,9 @@ class CachedProvider(
 
     override val channel: com.replaybox.core.model.Channel get() = inner.channel
 
+    /** The network Provider behind the cache, for forced refreshes. */
+    val origin: Provider get() = inner
+
     override suspend fun shows(genre: Genre?): List<Show> = store.shows(inner, genre)
 
     override suspend fun seasons(show: ShowId): List<Season> = store.seasons(inner, show)

@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import com.replaybox.core.data.CatalogDao
 import com.replaybox.core.data.CatalogStore
+import com.replaybox.core.data.ProgressRecorder
 import com.replaybox.core.data.ReplayboxDatabase
 import com.replaybox.core.data.RoomCatalogDao
 import com.replaybox.provider.tf1.Tf1Auth
@@ -45,6 +46,9 @@ class ReplayboxApplication : Application() {
         private fun catalogDao(): CatalogDao = RoomCatalogDao(database, database.rawDao())
 
         private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+        /** Playhead writes that outlive the player screen (see ProgressRecorder). */
+        val progress: ProgressRecorder by lazy { ProgressRecorder(catalog, appScope) }
 
         /** Self-update from the GitHub Releases (SPEC §Auto-update). */
         val updater: AppUpdater by lazy {

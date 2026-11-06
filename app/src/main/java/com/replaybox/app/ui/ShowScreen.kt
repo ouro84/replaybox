@@ -145,7 +145,10 @@ fun ShowScreen(
         episodes = null
         failed = false
         try {
-            episodes = provider.episodes(state.selectedSeason)
+            val loaded = provider.episodes(state.selectedSeason)
+            // Progression first, then the rows: they never paint without bars.
+            progress = catalog.episodeProgress(loaded.map { it.id })
+            episodes = loaded
         } catch (e: CancellationException) {
             // Superseded by another Saison: not an error.
             throw e

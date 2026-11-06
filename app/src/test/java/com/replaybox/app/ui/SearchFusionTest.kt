@@ -38,4 +38,20 @@ class SearchFusionTest {
         assertThat(SearchFusion.fuse("cesar", listOf(one, two)).map { it.id.value })
             .containsExactly("a")
     }
+
+    @Test
+    fun `origins credit the Provider whose result was kept`() {
+        val tf1 = listOf(show("tf1-marleau", "Capitaine Marleau"), show("tf1-chrono", "Enquête Chrono"))
+        val ftv = listOf(show("ftv-marleau", "Capitaine Marleau"), show("ftv-vera", "Les enquêtes de Vera"))
+        val results = listOf(tf1, ftv)
+        val fused = SearchFusion.fuse("e", results)
+
+        val origins = SearchFusion.origins(fused, listOf("tf1", "france-3"), results)
+
+        assertThat(origins.mapKeys { it.key.value }).containsExactly(
+            "tf1-marleau", "tf1",
+            "tf1-chrono", "tf1",
+            "ftv-vera", "france-3",
+        )
+    }
 }

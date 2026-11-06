@@ -67,4 +67,14 @@ class FtvProgramParserTest {
         assertThat(rejected.isSuccess).isTrue()
         assertThat(rejected.getOrNull()).isEqualTo("other")
     }
+
+    @Test
+    fun `unescapes quotes France TV double-escapes in descriptions`() {
+        // Recorded 2026-11-06: the decoded description holds a literal backslash-quote.
+        val pitch = FtvTestFixtures.load("ftv_program_le-pitch-cinema.json")
+        val episodes = FtvParsers.episodesFromProgram(pitch, null)
+        val synopsis = episodes.first().synopsis.orEmpty()
+        assertThat(synopsis).contains("grand écran \" donne les clefs")
+        assertThat(synopsis).doesNotContain("\\")
+    }
 }

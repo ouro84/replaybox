@@ -80,13 +80,32 @@ object SearchFusion {
 
     private fun String.normalizedKey(): String = Titles.normalize(this)
 
-    suspend fun search(providers: List<Provider>, query: String): List<Show> = coroutineScope {
+    /**
+     * Chaîne of each kept result: the Provider whose result survived the
+     * fusion. France TV search only returns cached (listed) Programmes, so the
+     * listing remains the source for them; this credits remote TF1+ results,
+     * which no listing holds.
+     */
+    fun origins(fused: List<Show>, channelIds: List<String>, providerResults: List<List<Show>>): Map<ShowId, String> {
+        val origin = HashMap<ShowId, String>()
+        providerResults.forEachIndexed { index, shows ->
+            val channelId = channelIds.getOrNull(index) ?: return@forEachIndexed
+            for (show in shows) origin.putIfAbsent(show.id, channelId)
+        }
+        return fused.mapNotNull { show -> origin[show.id]?.let { show.id to it } }.toMap()
+    }
+
+    /** Fused results plus the Chaîne each came from. */
+    data class Hits(val shows: List<Show>, val origins: Map<ShowId, String>)
+
+    suspend fun search(providers: List<Provider>, query: String): Hits = coroutineScope {
         val trimmed = query.trim()
-        if (trimmed.length < MIN_CHARS) return@coroutineScope emptyList()
+        if (trimmed.length < MIN_CHARS) return@coroutineScope Hits(emptyList(), emptyMap())
         val results = providers.map { provider ->
             async { runCatching { provider.search(trimmed) }.getOrDefault(emptyList()) }
         }.awaitAll()
-        fuse(trimmed, results)
+        val fused = fuse(trimmed, results)
+        Hits(fused, origins(fused, providers.map { it.channel.id }, results))
     }
 }
 
@@ -96,6 +115,7 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
     var results by remember { mutableStateOf<List<Show>>(emptyList()) }
     var searching by remember { mutableStateOf(false) }
     var channels by remember { mutableStateOf<Map<ShowId, String>>(emptyMap()) }
+    var origins by remember { mutableStateOf<Map<ShowId, String>>(emptyMap()) }
     val resultsFocus = remember { FocusRequester() }
     val fieldFocus = remember { FocusRequester() }
     // Arriving on Search means typing: the field takes focus at once.
@@ -112,12 +132,17 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
             return@LaunchedEffect
         }
         searching = true
-        results = SearchFusion.search(Providers.all, value)
+        val hits = SearchFusion.search(Providers.all, value)
+        origins = hits.origins
+        results = hits.shows
         searching = false
     }
     // Captions name the Chaîne only when the cache knows it (never a guess).
     LaunchedEffect(results) {
-        channels = Providers.catalog.channelsOf(results.map { it.id }, channelIds)
+        // The listing names the Chaîne when it knows the Programme; otherwise the
+        // Provider that returned it does (remote TF1+ results). Never a guess.
+        val listed = Providers.catalog.channelsOf(results.map { it.id }, channelIds)
+        channels = results.mapNotNull { show -> (listed[show.id] ?: origins[show.id])?.let { show.id to it } }.toMap()
     }
 
     Column(

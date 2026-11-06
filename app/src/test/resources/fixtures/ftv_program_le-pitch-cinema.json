@@ -1,0 +1,889 @@
+{
+ "label": "Le pitch cinéma",
+ "item": {
+  "id": 19711,
+  "label": "Le pitch cinéma",
+  "description": "Chaque semaine Le Pitch Cinéma vous présente 3 sorties de la semaine. Rythmé et graphique, une mystérieuse silhouette en contre jour devant un grand écran « donne les clefs aux téléspectateurs pour se forger leur opinion » et décider ensuite d'aller voir les films… ou pas ! Le Pitch Cinéma fait appel à la culture cinématographique des téléspectateurs et propose pour chaque sortie de film un véritable jeu d’association : si vous avez aimé tel film, vous risquez d’aimer tel film…. Ou pas…",
+  "type": "program",
+  "program_path": "france-2_le-pitch-cinema",
+  "link": {
+   "url": "/apps/program/meta/france-2_le-pitch-cinema?platform=apps",
+   "type": "tab"
+  },
+  "color": null,
+  "sound": null,
+  "headline_title": " À découvrir au cinéma cette semaine",
+  "images": [
+   {
+    "urls": {
+     "w:800": "https://medias.france.tv/FUOQrKfjOnAio5sow2J1F0HRFsI/800x450/filters:quality(85)/y/a/7/phpsjj7ay.jpg",
+     "w:1024": "https://medias.france.tv/SydYoSPUDAYBsxnN5OUnadT1_BE/1024x576/filters:quality(85)/y/a/7/phpsjj7ay.jpg",
+     "w:2500": "https://medias.france.tv/HPEaT3vjdWL_vz-OB7ur0CikDRM/2500x1406/filters:quality(85)/y/a/7/phpsjj7ay.jpg"
+    },
+    "type": "background_16x9"
+   },
+   {
+    "urls": {
+     "w:0": "https://medias.france.tv/wGq6_sbtt1eqb_JmzLzkDRRxssQ/0x0/filters:quality(85)/v/t/r/php69grtv.png",
+     "w:25": "https://medias.france.tv/k8Fsu4EtbxPKeAHJJus2jLSAGjI/25x0/filters:quality(85)/v/t/r/php69grtv.png",
+     "w:150": "https://medias.france.tv/biQ9TaVSKgV5ZV6pQfARHkw2284/150x0/filters:quality(85)/v/t/r/php69grtv.png",
+     "w:300": "https://medias.france.tv/A87UFmxhKjEwTPklEC4tO0dIBUQ/300x0/filters:quality(85)/v/t/r/php69grtv.png",
+     "w:450": "https://medias.france.tv/_Rg0JnRkNguFp8uuD464LasAxBg/450x0/filters:quality(85)/v/t/r/php69grtv.png",
+     "w:1024": "https://medias.france.tv/J8D2HZT1rSkQtU2vMRIjvlMkzfk/1024x0/filters:quality(85)/v/t/r/php69grtv.png"
+    },
+    "type": "logo"
+   },
+   {
+    "urls": {
+     "w:400": "https://medias.france.tv/4mt0r8v4Hfpw_cOh5iMQiAB9GUE/400x0/filters:quality(85)/t/c/n/phpmfonct.jpg",
+     "w:800": "https://medias.france.tv/lWPO-bbIZh63pKCO19v9NTly61k/800x450/filters:quality(85)/t/c/n/phpmfonct.jpg",
+     "w:1024": "https://medias.france.tv/ADsctw-brNHmhFmUasdIEImXaXI/1024x576/filters:quality(85)/t/c/n/phpmfonct.jpg",
+     "w:2500": "https://medias.france.tv/_LGctg7llHoPy0Z68uEFxexDC44/2500x1406/filters:quality(85)/t/c/n/phpmfonct.jpg"
+    },
+    "type": "vignette_16x9"
+   },
+   {
+    "urls": {
+     "w:400": "https://medias.france.tv/i-UUGSqQU1bfuf3MpuV_oHQRmD8/400x533/filters:quality(85)/x/m/i/phpiemimx.jpg",
+     "w:800": "https://medias.france.tv/2TgO9d1kKk9p8QrwjsSWqjYzYZY/800x1066/filters:quality(85)/x/m/i/phpiemimx.jpg",
+     "w:1024": "https://medias.france.tv/KQ0OKjo1eDCMThNhJUHaA_XSOKg/1024x1365/filters:quality(85)/x/m/i/phpiemimx.jpg"
+    },
+    "type": "vignette_3x4"
+   }
+  ],
+  "integral_counter": 5,
+  "ads_blocked": false,
+  "broadcast_box": "",
+  "recommendation": true,
+  "partner": null,
+  "sponsored": false,
+  "channel": "france-2",
+  "marker": {
+   "level_2": null,
+   "page": null,
+   "indicators": null,
+   "custom_variables": null
+  },
+  "marker_piano": {
+   "contextual_properties": {
+    "page": "le_pitch_cinema",
+    "page_type": "programme"
+   },
+   "additional_properties": {
+    "channel": "france_2",
+    "channel_type": "premium",
+    "sub_channel": null,
+    "region": null,
+    "category": "cinema",
+    "sub_category": null,
+    "content_type": null,
+    "content_title": null,
+    "content_status": null,
+    "content_format": null,
+    "program": "le_pitch_cinema",
+    "program_id": 19711,
+    "highlight": null,
+    "tag": null,
+    "sub_tag": null,
+    "season": null,
+    "content_id": null,
+    "content_sponsored": null,
+    "content_logged": null,
+    "audiomeans_id": null,
+    "last_update_date": null,
+    "first_publication_date": null,
+    "author": null,
+    "partner": null
+   }
+  },
+  "age_min": null,
+  "age_max": null,
+  "saison": null,
+  "call_to_action": "",
+  "call_to_action_url": "",
+  "synopsis": "Chaque semaine Le Pitch Cinéma vous présente  sa sélection des 5 films sorties de la semaine.",
+  "label_edito": null,
+  "downloadable": false,
+  "casting": null,
+  "characters": null,
+  "director": null,
+  "scenarists": null,
+  "palmares": null,
+  "production_countries": null,
+  "number_of_episodes": null,
+  "number_of_seasons": 3,
+  "categories": [
+   {
+    "id": 33,
+    "type": "categorie",
+    "label": "Cinéma",
+    "url_complete": "films",
+    "images": [],
+    "marker": {
+     "level_2": null,
+     "page": null,
+     "indicators": null,
+     "custom_variables": null
+    },
+    "marker_piano": {
+     "contextual_properties": null,
+     "additional_properties": null
+    },
+    "call_to_action": null,
+    "call_to_action_url": null,
+    "synopsis": null,
+    "headline_title": null,
+    "label_edito": null,
+    "parent": null
+   }
+  ],
+  "sub_categories": [],
+  "category": {
+   "label": "Cinéma",
+   "url_complete": "films",
+   "id": 33,
+   "type": "categorie"
+  },
+  "podcast_url": null,
+  "offer": "francetv",
+  "sort_seasons": "desc",
+  "sort_episodes": "begin_date:desc"
+ },
+ "collections": [
+  {
+   "type": "playlist_video",
+   "items": [
+    {
+     "id": 8968469,
+     "title": "Émission du lundi 2 novembre 2026",
+     "label_edito": null,
+     "type": "integrale",
+     "headline_title": null,
+     "season": null,
+     "episode": null,
+     "description": "Chaque semaine Le Pitch Cinéma vous présente 5 sorties de la semaine. Rythmé et graphique, une mystérieuse silhouette en contre jour devant un grand écran \\\" donne les clefs aux téléspectateurs pour se forger leur opinion \\\" et décider ensuite d'aller voir les films ou pas ! Le Pitch Cinéma fait appel à la culture cinématographique des téléspectateurs et propose pour chaque sortie de film un véritable jeu d'association : si vous avez aimé tel film, vous risquez d'aimer tel film. Ou pas",
+     "broadcast_begin_date": 1793574942,
+     "broadcast_end_date": 1793575180,
+     "begin_date": 1793575138,
+     "end_date": 1796167138,
+     "duration": 238,
+     "rating_csa": "Tous publics",
+     "si_id": "10ab928b-8a26-4a25-bf7f-1ac0853dd0e9",
+     "downloadable": false,
+     "episode_title": "Émission du lundi 2 novembre 2026",
+     "program": {
+      "id": 19711,
+      "label": "Le pitch cinéma",
+      "description": "",
+      "type": "program",
+      "program_path": "france-2_le-pitch-cinema",
+      "link": {
+       "url": "/apps/program/meta/france-2_le-pitch-cinema?platform=apps",
+       "type": "tab"
+      },
+      "color": null,
+      "sound": null,
+      "headline_title": " À découvrir au cinéma cette semaine",
+      "images": [
+       {
+        "urls": {
+         "w:800": "https://medias.france.tv/FUOQrKfjOnAio5sow2J1F0HRFsI/800x450/filters:quality(85)/y/a/7/phpsjj7ay.jpg",
+         "w:1024": "https://medias.france.tv/SydYoSPUDAYBsxnN5OUnadT1_BE/1024x576/filters:quality(85)/y/a/7/phpsjj7ay.jpg",
+         "w:2500": "https://medias.france.tv/HPEaT3vjdWL_vz-OB7ur0CikDRM/2500x1406/filters:quality(85)/y/a/7/phpsjj7ay.jpg"
+        },
+        "type": "background_16x9"
+       },
+       {
+        "urls": {
+         "w:0": "https://medias.france.tv/wGq6_sbtt1eqb_JmzLzkDRRxssQ/0x0/filters:quality(85)/v/t/r/php69grtv.png",
+         "w:25": "https://medias.france.tv/k8Fsu4EtbxPKeAHJJus2jLSAGjI/25x0/filters:quality(85)/v/t/r/php69grtv.png",
+         "w:150": "https://medias.france.tv/biQ9TaVSKgV5ZV6pQfARHkw2284/150x0/filters:quality(85)/v/t/r/php69grtv.png",
+         "w:300": "https://medias.france.tv/A87UFmxhKjEwTPklEC4tO0dIBUQ/300x0/filters:quality(85)/v/t/r/php69grtv.png",
+         "w:450": "https://medias.france.tv/_Rg0JnRkNguFp8uuD464LasAxBg/450x0/filters:quality(85)/v/t/r/php69grtv.png",
+         "w:1024": "https://medias.france.tv/J8D2HZT1rSkQtU2vMRIjvlMkzfk/1024x0/filters:quality(85)/v/t/r/php69grtv.png"
+        },
+        "type": "logo"
+       },
+       {
+        "urls": {
+         "w:400": "https://medias.france.tv/4mt0r8v4Hfpw_cOh5iMQiAB9GUE/400x0/filters:quality(85)/t/c/n/phpmfonct.jpg",
+         "w:800": "https://medias.france.tv/lWPO-bbIZh63pKCO19v9NTly61k/800x450/filters:quality(85)/t/c/n/phpmfonct.jpg",
+         "w:1024": "https://medias.france.tv/ADsctw-brNHmhFmUasdIEImXaXI/1024x576/filters:quality(85)/t/c/n/phpmfonct.jpg",
+         "w:2500": "https://medias.france.tv/_LGctg7llHoPy0Z68uEFxexDC44/2500x1406/filters:quality(85)/t/c/n/phpmfonct.jpg"
+        },
+        "type": "vignette_16x9"
+       },
+       {
+        "urls": {
+         "w:400": "https://medias.france.tv/i-UUGSqQU1bfuf3MpuV_oHQRmD8/400x533/filters:quality(85)/x/m/i/phpiemimx.jpg",
+         "w:800": "https://medias.france.tv/2TgO9d1kKk9p8QrwjsSWqjYzYZY/800x1066/filters:quality(85)/x/m/i/phpiemimx.jpg",
+         "w:1024": "https://medias.france.tv/KQ0OKjo1eDCMThNhJUHaA_XSOKg/1024x1365/filters:quality(85)/x/m/i/phpiemimx.jpg"
+        },
+        "type": "vignette_3x4"
+       }
+      ],
+      "integral_counter": 6,
+      "ads_blocked": false,
+      "broadcast_box": null,
+      "recommendation": true,
+      "partner": null,
+      "sponsored": false,
+      "channel": "france-2",
+      "marker": {
+       "level_2": null,
+       "page": null,
+       "indicators": null,
+       "custom_variables": null
+      },
+      "marker_piano": {
+       "contextual_properties": null,
+       "additional_properties": {
+        "category": null,
+        "sub_category": null
+       }
+      },
+      "age_min": null,
+      "age_max": null,
+      "saison": null,
+      "call_to_action": "",
+      "call_to_action_url": "",
+      "synopsis": "Chaque semaine Le Pitch Cinéma vous présente  sa sélection des 5 films sorties de la semaine.",
+      "label_edito": null,
+      "casting": null,
+      "characters": null,
+      "director": null,
+      "scenarists": null,
+      "palmares": null,
+      "production_countries": null,
+      "number_of_episodes": null,
+      "number_of_seasons": 3,
+      "categories": [],
+      "sub_categories": [],
+      "category": null,
+      "podcast_url": null,
+      "offer": "francetv",
+      "sort_seasons": null,
+      "sort_episodes": null
+     },
+     "images": [
+      {
+       "urls": {
+        "w:400": "https://medias.france.tv/phm6ll_JXFUwM84CPQGSNLcYNbc/400x0/filters:quality(85)/a/4/r/phpntvr4a.jpg",
+        "w:800": "https://medias.france.tv/acCnAi8duCrFu_Y2SLuUUPiB1mg/800x450/filters:quality(85)/a/4/r/phpntvr4a.jpg",
+        "w:1024": "https://medias.france.tv/8PxlAyjxsjJET3DgoOLLDhMP17g/1024x576/filters:quality(85)/a/4/r/phpntvr4a.jpg",
+        "w:2500": "https://medias.france.tv/Tt0Fe_Wy5PFreg9FnIi1e6sTIms/2500x1406/filters:quality(85)/a/4/r/phpntvr4a.jpg"
+       },
+       "type": "vignette_16x9"
+      },
+      {
+       "urls": {
+        "w:400": "https://medias.france.tv/8XpD3bxF81kKy55XiRETRTURWk0/400x533/filters:quality(85)/s/m/7/phpsar7ms.jpg",
+        "w:800": "https://medias.france.tv/ei1qN6MVQJv2nInLDz_3tXb47Og/800x1066/filters:quality(85)/s/m/7/phpsar7ms.jpg",
+        "w:1024": "https://medias.france.tv/gzHliIvK1nQOJtZ9fgIZIt7eWYs/1024x1365/filters:quality(85)/s/m/7/phpsar7ms.jpg"
+       },
+       "type": "vignette_3x4"
+      }
+     ],
+     "channel": {
+      "id": 1,
+      "label": "France 2",
+      "type": "channel",
+      "channel_path": "france-2",
+      "images": [
+       {
+        "urls": {
+         "w:800": "https://medias.france.tv/mLqXUD7pGPZMQDNu6nAHm1HRS4M/800x450/filters:quality(85)/1/k/m/phppfemk1.jpg",
+         "w:1024": "https://medias.france.tv/wPgCVt5lCy78c0Dz87UTaVb2tfU/1024x576/filters:quality(85)/1/k/m/phppfemk1.jpg",
+         "w:2500": "https://medias.france.tv/Wd3atkIPrSuUXyP5SPease6wKZs/2500x1406/filters:quality(85)/1/k/m/phppfemk1.jpg"
+        },
+        "type": "background_16x9"
+       },
+       {
+        "urls": {
+         "w:265": "https://medias.france.tv/ANKNqY3gzyyG5GIAyePKRrZiMdA/265x265/filters:quality(85)/c/7/t/php6kjt7c.png",
+         "w:300": "https://medias.france.tv/Hvxatu-k_sKN-NBK-X6Hg1tjVco/300x300/filters:quality(85)/c/7/t/php6kjt7c.png",
+         "w:400": "https://medias.france.tv/v25lgE50IPcm5SkmaN7WLDiOuEo/400x400/filters:quality(85)/c/7/t/php6kjt7c.png",
+         "w:800": "https://medias.france.tv/3UhtTybWFPZvEotF2qlav8OWrW8/800x800/filters:quality(85)/c/7/t/php6kjt7c.png",
+         "w:1024": "https://medias.france.tv/6oz4Bmu7itJjIT1Mnh3asxClwPc/1024x1024/filters:quality(85)/c/7/t/php6kjt7c.png"
+        },
+        "type": "carre"
+       },
+       {
+        "urls": {
+         "w:0": "https://medias.france.tv/debMOnbWg8TetTZhLF-K56IQ2Mo/0x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+         "w:25": "https://medias.france.tv/wtQQS-esm6t16I6olBef3VTJQIg/25x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+         "w:150": "https://medias.france.tv/jKWZKoynXaOcxrbmGmpPM66U3E0/150x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+         "w:300": "https://medias.france.tv/mUab8olpguMyPRii8N425DQmlIs/300x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+         "w:450": "https://medias.france.tv/tv2YD3WsEHwdY7ySwWlfWGXzB2w/450x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+         "w:1024": "https://medias.france.tv/p2KkmucENa0CMGIvA_1KWC4SBFc/1024x0/filters:quality(85)/a/c/h/phpi0hhca.png"
+        },
+        "type": "logo"
+       },
+       {
+        "urls": {
+         "w:400": "https://medias.france.tv/7iMGREATX7UsKTEq35pMallmdy8/400x0/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+         "w:800": "https://medias.france.tv/vDTl5ncJJEu6Jd11KR-TY4xF1fA/800x450/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+         "w:1024": "https://medias.france.tv/Q-4oPgpeaL6wMcE6r6-SxXB_mnQ/1024x576/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+         "w:2500": "https://medias.france.tv/SyuTNozmt9jee_kyUHzHfSbI8MI/2500x1406/filters:quality(85)/j/k/s/phpn0qskj.jpg"
+        },
+        "type": "vignette_16x9"
+       },
+       {
+        "urls": {
+         "w:400": "https://medias.france.tv/KFtHQ8BAnDpwElwFdcBvZlQ6OM0/400x533/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+         "w:800": "https://medias.france.tv/ftci3wQ-G6qjjN9c1-ToTJV4iX4/800x1066/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+         "w:1024": "https://medias.france.tv/eRwxerP2BRgddRX72HBRRZVkEwU/1024x1365/filters:quality(85)/3/d/y/phpkiyyd3.jpg"
+        },
+        "type": "vignette_3x4"
+       }
+      ],
+      "si_id": "006194ea-117d-4bcf-94a9-153d999c59ae",
+      "channel_url": "france-2",
+      "marker": {
+       "level_2": null,
+       "page": null,
+       "indicators": null,
+       "custom_variables": null
+      },
+      "marker_piano": {
+       "contextual_properties": null,
+       "additional_properties": {
+        "category": null,
+        "sub_category": null
+       }
+      },
+      "call_to_action": "",
+      "call_to_action_url": "",
+      "synopsis": null,
+      "offer": "france-2"
+     },
+     "category": {
+      "id": 57,
+      "type": "categorie",
+      "label": "Arts & spectacles",
+      "url_complete": "spectacles-et-culture",
+      "images": [
+       {
+        "urls": {
+         "w:800": "https://medias.france.tv/m3tOanYulaYn7MqzTbyqyT3xl08/800x450/filters:quality(85)/l/n/1/phpe9h1nl.png",
+         "w:1024": "https://medias.france.tv/dxdb2mEksdSbmAJiaaMU0msDmco/1024x576/filters:quality(85)/l/n/1/phpe9h1nl.png",
+         "w:2500": "https://medias.france.tv/eBjfqrBC_ogIO_Lj63X5HkYLc4E/2500x1406/filters:quality(85)/l/n/1/phpe9h1nl.png"
+        },
+        "type": "background_16x9"
+       },
+       {
+        "urls": {
+         "w:265": "https://medias.france.tv/ogm8TJcnmIUx-HanwTaEXpfy4dE/265x265/filters:quality(85)/w/s/9/php5cb9sw.png",
+         "w:300": "https://medias.france.tv/92-MNNTXif4sI7Kn2nVyVixKFgQ/300x300/filters:quality(85)/w/s/9/php5cb9sw.png",
+         "w:400": "https://medias.france.tv/GZEhjJ_NTUa41essQh_NGYy84Mo/400x400/filters:quality(85)/w/s/9/php5cb9sw.png",
+         "w:800": "https://medias.france.tv/tQ72IVt0ADlDD49zTtq2EOOGe5U/800x800/filters:quality(85)/w/s/9/php5cb9sw.png",
+         "w:1024": "https://medias.france.tv/LlPB6WYQihgVsOk4ArT3p_an7Xg/1024x1024/filters:quality(85)/w/s/9/php5cb9sw.png"
+        },
+        "type": "carre"
+       },
+       {
+        "urls": {
+         "w:0": "https://medias.france.tv/nCEBDCo0wOKorBuDt1Zm7lC6Scs/0x0/filters:quality(85)/s/d/z/phpdwozds.png",
+         "w:25": "https://medias.france.tv/BBfAmrl0YTvyNLh0ieS-jLA9jzk/25x0/filters:quality(85)/s/d/z/phpdwozds.png",
+         "w:150": "https://medias.france.tv/DAASUY-c1I8UVsmBOuiQ_iYwxDM/150x0/filters:quality(85)/s/d/z/phpdwozds.png",
+         "w:300": "https://medias.france.tv/ri5GIz_4rU_9mdZuiqo7GmsOGqo/300x0/filters:quality(85)/s/d/z/phpdwozds.png",
+         "w:450": "https://medias.france.tv/NIqNJP7VF-dY1DjFIGiy376WeK4/450x0/filters:quality(85)/s/d/z/phpdwozds.png",
+         "w:1024": "https://medias.france.tv/zMvzOXHe2rxbMRFJFT1r9D7Qalc/1024x0/filters:quality(85)/s/d/z/phpdwozds.png"
+        },
+        "type": "logo"
+       },
+       {
+        "urls": {
+         "w:400": "https://medias.france.tv/jx_H0DbKE8hJzi9LJg27E8KvZB8/400x0/filters:quality(85)/i/4/q/phpbhbq4i.png",
+         "w:800": "https://medias.france.tv/FLEXz-Aswj24cyy88GzSZwblmYE/800x450/filters:quality(85)/i/4/q/phpbhbq4i.png",
+         "w:1024": "https://medias.france.tv/MH7vK6Zn7N8y6PkeDDRe0Eem6LI/1024x576/filters:quality(85)/i/4/q/phpbhbq4i.png",
+         "w:2500": "https://medias.france.tv/Y1Cu4-1X_loIvmnVOR-xv9HZ-X4/2500x1406/filters:quality(85)/i/4/q/phpbhbq4i.png"
+        },
+        "type": "vignette_16x9"
+       },
+       {
+        "urls": {
+         "w:400": "https://medias.france.tv/lYJtc7PJtRFmVTJCsTGWzyheBFI/400x533/filters:quality(85)/g/5/b/phpplsb5g.png",
+         "w:800": "https://medias.france.tv/W6QXcKRneOf9Ku2SPmRHY-I_tAQ/800x1066/filters:quality(85)/g/5/b/phpplsb5g.png",
+         "w:1024": "https://medias.france.tv/Le8YX8jHdA_cAevyW3QmDRACfFE/1024x1365/filters:quality(85)/g/5/b/phpplsb5g.png"
+        },
+        "type": "vignette_3x4"
+       }
+      ],
+      "integral_counter": 0,
+      "marker": {
+       "level_2": null,
+       "page": null,
+       "indicators": null,
+       "custom_variables": null
+      },
+      "marker_piano": {
+       "contextual_properties": null,
+       "additional_properties": null
+      },
+      "call_to_action": "",
+      "call_to_action_url": "",
+      "synopsis": "La plus grande scène de France",
+      "headline_title": null,
+      "label_edito": null,
+      "parent": null
+     },
+     "event": null,
+     "partner": null,
+     "ads_blocked": false,
+     "sponsored": false,
+     "is_live": false,
+     "is_published": true,
+     "production_year": null,
+     "is_audio_descripted": false,
+     "is_multi_lingual": false,
+     "casting": "",
+     "director": null,
+     "producer": null,
+     "presenter": null,
+     "characters": "",
+     "visible": true,
+     "marker": {
+      "level_2": 51,
+      "page": "player::replay::lepitchcinema-emission_du_lundi_2_novembre_2026-8968469",
+      "indicators": {
+       "4": "[france_2]",
+       "23": "1"
+      },
+      "custom_variables": {
+       "titre_video": "emission_du_lundi_2_novembre_2026",
+       "nom_programme": "lepitchcinema",
+       "id_video_offre": "8968469",
+       "categories": "spectacles_et-culture"
+      }
+     },
+     "marker_piano": {
+      "contextual_properties": {
+       "page": "emission_du_lundi_2_novembre_2026",
+       "page_type": "video"
+      },
+      "additional_properties": {
+       "channel": "france_2",
+       "channel_type": "premium",
+       "sub_channel": null,
+       "region": "paris_ile_de_france",
+       "category": "arts_spectacles|cinema",
+       "sub_category": "emissions_culturelles",
+       "content_type": "video",
+       "content_title": "emission_du_lundi_2_novembre_2026",
+       "content_status": "replay",
+       "content_format": "integrale",
+       "program": "le_pitch_cinema",
+       "program_id": 19711,
+       "highlight": null,
+       "tag": null,
+       "sub_tag": null,
+       "season": null,
+       "content_id": 8968469,
+       "content_sponsored": false,
+       "content_logged": true,
+       "audiomeans_id": null,
+       "last_update_date": null,
+       "first_publication_date": null,
+       "author": null,
+       "partner": null,
+       "content_diffusion_date": "02112026",
+       "video_factory_id": "10ab928b-8a26-4a25-bf7f-1ac0853dd0e9"
+      }
+     },
+     "is_recommended": false,
+     "rating_csa_code": "TP",
+     "is_subtitled": true,
+     "login": true,
+     "broadcast_channel": "france-2",
+     "medium_description": null,
+     "production_company": null,
+     "production_countries": "France",
+     "production_language": "Français",
+     "palmares": "",
+     "creator": "",
+     "voice_off": "",
+     "release_date": null,
+     "scenarists": "",
+     "reviewers": "",
+     "upcoming_live": false,
+     "intro": null,
+     "text": null,
+     "reading_time": null,
+     "offer": "francetv",
+     "format": "landscape"
+    },
+    {
+     "id": 8943966,
+     "title": "Émission du dimanche 25 octobre 2026",
+     "label_edito": null,
+     "type": "integrale",
+     "headline_title": null,
+     "season": null,
+     "episode": null,
+     "description": "Chaque semaine Le Pitch Cinéma vous présente 5 sorties de la semaine. Rythmé et graphique, une mystérieuse silhouette en contre jour devant un grand écran \\\" donne les clefs aux téléspectateurs pour se forger leur opinion \\\" et décider ensuite d'aller voir les films… ou pas ! Le Pitch Cinéma fait appel à la culture cinématographique des téléspectateurs et propose pour chaque sortie de film un véritable jeu d'association : si vous avez aimé tel film, vous risquez d'aimer tel film…. Ou pas…",
+     "broadcast_begin_date": 1792965739,
+     "broadcast_end_date": 1792965977,
+     "begin_date": 1792966138,
+     "end_date": 1795558138,
+     "duration": 238,
+     "rating_csa": "Tous publics",
+     "si_id": "66ec5d09-7e7f-47ba-982a-2e839bad2a44",
+     "downloadable": false,
+     "episode_title": "Émission du dimanche 25 octobre 2026",
+     "program": {
+      "id": 19711,
+      "label": "Le pitch cinéma",
+      "description": "",
+      "type": "program",
+      "program_path": "france-2_le-pitch-cinema",
+      "link": {
+       "url": "/apps/program/meta/france-2_le-pitch-cinema?platform=apps",
+       "type": "tab"
+      },
+      "color": null,
+      "sound": null,
+      "headline_title": " À découvrir au cinéma cette semaine",
+      "images": [
+       {
+        "urls": {
+         "w:800": "https://medias.france.tv/FUOQrKfjOnAio5sow2J1F0HRFsI/800x450/filters:quality(85)/y/a/7/phpsjj7ay.jpg",
+         "w:1024": "https://medias.france.tv/SydYoSPUDAYBsxnN5OUnadT1_BE/1024x576/filters:quality(85)/y/a/7/phpsjj7ay.jpg",
+         "w:2500": "https://medias.france.tv/HPEaT3vjdWL_vz-OB7ur0CikDRM/2500x1406/filters:quality(85)/y/a/7/phpsjj7ay.jpg"
+        },
+        "type": "background_16x9"
+       },
+       {
+        "urls": {
+         "w:0": "https://medias.france.tv/wGq6_sbtt1eqb_JmzLzkDRRxssQ/0x0/filters:quality(85)/v/t/r/php69grtv.png",
+         "w:25": "https://medias.france.tv/k8Fsu4EtbxPKeAHJJus2jLSAGjI/25x0/filters:quality(85)/v/t/r/php69grtv.png",
+         "w:150": "https://medias.france.tv/biQ9TaVSKgV5ZV6pQfARHkw2284/150x0/filters:quality(85)/v/t/r/php69grtv.png",
+         "w:300": "https://medias.france.tv/A87UFmxhKjEwTPklEC4tO0dIBUQ/300x0/filters:quality(85)/v/t/r/php69grtv.png",
+         "w:450": "https://medias.france.tv/_Rg0JnRkNguFp8uuD464LasAxBg/450x0/filters:quality(85)/v/t/r/php69grtv.png",
+         "w:1024": "https://medias.france.tv/J8D2HZT1rSkQtU2vMRIjvlMkzfk/1024x0/filters:quality(85)/v/t/r/php69grtv.png"
+        },
+        "type": "logo"
+       },
+       {
+        "urls": {
+         "w:400": "https://medias.france.tv/4mt0r8v4Hfpw_cOh5iMQiAB9GUE/400x0/filters:quality(85)/t/c/n/phpmfonct.jpg",
+         "w:800": "https://medias.france.tv/lWPO-bbIZh63pKCO19v9NTly61k/800x450/filters:quality(85)/t/c/n/phpmfonct.jpg",
+         "w:1024": "https://medias.france.tv/ADsctw-brNHmhFmUasdIEImXaXI/1024x576/filters:quality(85)/t/c/n/phpmfonct.jpg",
+         "w:2500": "https://medias.france.tv/_LGctg7llHoPy0Z68uEFxexDC44/2500x1406/filters:quality(85)/t/c/n/phpmfonct.jpg"
+        },
+        "type": "vignette_16x9"
+       },
+       {
+        "urls": {
+         "w:400": "https://medias.france.tv/i-UUGSqQU1bfuf3MpuV_oHQRmD8/400x533/filters:quality(85)/x/m/i/phpiemimx.jpg",
+         "w:800": "https://medias.france.tv/2TgO9d1kKk9p8QrwjsSWqjYzYZY/800x1066/filters:quality(85)/x/m/i/phpiemimx.jpg",
+         "w:1024": "https://medias.france.tv/KQ0OKjo1eDCMThNhJUHaA_XSOKg/1024x1365/filters:quality(85)/x/m/i/phpiemimx.jpg"
+        },
+        "type": "vignette_3x4"
+       }
+      ],
+      "integral_counter": 7,
+      "ads_blocked": false,
+      "broadcast_box": null,
+      "recommendation": true,
+      "partner": null,
+      "sponsored": false,
+      "channel": "france-2",
+      "marker": {
+       "level_2": null,
+       "page": null,
+       "indicators": null,
+       "custom_variables": null
+      },
+      "marker_piano": {
+       "contextual_properties": null,
+       "additional_properties": {
+        "category": null,
+        "sub_category": null
+       }
+      },
+      "age_min": null,
+      "age_max": null,
+      "saison": null,
+      "call_to_action": "",
+      "call_to_action_url": "",
+      "synopsis": "Chaque semaine Le Pitch Cinéma vous présente  sa sélection des 5 films sorties de la semaine.",
+      "label_edito": null,
+      "casting": null,
+      "characters": null,
+      "director": null,
+      "scenarists": null,
+      "palmares": null,
+      "production_countries": null,
+      "number_of_episodes": null,
+      "number_of_seasons": 3,
+      "categories": [],
+      "sub_categories": [],
+      "category": null,
+      "podcast_url": null,
+      "offer": "francetv",
+      "sort_seasons": null,
+      "sort_episodes": null
+     },
+     "images": [
+      {
+       "urls": {
+        "w:400": "https://medias.france.tv/210Mgkpt5fRd_jI7dH184vB89iw/400x0/filters:quality(85)/y/g/v/phpslpvgy.jpg",
+        "w:800": "https://medias.france.tv/V9VNW-uwRaNTbp_Qvvg5rLnZ7F8/800x450/filters:quality(85)/y/g/v/phpslpvgy.jpg",
+        "w:1024": "https://medias.france.tv/NLnT5ndDiRJfgtIip60ir7HAbZY/1024x576/filters:quality(85)/y/g/v/phpslpvgy.jpg",
+        "w:2500": "https://medias.france.tv/ILCcUMZTp7Fs-fPRE3huz29vFSw/2500x1406/filters:quality(85)/y/g/v/phpslpvgy.jpg"
+       },
+       "type": "vignette_16x9"
+      },
+      {
+       "urls": {
+        "w:400": "https://medias.france.tv/KMlCgjqwfPjPOg4pLl_dSkTBf7w/400x533/filters:quality(85)/e/z/5/phpis95ze.jpg",
+        "w:800": "https://medias.france.tv/M2ej5519-hjsoBnUf_xb24Oeh_8/800x1066/filters:quality(85)/e/z/5/phpis95ze.jpg",
+        "w:1024": "https://medias.france.tv/Rd0wDMgfxhYkhTbmU41OrfaTI-M/1024x1365/filters:quality(85)/e/z/5/phpis95ze.jpg"
+       },
+       "type": "vignette_3x4"
+      }
+     ],
+     "channel": {
+      "id": 1,
+      "label": "France 2",
+      "type": "channel",
+      "channel_path": "france-2",
+      "images": [
+       {
+        "urls": {
+         "w:800": "https://medias.france.tv/mLqXUD7pGPZMQDNu6nAHm1HRS4M/800x450/filters:quality(85)/1/k/m/phppfemk1.jpg",
+         "w:1024": "https://medias.france.tv/wPgCVt5lCy78c0Dz87UTaVb2tfU/1024x576/filters:quality(85)/1/k/m/phppfemk1.jpg",
+         "w:2500": "https://medias.france.tv/Wd3atkIPrSuUXyP5SPease6wKZs/2500x1406/filters:quality(85)/1/k/m/phppfemk1.jpg"
+        },
+        "type": "background_16x9"
+       },
+       {
+        "urls": {
+         "w:265": "https://medias.france.tv/ANKNqY3gzyyG5GIAyePKRrZiMdA/265x265/filters:quality(85)/c/7/t/php6kjt7c.png",
+         "w:300": "https://medias.france.tv/Hvxatu-k_sKN-NBK-X6Hg1tjVco/300x300/filters:quality(85)/c/7/t/php6kjt7c.png",
+         "w:400": "https://medias.france.tv/v25lgE50IPcm5SkmaN7WLDiOuEo/400x400/filters:quality(85)/c/7/t/php6kjt7c.png",
+         "w:800": "https://medias.france.tv/3UhtTybWFPZvEotF2qlav8OWrW8/800x800/filters:quality(85)/c/7/t/php6kjt7c.png",
+         "w:1024": "https://medias.france.tv/6oz4Bmu7itJjIT1Mnh3asxClwPc/1024x1024/filters:quality(85)/c/7/t/php6kjt7c.png"
+        },
+        "type": "carre"
+       },
+       {
+        "urls": {
+         "w:0": "https://medias.france.tv/debMOnbWg8TetTZhLF-K56IQ2Mo/0x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+         "w:25": "https://medias.france.tv/wtQQS-esm6t16I6olBef3VTJQIg/25x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+         "w:150": "https://medias.france.tv/jKWZKoynXaOcxrbmGmpPM66U3E0/150x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+         "w:300": "https://medias.france.tv/mUab8olpguMyPRii8N425DQmlIs/300x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+         "w:450": "https://medias.france.tv/tv2YD3WsEHwdY7ySwWlfWGXzB2w/450x0/filters:quality(85)/a/c/h/phpi0hhca.png",
+         "w:1024": "https://medias.france.tv/p2KkmucENa0CMGIvA_1KWC4SBFc/1024x0/filters:quality(85)/a/c/h/phpi0hhca.png"
+        },
+        "type": "logo"
+       },
+       {
+        "urls": {
+         "w:400": "https://medias.france.tv/7iMGREATX7UsKTEq35pMallmdy8/400x0/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+         "w:800": "https://medias.france.tv/vDTl5ncJJEu6Jd11KR-TY4xF1fA/800x450/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+         "w:1024": "https://medias.france.tv/Q-4oPgpeaL6wMcE6r6-SxXB_mnQ/1024x576/filters:quality(85)/j/k/s/phpn0qskj.jpg",
+         "w:2500": "https://medias.france.tv/SyuTNozmt9jee_kyUHzHfSbI8MI/2500x1406/filters:quality(85)/j/k/s/phpn0qskj.jpg"
+        },
+        "type": "vignette_16x9"
+       },
+       {
+        "urls": {
+         "w:400": "https://medias.france.tv/KFtHQ8BAnDpwElwFdcBvZlQ6OM0/400x533/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+         "w:800": "https://medias.france.tv/ftci3wQ-G6qjjN9c1-ToTJV4iX4/800x1066/filters:quality(85)/3/d/y/phpkiyyd3.jpg",
+         "w:1024": "https://medias.france.tv/eRwxerP2BRgddRX72HBRRZVkEwU/1024x1365/filters:quality(85)/3/d/y/phpkiyyd3.jpg"
+        },
+        "type": "vignette_3x4"
+       }
+      ],
+      "si_id": "006194ea-117d-4bcf-94a9-153d999c59ae",
+      "channel_url": "france-2",
+      "marker": {
+       "level_2": null,
+       "page": null,
+       "indicators": null,
+       "custom_variables": null
+      },
+      "marker_piano": {
+       "contextual_properties": null,
+       "additional_properties": {
+        "category": null,
+        "sub_category": null
+       }
+      },
+      "call_to_action": "",
+      "call_to_action_url": "",
+      "synopsis": null,
+      "offer": "france-2"
+     },
+     "category": {
+      "id": 57,
+      "type": "categorie",
+      "label": "Arts & spectacles",
+      "url_complete": "spectacles-et-culture",
+      "images": [
+       {
+        "urls": {
+         "w:800": "https://medias.france.tv/m3tOanYulaYn7MqzTbyqyT3xl08/800x450/filters:quality(85)/l/n/1/phpe9h1nl.png",
+         "w:1024": "https://medias.france.tv/dxdb2mEksdSbmAJiaaMU0msDmco/1024x576/filters:quality(85)/l/n/1/phpe9h1nl.png",
+         "w:2500": "https://medias.france.tv/eBjfqrBC_ogIO_Lj63X5HkYLc4E/2500x1406/filters:quality(85)/l/n/1/phpe9h1nl.png"
+        },
+        "type": "background_16x9"
+       },
+       {
+        "urls": {
+         "w:265": "https://medias.france.tv/ogm8TJcnmIUx-HanwTaEXpfy4dE/265x265/filters:quality(85)/w/s/9/php5cb9sw.png",
+         "w:300": "https://medias.france.tv/92-MNNTXif4sI7Kn2nVyVixKFgQ/300x300/filters:quality(85)/w/s/9/php5cb9sw.png",
+         "w:400": "https://medias.france.tv/GZEhjJ_NTUa41essQh_NGYy84Mo/400x400/filters:quality(85)/w/s/9/php5cb9sw.png",
+         "w:800": "https://medias.france.tv/tQ72IVt0ADlDD49zTtq2EOOGe5U/800x800/filters:quality(85)/w/s/9/php5cb9sw.png",
+         "w:1024": "https://medias.france.tv/LlPB6WYQihgVsOk4ArT3p_an7Xg/1024x1024/filters:quality(85)/w/s/9/php5cb9sw.png"
+        },
+        "type": "carre"
+       },
+       {
+        "urls": {
+         "w:0": "https://medias.france.tv/nCEBDCo0wOKorBuDt1Zm7lC6Scs/0x0/filters:quality(85)/s/d/z/phpdwozds.png",
+         "w:25": "https://medias.france.tv/BBfAmrl0YTvyNLh0ieS-jLA9jzk/25x0/filters:quality(85)/s/d/z/phpdwozds.png",
+         "w:150": "https://medias.france.tv/DAASUY-c1I8UVsmBOuiQ_iYwxDM/150x0/filters:quality(85)/s/d/z/phpdwozds.png",
+         "w:300": "https://medias.france.tv/ri5GIz_4rU_9mdZuiqo7GmsOGqo/300x0/filters:quality(85)/s/d/z/phpdwozds.png",
+         "w:450": "https://medias.france.tv/NIqNJP7VF-dY1DjFIGiy376WeK4/450x0/filters:quality(85)/s/d/z/phpdwozds.png",
+         "w:1024": "https://medias.france.tv/zMvzOXHe2rxbMRFJFT1r9D7Qalc/1024x0/filters:quality(85)/s/d/z/phpdwozds.png"
+        },
+        "type": "logo"
+       },
+       {
+        "urls": {
+         "w:400": "https://medias.france.tv/jx_H0DbKE8hJzi9LJg27E8KvZB8/400x0/filters:quality(85)/i/4/q/phpbhbq4i.png",
+         "w:800": "https://medias.france.tv/FLEXz-Aswj24cyy88GzSZwblmYE/800x450/filters:quality(85)/i/4/q/phpbhbq4i.png",
+         "w:1024": "https://medias.france.tv/MH7vK6Zn7N8y6PkeDDRe0Eem6LI/1024x576/filters:quality(85)/i/4/q/phpbhbq4i.png",
+         "w:2500": "https://medias.france.tv/Y1Cu4-1X_loIvmnVOR-xv9HZ-X4/2500x1406/filters:quality(85)/i/4/q/phpbhbq4i.png"
+        },
+        "type": "vignette_16x9"
+       },
+       {
+        "urls": {
+         "w:400": "https://medias.france.tv/lYJtc7PJtRFmVTJCsTGWzyheBFI/400x533/filters:quality(85)/g/5/b/phpplsb5g.png",
+         "w:800": "https://medias.france.tv/W6QXcKRneOf9Ku2SPmRHY-I_tAQ/800x1066/filters:quality(85)/g/5/b/phpplsb5g.png",
+         "w:1024": "https://medias.france.tv/Le8YX8jHdA_cAevyW3QmDRACfFE/1024x1365/filters:quality(85)/g/5/b/phpplsb5g.png"
+        },
+        "type": "vignette_3x4"
+       }
+      ],
+      "integral_counter": 0,
+      "marker": {
+       "level_2": null,
+       "page": null,
+       "indicators": null,
+       "custom_variables": null
+      },
+      "marker_piano": {
+       "contextual_properties": null,
+       "additional_properties": null
+      },
+      "call_to_action": "",
+      "call_to_action_url": "",
+      "synopsis": "La plus grande scène de France",
+      "headline_title": null,
+      "label_edito": null,
+      "parent": null
+     },
+     "event": null,
+     "partner": null,
+     "ads_blocked": false,
+     "sponsored": false,
+     "is_live": false,
+     "is_published": true,
+     "production_year": null,
+     "is_audio_descripted": false,
+     "is_multi_lingual": false,
+     "casting": "",
+     "director": null,
+     "producer": null,
+     "presenter": null,
+     "characters": "",
+     "visible": true,
+     "marker": {
+      "level_2": 51,
+      "page": "player::replay::lepitchcinema-emission_du_dimanche_25_octobre_2026-8943966",
+      "indicators": {
+       "4": "[france_2]",
+       "23": "1"
+      },
+      "custom_variables": {
+       "titre_video": "emission_du_dimanche_25_octobre_2026",
+       "nom_programme": "lepitchcinema",
+       "id_video_offre": "8943966",
+       "categories": "spectacles_et-culture"
+      }
+     },
+     "marker_piano": {
+      "contextual_properties": {
+       "page": "emission_du_dimanche_25_octobre_2026",
+       "page_type": "video"
+      },
+      "additional_properties": {
+       "channel": "france_2",
+       "channel_type": "premium",
+       "sub_channel": null,
+       "region": "paris_ile_de_france",
+       "category": "arts_spectacles|cinema",
+       "sub_category": "emissions_culturelles",
+       "content_type": "video",
+       "content_title": "emission_du_dimanche_25_octobre_2026",
+       "content_status": "replay",
+       "content_format": "integrale",
+       "program": "le_pitch_cinema",
+       "program_id": 19711,
+       "highlight": null,
+       "tag": null,
+       "sub_tag": null,
+       "season": null,
+       "content_id": 8943966,
+       "content_sponsored": false,
+       "content_logged": true,
+       "audiomeans_id": null,
+       "last_update_date": null,
+       "first_publication_date": null,
+       "author": null,
+       "partner": null,
+       "content_diffusion_date": "25102026",
+       "video_factory_id": "66ec5d09-7e7f-47ba-982a-2e839bad2a44"
+      }
+     },
+     "is_recommended": false,
+     "rating_csa_code": "TP",
+     "is_subtitled": true,
+     "login": true,
+     "broadcast_channel": "france-2",
+     "medium_description": null,
+     "production_company": null,
+     "production_countries": "France",
+     "production_language": "Français",
+     "palmares": "",
+     "creator": "",
+     "voice_off": "",
+     "release_date": null,
+     "scenarists": "",
+     "reviewers": "",
+     "upcoming_live": false,
+     "intro": null,
+     "text": null,
+     "reading_time": null,
+     "offer": "francetv",
+     "format": "landscape"
+    }
+   ],
+   "label": "Les films"
+  }
+ ],
+ "actions": [
+  {
+   "label": "voir la dernière diffusion disponible",
+   "id": 8968469,
+   "episode_title": "Émission du lundi 2 novembre 2026",
+   "duration": 238,
+   "type": "replay"
+  }
+ ]
+}

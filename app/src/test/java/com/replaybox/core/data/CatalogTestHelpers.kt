@@ -75,6 +75,9 @@ class FakeCatalogDao : CatalogDao {
         progress.remove(episodeId)
     }
 
+    override suspend fun progressOfShow(showId: String): List<ProgressEntity> =
+        progress.values.filter { it.showId == showId }.sortedByDescending { it.updatedAt }
+
     override suspend fun progressFor(episodeIds: List<String>): List<ProgressEntity> =
         episodeIds.mapNotNull { progress[it] }
 

@@ -44,6 +44,9 @@ interface CatalogDao {
 
     suspend fun deleteProgress(episodeId: String)
 
+    /** This Programme's saved rows, most recently updated first. */
+    suspend fun progressOfShow(showId: String): List<ProgressEntity>
+
     /** Saved rows for these Épisodes; unknown ids are simply absent. */
     suspend fun progressFor(episodeIds: List<String>): List<ProgressEntity>
 
