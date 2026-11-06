@@ -1,5 +1,6 @@
 package com.replaybox.app.update
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -20,11 +21,14 @@ object UpdateInstaller {
     private const val TAG = "UpdateInstaller"
 
     fun install(context: Context, apk: File) {
+        // Started from the Activity (no NEW_TASK) so BACK from the system
+        // screens returns to Replaybox, not to the launcher.
+        val taskFlags = if (context is Activity) 0 else Intent.FLAG_ACTIVITY_NEW_TASK
         if (!context.packageManager.canRequestPackageInstalls()) {
             val grant = Intent(
                 Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
                 Uri.parse("package:${context.packageName}"),
-            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            ).addFlags(taskFlags)
             try {
                 context.startActivity(grant)
                 return
@@ -36,7 +40,7 @@ object UpdateInstaller {
         val uri = FileProvider.getUriForFile(context, AUTHORITY, apk)
         val intent = Intent(Intent.ACTION_VIEW)
             .setDataAndType(uri, "application/vnd.android.package-archive")
-            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or taskFlags)
         context.startActivity(intent)
     }
 }

@@ -181,6 +181,11 @@ Implémentation (`app.update`) :
   d'installation (`ACTION_VIEW` sur un `content://` du `FileProvider` `com.replaybox.updates`)
   ne part **que** sur appui. Si « sources inconnues » n'est pas encore accordé à Replaybox,
   l'appui ouvre d'abord `ACTION_MANAGE_UNKNOWN_APP_SOURCES` ; l'utilisateur ré-appuie ensuite.
+- Mesuré sur la Bbox (06/11) : l'écran système est `com.android.tv.settings/…ExternalSourcesActivity`
+  (liste, Replaybox « Non autorisé » à basculer). Basculer le droit **tue le processus**
+  Replaybox (comportement Android) : après l'autorisation unique, relancer l'app ; l'APK déjà
+  téléchargé est réutilisé, le bandeau revient, l'appui ouvre le prompt système « Voulez-vous
+  mettre à jour cette application ? ».
 
 ## Releases
 
