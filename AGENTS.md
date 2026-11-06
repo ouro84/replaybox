@@ -34,4 +34,5 @@ Code, commentaires, tests, messages de commit : **anglais**. Chaînes UI : **fra
 - Aucun secret dans le repo (V1 : aucun compte ; V2 : credentials M6 au Keystore Android, jamais en
   dur, jamais en log).
 - Les docs produit (`PRD.md`, `ROADMAP.md`) et les ADR ne se modifient que sur décision explicite
-  d'Arnaud via Hermes.
+  d'Arnaud via Hermes. Exception autorisée par Arnaud (2026-11-06) : cocher les cases de
+  `ROADMAP.md` quand l'item est livré et vérifié sur la box, dans la PR qui le livre.
