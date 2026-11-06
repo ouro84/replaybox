@@ -35,6 +35,13 @@ class FtvChannelParserTest {
     }
 
     @Test
+    fun `picks a landscape backdrop`() {
+        val shows = FtvParsers.showsFromChannel(FtvTestFixtures.load("ftv_channel_france-2.json"))
+        assertThat(shows.first().backdropUrl).startsWith("https://medias.france.tv/")
+        assertThat(shows.count { it.backdropUrl != null }).isEqualTo(shows.size)
+    }
+
+    @Test
     fun `maps listing genres`() {
         val shows = FtvParsers.showsFromChannel(FtvTestFixtures.load("ftv_channel_france-2.json"))
         val drama = shows.first { it.id.value.endsWith("les-disparus-des-argonnes") }

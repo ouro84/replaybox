@@ -1,5 +1,6 @@
 package com.replaybox.core.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -15,6 +16,15 @@ data class ShowEntity(
     val title: String,
     val posterUrl: String?,
     val synopsis: String?,
+    val backdropUrl: String? = null,
+    /**
+     * When this Programme first appeared in its Chaîne listing, and its rank
+     * in that listing (schema v3). Listings are re-ordered editorially on
+     * every fetch; keeping the first-seen order holds the Home rails still
+     * from one evening to the next, newest arrivals first.
+     */
+    @ColumnInfo(defaultValue = "0") val firstSeenAt: Long = 0,
+    @ColumnInfo(defaultValue = "0") val firstSeenRank: Int = 0,
 )
 
 @Entity(tableName = "genre_map", primaryKeys = ["showId", "genre"])
@@ -59,13 +69,21 @@ data class ProgramMetaEntity(
     val fetchedAt: Long,
 )
 
-/** Progression (glossary): device-local playhead, never leaves the box. */
+/**
+ * Progression (glossary): device-local playhead, never leaves the box. The
+ * Programme context (schema v2) feeds the Home "Reprendre" rail; rows saved
+ * before v2 have none and stay out of that rail.
+ */
 @Entity(tableName = "progress")
 data class ProgressEntity(
     @PrimaryKey val episodeId: String,
     val positionSeconds: Long,
     val durationSeconds: Int?,
     val updatedAt: Long,
+    val showId: String? = null,
+    val showTitle: String? = null,
+    val episodeTitle: String? = null,
+    val thumbnailUrl: String? = null,
 )
 
 @Entity(tableName = "favorites")

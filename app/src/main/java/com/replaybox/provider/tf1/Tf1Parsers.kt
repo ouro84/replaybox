@@ -43,8 +43,16 @@ object Tf1Parsers {
             posterUrl = posterFrom(item),
             synopsis = Tf1Json.str(item, "decoration", "description"),
             genres = Tf1Genres.map(categoryIds),
+            backdropUrl = backdropFrom(item),
         )
     }
+
+    /** decoration.background is the 16:9 "background-ott" key art (SPEC §Images). */
+    private fun backdropFrom(item: JsonObject): String? =
+        Tf1Json.objects(Tf1Json.array(item, "decoration", "background", "sources"))
+            .filter { (Tf1Json.str(it, "type") ?: "").lowercase() != "mp4" }
+            .maxByOrNull { Tf1Json.int(it, "width") ?: 0 }
+            ?.let { Tf1Json.str(it, "url") }
 
     private fun posterFrom(item: JsonObject): String? {
         val sources = Tf1Json.objects(Tf1Json.array(item, "decoration", "image", "sources"))

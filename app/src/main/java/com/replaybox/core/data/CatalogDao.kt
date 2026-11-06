@@ -34,9 +34,15 @@ interface CatalogDao {
 
     // ---- Progress + Favorites (device-local) ----
 
-    suspend fun putProgress(episodeId: String, positionSeconds: Long, durationSeconds: Int?, at: Long)
+    /** Inserts or replaces the whole row, Programme context included. */
+    suspend fun putProgress(progress: ProgressEntity)
 
     suspend fun progress(episodeId: String): ProgressEntity?
+
+    /** Most recently updated first. */
+    suspend fun recentProgress(limit: Int): List<ProgressEntity>
+
+    suspend fun deleteProgress(episodeId: String)
 
     suspend fun putFavorite(showId: String, at: Long)
 

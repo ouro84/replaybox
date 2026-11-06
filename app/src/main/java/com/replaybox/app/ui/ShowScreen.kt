@@ -38,13 +38,14 @@ import coil.compose.AsyncImage
 import com.replaybox.R
 import com.replaybox.core.model.Episode
 import com.replaybox.core.model.EpisodeId
+import com.replaybox.core.model.ProgressContext
 import com.replaybox.core.model.Season
 import com.replaybox.core.model.SeasonId
 import com.replaybox.core.model.ShowId
 import kotlinx.coroutines.launch
 
 @Composable
-fun ShowScreen(showId: ShowId, title: String, onOpenEpisode: (EpisodeId, String) -> Unit) {
+fun ShowScreen(showId: ShowId, title: String, onOpenEpisode: (Episode, ProgressContext) -> Unit) {
     val provider = Providers.resolveShow(showId.value)
     var seasons by remember { mutableStateOf<List<Season>?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -138,7 +139,15 @@ fun ShowScreen(showId: ShowId, title: String, onOpenEpisode: (EpisodeId, String)
             }
         } else {
             items(episodes) { episode ->
-                EpisodeRow(episode = episode, onOpenEpisode = onOpenEpisode)
+                EpisodeRow(
+                    episode = episode,
+                    onOpenEpisode = {
+                        onOpenEpisode(
+                            episode,
+                            ProgressContext(showId, title, episode.title, episode.thumbnailUrl),
+                        )
+                    },
+                )
             }
         }
     }
@@ -188,13 +197,13 @@ private fun SeasonChip(season: Season, selected: Boolean, onSelect: () -> Unit) 
 }
 
 @Composable
-private fun EpisodeRow(episode: Episode, onOpenEpisode: (EpisodeId, String) -> Unit) {
+private fun EpisodeRow(episode: Episode, onOpenEpisode: () -> Unit) {
     var focused by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 32.dp)
-            .clickable { onOpenEpisode(episode.id, episode.title) }
+            .clickable { onOpenEpisode() }
             .focusable()
             .onFocusChanged { focused = it.isFocused },
         horizontalArrangement = Arrangement.spacedBy(16.dp),
