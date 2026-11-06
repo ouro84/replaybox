@@ -1,5 +1,6 @@
 package com.replaybox.app.ui
 
+import androidx.compose.material.icons.filled.Refresh
 import android.view.KeyEvent as NativeKeyEvent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
@@ -101,6 +102,9 @@ class HomeUiState {
     var data: HomeData? = null
     var refreshed = false
 
+    /** Every Chaîne failed the last refresh (Round 8 Q4). */
+    var unavailable = false
+
     fun row(key: String): TvLazyListState = rows.getOrPut(key) { TvLazyListState() }
     fun requester(key: String): FocusRequester = requesters.getOrPut(key) { FocusRequester() }
     fun resetRows() = rows.clear()
@@ -146,6 +150,10 @@ fun HomeScreen(
     val updateState by ReplayboxApplication.updater.state.collectAsState()
     var data by remember { mutableStateOf(state.data) }
     var refreshing by remember { mutableStateOf(!state.refreshed) }
+    var unavailable by remember { mutableStateOf(state.unavailable) }
+    var refreshRun by remember { mutableStateOf(0) }
+    var refocus by remember { mutableStateOf(0) }
+    val retryFocus = remember { FocusRequester() }
     var focused by remember { mutableStateOf<Featured?>(null) }
     var removing by remember { mutableStateOf<ResumeItem?>(null) }
     val scope = rememberCoroutineScope()
@@ -153,11 +161,17 @@ fun HomeScreen(
 
     // ADR 0002: background refresh once per process, Home listings first.
     // The rails compose instantly from the cache; catalog.updates re-ticks them.
-    LaunchedEffect(Unit) {
-        if (state.refreshed) return@LaunchedEffect
-        withContext(Dispatchers.IO) { catalog.refreshListings(Providers.all) }
+    LaunchedEffect(refreshRun) {
+        // Once per process, unless the viewer asks again (« Réessayer »).
+        if (state.refreshed && refreshRun == 0) return@LaunchedEffect
+        refreshing = true
+        val failed = withContext(Dispatchers.IO) { catalog.refreshListings(Providers.all) }
+        unavailable = Providers.all.isNotEmpty() && failed == Providers.all.size
+        state.unavailable = unavailable
         state.refreshed = true
         refreshing = false
+        // Réessayer left composition with the skeleton: focus the loaded Home.
+        if (refreshRun > 0 && !unavailable) refocus++
     }
     LaunchedEffect(updates) {
         val loaded = withContext(Dispatchers.IO) { loadHome(catalog) }
@@ -177,7 +191,6 @@ fun HomeScreen(
     // else the billboard's primary action, else the first card. A key whose
     // card is gone (removed, delisted) falls through to the next candidate.
     val firstCardKey = current?.let { firstCardKey(it) }
-    var refocus by remember { mutableStateOf(0) }
     LaunchedEffect(current != null, billboard != null, refocus) {
         if (current == null) return@LaunchedEffect
         withFrameNanos { }
@@ -224,12 +237,30 @@ fun HomeScreen(
             )
             when {
                 current == null || (current.genres.isEmpty() && refreshing) -> SkeletonRails()
-                current.genres.isEmpty() && current.resume.isEmpty() && current.favorites.isEmpty() -> Text(
-                    text = stringResource(R.string.catalog_empty),
-                    style = RbType.body,
-                    color = Rb.textSecondary,
-                    modifier = Modifier.padding(start = GUTTER, top = 16.dp),
-                )
+                current.genres.isEmpty() && current.resume.isEmpty() && current.favorites.isEmpty() -> Column(
+                    Modifier.padding(start = GUTTER, top = 16.dp),
+                ) {
+                    // A failed refresh is never presented as an empty catalogue.
+                    Text(
+                        text = stringResource(if (unavailable) R.string.catalog_unavailable else R.string.catalog_empty),
+                        style = RbType.body,
+                        color = Rb.textSecondary,
+                    )
+                    if (unavailable) {
+                        LaunchedEffect(Unit) {
+                            withFrameNanos { }
+                            runCatching { retryFocus.requestFocus() }
+                        }
+                        Box(Modifier.padding(top = 20.dp)) {
+                            PanelButton(
+                                label = stringResource(R.string.retry),
+                                icon = Icons.Filled.Refresh,
+                                requester = retryFocus,
+                                onClick = { refreshRun += 1 },
+                            )
+                        }
+                    }
+                }
                 else -> TvLazyColumn(
                     state = state.rails,
                     modifier = Modifier.fillMaxWidth().weight(1f),

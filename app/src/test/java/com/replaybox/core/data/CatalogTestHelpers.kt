@@ -101,6 +101,7 @@ class FakeProvider(
     private val seasonsError: Exception? = null,
     private val episodesResult: List<Episode> = emptyList(),
     private val episodesError: Exception? = null,
+    private val searchError: Exception? = null,
 ) : Provider {
 
     var showsCalls = 0
@@ -129,6 +130,7 @@ class FakeProvider(
 
     override suspend fun search(query: String): List<Show> {
         searchCalls += 1
+        searchError?.let { throw it }
         return showsResult.filter { it.title.contains(query, ignoreCase = true) }
     }
 

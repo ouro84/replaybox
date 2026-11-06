@@ -3,6 +3,9 @@ package com.replaybox.app.ui
 import com.google.common.truth.Truth.assertThat
 import com.replaybox.core.data.show
 import com.replaybox.core.model.Genre
+import com.replaybox.core.data.FakeProvider
+import com.replaybox.core.data.blocking
+import com.replaybox.core.model.Channel
 import org.junit.Test
 
 /** SPEC §Recherche: fusion by normalized title, first Chaîne wins. */
@@ -53,5 +56,45 @@ class SearchFusionTest {
             "tf1-chrono", "tf1",
             "ftv-vera", "france-3",
         )
+    }
+
+    @Test
+    fun `every Provider failing is a failure, not an empty result`() {
+        val hits = blocking {
+            SearchFusion.search(
+                listOf(
+                    FakeProvider(channel = Channel("tf1", "TF1+"), searchError = java.io.IOException("offline")),
+                    FakeProvider(channel = Channel("ftv", "France TV"), searchError = java.io.IOException("offline")),
+                ),
+                "tracker",
+            )
+        }
+        assertThat(hits.failed).isTrue()
+        assertThat(hits.shows).isEmpty()
+    }
+
+    @Test
+    fun `one Provider failing keeps the other's results`() {
+        val hits = blocking {
+            SearchFusion.search(
+                listOf(
+                    FakeProvider(channel = Channel("tf1", "TF1+"), showsResult = listOf(show("t", "Tracker"))),
+                    FakeProvider(channel = Channel("ftv", "France TV"), searchError = java.io.IOException("offline")),
+                ),
+                "tracker",
+            )
+        }
+        assertThat(hits.failed).isFalse()
+        assertThat(hits.shows.map { it.title }).containsExactly("Tracker")
+    }
+
+    @Test(expected = kotlinx.coroutines.CancellationException::class)
+    fun `cancellation is not swallowed as a failure`() {
+        blocking {
+            SearchFusion.search(
+                listOf(FakeProvider(searchError = kotlinx.coroutines.CancellationException("new query"))),
+                "tracker",
+            )
+        }
     }
 }

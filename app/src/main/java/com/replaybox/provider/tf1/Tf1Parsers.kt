@@ -150,6 +150,13 @@ object Tf1Parsers {
         }
     }
 
+    private val DATE_FORMAT: java.time.format.DateTimeFormatter =
+        java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy").withZone(java.time.ZoneId.of("Europe/Paris"))
+
+    /** TF1 dates are ISO instants; shown like France TV's (« 04/11/2026 », Paris). Unparsable: none. */
+    private fun displayDate(raw: String): String? =
+        runCatching { DATE_FORMAT.format(java.time.OffsetDateTime.parse(raw).toInstant()) }.getOrNull()
+
     fun episodesFromVideos(seasonId: SeasonId?, showId: ShowId, videos: List<ReplayVideo>): List<Episode> {
         val filtered = if (seasonId == null) videos else {
             val wanted = seasonId.value.substringAfter(SEPARATOR)
@@ -161,7 +168,7 @@ object Tf1Parsers {
                 seasonId = seasonId ?: SeasonId(showId.value + SEPARATOR + (v.season ?: "")),
                 title = v.title.ifEmpty { v.slug },
                 synopsis = v.synopsis,
-                broadcastDate = v.date,
+                broadcastDate = v.date?.let(::displayDate),
                 durationSeconds = v.durationSeconds,
                 thumbnailUrl = v.thumbnailUrl,
             )

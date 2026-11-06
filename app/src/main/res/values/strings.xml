@@ -24,6 +24,9 @@
     <string name="player_error_generic">Impossible de résoudre le Flux pour cet Épisode.</string>
     <string name="player_error_tf1_account">TF1 exige désormais un compte connecté pour ce Programme. Ouvre « Paramètres » dans le menu de gauche de l\u0027accueil pour te connecter.</string>
     <string name="player_error_tf1_content">Ce contenu reste indisponible avec ce compte (droits TF1 ou zone).</string>
+    <string name="player_error_playback">La lecture s\u0027est interrompue.</string>
+    <string name="search_unavailable">Recherche indisponible.</string>
+    <string name="catalog_unavailable">Catalogue indisponible. Vérifie la connexion.</string>
     <string name="player_error_geoblocked">Ce contenu est bloqué dans ta zone.</string>
     <string name="retry">Réessayer</string>
     <string name="back">Retour</string>
