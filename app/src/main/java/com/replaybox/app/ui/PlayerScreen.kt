@@ -75,7 +75,8 @@ private sealed interface PlayerState {
         val subtitleLanguage: String?,
         val resumeAtMs: Long?,
     ) : PlayerState
-    data class Error(val message: String, val accountRequired: Boolean) : PlayerState
+    /** [playback]: the Flux resolved but failed while playing. */
+    data class Error(val message: String, val accountRequired: Boolean, val playback: Boolean = false) : PlayerState
 }
 
 @Composable
@@ -95,6 +96,9 @@ fun PlayerScreen(
     val provider = Providers.resolveEpisode(episodeId.value)
     var state by remember { mutableStateOf<PlayerState>(PlayerState.Resolving) }
     var attempt by remember { mutableStateOf(0) }
+    val recovery = remember { PlaybackRecovery() }
+    // Position to resume at after a playback error (Round 8 Q2), no prompt.
+    var recoverAtMs by remember { mutableStateOf<Long?>(null) }
 
     suspend fun resolve() {
         state = PlayerState.Resolving
@@ -102,7 +106,7 @@ fun PlayerScreen(
         while (true) {
             try {
                 val stream = provider.stream(episodeId)
-                val resumeAtMs = ReplayboxApplication.catalog.resumeAtFor(episodeId)
+                val resumeAtMs = recoverAtMs ?: ReplayboxApplication.catalog.resumeAtFor(episodeId)
                 state = PlayerState.Ready(
                     stream.manifestUrl,
                     stream.type,
@@ -113,6 +117,8 @@ fun PlayerScreen(
                     resumeAtMs,
                 )
                 return
+            } catch (error: kotlinx.coroutines.CancellationException) {
+                throw error
             } catch (error: Exception) {
                 failures += 1
                 if (failures >= 2) {
@@ -127,7 +133,9 @@ fun PlayerScreen(
     LaunchedEffect(attempt) { resolve() }
 
     when (val current = state) {
-        is PlayerState.Resolving -> CenteredMessage(stringResource(R.string.loading))
+        is PlayerState.Resolving -> Box(Modifier.fillMaxSize().background(Rb.ground)) {
+            LoadingRing(Modifier.align(Alignment.Center))
+        }
         is PlayerState.Error -> {
             val retry = remember { FocusRequester() }
             LaunchedEffect(current) { runCatching { retry.requestFocus() } }
@@ -145,6 +153,7 @@ fun PlayerScreen(
                 )
                 Text(
                     text = when {
+                        current.playback -> stringResource(R.string.player_error_playback)
                         !current.accountRequired -> current.message.ifBlank { stringResource(R.string.player_error_generic) }
                         ReplayboxApplication.tf1Auth.hasCredentials() -> stringResource(R.string.player_error_tf1_content)
                         else -> stringResource(R.string.player_error_tf1_account)
@@ -158,7 +167,10 @@ fun PlayerScreen(
                         label = stringResource(R.string.retry),
                         icon = Icons.Filled.Refresh,
                         requester = retry,
-                        onClick = { attempt += 1 },
+                        onClick = {
+                            recovery.onUserRetry()
+                            attempt += 1
+                        },
                     )
                 }
             }
@@ -173,21 +185,19 @@ fun PlayerScreen(
             subtitleLanguage = current.subtitleLanguage,
             resumeAtMs = current.resumeAtMs,
             progressContext = progressContext,
-            autoResume = autoResume,
+            autoResume = autoResume || recoverAtMs != null,
             next = NextEpisodePolicy.next(queue, episodeId),
             onPlayNext = onPlayNext,
+            onPlaying = { recovery.onPlaying() },
+            onPlaybackError = { positionMs ->
+                if (positionMs > 0) recoverAtMs = positionMs
+                when (recovery.onError()) {
+                    PlaybackRecovery.Action.RETRY -> attempt += 1
+                    PlaybackRecovery.Action.SHOW_ERROR ->
+                        state = PlayerState.Error(message = "", accountRequired = false, playback = true)
+                }
+            },
         )
-    }
-}
-
-@Composable
-private fun CenteredMessage(message: String) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(message, style = RbType.body, color = Rb.textSecondary)
     }
 }
 
@@ -205,6 +215,8 @@ private fun PlayerSurface(
     autoResume: Boolean,
     next: Episode?,
     onPlayNext: (Episode) -> Unit,
+    onPlaying: () -> Unit,
+    onPlaybackError: (positionMs: Long) -> Unit,
 ) {
     val context = LocalContext.current
     val catalog = ReplayboxApplication.catalog
@@ -432,10 +444,22 @@ private fun PlayerSurface(
     var isPlaying by remember(manifestUrl) { mutableStateOf(false) }
     var positionMs by remember(manifestUrl) { mutableStateOf(0L) }
     var durationMs by remember(manifestUrl) { mutableStateOf(0L) }
+    var buffering by remember(manifestUrl) { mutableStateOf(false) }
     DisposableEffect(player) {
         val playingListener = object : androidx.media3.common.Player.Listener {
             override fun onIsPlayingChanged(playing: Boolean) {
                 isPlaying = playing
+                if (playing) onPlaying()
+            }
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                buffering = playbackState == androidx.media3.common.Player.STATE_BUFFERING
+            }
+
+            // Network cut, expired signed URL, decoder failure: hand over to
+            // PlaybackRecovery with the position to resume at.
+            override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
+                onPlaybackError(player.currentPosition.coerceAtLeast(0))
             }
         }
         player.addListener(playingListener)
@@ -544,6 +568,8 @@ private fun PlayerSurface(
                 }
             },
         )
+        // Same ring as the Flux resolution (Round 8 Q3), over the video.
+        if (buffering && !showResumeChoice) LoadingRing(Modifier.align(Alignment.Center))
         if (nextUp && next != null) {
             NextUp(
                 episode = next,

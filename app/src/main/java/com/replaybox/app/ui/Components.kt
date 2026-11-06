@@ -1,5 +1,6 @@
 package com.replaybox.app.ui
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -242,4 +243,24 @@ internal fun Artwork(url: String?, fallback: String) {
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize(),
     )
+}
+
+/** Shown only past this delay, so quick loads never flash a spinner (Round 8 Q3). */
+internal const val LOADING_DELAY_MS = 500L
+
+/** The one loading indicator: a 48 dp Paper White ring, no text. */
+@Composable
+internal fun LoadingRing(modifier: Modifier = Modifier) {
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(LOADING_DELAY_MS)
+        visible = true
+    }
+    if (visible) {
+        androidx.compose.material3.CircularProgressIndicator(
+            modifier = modifier.size(48.dp),
+            color = Rb.text,
+            strokeWidth = 4.dp,
+        )
+    }
 }
