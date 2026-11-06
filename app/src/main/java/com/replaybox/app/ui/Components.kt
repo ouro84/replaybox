@@ -201,21 +201,28 @@ internal fun focusScale(focused: Boolean): Float {
  */
 internal fun Modifier.cardFocus(focused: Boolean): Modifier =
     this
-        .drawWithContent {
-            drawContent()
-            if (focused) {
-                val stroke = Rb.focusOutline.toPx()
-                val reach = FOCUS_GAP.toPx() + stroke / 2
-                drawRoundRect(
-                    color = Rb.focus,
-                    topLeft = Offset(-reach, -reach),
-                    size = Size(size.width + 2 * reach, size.height + 2 * reach),
-                    cornerRadius = CornerRadius(CARD_RADIUS.toPx() + reach),
-                    style = Stroke(width = stroke),
-                )
-            }
-        }
+        .focusRing(focused, CARD_RADIUS)
         .clip(Rb.cardShape)
+
+/**
+ * The white focus ring, 3 dp outside an element whose corner radius is
+ * [radius], kept concentric (The Concentric Ring Rule). Draws nothing at rest.
+ */
+internal fun Modifier.focusRing(focused: Boolean, radius: Dp): Modifier =
+    drawWithContent {
+        drawContent()
+        if (focused) {
+            val stroke = Rb.focusOutline.toPx()
+            val reach = FOCUS_GAP.toPx() + stroke / 2
+            drawRoundRect(
+                color = Rb.focus,
+                topLeft = Offset(-reach, -reach),
+                size = Size(size.width + 2 * reach, size.height + 2 * reach),
+                cornerRadius = CornerRadius(radius.toPx() + reach),
+                style = Stroke(width = stroke),
+            )
+        }
+    }
 
 private val FOCUS_GAP = 3.dp
 private val CARD_RADIUS = 10.dp
