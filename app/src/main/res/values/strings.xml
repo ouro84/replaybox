@@ -58,4 +58,8 @@
     <string name="remove_resume_hint">La position de lecture sera oubliée.</string>
     <string name="remove_resume_confirm">Retirer de Reprendre</string>
     <string name="cancel">Annuler</string>
+    <string name="action_play">Lecture</string>
+    <string name="episode_watched">Vu</string>
+    <string name="duration_minutes">%1$d min</string>
+    <string name="show_load_error">Impossible de charger les Épisodes.</string>
 </resources>

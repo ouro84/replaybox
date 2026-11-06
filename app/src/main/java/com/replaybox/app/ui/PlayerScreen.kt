@@ -69,7 +69,16 @@ private sealed interface PlayerState {
 }
 
 @Composable
-fun PlayerScreen(episodeId: EpisodeId, title: String, progressContext: ProgressContext? = null) {
+/**
+ * [autoResume]: the user already chose « Reprendre » (billboard, Reprendre
+ * card, Programme hero), so playback resumes at once instead of asking again.
+ */
+fun PlayerScreen(
+    episodeId: EpisodeId,
+    title: String,
+    progressContext: ProgressContext? = null,
+    autoResume: Boolean = false,
+) {
     val provider = Providers.resolveEpisode(episodeId.value)
     var state by remember { mutableStateOf<PlayerState>(PlayerState.Resolving) }
     var attempt by remember { mutableStateOf(0) }
@@ -136,6 +145,7 @@ fun PlayerScreen(episodeId: EpisodeId, title: String, progressContext: ProgressC
             subtitleLanguage = current.subtitleLanguage,
             resumeAtMs = current.resumeAtMs,
             progressContext = progressContext,
+            autoResume = autoResume,
         )
     }
 }
@@ -162,6 +172,7 @@ private fun PlayerSurface(
     subtitleLanguage: String?,
     resumeAtMs: Long?,
     progressContext: ProgressContext?,
+    autoResume: Boolean,
 ) {
     val context = LocalContext.current
     val catalog = ReplayboxApplication.catalog
@@ -202,14 +213,16 @@ private fun PlayerSurface(
                     )
                 }
                 setMediaItem(builder.build())
+                if (autoResume && resumeAtMs != null) seekTo(resumeAtMs)
                 prepare()
                 // With a saved Progression the Reprendre / Débuter choice gates
-                // playback; otherwise the Flux starts immediately.
-                playWhenReady = resumeAtMs == null
+                // playback, unless Reprendre was already chosen; otherwise the
+                // Flux starts immediately.
+                playWhenReady = resumeAtMs == null || autoResume
             }
     }
 
-    var showResumeChoice by remember(manifestUrl) { mutableStateOf(resumeAtMs != null) }
+    var showResumeChoice by remember(manifestUrl) { mutableStateOf(resumeAtMs != null && !autoResume) }
 
     // Sous-titres FR activés par défaut (choix produit PRD), toggle un
     // appui. The chip only appears when a text track exists — TF1 keeps
@@ -402,8 +415,7 @@ private fun SubtitleChip(enabled: Boolean, onToggle: () -> Unit, modifier: Modif
 private fun ResumeChoice(resumeAtMs: Long, onResume: () -> Unit, onStartOver: () -> Unit) {
     val resumeButton = remember { FocusRequester() }
     LaunchedEffect(Unit) { resumeButton.requestFocus() }
-    val minutes = (resumeAtMs / 60_000).toInt()
-    val formatted = "%d min".format(minutes)
+    val formatted = Playhead.format(resumeAtMs)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -424,5 +436,16 @@ private fun ResumeChoice(resumeAtMs: Long, onResume: () -> Unit, onStartOver: ()
                 Text(stringResource(R.string.start_over))
             }
         }
+    }
+}
+
+/** Playback position as the player's own clock shows it: "0:45", "12:34", "1:02:05". */
+object Playhead {
+    fun format(positionMs: Long): String {
+        val total = (positionMs / 1000).coerceAtLeast(0)
+        val hours = total / 3600
+        val minutes = (total % 3600) / 60
+        val seconds = total % 60
+        return if (hours > 0) "%d:%02d:%02d".format(hours, minutes, seconds) else "%d:%02d".format(minutes, seconds)
     }
 }

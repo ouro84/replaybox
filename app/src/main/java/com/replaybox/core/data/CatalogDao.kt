@@ -44,6 +44,9 @@ interface CatalogDao {
 
     suspend fun deleteProgress(episodeId: String)
 
+    /** Saved rows for these Épisodes; unknown ids are simply absent. */
+    suspend fun progressFor(episodeIds: List<String>): List<ProgressEntity>
+
     suspend fun putFavorite(showId: String, at: Long)
 
     suspend fun removeFavorite(showId: String)

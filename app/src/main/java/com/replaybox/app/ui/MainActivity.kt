@@ -18,6 +18,8 @@ sealed interface Screen {
         val episodeId: EpisodeId,
         val title: String,
         val progressContext: ProgressContext? = null,
+        /** True when the user pressed « Reprendre »: no second prompt. */
+        val autoResume: Boolean = false,
     ) : Screen
     object Login : Screen
     object Search : Screen
@@ -32,6 +34,8 @@ class MainActivity : ComponentActivity() {
             val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
             // Survives trips to a Programme or the player: scroll + focus restored.
             val homeState = remember { HomeUiState() }
+            // One state per Programme: Back from the player lands on the Épisode just watched.
+            val showStates = remember { HashMap<String, ShowUiState>() }
             BackHandler(enabled = backStack.size > 1) { backStack.removeAt(backStack.lastIndex) }
             ReplayboxThemeSurface {
                 when (val current = backStack.last()) {
@@ -39,7 +43,7 @@ class MainActivity : ComponentActivity() {
                         state = homeState,
                         onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
                         onPlay = { id, title, progressContext ->
-                            backStack.add(Screen.Player(id, title, progressContext))
+                            backStack.add(Screen.Player(id, title, progressContext, autoResume = true))
                         },
                         onNavigate = { destination ->
                             when (destination) {
@@ -52,14 +56,16 @@ class MainActivity : ComponentActivity() {
                     is Screen.ShowDetail -> ShowScreen(
                         showId = current.showId,
                         title = current.title,
-                        onOpenEpisode = { episode, progressContext ->
-                            backStack.add(Screen.Player(episode.id, episode.title, progressContext))
+                        state = showStates.getOrPut(current.showId.value) { ShowUiState() },
+                        onOpenEpisode = { episode, progressContext, autoResume ->
+                            backStack.add(Screen.Player(episode.id, episode.title, progressContext, autoResume))
                         },
                     )
                     is Screen.Player -> PlayerScreen(
                         episodeId = current.episodeId,
                         title = current.title,
                         progressContext = current.progressContext,
+                        autoResume = current.autoResume,
                     )
                     Screen.Login -> LoginScreen(onDone = { backStack.removeAt(backStack.lastIndex) })
                     Screen.Search -> SearchScreen(

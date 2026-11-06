@@ -131,4 +131,19 @@ class HomeRailsTest {
             assertThat(favorites.single().channelId).isEqualTo("france-3")
         }
     }
+
+    @Test
+    fun `a newer finished Episode does not hide an older unfinished one`() {
+        blocking {
+            var now = 1_000L
+            val catalog = CatalogStore(FakeCatalogDao()) { now }
+            catalog.saveProgress(EpisodeId("pitch-nov"), 45, 239, context("pitch", "nov"))
+            now += 10
+            // Finished afterwards: the Programme stays in Reprendre on the unfinished one.
+            catalog.saveProgress(EpisodeId("pitch-oct"), 239, 239, context("pitch", "oct"))
+
+            val items = catalog.continueWatching(listOf("france-2"))
+            assertThat(items.map { it.episodeId.value }).containsExactly("pitch-nov")
+        }
+    }
 }

@@ -364,76 +364,8 @@ private fun showFeatured(entry: ChannelShow, names: Map<String, String>) = Featu
     backdropUrl = entry.show.backdropUrl ?: entry.show.posterUrl,
 )
 
-@Composable
-private fun remainingText(item: ResumeItem): String? {
-    val seconds = item.remainingSeconds ?: return null
-    return when {
-        seconds < 60 -> stringResource(R.string.remaining_under_minute)
-        seconds < 3600 -> (seconds / 60).toInt().let { pluralStringResource(R.plurals.remaining_minutes, it, it) }
-        else -> stringResource(R.string.remaining_hours, (seconds / 3600).toInt(), ((seconds % 3600) / 60).toInt())
-    }
-}
-
 // ---- Backdrop ----
 
-@Composable
-private fun Backdrop(url: String?) {
-    Box(Modifier.fillMaxSize()) {
-        Crossfade(
-            targetState = url,
-            animationSpec = tween(Rb.BACKDROP_MS),
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .width(BACKDROP_WIDTH)
-                .aspectRatio(16f / 9f),
-            label = "backdrop",
-        ) { target ->
-            if (target != null) {
-                AsyncImage(
-                    model = target,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
-        }
-        // Scrims keep the detail text at AAA contrast over any key art.
-        Box(
-            Modifier
-                .align(Alignment.TopEnd)
-                .width(BACKDROP_WIDTH)
-                .aspectRatio(16f / 9f)
-                .background(
-                    Brush.horizontalGradient(
-                        0f to Rb.ground,
-                        0.3f to Rb.ground.copy(alpha = 0.92f),
-                        0.55f to Rb.ground.copy(alpha = 0.6f),
-                        0.85f to Rb.ground.copy(alpha = 0.1f),
-                        1f to Color.Transparent,
-                    ),
-                ),
-        )
-        Box(
-            Modifier
-                .align(Alignment.TopEnd)
-                .width(BACKDROP_WIDTH)
-                .aspectRatio(16f / 9f)
-                .background(
-                    Brush.verticalGradient(
-                        0f to Color.Transparent,
-                        0.55f to Rb.ground.copy(alpha = 0.35f),
-                        1f to Rb.ground,
-                    ),
-                ),
-        )
-    }
-}
-
-/** Inner gutter between the content column edge and the rails, wide enough that
- * a focused card's scale and ring are never clipped by its row. */
-private val GUTTER = 20.dp
-
-private val BACKDROP_WIDTH = 640.dp
 private val PANEL_HEIGHT = 252.dp
 
 // ---- Detail panel ----
@@ -501,14 +433,14 @@ private fun DetailPanel(
                         is Billboard.Resume -> {
                             PanelButton(
                                 label = stringResource(R.string.action_resume),
-                                icon = true,
+                                icon = Icons.Filled.PlayArrow,
                                 requester = state.requester(KEY_PRIMARY),
                                 onFocused = { onFocusButton(KEY_PRIMARY) },
                                 onClick = { onPlay(billboard.item) },
                             )
                             PanelButton(
                                 label = stringResource(R.string.action_episodes),
-                                icon = false,
+                                icon = null,
                                 requester = state.requester(KEY_SECONDARY),
                                 onFocused = { onFocusButton(KEY_SECONDARY) },
                                 onClick = { onOpenShow(billboard.item.showId, billboard.item.showTitle) },
@@ -517,7 +449,7 @@ private fun DetailPanel(
                         }
                         is Billboard.Favorite -> PanelButton(
                             label = stringResource(R.string.action_episodes),
-                            icon = false,
+                            icon = null,
                             requester = state.requester(KEY_PRIMARY),
                             onFocused = { onFocusButton(KEY_PRIMARY) },
                             onClick = { onOpenShow(billboard.entry.show.id, billboard.entry.show.title) },
@@ -550,55 +482,8 @@ private fun DetailPanel(
 private fun ResumeProgress(item: ResumeItem, inset: Boolean = true) {
     val ratio = item.watchedRatio ?: return
     Column(Modifier.padding(start = if (inset) 8.dp else 0.dp)) {
-        remainingText(item)?.let { Text(it, style = RbType.meta, color = Rb.text) }
-        Box(
-            Modifier
-                .padding(top = 6.dp)
-                .width(120.dp)
-                .height(4.dp)
-                .background(Rb.track, Rb.pillShape),
-        ) {
-            Box(
-                Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(ratio)
-                    .background(Rb.accent, Rb.pillShape),
-            )
-        }
-    }
-}
-
-@Composable
-private fun PanelButton(
-    label: String,
-    icon: Boolean,
-    requester: FocusRequester,
-    onFocused: () -> Unit,
-    onClick: () -> Unit,
-) {
-    var isFocused by remember { mutableStateOf(false) }
-    val scale by animateFloatAsState(if (isFocused) Rb.BUTTON_FOCUS_SCALE else 1f, tween(Rb.FOCUS_MS), label = "btn")
-    Row(
-        modifier = Modifier
-            .scale(scale)
-            .focusRequester(requester)
-            .onFocusChanged {
-                isFocused = it.isFocused
-                if (it.isFocused) onFocused()
-            }
-            .focusable()
-            .clickable(onClick = onClick)
-            .background(if (isFocused) Rb.focus else Rb.surfaceRaised, Rb.buttonShape)
-            .height(44.dp)
-            .padding(horizontal = 20.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        val color = if (isFocused) Rb.onFocus else Rb.text
-        if (icon) {
-            Icon(Icons.Filled.PlayArrow, contentDescription = null, tint = color, modifier = Modifier.size(24.dp))
-            Spacer(Modifier.width(8.dp))
-        }
-        Text(label, style = RbType.bodyStrong, color = color, maxLines = 1)
+        remainingText(item.remainingSeconds)?.let { Text(it, style = RbType.meta, color = Rb.text) }
+        ProgressBar(ratio, width = 120.dp, modifier = Modifier.padding(top = 6.dp))
     }
 }
 
@@ -613,8 +498,7 @@ private fun UpdateChip(update: UpdateState.Ready) {
             .padding(top = 8.dp)
             .scale(scale)
             .onFocusChanged { isFocused = it.isFocused }
-            .focusable()
-            .clickable { UpdateInstaller.install(context, update.apk) }
+            .tvClickable { UpdateInstaller.install(context, update.apk) }
             .background(if (isFocused) Rb.focus else Rb.surfaceRaised, Rb.pillShape)
             .padding(horizontal = 16.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -656,37 +540,6 @@ private fun Rail(
 }
 
 @Composable
-private fun focusScale(focused: Boolean): Float {
-    val scale by animateFloatAsState(if (focused) Rb.FOCUS_SCALE else 1f, tween(Rb.FOCUS_MS), label = "card")
-    return scale
-}
-
-/**
- * Focus ring drawn outside the art with a gap (never over the artwork or the
- * Progression bar), then the art clipped to the card shape.
- */
-private fun Modifier.cardFocus(focused: Boolean): Modifier =
-    this
-        .drawWithContent {
-            drawContent()
-            if (focused) {
-                val stroke = Rb.focusOutline.toPx()
-                val reach = FOCUS_GAP.toPx() + stroke / 2
-                drawRoundRect(
-                    color = Rb.focus,
-                    topLeft = Offset(-reach, -reach),
-                    size = Size(size.width + 2 * reach, size.height + 2 * reach),
-                    cornerRadius = CornerRadius(CARD_RADIUS.toPx() + reach),
-                    style = Stroke(width = stroke),
-                )
-            }
-        }
-        .clip(Rb.cardShape)
-
-private val FOCUS_GAP = 3.dp
-private val CARD_RADIUS = 10.dp
-
-@Composable
 private fun ResumeCard(
     item: ResumeItem,
     requester: FocusRequester,
@@ -713,8 +566,7 @@ private fun ResumeCard(
                     false
                 }
             }
-            .focusable()
-            .clickable(onClick = onClick),
+            .tvClickable(onClick),
     ) {
         Box(
             Modifier
@@ -746,7 +598,7 @@ private fun ResumeCard(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(top = 14.dp),
         )
-        remainingText(item)?.let {
+        remainingText(item.remainingSeconds)?.let {
             Text(it, style = RbType.meta, color = Rb.textSecondary, maxLines = 1)
         }
     }
@@ -770,31 +622,13 @@ private fun PosterCard(
                 isFocused = it.isFocused
                 if (it.isFocused) onFocused()
             }
-            .focusable()
-            .clickable(onClick = onClick)
+            .tvClickable(onClick)
             .scale(scale)
             .cardFocus(isFocused)
             .background(Rb.surfaceRaised),
     ) {
         Artwork(url = entry.show.posterUrl, fallback = entry.show.title)
     }
-}
-
-/** Key art, or a flat plate carrying the title when the Chaîne ships none. */
-@Composable
-private fun Artwork(url: String?, fallback: String) {
-    if (url == null) {
-        Box(Modifier.fillMaxSize().padding(12.dp), contentAlignment = Alignment.BottomStart) {
-            Text(fallback, style = RbType.cardTitle, color = Rb.text, maxLines = 3, overflow = TextOverflow.Ellipsis)
-        }
-        return
-    }
-    AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current).data(url).crossfade(Rb.FOCUS_MS).build(),
-        contentDescription = fallback,
-        contentScale = ContentScale.Crop,
-        modifier = Modifier.fillMaxSize(),
-    )
 }
 
 /** Placeholder rails laid out exactly like [Rail], clipped to the screen. */
@@ -854,10 +688,10 @@ private fun RemoveResumeDialog(item: ResumeItem, onDismiss: () -> Unit, onConfir
                 modifier = Modifier.padding(top = 8.dp),
             )
             Row(Modifier.padding(top = 24.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                PanelButton(stringResource(R.string.cancel), icon = false, requester = cancel, onFocused = {}, onClick = onDismiss)
+                PanelButton(stringResource(R.string.cancel), icon = null, requester = cancel, onFocused = {}, onClick = onDismiss)
                 PanelButton(
                     stringResource(R.string.remove_resume_confirm),
-                    icon = false,
+                    icon = null,
                     requester = remember { FocusRequester() },
                     onFocused = {},
                     onClick = onConfirm,

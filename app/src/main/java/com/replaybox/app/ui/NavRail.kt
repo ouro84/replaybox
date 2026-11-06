@@ -127,8 +127,7 @@ private fun RailItem(
             .height(48.dp)
             .scale(scale)
             .onFocusChanged { focused = it.isFocused }
-            .focusable()
-            .clickable(onClick = onClick)
+            .tvClickable(onClick)
             .then(if (background != null) Modifier.background(background, Rb.pillShape) else Modifier)
             .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,

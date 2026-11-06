@@ -2,6 +2,7 @@
 
 import com.replaybox.core.model.Episode
 import com.replaybox.core.model.EpisodeId
+import com.replaybox.core.model.EpisodeProgress
 import com.replaybox.core.model.Genre
 import com.replaybox.core.model.ChannelShow
 import com.replaybox.core.model.Progress
@@ -157,8 +158,8 @@ class CatalogStore(
     }
 
     /**
-     * The Home "Reprendre" rail: one card per Programme (its latest
-     * Épisode), most recent first, finished Épisodes and rows without a
+     * The Home "Reprendre" rail: one card per Programme (its newest
+     * unfinished Épisode), most recent first, finished Épisodes and rows without a
      * Programme context left out (ResumePolicy). Art and Chaîne come from the
      * cached listings of [channelIds] when the Programme is still listed.
      */
@@ -171,9 +172,12 @@ class CatalogStore(
         val items = ArrayList<ResumeItem>()
         for (row in dao.recentProgress(RESUME_SCAN)) {
             val showId = row.showId ?: continue
-            if (!seenShows.add(showId)) continue
+            if (showId in seenShows) continue
             val progress = Progress(EpisodeId(row.episodeId), row.positionSeconds, row.updatedAt)
+            // A finished row does not claim its Programme: an older unfinished
+            // Épisode still resumes (same rule as the Programme page hero).
             if (ResumePolicy.resumeAt(progress, row.durationSeconds) == null) continue
+            seenShows.add(showId)
             val listing = listed[showId]
             items += ResumeItem(
                 episodeId = EpisodeId(row.episodeId),
@@ -230,6 +234,55 @@ class CatalogStore(
             for (show in dao.shows(channelId)) byId.putIfAbsent(show.id.value, ChannelShow(show, channelId))
         }
         return ids.mapNotNull { byId[it] }
+    }
+
+    /**
+     * Programme page: Progression of each listed Épisode. Positions under
+     * ResumePolicy.MIN_POSITION_SECONDS count as not started and are absent.
+     */
+    suspend fun episodeProgress(ids: List<EpisodeId>): Map<EpisodeId, EpisodeProgress> {
+        if (ids.isEmpty()) return emptyMap()
+        return dao.progressFor(ids.map { it.value })
+            .filter { it.positionSeconds >= ResumePolicy.MIN_POSITION_SECONDS }
+            .associate { row ->
+                val duration = row.durationSeconds
+                val watched = duration != null && duration > 0 &&
+                    row.positionSeconds >= duration * ResumePolicy.FINISHED_RATIO
+                EpisodeId(row.episodeId) to EpisodeProgress(row.positionSeconds, duration, watched)
+            }
+    }
+
+    /** The Programme as cached in the listings of [channelIds], with its Chaîne; null when unlisted. */
+    suspend fun listedShow(showId: ShowId, channelIds: List<String>): ChannelShow? {
+        for (channelId in channelIds) {
+            dao.shows(channelId).firstOrNull { it.id == showId }?.let { return ChannelShow(it, channelId) }
+        }
+        return null
+    }
+
+    /**
+     * The Reprendre target of this Programme: its newest unfinished Épisode,
+     * or null. Unlike the Home rail, a newer finished Épisode does not hide an
+     * older unfinished one: on its own page every Progression counts.
+     */
+    suspend fun resumeFor(showId: ShowId, channelIds: List<String>): ResumeItem? {
+        val row = dao.recentProgress(RESUME_SCAN).firstOrNull {
+            it.showId == showId.value &&
+                ResumePolicy.resumeAt(Progress(EpisodeId(it.episodeId), it.positionSeconds, it.updatedAt), it.durationSeconds) != null
+        } ?: return null
+        val listing = listedShow(showId, channelIds)
+        return ResumeItem(
+            episodeId = EpisodeId(row.episodeId),
+            showId = showId,
+            showTitle = row.showTitle ?: listing?.show?.title.orEmpty(),
+            episodeTitle = row.episodeTitle.orEmpty(),
+            thumbnailUrl = row.thumbnailUrl ?: listing?.show?.backdropUrl,
+            backdropUrl = listing?.show?.backdropUrl ?: row.thumbnailUrl,
+            channelId = listing?.channelId,
+            positionSeconds = row.positionSeconds,
+            durationSeconds = row.durationSeconds,
+            updatedAtEpochMs = row.updatedAt,
+        )
     }
 
     suspend fun progressFor(episodeId: EpisodeId): Progress? {
