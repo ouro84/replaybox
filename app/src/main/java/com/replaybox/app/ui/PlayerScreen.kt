@@ -446,6 +446,8 @@ private fun PlayerSurface(
                         true
                     }
                     PlayerKeys.Action.TOGGLE_SUBTITLES -> hasTextTracks.also { if (it) toggleSubtitles() }
+                    // Until the Options panel lands (next commit), MENU keeps showing the controls.
+                    PlayerKeys.Action.OPTIONS -> { showControls(); true }
                 }
             }
             .focusRequester(rootFocus)

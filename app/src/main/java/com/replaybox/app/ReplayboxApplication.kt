@@ -47,6 +47,11 @@ class ReplayboxApplication : Application() {
 
         private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+        /** Remembered audio kind and quality cap (decision Q3). */
+        val playbackPreferences: com.replaybox.app.ui.PlaybackPreferenceStore by lazy {
+            com.replaybox.app.ui.SharedPrefsPlaybackPreferenceStore(instance)
+        }
+
         /** Playhead writes that outlive the player screen (see ProgressRecorder). */
         val progress: ProgressRecorder by lazy { ProgressRecorder(catalog, appScope) }
 
