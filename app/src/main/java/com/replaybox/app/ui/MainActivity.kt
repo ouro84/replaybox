@@ -32,6 +32,8 @@ class MainActivity : ComponentActivity() {
             val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
             // Survives trips to a Programme or the player: scroll + focus restored.
             val homeState = remember { HomeUiState() }
+            // One state per Programme: Back from the player lands on the Épisode just watched.
+            val showStates = remember { HashMap<String, ShowUiState>() }
             BackHandler(enabled = backStack.size > 1) { backStack.removeAt(backStack.lastIndex) }
             ReplayboxThemeSurface {
                 when (val current = backStack.last()) {
@@ -52,6 +54,7 @@ class MainActivity : ComponentActivity() {
                     is Screen.ShowDetail -> ShowScreen(
                         showId = current.showId,
                         title = current.title,
+                        state = showStates.getOrPut(current.showId.value) { ShowUiState() },
                         onOpenEpisode = { episode, progressContext ->
                             backStack.add(Screen.Player(episode.id, episode.title, progressContext))
                         },
