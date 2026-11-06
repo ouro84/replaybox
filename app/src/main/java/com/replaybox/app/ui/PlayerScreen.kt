@@ -45,6 +45,7 @@ import androidx.media3.ui.PlayerView
 import com.replaybox.R
 import com.replaybox.app.ReplayboxApplication
 import com.replaybox.core.model.EpisodeId
+import com.replaybox.core.model.ProgressContext
 import com.replaybox.core.model.StreamType
 import com.replaybox.provider.tf1.StreamResolutionException
 import kotlinx.coroutines.CoroutineScope
@@ -68,7 +69,7 @@ private sealed interface PlayerState {
 }
 
 @Composable
-fun PlayerScreen(episodeId: EpisodeId, title: String) {
+fun PlayerScreen(episodeId: EpisodeId, title: String, progressContext: ProgressContext? = null) {
     val provider = Providers.resolveEpisode(episodeId.value)
     var state by remember { mutableStateOf<PlayerState>(PlayerState.Resolving) }
     var attempt by remember { mutableStateOf(0) }
@@ -134,6 +135,7 @@ fun PlayerScreen(episodeId: EpisodeId, title: String) {
             subtitleUrl = current.subtitleUrl,
             subtitleLanguage = current.subtitleLanguage,
             resumeAtMs = current.resumeAtMs,
+            progressContext = progressContext,
         )
     }
 }
@@ -159,6 +161,7 @@ private fun PlayerSurface(
     subtitleUrl: String?,
     subtitleLanguage: String?,
     resumeAtMs: Long?,
+    progressContext: ProgressContext?,
 ) {
     val context = LocalContext.current
     val catalog = ReplayboxApplication.catalog
@@ -269,7 +272,7 @@ private fun PlayerSurface(
     fun saveProgress() {
         if (playerReleased || player.currentPosition <= 0) return
         val durationSeconds = player.duration.takeIf { it > 0 }?.let { (it / 1000).toInt() }
-        scope.launch { catalog.saveProgress(episodeId, player.currentPosition / 1000, durationSeconds) }
+        scope.launch { catalog.saveProgress(episodeId, player.currentPosition / 1000, durationSeconds, progressContext) }
     }
 
     // Progression (glossary): device-local playhead, saved every 5 s while

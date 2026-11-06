@@ -34,6 +34,7 @@ class ReplayboxApplication : Application() {
 
         private val database: ReplayboxDatabase by lazy {
             Room.databaseBuilder(instance, ReplayboxDatabase::class.java, "replaybox.db")
+                .addMigrations(ReplayboxDatabase.MIGRATION_1_2, ReplayboxDatabase.MIGRATION_2_3)
                 .fallbackToDestructiveMigration()
                 .build()
         }

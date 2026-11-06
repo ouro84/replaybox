@@ -3,7 +3,10 @@
 import com.replaybox.core.model.Episode
 import com.replaybox.core.model.EpisodeId
 import com.replaybox.core.model.Genre
+import com.replaybox.core.model.ChannelShow
 import com.replaybox.core.model.Progress
+import com.replaybox.core.model.ProgressContext
+import com.replaybox.core.model.ResumeItem
 import com.replaybox.core.model.Season
 import com.replaybox.core.model.Show
 import com.replaybox.core.model.ShowId
@@ -125,9 +128,108 @@ class CatalogStore(
 
     // ---- Progress (device-local, never synchronized — glossary) ----
 
-    suspend fun saveProgress(episodeId: EpisodeId, positionSeconds: Long, durationSeconds: Int?) {
+    /**
+     * Saves the playhead. A null [context] keeps the Programme context an
+     * earlier save recorded, so a context-less caller never orphans the row
+     * from the "Reprendre" rail.
+     */
+    suspend fun saveProgress(
+        episodeId: EpisodeId,
+        positionSeconds: Long,
+        durationSeconds: Int?,
+        context: ProgressContext? = null,
+    ) {
         if (positionSeconds <= 0) return
-        dao.putProgress(episodeId.value, positionSeconds, durationSeconds, clock())
+        val previous = if (context == null) dao.progress(episodeId.value) else null
+        dao.putProgress(
+            ProgressEntity(
+                episodeId = episodeId.value,
+                positionSeconds = positionSeconds,
+                durationSeconds = durationSeconds,
+                updatedAt = clock(),
+                showId = context?.showId?.value ?: previous?.showId,
+                showTitle = context?.showTitle ?: previous?.showTitle,
+                episodeTitle = context?.episodeTitle ?: previous?.episodeTitle,
+                thumbnailUrl = context?.thumbnailUrl ?: previous?.thumbnailUrl,
+            ),
+        )
+        tick()
+    }
+
+    /**
+     * The Home "Reprendre" rail: one card per Programme (its latest
+     * Épisode), most recent first, finished Épisodes and rows without a
+     * Programme context left out (ResumePolicy). Art and Chaîne come from the
+     * cached listings of [channelIds] when the Programme is still listed.
+     */
+    suspend fun continueWatching(channelIds: List<String>, limit: Int = RESUME_LIMIT): List<ResumeItem> {
+        val listed = HashMap<String, ChannelShow>()
+        for (channelId in channelIds) {
+            for (show in dao.shows(channelId)) listed.putIfAbsent(show.id.value, ChannelShow(show, channelId))
+        }
+        val seenShows = HashSet<String>()
+        val items = ArrayList<ResumeItem>()
+        for (row in dao.recentProgress(RESUME_SCAN)) {
+            val showId = row.showId ?: continue
+            if (!seenShows.add(showId)) continue
+            val progress = Progress(EpisodeId(row.episodeId), row.positionSeconds, row.updatedAt)
+            if (ResumePolicy.resumeAt(progress, row.durationSeconds) == null) continue
+            val listing = listed[showId]
+            items += ResumeItem(
+                episodeId = EpisodeId(row.episodeId),
+                showId = ShowId(showId),
+                showTitle = row.showTitle ?: listing?.show?.title.orEmpty(),
+                episodeTitle = row.episodeTitle.orEmpty(),
+                thumbnailUrl = row.thumbnailUrl ?: listing?.show?.backdropUrl,
+                backdropUrl = listing?.show?.backdropUrl ?: row.thumbnailUrl,
+                channelId = listing?.channelId,
+                positionSeconds = row.positionSeconds,
+                durationSeconds = row.durationSeconds,
+                updatedAtEpochMs = row.updatedAt,
+            )
+            if (items.size >= limit) break
+        }
+        return items
+    }
+
+    /** "Retirer de Reprendre": forgets the playhead of this Épisode. */
+    suspend fun removeFromContinueWatching(episodeId: EpisodeId) {
+        dao.deleteProgress(episodeId.value)
+        tick()
+    }
+
+    /**
+     * Home Genre rails, cache only: every Genre in glossary order with its
+     * Programmes across [channelIds], interleaved Chaîne by Chaîne (the
+     * listings carry no broadcast date to sort on) and de-duplicated on the
+     * normalized title. Empty Genres are dropped.
+     */
+    suspend fun genreRails(channelIds: List<String>): List<Pair<Genre, List<ChannelShow>>> {
+        val listings = channelIds.map { channelId -> dao.shows(channelId).map { ChannelShow(it, channelId) } }
+        return Genre.values().mapNotNull { genre ->
+            val perChannel = listings.map { listing -> listing.filter { genre in it.show.genres } }
+            val merged = ArrayList<ChannelShow>()
+            val seen = HashSet<String>()
+            val longest = perChannel.maxOfOrNull { it.size } ?: 0
+            for (index in 0 until longest) {
+                for (listing in perChannel) {
+                    val candidate = listing.getOrNull(index) ?: continue
+                    if (seen.add(Titles.normalize(candidate.show.title))) merged += candidate
+                }
+            }
+            if (merged.isEmpty()) null else genre to merged
+        }
+    }
+
+    /** Favorites with the Chaîne they are listed on, most recently pinned first. */
+    suspend fun favoriteChannelShows(channelIds: List<String>): List<ChannelShow> {
+        val ids = dao.favoriteIds()
+        if (ids.isEmpty()) return emptyList()
+        val byId = HashMap<String, ChannelShow>()
+        for (channelId in channelIds) {
+            for (show in dao.shows(channelId)) byId.putIfAbsent(show.id.value, ChannelShow(show, channelId))
+        }
+        return ids.mapNotNull { byId[it] }
     }
 
     suspend fun progressFor(episodeId: EpisodeId): Progress? {
@@ -177,6 +279,12 @@ class CatalogStore(
 
     companion object {
         const val TTL_MS: Long = 12 * 60 * 60 * 1000
+
+        /** Cap of the Home "Reprendre" rail. */
+        const val RESUME_LIMIT = 20
+
+        /** Progress rows scanned to fill the rail (several per Programme). */
+        private const val RESUME_SCAN = 200
 
         /** Channels carrying France TV listings (SPEC §Provider France TV). */
         val FTV_CHANNEL_IDS = listOf("france-2", "france-3", "france-4", "france-5", "franceinfo")

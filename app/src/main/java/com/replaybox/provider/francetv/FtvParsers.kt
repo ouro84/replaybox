@@ -49,6 +49,7 @@ object FtvParsers {
                         FtvJson.objects(item["sub_categories"])
                             .mapNotNull { FtvJson.str(it, "url_complete") },
                     ),
+                    backdropUrl = imageOf(item, "background_16x9", "vignette_16x9"),
                 )
             }
         }

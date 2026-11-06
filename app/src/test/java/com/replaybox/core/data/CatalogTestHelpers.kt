@@ -29,13 +29,22 @@ class FakeCatalogDao : CatalogDao {
 
     override suspend fun listingAt(channelId: String): Long? = listings[channelId]
 
+    /** id -> (firstSeenAt, firstSeenRank), mirroring RoomCatalogDao. */
+    private val firstSeen = HashMap<String, Pair<Long, Int>>()
+
     override suspend fun putListing(channelId: String, shows: List<Show>, at: Long) {
         listings[channelId] = at
+        shows.forEachIndexed { index, show -> firstSeen.putIfAbsent(show.id.value, at to index) }
         this.shows[channelId] = shows.toMutableList()
         genres[channelId] = shows.flatMap { it.genres }.toMutableSet()
     }
 
-    override suspend fun shows(channelId: String): List<Show> = shows[channelId].orEmpty()
+    override suspend fun shows(channelId: String): List<Show> =
+        shows[channelId].orEmpty().sortedWith(
+            compareByDescending<Show> { (firstSeen[it.id.value]?.first ?: 0) / 86_400_000 }
+                .thenBy { firstSeen[it.id.value]?.first ?: 0 }
+                .thenBy { firstSeen[it.id.value]?.second ?: 0 },
+        )
 
     override suspend fun programAt(key: String): Long? = programs[key]
 
@@ -53,11 +62,18 @@ class FakeCatalogDao : CatalogDao {
 
     override suspend fun episodes(seasonId: String): List<Episode> = episodes[seasonId].orEmpty()
 
-    override suspend fun putProgress(episodeId: String, positionSeconds: Long, durationSeconds: Int?, at: Long) {
-        progress[episodeId] = ProgressEntity(episodeId, positionSeconds, durationSeconds, at)
+    override suspend fun putProgress(progress: ProgressEntity) {
+        this.progress[progress.episodeId] = progress
     }
 
     override suspend fun progress(episodeId: String): ProgressEntity? = progress[episodeId]
+
+    override suspend fun recentProgress(limit: Int): List<ProgressEntity> =
+        progress.values.sortedByDescending { it.updatedAt }.take(limit)
+
+    override suspend fun deleteProgress(episodeId: String) {
+        progress.remove(episodeId)
+    }
 
     override suspend fun putFavorite(showId: String, at: Long) {
         favorites[showId] = at

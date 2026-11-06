@@ -34,6 +34,48 @@ catalogue → Programme → Saison → Épisode → Flux → lecture Media3.
 
 **Critère** : Definition of Done du PRD vérifiée en conditions réelles.
 
+## M4 — « Design »
+
+Refonte visuelle à partir des maquettes Stitch, cadrée par `PRODUCT.md` (TV 55" à 3 m, WCAG AA avec
+contraste texte AAA, voix discrète). Toute donnée affichée (expiration, pistes audio, qualités) doit
+d'abord exister dans le `SPEC.md` du Provider concerné.
+
+Fondations :
+
+- [ ] Design system Compose for TV (couleurs, typo, formes, focus) documenté dans `DESIGN.md`
+- [ ] États de focus D-pad lisibles à 3 m sur tous les écrans, focus initial défini partout
+- [ ] Lisibilité des sous-titres réglable (taille, fond)
+
+Accueil & navigation :
+
+- [ ] Rail de navigation latéral (Accueil, Genres, Recherche, Paramètres)
+- [x] Billboard « à la une » avec action Reprendre
+- [x] Rail « Reprendre la lecture » en tête d'accueil
+- [x] Fond dynamique tiré du visuel focalisé
+- [ ] Grille « Tout voir » par Genre
+
+Épisodes enrichis :
+
+- [ ] Badges de fraîcheur (Hier soir, Nouveau, Inédit, J-n avant expiration)
+- [ ] État de Progression sur chaque Épisode (non commencé, % vu, vu)
+- [ ] « Marquer comme vu »
+
+Lecteur complet :
+
+- [ ] −10 s / +10 s, recommencer
+- [ ] Épisode suivant, avec enchaînement automatique
+- [ ] Choix de la piste audio et de la qualité
+- [ ] Vitesse de lecture
+
+Recherche guidée :
+
+- [ ] Clavier à l'écran pensé pour le D-pad
+- [ ] Filtres rapides par Chaîne et par Genre
+- [ ] Meilleur résultat mis en avant
+
+**Critère** : une soirée complète sur la Bbox (accueil → reprise → Épisode suivant → recherche)
+sans focus perdu, et sous-titres lus confortablement depuis le canapé.
+
 ## V2 (décisions prises, exécution repoussée)
 
 - Provider M6+ : compte Gigya + licence Widevine drmtoday, credentials au Keystore Android

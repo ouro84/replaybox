@@ -33,7 +33,8 @@ interface RoomRawDao {
     suspend fun insertListing(listing: ListingEntity)
 
     @Query(
-        "SELECT * FROM shows WHERE channelId = :channelId ORDER BY rowid",
+        "SELECT * FROM shows WHERE channelId = :channelId " +
+            "ORDER BY firstSeenAt / 86400000 DESC, firstSeenAt ASC, firstSeenRank ASC",
     )
     suspend fun shows(channelId: String): List<ShowEntity>
 
@@ -73,6 +74,12 @@ interface RoomRawDao {
     @Query("SELECT * FROM progress WHERE episodeId = :episodeId")
     suspend fun progress(episodeId: String): ProgressEntity?
 
+    @Query("SELECT * FROM progress ORDER BY updatedAt DESC LIMIT :limit")
+    suspend fun recentProgress(limit: Int): List<ProgressEntity>
+
+    @Query("DELETE FROM progress WHERE episodeId = :episodeId")
+    suspend fun deleteProgress(episodeId: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFavorite(favorite: FavoriteEntity)
 
@@ -90,11 +97,17 @@ class RoomCatalogDao(
 ) : CatalogDao {
 
     override suspend fun putListing(channelId: String, shows: List<Show>, at: Long) = db.withTransaction {
+        val seen = raw.shows(channelId).associateBy { it.id }
         raw.clearShows(channelId)
         raw.clearGenres(channelId)
         raw.insertShows(
-            shows.map {
-                ShowEntity(it.id.value, channelId, it.title, it.posterUrl, it.synopsis)
+            shows.mapIndexed { index, show ->
+                val known = seen[show.id.value]
+                ShowEntity(
+                    show.id.value, channelId, show.title, show.posterUrl, show.synopsis, show.backdropUrl,
+                    firstSeenAt = known?.firstSeenAt ?: at,
+                    firstSeenRank = known?.firstSeenRank ?: index,
+                )
             },
         )
         raw.insertGenres(
@@ -117,6 +130,7 @@ class RoomCatalogDao(
                 title = it.title,
                 posterUrl = it.posterUrl,
                 synopsis = it.synopsis,
+                backdropUrl = it.backdropUrl,
                 genres = genres[it.id].orEmpty().mapNotNull { g -> runCatching { Genre.valueOf(g) }.getOrNull() }.toSet(),
             )
         }
@@ -170,11 +184,13 @@ class RoomCatalogDao(
             )
         }
 
-    override suspend fun putProgress(episodeId: String, positionSeconds: Long, durationSeconds: Int?, at: Long) {
-        raw.insertProgress(ProgressEntity(episodeId, positionSeconds, durationSeconds, at))
-    }
+    override suspend fun putProgress(progress: ProgressEntity) = raw.insertProgress(progress)
 
     override suspend fun progress(episodeId: String): ProgressEntity? = raw.progress(episodeId)
+
+    override suspend fun recentProgress(limit: Int): List<ProgressEntity> = raw.recentProgress(limit)
+
+    override suspend fun deleteProgress(episodeId: String) = raw.deleteProgress(episodeId)
 
     override suspend fun putFavorite(showId: String, at: Long) {
         raw.insertFavorite(FavoriteEntity(showId, at))
