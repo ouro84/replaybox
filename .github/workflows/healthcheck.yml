@@ -4,8 +4,6 @@
 name: health-check
 
 on:
-  push: # TEMPORARY: pre-merge verification, removed before merge
-    branches: [m2-nightly-healthcheck]
   schedule:
     - cron: "0 2 * * *" # 03:00 Paris (winter) / 04:00 (summer)
   workflow_dispatch:
