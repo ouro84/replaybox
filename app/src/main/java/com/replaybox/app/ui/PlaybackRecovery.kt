@@ -11,7 +11,16 @@ class PlaybackRecovery {
 
     private var failures = 0
 
-    fun onError(): Action {
+    /**
+     * Where the next resolution resumes: the position of the last error, 0
+     * included (« Recommencer » then a failure must not jump back). Null while
+     * nothing played past the resume prompt: the prompt still decides.
+     */
+    var resumeAtMs: Long? = null
+        private set
+
+    fun onError(positionMs: Long?): Action {
+        if (positionMs != null) resumeAtMs = positionMs
         failures += 1
         return if (failures == 1) Action.RETRY else Action.SHOW_ERROR
     }

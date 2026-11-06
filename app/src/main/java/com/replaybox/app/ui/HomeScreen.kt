@@ -152,6 +152,7 @@ fun HomeScreen(
     var refreshing by remember { mutableStateOf(!state.refreshed) }
     var unavailable by remember { mutableStateOf(state.unavailable) }
     var refreshRun by remember { mutableStateOf(0) }
+    var refocus by remember { mutableStateOf(0) }
     val retryFocus = remember { FocusRequester() }
     var focused by remember { mutableStateOf<Featured?>(null) }
     var removing by remember { mutableStateOf<ResumeItem?>(null) }
@@ -169,6 +170,8 @@ fun HomeScreen(
         state.unavailable = unavailable
         state.refreshed = true
         refreshing = false
+        // Réessayer left composition with the skeleton: focus the loaded Home.
+        if (refreshRun > 0 && !unavailable) refocus++
     }
     LaunchedEffect(updates) {
         val loaded = withContext(Dispatchers.IO) { loadHome(catalog) }
@@ -188,7 +191,6 @@ fun HomeScreen(
     // else the billboard's primary action, else the first card. A key whose
     // card is gone (removed, delisted) falls through to the next candidate.
     val firstCardKey = current?.let { firstCardKey(it) }
-    var refocus by remember { mutableStateOf(0) }
     LaunchedEffect(current != null, billboard != null, refocus) {
         if (current == null) return@LaunchedEffect
         withFrameNanos { }

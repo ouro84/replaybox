@@ -97,8 +97,6 @@ fun PlayerScreen(
     var state by remember { mutableStateOf<PlayerState>(PlayerState.Resolving) }
     var attempt by remember { mutableStateOf(0) }
     val recovery = remember { PlaybackRecovery() }
-    // Position to resume at after a playback error (Round 8 Q2), no prompt.
-    var recoverAtMs by remember { mutableStateOf<Long?>(null) }
 
     suspend fun resolve() {
         state = PlayerState.Resolving
@@ -106,7 +104,7 @@ fun PlayerScreen(
         while (true) {
             try {
                 val stream = provider.stream(episodeId)
-                val resumeAtMs = recoverAtMs ?: ReplayboxApplication.catalog.resumeAtFor(episodeId)
+                val resumeAtMs = recovery.resumeAtMs ?: ReplayboxApplication.catalog.resumeAtFor(episodeId)
                 state = PlayerState.Ready(
                     stream.manifestUrl,
                     stream.type,
@@ -185,13 +183,13 @@ fun PlayerScreen(
             subtitleLanguage = current.subtitleLanguage,
             resumeAtMs = current.resumeAtMs,
             progressContext = progressContext,
-            autoResume = autoResume || recoverAtMs != null,
+            // After a recovery, resume at once (Round 8 Q2): no second prompt.
+            autoResume = autoResume || recovery.resumeAtMs != null,
             next = NextEpisodePolicy.next(queue, episodeId),
             onPlayNext = onPlayNext,
             onPlaying = { recovery.onPlaying() },
             onPlaybackError = { positionMs ->
-                if (positionMs > 0) recoverAtMs = positionMs
-                when (recovery.onError()) {
+                when (recovery.onError(positionMs)) {
                     PlaybackRecovery.Action.RETRY -> attempt += 1
                     PlaybackRecovery.Action.SHOW_ERROR ->
                         state = PlayerState.Error(message = "", accountRequired = false, playback = true)
@@ -216,7 +214,8 @@ private fun PlayerSurface(
     next: Episode?,
     onPlayNext: (Episode) -> Unit,
     onPlaying: () -> Unit,
-    onPlaybackError: (positionMs: Long) -> Unit,
+    /** Position to resume at, or null while the resume prompt is still pending. */
+    onPlaybackError: (positionMs: Long?) -> Unit,
 ) {
     val context = LocalContext.current
     val catalog = ReplayboxApplication.catalog
@@ -459,7 +458,7 @@ private fun PlayerSurface(
             // Network cut, expired signed URL, decoder failure: hand over to
             // PlaybackRecovery with the position to resume at.
             override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
-                onPlaybackError(player.currentPosition.coerceAtLeast(0))
+                onPlaybackError(if (showResumeChoice) null else player.currentPosition.coerceAtLeast(0))
             }
         }
         player.addListener(playingListener)

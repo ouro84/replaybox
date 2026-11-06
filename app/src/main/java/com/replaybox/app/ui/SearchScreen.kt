@@ -1,5 +1,6 @@
 package com.replaybox.app.ui
 
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -138,6 +139,7 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
     val retryFocus = remember { FocusRequester() }
     var failed by remember { mutableStateOf(false) }
     var retry by remember { mutableStateOf(0) }
+    var handledRetry by remember { mutableStateOf(0) }
     // Arriving on Search means typing: the field takes focus at once.
     LaunchedEffect(Unit) { runCatching { fieldFocus.requestFocus() } }
     val channelIds = remember { Providers.all.map { it.channel.id } }
@@ -146,7 +148,12 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
     LaunchedEffect(query, retry) {
         val value = query
         failed = false // a new query never shows the previous one's failure
-        delay(SearchFusion.DEBOUNCE_MS)
+        // Loading from the first moment, so neither the debounce nor a retry
+        // ever reads « Aucun Programme trouvé » (Round 8 Q4).
+        if (value.trim().length >= SearchFusion.MIN_CHARS) searching = true
+        val fromRetry = retry != handledRetry
+        handledRetry = retry
+        if (!fromRetry) delay(SearchFusion.DEBOUNCE_MS)
         if (value.trim().length < SearchFusion.MIN_CHARS) {
             results = emptyList()
             searching = false
@@ -158,6 +165,11 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
         results = hits.shows
         failed = hits.failed
         searching = false
+        if (fromRetry) {
+            // Réessayer left composition during loading: put focus back.
+            withFrameNanos { }
+            runCatching { if (failed) retryFocus.requestFocus() else resultsFocus.requestFocus() }
+        }
     }
     // Captions name the Chaîne only when the cache knows it (never a guess).
     LaunchedEffect(results) {
