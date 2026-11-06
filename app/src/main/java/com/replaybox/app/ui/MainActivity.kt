@@ -18,6 +18,8 @@ sealed interface Screen {
         val episodeId: EpisodeId,
         val title: String,
         val progressContext: ProgressContext? = null,
+        /** True when the user pressed « Reprendre »: no second prompt. */
+        val autoResume: Boolean = false,
     ) : Screen
     object Login : Screen
     object Search : Screen
@@ -41,7 +43,7 @@ class MainActivity : ComponentActivity() {
                         state = homeState,
                         onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
                         onPlay = { id, title, progressContext ->
-                            backStack.add(Screen.Player(id, title, progressContext))
+                            backStack.add(Screen.Player(id, title, progressContext, autoResume = true))
                         },
                         onNavigate = { destination ->
                             when (destination) {
@@ -55,14 +57,15 @@ class MainActivity : ComponentActivity() {
                         showId = current.showId,
                         title = current.title,
                         state = showStates.getOrPut(current.showId.value) { ShowUiState() },
-                        onOpenEpisode = { episode, progressContext ->
-                            backStack.add(Screen.Player(episode.id, episode.title, progressContext))
+                        onOpenEpisode = { episode, progressContext, autoResume ->
+                            backStack.add(Screen.Player(episode.id, episode.title, progressContext, autoResume))
                         },
                     )
                     is Screen.Player -> PlayerScreen(
                         episodeId = current.episodeId,
                         title = current.title,
                         progressContext = current.progressContext,
+                        autoResume = current.autoResume,
                     )
                     Screen.Login -> LoginScreen(onDone = { backStack.removeAt(backStack.lastIndex) })
                     Screen.Search -> SearchScreen(

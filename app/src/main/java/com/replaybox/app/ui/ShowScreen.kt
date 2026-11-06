@@ -100,7 +100,8 @@ fun ShowScreen(
     showId: ShowId,
     title: String,
     state: ShowUiState,
-    onOpenEpisode: (Episode, ProgressContext) -> Unit,
+    /** Third argument: true for the hero « Reprendre » (resume without asking). */
+    onOpenEpisode: (Episode, ProgressContext, Boolean) -> Unit,
 ) {
     val provider = Providers.resolveShow(showId.value)
     val catalog = Providers.catalog
@@ -158,20 +159,20 @@ fun ShowScreen(
 
     fun open(episode: Episode) {
         state.focusedKey = episodeKey(episode)
-        onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl))
+        onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl), false)
     }
 
     fun play(target: PlayTarget) {
         state.focusedKey = KEY_PLAY
         when (target) {
             is PlayTarget.Start -> target.episode.let { episode ->
-                onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl))
+                onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl), false)
             }
             is PlayTarget.Resume -> {
                 val item = target.item
                 val episode = list?.firstOrNull { it.id == item.episodeId }
                     ?: Episode(item.episodeId, null, item.episodeTitle, null, null, item.durationSeconds, item.thumbnailUrl)
-                onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl ?: item.thumbnailUrl))
+                onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl ?: item.thumbnailUrl), true)
             }
         }
     }
