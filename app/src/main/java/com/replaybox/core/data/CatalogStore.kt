@@ -13,6 +13,7 @@ import com.replaybox.core.model.Show
 import com.replaybox.core.model.ShowId
 import com.replaybox.core.model.SeasonId
 import com.replaybox.core.model.Titles
+import com.replaybox.provider.api.CachedProvider
 import com.replaybox.provider.api.Provider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -91,7 +92,9 @@ class CatalogStore(
     suspend fun refreshListings(providers: List<Provider>) {
         for (provider in providers) {
             try {
-                val fetched = provider.shows(null)
+                // A cache-first Provider would serve the fresh cache: go to its network side.
+                val source = (provider as? CachedProvider)?.origin ?: provider
+                val fetched = source.shows(null)
                 dao.putListing(provider.channel.id, fetched, clock())
                 tick()
             } catch (_: Exception) {
@@ -282,9 +285,9 @@ class CatalogStore(
      * older unfinished one: on its own page every Progression counts.
      */
     suspend fun resumeFor(showId: ShowId, channelIds: List<String>): ResumeItem? {
-        val row = dao.recentProgress(RESUME_SCAN).firstOrNull {
-            it.showId == showId.value &&
-                ResumePolicy.resumeAt(Progress(EpisodeId(it.episodeId), it.positionSeconds, it.updatedAt), it.durationSeconds) != null
+        // Queried per Programme: a long history of other Programmes never hides it.
+        val row = dao.progressOfShow(showId.value).firstOrNull {
+            ResumePolicy.resumeAt(Progress(EpisodeId(it.episodeId), it.positionSeconds, it.updatedAt), it.durationSeconds) != null
         } ?: return null
         val listing = listedShow(showId, channelIds)
         return ResumeItem(

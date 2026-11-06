@@ -43,7 +43,7 @@ object FtvParsers {
                     id = showIdFromPath(path),
                     title = FtvJson.str(item, "label") ?: "",
                     posterUrl = posterFrom(item),
-                    synopsis = FtvJson.str(item, "synopsis") ?: FtvJson.str(item, "description"),
+                    synopsis = FtvJson.text(item, "synopsis") ?: FtvJson.text(item, "description"),
                     genres = FtvGenres.map(
                         FtvJson.str(item, "category", "url_complete"),
                         FtvJson.objects(item["sub_categories"])
@@ -97,7 +97,7 @@ object FtvParsers {
                     title = FtvJson.str(item, "episode_title")
                         ?: FtvJson.str(item, "title")
                         ?: siId,
-                    synopsis = FtvJson.str(item, "description"),
+                    synopsis = FtvJson.text(item, "description"),
                     broadcastDate = broadcastDateFrom(item),
                     durationSeconds = FtvJson.int(item, "duration"),
                     thumbnailUrl = vignetteFrom(item),

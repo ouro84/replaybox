@@ -31,6 +31,13 @@ internal object FtvJson {
         return current as? JsonArray
     }
 
+    /**
+     * Display text: like [str], minus the backslash France TV leaves before
+     * quotes in some descriptions (double-escaped upstream, seen 2026-11-06).
+     */
+    fun text(element: JsonElement?, vararg path: String): String? =
+        str(element, *path)?.replace("\\\"", "\"")
+
     fun str(element: JsonElement?, vararg path: String): String? {
         var current: JsonElement? = element
         for (key in path) {

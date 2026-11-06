@@ -83,4 +83,19 @@ class ProgrammePageTest {
             assertThat(catalog.resumeFor(ShowId("nope"), listOf("tf1"))).isNull()
         }
     }
+
+    @Test
+    fun `resumeFor finds a Programme behind a long Progression history`() {
+        blocking {
+            var now = 1_000L
+            val catalog = CatalogStore(FakeCatalogDao()) { now }
+            catalog.saveProgress(EpisodeId("koh-e1"), 600, 3600, context("koh", "e1"))
+            repeat(250) { index ->
+                now += 1
+                catalog.saveProgress(EpisodeId("other-$index"), 600, 3600, context("other$index", "o$index"))
+            }
+
+            assertThat(catalog.resumeFor(ShowId("koh"), listOf("tf1"))?.episodeId).isEqualTo(EpisodeId("koh-e1"))
+        }
+    }
 }
