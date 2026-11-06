@@ -22,4 +22,29 @@ class ForcedRefreshTest {
             assertThat(dao.shows("tf1").map { it.id.value }).containsExactly("new")
         }
     }
+
+    @Test
+    fun `refreshListings reports how many Chaînes failed`() {
+        blocking {
+            val dao = FakeCatalogDao()
+            val catalog = CatalogStore(dao) { 1_000L }
+            val down = java.io.IOException("offline")
+            val allDown = catalog.refreshListings(
+                listOf(
+                    FakeProvider(channel = Channel("tf1", "TF1+"), showsError = down),
+                    FakeProvider(channel = Channel("ftv", "France TV"), showsError = down),
+                ),
+            )
+            assertThat(allDown).isEqualTo(2)
+
+            val oneDown = catalog.refreshListings(
+                listOf(
+                    FakeProvider(channel = Channel("tf1", "TF1+"), showsResult = listOf(show("t", "Tracker"))),
+                    FakeProvider(channel = Channel("ftv", "France TV"), showsError = down),
+                ),
+            )
+            assertThat(oneDown).isEqualTo(1)
+            assertThat(dao.shows("tf1").map { it.id.value }).containsExactly("t")
+        }
+    }
 }

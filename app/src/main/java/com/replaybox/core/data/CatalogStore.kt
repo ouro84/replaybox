@@ -88,8 +88,11 @@ class CatalogStore(
      * Forced background refresh of the Home listings (startup priority,
      * ADR 0002). A failing Chaîne is skipped — the evening never blocks on
      * the network; its stale date surfaces in the Home banner instead.
+     * Returns how many Chaînes failed, so an empty Home can tell « offline »
+     * from « nothing listed » (decision Round 8 Q4).
      */
-    suspend fun refreshListings(providers: List<Provider>) {
+    suspend fun refreshListings(providers: List<Provider>): Int {
+        var failed = 0
         for (provider in providers) {
             try {
                 // A cache-first Provider would serve the fresh cache: go to its network side.
@@ -97,10 +100,14 @@ class CatalogStore(
                 val fetched = source.shows(null)
                 dao.putListing(provider.channel.id, fetched, clock())
                 tick()
+            } catch (error: kotlinx.coroutines.CancellationException) {
+                throw error
             } catch (_: Exception) {
                 // Degraded mode: keep serving the cache.
+                failed += 1
             }
         }
+        return failed
     }
 
     /** Freshness of a Chaîne listing, for the dated degraded-mode banner. */
