@@ -62,10 +62,10 @@ Accueil & navigation :
 
 Lecteur complet :
 
-- [ ] −10 s / +10 s, recommencer
+- [x] −10 s / +10 s, recommencer
 - [x] Épisode suivant, avec enchaînement automatique
-- [ ] Choix de la piste audio et de la qualité
-- [ ] Vitesse de lecture
+- [x] Choix de la piste audio et de la qualité
+- [x] Vitesse de lecture
 
 Recherche guidée :
 

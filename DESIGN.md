@@ -358,9 +358,18 @@ Every D-pad target uses `tvClickable`: one focus node and no Material ripple. `f
 - **Status lines.** « Saisis au moins 3 caractères. », loading and « Aucun Programme trouvé. » are set in Body Mist, aligned at 104 dp.
 - **Results.** Six 3:4 posters per row, 20 dp gap, between 104 dp and the 48 dp safe edge. They use the Home card focus (ring plus 1.1 lift). Each poster has a caption 14 dp below: the title in Card Title (2 lines), then « Chaîne · Genre » in Meta Mist. The Chaîne comes from the cached listings only and is never guessed. DOWN from the field reaches the first result.
 
+### Player
+The video owns the screen. Every overlay sits at the bottom over a ground scrim (transparent to 92–94 % ground), inside the 48 dp safe frame, and one Back closes it.
+- **Keys with nothing shown.** Left/Right seek 10 s and show the controls, OK plays or pauses, Up/Down show the controls, CC toggles subtitles, MENU opens Options.
+- **Controls.** Programme title in Rail Title, Épisode title in Meta Mist, then the timeline: tabular clocks either side of a 6 dp track with the amber Progression fill (One Amber Rule). Below, panel buttons: Pause/Lecture (initial focus), −10 s, +10 s, Recommencer, Sous-titres (check or cross: state by shape), Options. They hide 5 s after the last key while playing and stay while paused.
+- **Options panel.** Takes the controls' place. Title « Options », then one row per setting: label in Body Strong Mist on a 180 dp column, choices as panel buttons with a check on the selected one. Rows come only from the tracks the player has; a row with nothing to choose is left out. Initial focus is the selected choice of the first row.
+- **Captions.** While controls or Options are shown, the caption layer lifts (34 % and 62 % of its height) so no cue sits under an overlay.
+- **Resume prompt, Épisode suivant, error.** Slate panels with panel buttons, bottom left for the prompt and bottom right for Épisode suivant (10 s countdown, « Lire maintenant » focused). The error reuses Display Compact with a focused « Réessayer ».
+- **Focus holder.** The idle focus target is a sibling of the overlays, never their parent: Compose maps Back to a focus exit, and a focusable parent swallows the first press.
+
 ### Not yet specified
 These are not built in this system yet. Do not infer them from Home:
-- Player and TF1+ login. They still read the raw Material color scheme and typography and have not been through this pass.
+- TF1+ login. It still reads the raw Material color scheme and typography and has not been through this pass.
 - The Genre page and "Tout voir".
 - The Paramètres page (the rail currently opens the TF1+ account screen).
 - Subtitle styling (size, background, legibility setting).
