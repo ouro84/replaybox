@@ -50,6 +50,19 @@ object PlaybackChoices {
 
     private fun isFrench(language: String?) = language != null && FRENCH.matches(language.lowercase())
 
+    /** Kind of any audio track, including one left out of [audio] by deduplication. */
+    fun kindOf(track: TrackRef): AudioKind = audioKind(track)
+
+    /**
+     * The choice to force when a Flux starts, or null when the track Media3
+     * picked is already of the wanted kind (it may be a better group of that
+     * kind, 5.1 or a higher bitrate, that [audio] deduplicated away).
+     */
+    fun audioToApply(choices: List<AudioChoice>, preferred: AudioKind?, playing: TrackRef?): AudioChoice? {
+        val wanted = defaultAudio(choices, preferred) ?: return null
+        return wanted.takeIf { playing == null || audioKind(playing) != wanted.kind }
+    }
+
     private fun audioKind(track: TrackRef): AudioKind {
         val language = track.language?.lowercase()
         return when {

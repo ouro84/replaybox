@@ -277,8 +277,14 @@ private fun PlayerSurface(
 
     fun select(ref: TrackRef, type: Int) {
         val group = player.currentTracks.groups.getOrNull(ref.group) ?: return
-        // Audio keeps every bitrate of the group (adaptive); text is one track.
-        val indices = if (type == C.TRACK_TYPE_AUDIO) (0 until group.length).toList() else listOf(ref.index)
+        // Audio keeps every supported bitrate of the group (adaptive); text is
+        // one track. Unsupported formats are never forced (a mixed AAC/EC-3
+        // group would fail on a box without EC-3).
+        val indices = if (type == C.TRACK_TYPE_AUDIO) {
+            (0 until group.length).filter { group.isTrackSupported(it) }.ifEmpty { listOf(ref.index) }
+        } else {
+            listOf(ref.index)
+        }
         player.trackSelectionParameters = player.trackSelectionParameters
             .buildUpon()
             .setTrackTypeDisabled(type, false)
@@ -338,9 +344,10 @@ private fun PlayerSurface(
                 val audio = PlaybackChoices.audio(refs)
                 if (!audioDefaulted && audio.isNotEmpty()) {
                     audioDefaulted = true
-                    val wanted = PlaybackChoices.defaultAudio(audio, preferences.audio)
-                    val playing = audio.firstOrNull { tracks.groups[it.track.group].isSelected }
-                    if (wanted != null && wanted != playing) chooseAudio(wanted, remember = false) else audioKind = playing?.kind
+                    // Look up what plays among all audio tracks, not the deduped choices.
+                    val playing = refs.firstOrNull { it.type == TrackKind.AUDIO && tracks.groups[it.group].isSelected }
+                    val toApply = PlaybackChoices.audioToApply(audio, preferences.audio, playing)
+                    if (toApply != null) chooseAudio(toApply, remember = false) else audioKind = playing?.let(PlaybackChoices::kindOf)
                 }
                 val text = PlaybackChoices.subtitles(refs)
                 if (!textDefaulted && text.isNotEmpty()) {
@@ -400,10 +407,15 @@ private fun PlayerSurface(
 
     // Épisode suivant: shown when the Flux ends and a next Épisode exists.
     var nextUp by remember(manifestUrl) { mutableStateOf(false) }
+    var optionsOpen by remember(manifestUrl) { mutableStateOf(false) }
     DisposableEffect(player, next) {
         val endListener = object : androidx.media3.common.Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
-                if (playbackState == androidx.media3.common.Player.STATE_ENDED && next != null) nextUp = true
+                if (playbackState == androidx.media3.common.Player.STATE_ENDED && next != null) {
+                    // A panel left open must not come back after « Annuler ».
+                    optionsOpen = false
+                    nextUp = true
+                }
             }
         }
         player.addListener(endListener)
@@ -416,7 +428,6 @@ private fun PlayerSurface(
     val rootFocus = remember { FocusRequester() }
     val playFocus = remember { FocusRequester() }
     var controlsVisible by remember(manifestUrl) { mutableStateOf(false) }
-    var optionsOpen by remember(manifestUrl) { mutableStateOf(false) }
     var interaction by remember { mutableStateOf(0) }
     var isPlaying by remember(manifestUrl) { mutableStateOf(false) }
     var positionMs by remember(manifestUrl) { mutableStateOf(0L) }
@@ -468,8 +479,9 @@ private fun PlayerSurface(
         optionsOpen = false
         showControls()
     }
-    // Declared after the controls handler: with the panel open, Back closes it first.
-    BackHandler(enabled = optionsOpen) { closeOptions() }
+    // Declared after the controls handler: with the panel open, Back closes it
+    // first. Never while Épisode suivant shows: there Back cancels the countdown.
+    BackHandler(enabled = optionsOpen && !nextUp) { closeOptions() }
     // Captions climb above the controls panel while it is shown, never under it.
     // France TV WebVTT cues carry explicit line positions, which ignore the
     // SubtitleView bottom padding: the whole caption layer is lifted instead.

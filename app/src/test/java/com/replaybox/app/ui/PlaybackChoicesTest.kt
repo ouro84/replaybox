@@ -52,6 +52,17 @@ class PlaybackChoicesTest {
     }
 
     @Test
+    fun `no override when the playing track is already the wanted kind, even outside the deduped list`() {
+        val tracks = listOf(audio(1, "fr"), audio(4, "fr"), audio(2, "qaa"))
+        val choices = PlaybackChoices.audio(tracks)
+        // Media3 picked fr group 4 (e.g. 5.1): keep it, do not force group 1.
+        assertThat(PlaybackChoices.audioToApply(choices, null, playing = tracks[1])).isNull()
+        assertThat(PlaybackChoices.audioToApply(choices, AudioKind.ORIGINAL, playing = tracks[1])?.track?.group).isEqualTo(2)
+        assertThat(PlaybackChoices.audioToApply(choices, null, playing = null)?.kind).isEqualTo(AudioKind.FRENCH)
+        assertThat(PlaybackChoices.kindOf(tracks[1])).isEqualTo(AudioKind.FRENCH)
+    }
+
+    @Test
     fun `subtitles dedupe the side-loaded French track against the manifest one`() {
         val choices = PlaybackChoices.subtitles(listOf(text(5, "fr"), text(6, "qsm"), text(9, "fra")))
         assertThat(choices.map { it.kind }).containsExactly(SubtitleKind.FRENCH, SubtitleKind.HEARING_IMPAIRED).inOrder()
