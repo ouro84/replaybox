@@ -1,6 +1,6 @@
 package com.replaybox.app.ui
 
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,10 +14,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,17 +40,14 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.foundation.lazy.grid.TvGridCells
 import androidx.tv.foundation.lazy.grid.TvLazyVerticalGrid
-import androidx.tv.foundation.lazy.grid.items
-import coil.compose.AsyncImage
+import androidx.tv.foundation.lazy.grid.itemsIndexed
 import com.replaybox.R
-import com.replaybox.core.model.Genre
 import com.replaybox.core.model.Show
 import com.replaybox.core.model.ShowId
 import com.replaybox.core.model.Titles
@@ -97,7 +97,10 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
     var query by remember { mutableStateOf("") }
     var results by remember { mutableStateOf<List<Show>>(emptyList()) }
     var searching by remember { mutableStateOf(false) }
+    var channels by remember { mutableStateOf<Map<ShowId, String>>(emptyMap()) }
     val resultsFocus = remember { FocusRequester() }
+    val channelIds = remember { Providers.all.map { it.channel.id } }
+    val channelNames = remember { Providers.all.associate { it.channel.id to it.channel.name } }
 
     LaunchedEffect(query) {
         val value = query
@@ -111,11 +114,15 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
         results = SearchFusion.search(Providers.all, value)
         searching = false
     }
+    // Captions name the Chaîne only when the cache knows it (never a guess).
+    LaunchedEffect(results) {
+        channels = Providers.catalog.channelsOf(results.map { it.id }, channelIds)
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 24.dp)
+            .padding(top = Rb.safeVertical + 8.dp)
             // Capture phase: the focused TextField consumes D-pad events
             // before bubbling, so DOWN is intercepted here to move focus to
             // the first result card (TV remote flow).
@@ -123,45 +130,47 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
                 event.type == KeyEventType.KeyDown &&
                     event.key == Key.DirectionDown &&
                     results.isNotEmpty() &&
-                    run {
-                        resultsFocus.requestFocus()
-                        true
-                    }
+                    runCatching { resultsFocus.requestFocus() }.isSuccess
             },
     ) {
         SearchField(
             value = query,
             onValueChange = { query = it },
-            modifier = Modifier.padding(horizontal = 32.dp).fillMaxWidth(),
+            modifier = Modifier.padding(start = Rb.contentStart).width(540.dp),
         )
         val trimmed = query.trim()
-        when {
-            trimmed.length < SearchFusion.MIN_CHARS -> Text(
-                text = stringResource(R.string.search_min_chars),
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(horizontal = 32.dp, vertical = 12.dp),
+        val status = when {
+            trimmed.length < SearchFusion.MIN_CHARS -> R.string.search_min_chars
+            searching && results.isEmpty() -> R.string.loading
+            results.isEmpty() -> R.string.search_no_results
+            else -> null
+        }
+        if (status != null) {
+            Text(
+                text = stringResource(status),
+                style = RbType.body,
+                color = Rb.textSecondary,
+                modifier = Modifier.padding(start = Rb.contentStart, top = 20.dp),
             )
-            searching && results.isEmpty() -> Text(
-                text = stringResource(R.string.loading),
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(horizontal = 32.dp, vertical = 12.dp),
-            )
-            results.isEmpty() -> Text(
-                text = stringResource(R.string.search_no_results),
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(horizontal = 32.dp, vertical = 12.dp),
-            )
-            else -> TvLazyVerticalGrid(
-                columns = TvGridCells.Fixed(6),
-                contentPadding = PaddingValues(horizontal = 32.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+        } else {
+            TvLazyVerticalGrid(
+                columns = TvGridCells.Fixed(GRID_COLUMNS),
+                // Top/side room for the 1.1 lift and the ring (DESIGN.md: rails).
+                contentPadding = PaddingValues(
+                    start = Rb.contentStart,
+                    end = Rb.safeHorizontal,
+                    top = 24.dp,
+                    bottom = Rb.safeVertical,
+                ),
+                horizontalArrangement = Arrangement.spacedBy(Rb.cardGap),
+                verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
-                items(results) { show ->
+                itemsIndexed(results, key = { _, show -> show.id.value }) { index, show ->
                     SearchResultCard(
                         show = show,
-                        onOpenShow = onOpenShow,
-                        focusRequester = resultsFocus,
+                        channel = channels[show.id]?.let { channelNames[it] },
+                        focusRequester = resultsFocus.takeIf { index == 0 },
+                        onClick = { onOpenShow(show.id, show.title) },
                     )
                 }
             }
@@ -169,83 +178,92 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
     }
 }
 
+/** Six 3:4 posters of ~118 dp fill the 808 dp between the content start and the safe edge. */
+private const val GRID_COLUMNS = 6
+
 @Composable
 private fun SearchField(value: String, onValueChange: (String) -> Unit, modifier: Modifier) {
+    var focused by remember { mutableStateOf(false) }
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
-        textStyle = MaterialTheme.typography.bodyLarge.copy(
-            color = MaterialTheme.colorScheme.onSurface,
-        ),
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+        textStyle = RbType.body.copy(color = Rb.text),
+        cursorBrush = SolidColor(Rb.text),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         modifier = modifier
-            .border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(8.dp),
-            )
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .onFocusChanged { focused = it.isFocused }
+            .focusRing(focused, FIELD_RADIUS)
+            .background(Rb.surfaceRaised, Rb.buttonShape)
+            .height(52.dp),
         decorationBox = { inner ->
-            Box {
-                if (value.isEmpty()) {
-                    Text(
-                        text = stringResource(R.string.search_hint),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                    )
+            Row(
+                Modifier.padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(Icons.Filled.Search, contentDescription = null, tint = Rb.textSecondary, modifier = Modifier.size(24.dp))
+                Spacer(Modifier.width(12.dp))
+                Box(Modifier.weight(1f)) {
+                    if (value.isEmpty()) {
+                        Text(
+                            text = stringResource(R.string.search_hint),
+                            style = RbType.body,
+                            color = Rb.textSecondary,
+                        )
+                    }
+                    inner()
                 }
-                inner()
             }
         },
     )
 }
 
+/** Matches Rb.buttonShape so the ring stays concentric with the field. */
+private val FIELD_RADIUS = 8.dp
+
 @Composable
 private fun SearchResultCard(
     show: Show,
-    onOpenShow: (ShowId, String) -> Unit,
-    focusRequester: FocusRequester,
+    channel: String?,
+    focusRequester: FocusRequester?,
+    onClick: () -> Unit,
 ) {
     var focused by remember { mutableStateOf(false) }
+    val scale = focusScale(focused)
     Column(
         modifier = Modifier
-            .focusRequester(focusRequester)
-            .width(140.dp)
-            .scale(if (focused) 1.05f else 1f)
+            .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
             .onFocusChanged { focused = it.isFocused }
             .focusable()
-            .clickable { onOpenShow(show.id, show.title) }
-            .border(
-                width = 2.dp,
-                color = if (focused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
-                shape = RoundedCornerShape(8.dp),
-            ),
+            .clickable(onClick = onClick),
     ) {
-        Box(modifier = Modifier.fillMaxWidth().aspectRatio(3f / 4f)) {
-            AsyncImage(
-                model = show.posterUrl,
-                contentDescription = show.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-            )
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .scale(scale)
+                .aspectRatio(3f / 4f)
+                .cardFocus(focused)
+                .background(Rb.surface),
+        ) {
+            Artwork(url = show.posterUrl, fallback = show.title)
         }
         Text(
             text = show.title,
-            style = MaterialTheme.typography.bodyMedium,
-            maxLines = 1,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+            style = RbType.cardTitle,
+            color = Rb.text,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(top = 14.dp),
         )
-        val genreLabel = show.genres.firstOrNull()?.genreLabel().orEmpty()
-        if (genreLabel.isNotEmpty()) {
+        val meta = listOfNotNull(channel, show.genres.firstOrNull()?.genreLabel()).joinToString(" · ")
+        if (meta.isNotEmpty()) {
             Text(
-                text = genreLabel,
-                style = MaterialTheme.typography.labelSmall,
+                text = meta,
+                style = RbType.meta,
+                color = Rb.textSecondary,
                 maxLines = 1,
-                modifier = Modifier.padding(horizontal = 8.dp),
+                overflow = TextOverflow.Ellipsis,
             )
         }
-        Spacer(Modifier.height(8.dp))
     }
 }

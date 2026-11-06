@@ -252,6 +252,22 @@ class CatalogStore(
             }
     }
 
+    /**
+     * Search captions: the first Chaîne (in [channelIds] order) listing each
+     * Programme. Each listing is read once; unlisted Programmes are absent.
+     */
+    suspend fun channelsOf(showIds: Collection<ShowId>, channelIds: List<String>): Map<ShowId, String> {
+        val wanted = showIds.toHashSet()
+        val found = LinkedHashMap<ShowId, String>()
+        for (channelId in channelIds) {
+            if (found.size == wanted.size) break
+            for (show in dao.shows(channelId)) {
+                if (show.id in wanted) found.putIfAbsent(show.id, channelId)
+            }
+        }
+        return found
+    }
+
     /** The Programme as cached in the listings of [channelIds], with its Chaîne; null when unlisted. */
     suspend fun listedShow(showId: ShowId, channelIds: List<String>): ChannelShow? {
         for (channelId in channelIds) {
