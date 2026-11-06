@@ -204,9 +204,36 @@ avant toute distribution hors de la box.
 
 ## CI
 
-- **PR** : `./gradlew assembleDebug testDebugUnitTest`.
+- **PR** : `./gradlew assembleDebug testDebugUnitTest` — **en local** pour l'instant (décision du
+  06/11 : pas de workflow de PR sur GitHub ; les releases aussi se construisent en local, §Releases).
 - **Nightly health-check** : un épisode TF1 et un épisode France TV poussés **jusqu'à l'URL du
   manifest** ; échec → alerte. C'est le seul test d'intégration réel ; tout le reste est sur fixtures.
+
+Health-check (`.github/workflows/healthcheck.yml`, seul workflow Actions) :
+- Cron `0 2 * * *` (03:00 Paris l'hiver) + `workflow_dispatch` avec `simulate_failure`
+  (`none`/`tf1`/`francetv`) pour exercer l'alerte. Runner `ubuntu-latest`, JDK 11.
+- Code : `app/src/healthCheck/` (sondes `ProviderProbe` listées dans `Probes.all` — ajouter M6 =
+  une entrée), compilé et lancé **uniquement** avec `./gradlew testDebugUnitTest -PhealthCheck` ;
+  sans ce flag la suite unitaire les exclut explicitement (zéro réseau en test). Chaque sonde
+  appelle les vrais `Provider` étape par étape — étapes nommées comme les méthodes `Provider` —
+  et écrit `app/build/healthcheck/<provider>.json` {provider, label, ok, step, error, detail}.
+- **TF1+** : anonyme sur « Le 20h » — `programSlug` **`jt-20h`** (mesuré le 06/11 via
+  searchPrograms `e78b188` ; `le-20h` et `journal-20h` n'existent pas). Étapes `shows` → `seasons`
+  → `episodes` (dernier replay, choisi dynamiquement) → `stream` → `manifest` (GET 200 + `<MPD`).
+- **France TV** : `shows` (france-2) puis, pour les 10 premiers Programmes, `seasons` →
+  `episodes` → `stream` → `signature` jusqu'au premier Épisode qui résout — jamais de `si_id` codé
+  en dur (les Épisodes expirent). S'arrête à l'URL signée : **mesuré depuis un runner GitHub (US)
+  le 06/11, le CDN `cloudreplay.ftven.fr` répond 403 hors de France** alors que yatta, k7 et
+  hdfauth répondent 200. L'étape `signature` vérifie que le 1er segment du chemin décode en
+  `exp=…~acl=…~hmac=…` avec `exp` futur (sinon `FtvProvider` serait retombé sur l'URL k7 non
+  signée sans le dire).
+- Alerte : au moindre KO, l'issue ouverte au titre « health-check KO » (label `alerte`) est
+  **commentée** (date, provider, étape, erreur, lien du run) ; s'il n'y en a pas, elle est créée
+  avec les labels `ci` + `alerte` (créés au besoin). Au premier run entièrement OK, l'issue reçoit
+  un commentaire « rétabli » et se ferme. Pas de résultat du tout (build cassé) → KO à l'étape
+  `build`.
+- GitHub désactive les workflows `schedule` après 60 jours sans activité sur le repo : le
+  réactiver depuis l'onglet Actions si besoin.
 
 ## Tests
 

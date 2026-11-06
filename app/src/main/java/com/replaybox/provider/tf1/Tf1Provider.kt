@@ -22,6 +22,8 @@ import kotlinx.coroutines.sync.withLock
 class Tf1Provider(
     private val http: Tf1Http = Tf1Http(),
     private val tokenProvider: (suspend (forceRefresh: Boolean) -> String?)? = null,
+    // Injected so the provider also runs on a plain JVM (nightly health-check, CI).
+    private val log: (String) -> Unit = { message -> android.util.Log.w(TAG, message) },
 ) : Provider {
 
     override val channel: Channel = Channel("tf1", "TF1+")
@@ -84,8 +86,7 @@ class Tf1Provider(
                     is Tf1Parsers.Delivery.Ok -> return Tf1Parsers.streamFrom(delivery)
                     is Tf1Parsers.Delivery.Failure -> {
                         lastFailure = delivery
-                        android.util.Log.w(
-                            TAG,
+                        log(
                             "delivery refused mediaId=$mediaId attempt=$attempt code=${delivery.httpDeliveryCode}" +
                                 " error=${delivery.errorCode} desc=${delivery.description} geo=${delivery.geoBlocked}" +
                                 " accountOrDrm=${delivery.accountOrDrm} withToken=${token != null}",
@@ -94,7 +95,7 @@ class Tf1Provider(
                     }
                 }
             } catch (error: Tf1HttpException) {
-                android.util.Log.w(TAG, "mediainfo HTTP ${error.message}")
+                log("mediainfo HTTP ${error.message}")
                 if (tokenProvider == null || attempt > 0) throw error
             }
         }
