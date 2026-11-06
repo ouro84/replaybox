@@ -5,6 +5,17 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
 }
 
+// Single source of truth for the version: gradle.properties `replaybox.version`
+// (semver X.Y.Z, tagged vX.Y.Z by scripts/release.ps1). versionCode is derived
+// so it always grows with the semver: X*10000 + Y*100 + Z.
+val replayboxVersionName: String = providers.gradleProperty("replaybox.version").get()
+val replayboxVersionCode: Int = replayboxVersionName.split(".").let { parts ->
+    require(parts.size == 3 && parts.all { p -> p.toIntOrNull()?.let { it in 0..99 } == true }) {
+        "replaybox.version must be X.Y.Z with each part in 0..99, got $replayboxVersionName"
+    }
+    parts[0].toInt() * 10000 + parts[1].toInt() * 100 + parts[2].toInt()
+}
+
 android {
     namespace = "com.replaybox"
     compileSdk = 33
@@ -13,14 +24,18 @@ android {
         applicationId = "com.replaybox"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = replayboxVersionCode
+        versionName = replayboxVersionName
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // V1: release is signed with the debug keystore of the release machine
+            // (~/.android/debug.keystore) so it updates a sideloaded debug build and
+            // vice versa — same certificate on the box, no secret in the repo.
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
