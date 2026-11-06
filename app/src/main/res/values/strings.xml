@@ -37,4 +37,6 @@
     <string name="login_password">Mot de passe</string>
     <string name="login_submit">Se connecter</string>
     <string name="login_signout">Se déconnecter</string>
+    <string name="update_ready">Mise à jour %1$s prête</string>
+    <string name="update_install">Installer</string>
 </resources>

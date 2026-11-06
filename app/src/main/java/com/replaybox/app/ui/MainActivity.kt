@@ -6,6 +6,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import com.replaybox.app.ReplayboxApplication
 import com.replaybox.core.model.EpisodeId
 import com.replaybox.core.model.ShowId
 
@@ -21,6 +22,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) ReplayboxApplication.checkForUpdate()
         setContent {
             val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
             BackHandler(enabled = backStack.size > 1) { backStack.removeAt(backStack.lastIndex) }

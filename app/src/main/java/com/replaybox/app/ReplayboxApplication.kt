@@ -1,7 +1,17 @@
 package com.replaybox.app
 
 import android.app.Application
+import android.util.Log
 import androidx.room.Room
+import com.replaybox.BuildConfig
+import com.replaybox.app.update.AppUpdater
+import com.replaybox.app.update.AppVersion
+import com.replaybox.app.update.GitHubUpdateSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import java.io.File
 import com.replaybox.core.data.CatalogDao
 import com.replaybox.core.data.CatalogStore
 import com.replaybox.core.data.ReplayboxDatabase
@@ -32,5 +42,23 @@ class ReplayboxApplication : Application() {
         val catalog: CatalogStore by lazy { CatalogStore(catalogDao()) }
 
         private fun catalogDao(): CatalogDao = RoomCatalogDao(database, database.rawDao())
+
+        private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+        /** Self-update from the GitHub Releases (SPEC §Auto-update). */
+        val updater: AppUpdater by lazy {
+            AppUpdater(
+                current = AppVersion.parse(BuildConfig.VERSION_NAME)
+                    ?: error("versionName ${BuildConfig.VERSION_NAME} is not X.Y.Z"),
+                source = GitHubUpdateSource(userAgent = "Replaybox/${BuildConfig.VERSION_NAME}"),
+                directory = File(instance.cacheDir, "updates"),
+                log = { Log.i("AppUpdater", it) },
+            )
+        }
+
+        /** Launch-time check; outlives the Activity so a download is not cut by navigation. */
+        fun checkForUpdate() {
+            appScope.launch { updater.check() }
+        }
     }
 }
