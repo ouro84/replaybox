@@ -30,7 +30,7 @@ catalogue → Programme → Saison → Épisode → Flux → lecture Media3.
 - [ ] Auto-update depuis les GitHub Releases
 - [ ] Health-check nightly en CI + alerte d'échec
 - [ ] Polish UX (états d'erreur, spinner de résolution de Flux, écrans vides)
-- [ ] Releases taggées
+- [x] Releases taggées
 
 **Critère** : Definition of Done du PRD vérifiée en conditions réelles.
 

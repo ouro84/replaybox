@@ -164,6 +164,21 @@ cache (pas de route de recherche découverte).
 Au lancement : `GET /repos/ouro84/replaybox/releases/latest` (API GitHub) → si tag > version courante,
 notification → téléchargement APK → intent d'installation. Silencieux si à jour.
 
+## Releases
+
+Version unique : `replaybox.version=X.Y.Z` dans `gradle.properties` (semver, chaque partie 0..99) ;
+`versionCode` dérivé `X*10000 + Y*100 + Z`, donc toujours croissant avec le tag. Une release =
+`scripts/release.ps1` lancé sur `main` à jour et propre (build **local**, pas de CI de PR à ce
+stade — décision du 06/11) : tests + `assembleDebug assembleRelease`, tag annoté `vX.Y.Z`, GitHub
+Release avec deux assets `replaybox-X.Y.Z-release.apk` (celui que l'auto-update télécharge) et
+`replaybox-X.Y.Z-debug.apk`. `-DryRun` construit sans taguer ni publier.
+
+Signature V1 : la build `release` est signée avec le keystore debug de la machine de release
+(`~/.android/debug.keystore`), le même certificat que les APK debug déjà installés sur la box —
+debug et release se mettent à jour l'une l'autre, aucun secret dans le repo. Passer à un keystore
+release dédié casserait la mise à jour en place (désinstallation requise une fois) : à décider
+avant toute distribution hors de la box.
+
 ## CI
 
 - **PR** : `./gradlew assembleDebug testDebugUnitTest`.
