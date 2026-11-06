@@ -8,8 +8,10 @@ joue les flux directs est donc sans pub par architecture, sans blocage ni skip.
 
 ## Statut
 
-M0 « Ça marche » en cours : squelette Compose for TV + provider TF1 (catalogue complet sur
-fixtures, Flux via la chaîne wat de yt-dlp). Voir ROADMAP.md pour les jalons.
+M0 « Ça marche » et M1 « Utile tous les soirs » livrés : providers TF1+ (compte TF1+ embarqué)
+et France TV, cache Room cache-first avec mode dégradé daté, Genres canoniques, recherche
+cross-chaînes, favoris et reprise de lecture, sous-titres FR activés par défaut. M2 « Produit »
+en cours (releases taggées, auto-update, health-check nocturne). Voir ROADMAP.md pour les jalons.
 
 ## Docs
 

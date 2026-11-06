@@ -8,20 +8,20 @@ tant que son critère d'acceptation n'est pas observé sur le vrai boîtier.
 Squelette Compose for TV booté sur la Bbox, interface `Provider`, **provider TF1 complet** :
 catalogue → Programme → Saison → Épisode → Flux → lecture Media3.
 
-- [ ] APK sideloadé et lancé sur la Bbox
-- [ ] Parcours TF1 complet joué ce soir-là, sans pub
-- [ ] Fixtures de parsing TF1 en place
+- [x] APK sideloadé et lancé sur la Bbox
+- [x] Parcours TF1 complet joué ce soir-là, sans pub
+- [x] Fixtures de parsing TF1 en place
 
 **Critère** : Arnaud a regardé un programme TF1 depuis Replaybox.
 
 ## M1 — « Utile tous les soirs »
 
-- [ ] Provider France TV complet
-- [ ] Cache Room + TTL 12 h + mode dégradé (bannière datée)
-- [ ] Recherche cross-chaînes (debounce, fusion titre normalisé)
-- [ ] Favoris + reprise de lecture (Progress)
-- [ ] Genres canoniques (mapping TF1 GT/SGT + FTV sub_categories)
-- [ ] **Sous-titres FR activés par défaut**, toggle un appui
+- [x] Provider France TV complet
+- [x] Cache Room + TTL 12 h + mode dégradé (bannière datée)
+- [x] Recherche cross-chaînes (debounce, fusion titre normalisé)
+- [x] Favoris + reprise de lecture (Progress)
+- [x] Genres canoniques (mapping TF1 GT/SGT + FTV sub_categories)
+- [x] **Sous-titres FR activés par défaut**, toggle un appui
 
 **Critère** : une semaine d'usage réel sans ouvrir une app officielle.
 
