@@ -84,4 +84,16 @@ class Tf1ReplayParserTest {
         assertThat(episodes.first().title).isEqualTo("HPI - S05 E08 - Supernova")
         assertThat(episodes.first().durationSeconds).isEqualTo(4149)
     }
+
+    @Test
+    fun `broadcast date reads like France TV, in Paris time`() {
+        fun video(date: String?) = Tf1Parsers.ReplayVideo("s", "t", null, date, null, 3, 8, null)
+        val episodes = Tf1Parsers.episodesFromVideos(null, ShowId("tracker"), listOf(
+            video("2026-11-04T20:13:45Z"),
+            video("2026-11-04T23:30:00Z"), // already 5 November in Paris
+            video("not a date"),
+            video(null),
+        ))
+        assertThat(episodes.map { it.broadcastDate }).containsExactly("04/11/2026", "05/11/2026", null, null).inOrder()
+    }
 }
