@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.tv.foundation.lazy.list.TvLazyColumn
@@ -39,6 +40,8 @@ import androidx.tv.foundation.lazy.list.items
 import coil.compose.AsyncImage
 import com.replaybox.R
 import com.replaybox.app.ReplayboxApplication
+import com.replaybox.app.update.UpdateInstaller
+import com.replaybox.app.update.UpdateState
 import com.replaybox.core.data.CatalogStore
 import com.replaybox.core.model.Genre
 import com.replaybox.core.model.Show
@@ -58,6 +61,7 @@ fun HomeScreen(
 ) {
     var selectedGenre by remember { mutableStateOf<Genre?>(null) }
     val updates by Providers.catalog.updates.collectAsState()
+    val updateState by ReplayboxApplication.updater.state.collectAsState()
 
     // ADR 0002: background refresh at startup, Home listings first. Rows
     // compose instantly from the cache; this only re-ticks them with fresher
@@ -73,6 +77,12 @@ fun HomeScreen(
         contentPadding = PaddingValues(vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
+        val update = updateState
+        if (update is UpdateState.Ready) {
+            item {
+                UpdateBanner(update)
+            }
+        }
         item {
             Row(
                 modifier = Modifier
@@ -103,6 +113,31 @@ fun HomeScreen(
         }
         items(Providers.all) { provider ->
             ProviderRow(provider = provider, genre = selectedGenre, updates = updates, onOpenShow = onOpenShow)
+        }
+    }
+}
+
+/**
+ * Discreet in-app update notice (TV launchers do not surface system
+ * notifications). The installer only starts on the user's press.
+ */
+@Composable
+private fun UpdateBanner(update: UpdateState.Ready) {
+    val context = LocalContext.current
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(R.string.update_ready, update.version.toString()),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(end = 16.dp),
+        )
+        Button(onClick = { UpdateInstaller.install(context, update.apk) }) {
+            Text(stringResource(R.string.update_install))
         }
     }
 }

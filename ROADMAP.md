@@ -27,7 +27,7 @@ catalogue → Programme → Saison → Épisode → Flux → lecture Media3.
 
 ## M2 — « Produit »
 
-- [ ] Auto-update depuis les GitHub Releases
+- [x] Auto-update depuis les GitHub Releases
 - [ ] Health-check nightly en CI + alerte d'échec
 - [ ] Polish UX (états d'erreur, spinner de résolution de Flux, écrans vides)
 - [x] Releases taggées

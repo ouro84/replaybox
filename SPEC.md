@@ -164,6 +164,29 @@ cache (pas de route de recherche découverte).
 Au lancement : `GET /repos/ouro84/replaybox/releases/latest` (API GitHub) → si tag > version courante,
 notification → téléchargement APK → intent d'installation. Silencieux si à jour.
 
+Mesuré le 2026-11-06 (fixture `github_release_latest.json`) : `tag_name` `vX.Y.Z`, `draft`,
+`prerelease`, `assets[]` {`name`, `state` (`uploaded`), `size`, `browser_download_url`}. Le repo
+doit être **public** : en privé, l'API et `browser_download_url` répondent 404 sans token (aucun
+token ne vit sur la box). Appel non authentifié (60 req/h/IP), un seul par lancement d'Activity.
+
+Implémentation (`app.update`) :
+- Asset retenu : celui qui finit par `-release.apk` et `state == uploaded` ; release ignorée si
+  draft, prerelease ou tag non `X.Y.Z`. Comparaison semver numérique.
+- À jour (ou release plus ancienne, 404, réseau KO) : aucune autre requête, état `Idle`, les APK
+  téléchargés précédemment sont purgés. Toute erreur est silencieuse (log `AppUpdater`).
+- Plus récente : téléchargement dans `cacheDir/updates/replaybox-X.Y.Z.apk` (via `.part`, taille
+  vérifiée contre `size`, réutilisé s'il est déjà complet) → état `Ready`.
+- « Notification » = **bandeau in-app** en tête de la Home (« Mise à jour X.Y.Z prête » +
+  « Installer ») : les launchers TV n'affichent pas les notifications système. L'intent
+  d'installation (`ACTION_VIEW` sur un `content://` du `FileProvider` `com.replaybox.updates`)
+  ne part **que** sur appui. Si « sources inconnues » n'est pas encore accordé à Replaybox,
+  l'appui ouvre d'abord `ACTION_MANAGE_UNKNOWN_APP_SOURCES` ; l'utilisateur ré-appuie ensuite.
+- Mesuré sur la Bbox (06/11) : l'écran système est `com.android.tv.settings/…ExternalSourcesActivity`
+  (liste, Replaybox « Non autorisé » à basculer). Basculer le droit **tue le processus**
+  Replaybox (comportement Android) : après l'autorisation unique, relancer l'app ; l'APK déjà
+  téléchargé est réutilisé, le bandeau revient, l'appui ouvre le prompt système « Voulez-vous
+  mettre à jour cette application ? ».
+
 ## Releases
 
 Version unique : `replaybox.version=X.Y.Z` dans `gradle.properties` (semver, chaque partie 0..99) ;
