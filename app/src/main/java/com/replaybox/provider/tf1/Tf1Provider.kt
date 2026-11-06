@@ -109,16 +109,21 @@ class Tf1Provider(
             replayCache[show]?.let { return it }
         }
         val collected = LinkedHashMap<String, Tf1Parsers.ReplayVideo>()
-        var offset = 0
+        // TF1 reads `offset` as a page index (items offset*limit until (offset+1)*limit),
+        // not as an item index — measured 2026-11-06, see SPEC §TF1.
+        var pageIndex = 0
         var total = Int.MAX_VALUE
-        while (offset < total && offset < MAX_VIDEOS) {
+        while (pageIndex * Tf1Http.PAGE_LIMIT < minOf(total, MAX_VIDEOS)) {
             val page = Tf1Parsers.replayPage(
-                http.graphql(Tf1QueryIds.PROGRAM_BY_SLUG, http.programVideosVariables(show.value, offset, Tf1Http.PAGE_LIMIT)),
+                http.graphql(
+                    Tf1QueryIds.PROGRAM_BY_SLUG,
+                    http.programVideosVariables(show.value, pageIndex, Tf1Http.PAGE_LIMIT),
+                ),
             )
             total = page.total
             page.videos.forEach { collected.putIfAbsent(it.slug, it) }
             if (page.videos.isEmpty()) break
-            offset += page.videos.size
+            pageIndex++
         }
         val videos = collected.values.toList()
         replayMutex.withLock {

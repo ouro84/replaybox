@@ -23,7 +23,11 @@ open class FtvHttp(private val client: OkHttpClient = FtvHttp.defaultClient()) {
 
     suspend fun program(programPath: String): JsonObject = get(programUrl(programPath))
 
-    fun programUrl(programPath: String): String = "$YATTA/apps/program/$programPath?platform=apps"
+    /**
+     * yatta caps each collection at 250 items by default; [PROGRAM_SIZE] returns the whole
+     * replay in one call (measured 2026-11-06, journal-20h00: 249 → 443 integrales).
+     */
+    fun programUrl(programPath: String): String = "$YATTA/apps/program/$programPath?platform=apps&size=$PROGRAM_SIZE"
 
     fun programMetaUrl(programPath: String): String = "$YATTA/apps/program/meta/$programPath?platform=apps"
 
@@ -49,6 +53,7 @@ open class FtvHttp(private val client: OkHttpClient = FtvHttp.defaultClient()) {
 
     companion object {
         const val YATTA = "https://api-mobile.yatta.francetv.fr"
+        const val PROGRAM_SIZE = 2000
         const val K7 = "https://k7.ftven.fr"
         const val HDFAUTH = "https://hdfauth.ftven.fr/esi/TA?format=json"
         const val BROWSER_UA =
