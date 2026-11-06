@@ -87,5 +87,7 @@ class PlaybackChoicesTest {
     @Test
     fun `speeds are 0,75 to 1,5`() {
         assertThat(PlaybackChoices.SPEEDS).containsExactly(0.75f, 1f, 1.25f, 1.5f).inOrder()
+        assertThat(PlaybackChoices.SPEEDS.map(PlaybackChoices::speedLabel))
+            .containsExactly("0,75×", "1×", "1,25×", "1,5×").inOrder()
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -57,7 +58,8 @@ object PlayerKeys {
 
 /**
  * Player controls on the design system (Q26–Q30): title, timeline, then
- * Pause/Lecture (initial focus), −10 s, +10 s, Recommencer, Sous-titres.
+ * Pause/Lecture (initial focus), −10 s, +10 s, Recommencer, Sous-titres,
+ * Options (Q2).
  */
 @Composable
 internal fun PlayerControls(
@@ -74,6 +76,7 @@ internal fun PlayerControls(
     onSeekForward: () -> Unit,
     onRestart: () -> Unit,
     onToggleSubtitles: () -> Unit,
+    onOptions: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -137,6 +140,13 @@ internal fun PlayerControls(
                     onClick = { onInteract(); onToggleSubtitles() },
                 )
             }
+            PanelButton(
+                label = stringResource(R.string.options_title),
+                icon = Icons.Filled.Settings,
+                requester = remember { FocusRequester() },
+                onFocused = onInteract,
+                onClick = onOptions,
+            )
         }
     }
 }

@@ -36,6 +36,13 @@ data class SubtitleChoice(val kind: SubtitleKind, val track: TrackRef)
 object PlaybackChoices {
     val SPEEDS = listOf(0.75f, 1f, 1.25f, 1.5f)
 
+    /** « 0,75× », « 1× »: French decimal comma, no trailing zero. */
+    fun speedLabel(speed: Float): String {
+        val format = java.text.NumberFormat.getNumberInstance(java.util.Locale.FRENCH)
+        format.maximumFractionDigits = 2
+        return format.format(speed.toDouble()) + "×"
+    }
+
     /** Lowest height offered as a manual cap (Q8). */
     const val MIN_HEIGHT = 576
 

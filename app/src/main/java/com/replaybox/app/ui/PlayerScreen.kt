@@ -245,6 +245,12 @@ private fun PlayerSurface(
                     )
                 }
                 setMediaItem(builder.build())
+                // Remembered quality cap (Q3, Q8): a ceiling, Auto below it.
+                ReplayboxApplication.playbackPreferences.load().maxHeight?.let { cap ->
+                    trackSelectionParameters = trackSelectionParameters.buildUpon()
+                        .setMaxVideoSize(Int.MAX_VALUE, cap)
+                        .build()
+                }
                 if (autoResume && resumeAtMs != null) seekTo(resumeAtMs)
                 prepare()
                 // With a saved Progression the Reprendre / Débuter choice gates
@@ -256,57 +262,90 @@ private fun PlayerSurface(
 
     var showResumeChoice by remember(manifestUrl) { mutableStateOf(resumeAtMs != null && !autoResume) }
 
-    // Sous-titres FR activés par défaut (choix produit PRD), toggle un
-    // appui. The chip only appears when a text track exists — TF1 keeps
-    // captions inside the manifest, France TV via the side-loaded WebVTT.
-    var hasTextTracks by remember(manifestUrl) { mutableStateOf(false) }
+    // Tracks and Options (decisions Q3-Q10): every choice comes from the
+    // tracks the player has. Subtitles start on (PRD), French first (Q7);
+    // audio and quality follow the remembered preferences.
+    var preferences by remember { mutableStateOf(ReplayboxApplication.playbackPreferences.load()) }
+    var trackRefs by remember(manifestUrl) { mutableStateOf(emptyList<TrackRef>()) }
+    var audioKind by remember(manifestUrl) { mutableStateOf<AudioKind?>(null) }
+    var subtitleKind by remember(manifestUrl) { mutableStateOf<SubtitleKind?>(null) }
     var subtitlesOn by remember(manifestUrl) { mutableStateOf(true) }
+    var speed by remember(manifestUrl) { mutableStateOf(1f) }
+    var audioDefaulted by remember(manifestUrl) { mutableStateOf(false) }
+    var textDefaulted by remember(manifestUrl) { mutableStateOf(false) }
+    val hasTextTracks = trackRefs.any { it.type == TrackKind.TEXT }
 
-    fun selectFirstTextTrack() {
-        val group = player.currentTracks.groups
-            .firstOrNull { it.type == C.TRACK_TYPE_TEXT } ?: return
-        // Prefer the French track: France TV captions carry lang "qsm",
-        // TF1 exposes "fr"; fall back to the first track.
-        var index = 0
-        for (i in 0 until group.length) {
-            val language = group.getTrackFormat(i).language
-            if (language == "qsm" || language?.startsWith("fr") == true) {
-                index = i
-                break
-            }
-        }
+    fun select(ref: TrackRef, type: Int) {
+        val group = player.currentTracks.groups.getOrNull(ref.group) ?: return
+        // Audio keeps every bitrate of the group (adaptive); text is one track.
+        val indices = if (type == C.TRACK_TYPE_AUDIO) (0 until group.length).toList() else listOf(ref.index)
         player.trackSelectionParameters = player.trackSelectionParameters
             .buildUpon()
-            .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
-            .addOverride(
-                androidx.media3.common.TrackSelectionOverride(group.mediaTrackGroup, index),
-            )
+            .setTrackTypeDisabled(type, false)
+            .setOverrideForType(androidx.media3.common.TrackSelectionOverride(group.mediaTrackGroup, indices))
             .build()
     }
 
-    fun toggleSubtitles() {
-        subtitlesOn = !subtitlesOn
-        if (subtitlesOn) {
-            selectFirstTextTrack()
-        } else {
+    fun chooseAudio(choice: AudioChoice, remember: Boolean) {
+        select(choice.track, C.TRACK_TYPE_AUDIO)
+        audioKind = choice.kind
+        if (remember) {
+            preferences = preferences.withAudio(choice.kind)
+            ReplayboxApplication.playbackPreferences.save(preferences)
+        }
+    }
+
+    fun chooseSubtitle(choice: SubtitleChoice?) {
+        if (choice == null) {
+            subtitlesOn = false
             player.trackSelectionParameters = player.trackSelectionParameters
                 .buildUpon()
                 .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
                 .build()
+        } else {
+            subtitlesOn = true
+            subtitleKind = choice.kind
+            select(choice.track, C.TRACK_TYPE_TEXT)
         }
+    }
+
+    fun toggleSubtitles() {
+        val choices = PlaybackChoices.subtitles(trackRefs)
+        chooseSubtitle(
+            if (subtitlesOn) null
+            else choices.firstOrNull { it.kind == subtitleKind } ?: PlaybackChoices.defaultSubtitle(choices),
+        )
+    }
+
+    fun chooseQuality(cap: Int?) {
+        player.trackSelectionParameters = player.trackSelectionParameters.buildUpon()
+            .apply { if (cap == null) clearVideoSizeConstraints() else setMaxVideoSize(Int.MAX_VALUE, cap) }
+            .build()
+        preferences = preferences.copy(maxHeight = cap)
+        ReplayboxApplication.playbackPreferences.save(preferences)
+    }
+
+    fun chooseSpeed(value: Float) {
+        speed = value
+        player.setPlaybackSpeed(value)
     }
 
     DisposableEffect(player) {
         val listener = object : androidx.media3.common.Player.Listener {
             override fun onTracksChanged(tracks: androidx.media3.common.Tracks) {
-                hasTextTracks = tracks.containsType(C.TRACK_TYPE_TEXT)
-                val selected = tracks.groups
-                    .filter { it.type == C.TRACK_TYPE_TEXT }
-                    .any { group -> (0 until group.length).any { group.isTrackSelected(it) } }
-                // Guarantee the default-on product choice even when the
-                // Chaîne does not flag the caption track as default.
-                if (hasTextTracks && subtitlesOn && !selected) {
-                    selectFirstTextTrack()
+                val refs = tracks.toTrackRefs()
+                trackRefs = refs
+                val audio = PlaybackChoices.audio(refs)
+                if (!audioDefaulted && audio.isNotEmpty()) {
+                    audioDefaulted = true
+                    val wanted = PlaybackChoices.defaultAudio(audio, preferences.audio)
+                    val playing = audio.firstOrNull { tracks.groups[it.track.group].isSelected }
+                    if (wanted != null && wanted != playing) chooseAudio(wanted, remember = false) else audioKind = playing?.kind
+                }
+                val text = PlaybackChoices.subtitles(refs)
+                if (!textDefaulted && text.isNotEmpty()) {
+                    textDefaulted = true
+                    chooseSubtitle(PlaybackChoices.defaultSubtitle(text))
                 }
             }
         }
@@ -377,6 +416,7 @@ private fun PlayerSurface(
     val rootFocus = remember { FocusRequester() }
     val playFocus = remember { FocusRequester() }
     var controlsVisible by remember(manifestUrl) { mutableStateOf(false) }
+    var optionsOpen by remember(manifestUrl) { mutableStateOf(false) }
     var interaction by remember { mutableStateOf(0) }
     var isPlaying by remember(manifestUrl) { mutableStateOf(false) }
     var positionMs by remember(manifestUrl) { mutableStateOf(0L) }
@@ -411,19 +451,37 @@ private fun PlayerSurface(
             controlsVisible = false
         }
     }
-    LaunchedEffect(controlsVisible, nextUp, showResumeChoice) {
+    LaunchedEffect(controlsVisible, nextUp, showResumeChoice, optionsOpen) {
         withFrameNanos { }
-        if (nextUp || showResumeChoice) return@LaunchedEffect
+        // The Options panel focuses its own selected chip.
+        if (nextUp || showResumeChoice || optionsOpen) return@LaunchedEffect
         runCatching { if (controlsVisible) playFocus.requestFocus() else rootFocus.requestFocus() }
     }
     BackHandler(enabled = controlsVisible && !nextUp) { controlsVisible = false }
+
+    fun openOptions() {
+        controlsVisible = false
+        optionsOpen = true
+    }
+
+    fun closeOptions() {
+        optionsOpen = false
+        showControls()
+    }
+    // Declared after the controls handler: with the panel open, Back closes it first.
+    BackHandler(enabled = optionsOpen) { closeOptions() }
     // Captions climb above the controls panel while it is shown, never under it.
     // France TV WebVTT cues carry explicit line positions, which ignore the
     // SubtitleView bottom padding: the whole caption layer is lifted instead.
-    LaunchedEffect(controlsVisible) {
+    LaunchedEffect(controlsVisible, optionsOpen) {
+        val lift = when {
+            optionsOpen -> CAPTIONS_ABOVE_OPTIONS
+            controlsVisible -> CAPTIONS_ABOVE_CONTROLS
+            else -> 0f
+        }
         playerViewRef.value?.subtitleView?.let { captions ->
             captions.animate()
-                .translationY(if (controlsVisible) -captions.height * CAPTIONS_ABOVE_CONTROLS else 0f)
+                .translationY(-captions.height * lift)
                 .setDuration(Rb.FOCUS_MS.toLong())
                 .start()
         }
@@ -435,7 +493,7 @@ private fun PlayerSurface(
             .onPreviewKeyEvent { event ->
                 if (event.type != KeyEventType.KeyDown || showResumeChoice || nextUp) return@onPreviewKeyEvent false
                 interaction++
-                when (PlayerKeys.action(event.nativeKeyEvent.keyCode, controlsVisible)) {
+                when (PlayerKeys.action(event.nativeKeyEvent.keyCode, controlsVisible || optionsOpen)) {
                     PlayerKeys.Action.NONE -> false
                     PlayerKeys.Action.SHOW -> { showControls(); true }
                     PlayerKeys.Action.SEEK_BACK -> { player.seekBack(); showControls(); true }
@@ -446,13 +504,21 @@ private fun PlayerSurface(
                         true
                     }
                     PlayerKeys.Action.TOGGLE_SUBTITLES -> hasTextTracks.also { if (it) toggleSubtitles() }
-                    // Until the Options panel lands (next commit), MENU keeps showing the controls.
-                    PlayerKeys.Action.OPTIONS -> { showControls(); true }
+                    PlayerKeys.Action.OPTIONS -> { if (optionsOpen) closeOptions() else openOptions(); true }
                 }
             }
-            .focusRequester(rootFocus)
-            .focusable(),
     ) {
+        // Idle focus holder, a sibling of the overlays and never their parent:
+        // Compose maps Back to FocusDirection.Exit, which moves focus to the
+        // nearest focusable ancestor and swallows the key. With a focusable
+        // root, the first Back only moved focus to it and BackHandler needed a
+        // second press. The root above still reads every key (preview pass).
+        Box(
+            Modifier
+                .fillMaxSize()
+                .focusRequester(rootFocus)
+                .focusable(),
+        )
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { viewContext ->
@@ -487,6 +553,21 @@ private fun PlayerSurface(
                     showResumeChoice = false
                 },
             )
+        } else if (optionsOpen) {
+            OptionsPanel(
+                rows = optionRows(
+                    tracks = trackRefs,
+                    audioKind = audioKind,
+                    subtitleKind = subtitleKind.takeIf { subtitlesOn },
+                    maxHeight = preferences.maxHeight,
+                    speed = speed,
+                    onAudio = { chooseAudio(it, remember = true) },
+                    onSubtitle = { chooseSubtitle(it) },
+                    onQuality = { chooseQuality(it) },
+                    onSpeed = { chooseSpeed(it) },
+                ),
+                modifier = Modifier.align(Alignment.BottomStart),
+            )
         } else if (controlsVisible) {
             PlayerControls(
                 showTitle = progressContext?.showTitle,
@@ -502,6 +583,7 @@ private fun PlayerSurface(
                 onSeekForward = { player.seekForward(); positionMs = player.currentPosition },
                 onRestart = { player.seekTo(0); player.play(); positionMs = 0 },
                 onToggleSubtitles = { toggleSubtitles() },
+                onOptions = { openOptions() },
                 modifier = Modifier.align(Alignment.BottomStart),
             )
         }
@@ -612,3 +694,100 @@ private fun NextUp(episode: Episode, onPlay: () -> Unit, onCancel: () -> Unit, m
 
 /** Share of the screen height the captions rise by while the controls show (panel ≈ 30 %). */
 private const val CAPTIONS_ABOVE_CONTROLS = 0.34f
+
+/** Captions lift while the Options panel is open (taller than the controls). */
+private const val CAPTIONS_ABOVE_OPTIONS = 0.62f
+
+/** Media3 tracks to Media3-free [TrackRef]s; unsupported tracks are never offered (Q10). */
+private fun androidx.media3.common.Tracks.toTrackRefs(): List<TrackRef> =
+    groups.flatMapIndexed { groupIndex, group ->
+        val kind = when (group.type) {
+            C.TRACK_TYPE_AUDIO -> TrackKind.AUDIO
+            C.TRACK_TYPE_TEXT -> TrackKind.TEXT
+            C.TRACK_TYPE_VIDEO -> TrackKind.VIDEO
+            else -> return@flatMapIndexed emptyList()
+        }
+        (0 until group.length).filter { group.isTrackSupported(it) }.map { index ->
+            val format = group.getTrackFormat(index)
+            TrackRef(
+                type = kind,
+                group = groupIndex,
+                index = index,
+                language = format.language,
+                label = format.label,
+                describesVideo = format.roleFlags and C.ROLE_FLAG_DESCRIBES_VIDEO != 0,
+                height = format.height.coerceAtLeast(0),
+            )
+        }
+    }
+
+/** Fallback name for a language outside the France TV codes: label, else its French name. */
+private fun otherName(track: TrackRef): String =
+    track.label?.takeIf { it.isNotBlank() }
+        ?: track.language?.let { java.util.Locale(it).getDisplayLanguage(java.util.Locale.FRENCH) }
+            ?.takeIf { it.isNotBlank() }?.replaceFirstChar { it.uppercase() }
+        ?: "?"
+
+/** Rows of the Options panel; a row with nothing to choose is left out (Q6, Q10). */
+@Composable
+private fun optionRows(
+    tracks: List<TrackRef>,
+    audioKind: AudioKind?,
+    subtitleKind: SubtitleKind?,
+    maxHeight: Int?,
+    speed: Float,
+    onAudio: (AudioChoice) -> Unit,
+    onSubtitle: (SubtitleChoice?) -> Unit,
+    onQuality: (Int?) -> Unit,
+    onSpeed: (Float) -> Unit,
+): List<OptionRow> {
+    val rows = mutableListOf<OptionRow>()
+    val audio = PlaybackChoices.audio(tracks)
+    if (audio.size >= 2) {
+        rows += OptionRow(
+            stringResource(R.string.options_audio),
+            audio.map { choice ->
+                val label = when (choice.kind) {
+                    AudioKind.FRENCH -> stringResource(R.string.audio_french)
+                    AudioKind.ORIGINAL -> stringResource(R.string.audio_original)
+                    AudioKind.DESCRIPTION -> stringResource(R.string.audio_description)
+                    AudioKind.OTHER -> otherName(choice.track)
+                }
+                OptionChip(label, selected = choice.kind == audioKind && choice.kind != AudioKind.OTHER) { onAudio(choice) }
+            },
+        )
+    }
+    val subtitles = PlaybackChoices.subtitles(tracks)
+    if (subtitles.isNotEmpty()) {
+        rows += OptionRow(
+            stringResource(R.string.options_subtitles),
+            listOf(OptionChip(stringResource(R.string.subtitles_off), selected = subtitleKind == null) { onSubtitle(null) }) +
+                subtitles.map { choice ->
+                    val label = when (choice.kind) {
+                        SubtitleKind.FRENCH -> stringResource(R.string.audio_french)
+                        SubtitleKind.HEARING_IMPAIRED -> stringResource(R.string.subtitles_hearing)
+                        SubtitleKind.OTHER -> otherName(choice.track)
+                    }
+                    OptionChip(label, selected = choice.kind == subtitleKind && choice.kind != SubtitleKind.OTHER) { onSubtitle(choice) }
+                },
+        )
+    }
+    val qualities = PlaybackChoices.qualities(tracks)
+    if (qualities.isNotEmpty()) {
+        val shown = PlaybackChoices.selectedQuality(qualities, maxHeight)
+        rows += OptionRow(
+            stringResource(R.string.options_quality),
+            listOf(OptionChip(stringResource(R.string.quality_auto), selected = shown == null) { onQuality(null) }) +
+                qualities.map { height ->
+                    OptionChip(stringResource(R.string.quality_height, height), selected = shown == height) { onQuality(height) }
+                },
+        )
+    }
+    rows += OptionRow(
+        stringResource(R.string.options_speed),
+        PlaybackChoices.SPEEDS.map { value ->
+            OptionChip(PlaybackChoices.speedLabel(value), selected = value == speed) { onSpeed(value) }
+        },
+    )
+    return rows
+}
