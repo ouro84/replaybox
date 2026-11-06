@@ -101,8 +101,12 @@ fun ShowScreen(
     showId: ShowId,
     title: String,
     state: ShowUiState,
-    /** Third argument: true for the hero « Reprendre » (resume without asking). */
-    onOpenEpisode: (Episode, ProgressContext, Boolean) -> Unit,
+    /**
+     * Third argument: true for the hero « Reprendre » (resume without asking).
+     * Fourth: the queue for Épisode suivant, the displayed list of a numbered
+     * Saison, empty for an unnumbered one (NextEpisodePolicy).
+     */
+    onOpenEpisode: (Episode, ProgressContext, Boolean, List<Episode>) -> Unit,
 ) {
     val provider = Providers.resolveShow(showId.value)
     val catalog = Providers.catalog
@@ -164,19 +168,21 @@ fun ShowScreen(
     }
 
     val list = episodes
+    val numbered = seasons.orEmpty().firstOrNull { it.id == state.selectedSeason }?.number != null
+    val queue = if (numbered) list.orEmpty() else emptyList()
     val playTarget: PlayTarget? = resume?.let { PlayTarget.Resume(it) }
         ?: list?.firstOrNull()?.let { PlayTarget.Start(it) }
 
     fun open(episode: Episode) {
         state.focusedKey = episodeKey(episode)
-        onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl), false)
+        onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl), false, queue)
     }
 
     fun play(target: PlayTarget) {
         state.focusedKey = KEY_PLAY
         when (target) {
             is PlayTarget.Start -> target.episode.let { episode ->
-                onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl), false)
+                onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl), false, queue)
             }
             is PlayTarget.Resume -> {
                 val item = target.item
@@ -185,7 +191,7 @@ fun ShowScreen(
                         item.episodeId, null, item.episodeTitle.ifBlank { item.showTitle },
                         null, null, item.durationSeconds, item.thumbnailUrl,
                     )
-                onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl ?: item.thumbnailUrl), true)
+                onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl ?: item.thumbnailUrl), true, queue)
             }
         }
     }

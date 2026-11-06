@@ -63,7 +63,7 @@ Accueil & navigation :
 Lecteur complet :
 
 - [ ] −10 s / +10 s, recommencer
-- [ ] Épisode suivant, avec enchaînement automatique
+- [x] Épisode suivant, avec enchaînement automatique
 - [ ] Choix de la piste audio et de la qualité
 - [ ] Vitesse de lecture
 
