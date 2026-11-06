@@ -353,9 +353,14 @@ Duration is rounded up, so 3 min 45 s reads « 4 min ».
 ### Focus targets
 Every D-pad target uses `tvClickable`: one focus node and no Material ripple. `focusable()` + `clickable()` made two nodes, so after OK the visible focus was lost and a grey ripple rectangle appeared.
 
+### Search
+- **Field.** 540 dp wide and 52 dp tall at 104 dp, on raised slate with 8 dp corners. It has a Search icon and a placeholder in Mist (« Titre du Programme… »), and the text in Body Paper White. On focus it takes the white ring 3 dp outside the field (`focusRing`). The keyboard is the system IME.
+- **Status lines.** « Saisis au moins 3 caractères. », loading and « Aucun Programme trouvé. » are set in Body Mist, aligned at 104 dp.
+- **Results.** Six 3:4 posters per row, 20 dp gap, between 104 dp and the 48 dp safe edge. They use the Home card focus (ring plus 1.1 lift). Each poster has a caption 14 dp below: the title in Card Title (2 lines), then « Chaîne · Genre » in Meta Mist. The Chaîne comes from the cached listings only and is never guessed. DOWN from the field reaches the first result.
+
 ### Not yet specified
 These are not built in this system yet. Do not infer them from Home:
-- Search, Player and TF1+ login. They still read the raw Material color scheme and typography and have not been through this pass.
+- Player and TF1+ login. They still read the raw Material color scheme and typography and have not been through this pass.
 - The Genre page and "Tout voir".
 - The Paramètres page (the rail currently opens the TF1+ account screen).
 - Subtitle styling (size, background, legibility setting).

@@ -1,8 +1,6 @@
 package com.replaybox.app.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -99,6 +97,9 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
     var searching by remember { mutableStateOf(false) }
     var channels by remember { mutableStateOf<Map<ShowId, String>>(emptyMap()) }
     val resultsFocus = remember { FocusRequester() }
+    val fieldFocus = remember { FocusRequester() }
+    // Arriving on Search means typing: the field takes focus at once.
+    LaunchedEffect(Unit) { runCatching { fieldFocus.requestFocus() } }
     val channelIds = remember { Providers.all.map { it.channel.id } }
     val channelNames = remember { Providers.all.associate { it.channel.id to it.channel.name } }
 
@@ -136,7 +137,7 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
         SearchField(
             value = query,
             onValueChange = { query = it },
-            modifier = Modifier.padding(start = Rb.contentStart).width(540.dp),
+            modifier = Modifier.padding(start = Rb.contentStart).width(540.dp).focusRequester(fieldFocus),
         )
         val trimmed = query.trim()
         val status = when {
@@ -234,8 +235,7 @@ private fun SearchResultCard(
         modifier = Modifier
             .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
             .onFocusChanged { focused = it.isFocused }
-            .focusable()
-            .clickable(onClick = onClick),
+            .tvClickable(onClick),
     ) {
         Box(
             Modifier
