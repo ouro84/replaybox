@@ -1,5 +1,6 @@
 package com.replaybox.app.ui
 
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -95,17 +96,33 @@ object SearchFusion {
         return fused.mapNotNull { show -> origin[show.id]?.let { show.id to it } }.toMap()
     }
 
-    /** Fused results plus the Chaîne each came from. */
-    data class Hits(val shows: List<Show>, val origins: Map<ShowId, String>)
+    /**
+     * Fused results plus the Chaîne each came from. [failed]: every Provider
+     * failed, which is not « no result » (decision Round 8 Q4).
+     */
+    data class Hits(val shows: List<Show>, val origins: Map<ShowId, String>, val failed: Boolean = false)
 
     suspend fun search(providers: List<Provider>, query: String): Hits = coroutineScope {
         val trimmed = query.trim()
         if (trimmed.length < MIN_CHARS) return@coroutineScope Hits(emptyList(), emptyMap())
-        val results = providers.map { provider ->
-            async { runCatching { provider.search(trimmed) }.getOrDefault(emptyList()) }
+        val outcomes: List<List<Show>?> = providers.map { provider ->
+            async {
+                try {
+                    provider.search(trimmed)
+                } catch (error: kotlinx.coroutines.CancellationException) {
+                    throw error
+                } catch (_: Exception) {
+                    null // this Provider failed; the others still count
+                }
+            }
         }.awaitAll()
+        val results = outcomes.map { it.orEmpty() }
         val fused = fuse(trimmed, results)
-        Hits(fused, origins(fused, providers.map { it.channel.id }, results))
+        Hits(
+            shows = fused,
+            origins = origins(fused, providers.map { it.channel.id }, results),
+            failed = outcomes.isNotEmpty() && outcomes.all { it == null },
+        )
     }
 }
 
@@ -118,13 +135,17 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
     var origins by remember { mutableStateOf<Map<ShowId, String>>(emptyMap()) }
     val resultsFocus = remember { FocusRequester() }
     val fieldFocus = remember { FocusRequester() }
+    val retryFocus = remember { FocusRequester() }
+    var failed by remember { mutableStateOf(false) }
+    var retry by remember { mutableStateOf(0) }
     // Arriving on Search means typing: the field takes focus at once.
     LaunchedEffect(Unit) { runCatching { fieldFocus.requestFocus() } }
     val channelIds = remember { Providers.all.map { it.channel.id } }
     val channelNames = remember { Providers.all.associate { it.channel.id to it.channel.name } }
 
-    LaunchedEffect(query) {
+    LaunchedEffect(query, retry) {
         val value = query
+        failed = false // a new query never shows the previous one's failure
         delay(SearchFusion.DEBOUNCE_MS)
         if (value.trim().length < SearchFusion.MIN_CHARS) {
             results = emptyList()
@@ -135,6 +156,7 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
         val hits = SearchFusion.search(Providers.all, value)
         origins = hits.origins
         results = hits.shows
+        failed = hits.failed
         searching = false
     }
     // Captions name the Chaîne only when the cache knows it (never a guess).
@@ -155,8 +177,11 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
             .onPreviewKeyEvent { event ->
                 event.type == KeyEventType.KeyDown &&
                     event.key == Key.DirectionDown &&
-                    results.isNotEmpty() &&
-                    runCatching { resultsFocus.requestFocus() }.isSuccess
+                    when {
+                        failed -> runCatching { retryFocus.requestFocus() }.isSuccess
+                        results.isNotEmpty() -> runCatching { resultsFocus.requestFocus() }.isSuccess
+                        else -> false
+                    }
             },
     ) {
         SearchField(
@@ -168,6 +193,7 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
         val status = when {
             trimmed.length < SearchFusion.MIN_CHARS -> R.string.search_min_chars
             searching && results.isEmpty() -> R.string.loading
+            failed -> R.string.search_unavailable
             results.isEmpty() -> R.string.search_no_results
             else -> null
         }
@@ -178,6 +204,16 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
                 color = Rb.textSecondary,
                 modifier = Modifier.padding(start = Rb.contentStart, top = 20.dp),
             )
+            if (status == R.string.search_unavailable) {
+                Box(Modifier.padding(start = Rb.contentStart, top = 20.dp)) {
+                    PanelButton(
+                        label = stringResource(R.string.retry),
+                        icon = Icons.Filled.Refresh,
+                        requester = retryFocus,
+                        onClick = { retry += 1 },
+                    )
+                }
+            }
         } else {
             TvLazyVerticalGrid(
                 columns = TvGridCells.Fixed(GRID_COLUMNS),
