@@ -365,7 +365,12 @@ The video owns the screen. Every overlay sits at the bottom over a ground scrim 
 - **Options panel.** Takes the controls' place. Title « Options », then one row per setting: label in Body Strong Mist on a 180 dp column, choices as panel buttons with a check on the selected one. Rows come only from the tracks the player has; a row with nothing to choose is left out. Initial focus is the selected choice of the first row.
 - **Captions.** While controls or Options are shown, the caption layer lifts (34 % and 62 % of its height) so no cue sits under an overlay.
 - **Resume prompt, Épisode suivant, error.** Slate panels with panel buttons, bottom left for the prompt and bottom right for Épisode suivant (10 s countdown, « Lire maintenant » focused). The error reuses Display Compact with a focused « Réessayer ».
+- **Loading.** One indicator everywhere a Flux loads: a 48 dp Paper White ring (4 dp stroke), centred, no text, shown only after 500 ms so quick loads never flash. It covers the Flux resolution on ground and buffering over the video.
+- **Playback error.** The first error re-resolves the Flux silently and resumes at the last position; a second one in a row shows « Flux indisponible » / « La lecture s'est interrompue. » with « Réessayer », which resumes there.
 - **Focus holder.** The idle focus target is a sibling of the overlays, never their parent: Compose maps Back to a focus exit, and a focusable parent swallows the first press.
+
+### Failure states
+A failure is never shown as an empty result. Search with every Provider failing reads « Recherche indisponible. » with « Réessayer » (DOWN from the field reaches it); one Provider failing shows the other's results as they are. An empty Home after a refresh where every Chaîne failed reads « Catalogue indisponible. Vérifie la connexion. » with a focused « Réessayer »; with a cache, Home keeps its rails and the dated stale notice.
 
 ### Not yet specified
 These are not built in this system yet. Do not infer them from Home:
