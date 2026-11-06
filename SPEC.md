@@ -46,7 +46,9 @@ envoie aussi la forme complète `id=sha256:<hex>` :
 - `id=b2dc9439` variables `{"query":…}` → searchVideos
 - vidéos d'un programme : `id=a6f9cf0e` (mesuré 2026-11-05) variables `{"programSlug":…,"offset":N,
   "limit":20,"types":["REPLAY"],"sort":{"type":"DATE","order":"DESC"}}` → `programBySlug.videos`
-  {items, total} (pagination par 20)
+  {items, total} (pagination par 20). **`offset` est un index de page, pas d'item** (mesuré
+  2026-11-06 sur `profilage`, total 102 : `offset=1,limit=20` → items 20..39 ; `offset=20` → vide).
+  Fixture : `tf1_program_by_slug_profilage_last_page.json` (`offset=5`, 2 items)
 - détail d'une vidéo + id média interne : hash yt-dlp
   `9b80783950b85247541dd1d851f9cc7fa36574af015621f853ab111a679ce26f` variables
   `{"programSlug":…,"slug":…}` → `videoBySlug.streamId` (id numérique wat)
@@ -95,12 +97,18 @@ Listing — `GET https://api-mobile.yatta.francetv.fr/apps/channels/<slug>?platf
 (france-2, france-3, france-4, france-5, franceinfo) → collections `playlist_program`/
 `playlist_mixed` → `items[]` **plats** (label, description, `program_path`, images) — pas de
 `items[].item` (corrigé après mesure 2026-11-05). Détail programme :
-`GET /apps/program/<program_path>?platform=apps` → collections étiquetées « Saison N »
+`GET /apps/program/<program_path>?platform=apps&size=2000` → collections étiquetées « Saison N »
 (type `playlist_video`) → `items[]` plats avec `si_id`, `season`, `episode`, `duration`,
 `type: integrale` ; `/apps/program/meta/<path>` donne `category` + `sub_categories` (→ Genres
 canoniques ; mapping natif riche : séries-policieres, thriller, comédie, drame, doc histoire…).
 
 Détails mesurés le 2026-11-05 (lot 1 M1, fixtures `ftv_*.json`) :
+- **Plafond 250** (mesuré 2026-11-06) : sans `size`, chaque collection s'arrête à 250 items.
+  `page=N` pagine la collection principale par 250 (les thématiques ignorent `page` et se
+  répètent) ; `size=2000` rend tout en un appel — journal-20h00 249 → 443 intégrales,
+  ca-commence-aujourd-hui 274 → 495, 13h15-le-samedi 205 → 253. Séries numérotées : complètes
+  sans `size`. Fixture : `ftv_program_13h15-le-samedi_size2000.json` (items élagués des champs
+  `images`/`program`/`channel`/`category`/`marker*`).
 - `program_path` peut être préfixé par un slug de **navigation** (`info_nous-les-europeens`,
   `series-et-fictions_series-drame_les-disparus-des-argonnes`) et pas seulement par la chaîne —
   ne jamais déduire la Chaîne du préfixe du path.

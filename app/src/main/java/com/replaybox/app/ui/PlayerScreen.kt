@@ -566,6 +566,9 @@ private fun PlayerSurface(
                     playerViewRef.value = this
                 }
             },
+            // The box sleeps after screen_off_timeout without a key press (Bbox: 4 h).
+            // Hold the screen on while an Episode plays; paused or ended, it may sleep.
+            update = { view -> view.keepScreenOn = isPlaying },
         )
         // Same ring as the Flux resolution (Round 8 Q3), over the video.
         if (buffering && !showResumeChoice) LoadingRing(Modifier.align(Alignment.Center))

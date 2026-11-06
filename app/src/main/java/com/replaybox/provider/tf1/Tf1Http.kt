@@ -23,7 +23,7 @@ class Tf1HttpException(message: String) : Exception(message)
  */
 open class Tf1Http(private val client: OkHttpClient = defaultClient()) {
 
-    suspend fun graphql(queryId: String, variables: JsonObject): JsonObject = get(
+    open suspend fun graphql(queryId: String, variables: JsonObject): JsonObject = get(
         "$GRAPHQL?id=$queryId&variables=${encode(variables.toString())}",
         referer = REFERER,
     )
@@ -68,9 +68,10 @@ open class Tf1Http(private val client: OkHttpClient = defaultClient()) {
         put("limit", limit)
     }
 
-    fun programVideosVariables(programSlug: String, offset: Int, limit: Int): JsonObject = buildJsonObject {
+    /** [pageIndex] goes in `offset`: TF1 reads it as a page index, not an item index. */
+    fun programVideosVariables(programSlug: String, pageIndex: Int, limit: Int): JsonObject = buildJsonObject {
         put("programSlug", programSlug)
-        put("offset", offset)
+        put("offset", pageIndex)
         put("limit", limit)
         put("sort", buildJsonObject {
             put("type", "DATE")
