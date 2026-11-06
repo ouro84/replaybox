@@ -14,7 +14,6 @@ class PlayerKeysTest {
         assertThat(PlayerKeys.action(KeyEvent.KEYCODE_DPAD_CENTER, controlsVisible = false)).isEqualTo(PlayerKeys.Action.PLAY_PAUSE)
         assertThat(PlayerKeys.action(KeyEvent.KEYCODE_CAPTIONS, controlsVisible = false)).isEqualTo(PlayerKeys.Action.TOGGLE_SUBTITLES)
         assertThat(PlayerKeys.action(KeyEvent.KEYCODE_DPAD_UP, controlsVisible = false)).isEqualTo(PlayerKeys.Action.SHOW)
-        assertThat(PlayerKeys.action(KeyEvent.KEYCODE_MENU, controlsVisible = false)).isEqualTo(PlayerKeys.Action.SHOW)
     }
 
     @Test
@@ -22,6 +21,12 @@ class PlayerKeysTest {
         assertThat(PlayerKeys.action(KeyEvent.KEYCODE_DPAD_LEFT, controlsVisible = true)).isEqualTo(PlayerKeys.Action.NONE)
         assertThat(PlayerKeys.action(KeyEvent.KEYCODE_DPAD_CENTER, controlsVisible = true)).isEqualTo(PlayerKeys.Action.NONE)
         assertThat(PlayerKeys.action(KeyEvent.KEYCODE_CAPTIONS, controlsVisible = true)).isEqualTo(PlayerKeys.Action.TOGGLE_SUBTITLES)
+    }
+
+    @Test
+    fun `MENU opens Options whether the controls are shown or not`() {
+        assertThat(PlayerKeys.action(KeyEvent.KEYCODE_MENU, controlsVisible = false)).isEqualTo(PlayerKeys.Action.OPTIONS)
+        assertThat(PlayerKeys.action(KeyEvent.KEYCODE_MENU, controlsVisible = true)).isEqualTo(PlayerKeys.Action.OPTIONS)
     }
 
     @Test

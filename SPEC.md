@@ -126,11 +126,18 @@ Flux — `GET https://k7.ftven.fr/videos/<si_id>?country_code=FR&capabilities=dr
 <URL signée courte durée>}`. Sans DRM sur les contenus vérifiés.
 
 Sous-titres — mesuré sur 3 épisodes (fiction ancienne, fiction récente, magazine) :
-`video.text_tracks` est **toujours vide**, et le MPD signé **supprime lui-même** les pistes texte
-(en-tête `manifest_edit … element_remove contentType: text, mimeType: text/vtt`). Les
-sous-titres FR sont donc **side-loadés** depuis `meta.subtitles[]` (`{url: *.vtt, lang: "qsm"}`
-— `qsm` est le code France TV pour le français) via `MediaItem.SubtitleConfiguration` (Media3).
-Ne jamais attendre une piste texte du manifest France TV.
+`video.text_tracks` est **toujours vide**. Les sous-titres FR sont **side-loadés** depuis
+`meta.subtitles[]` (`{url: *.vtt, lang: "qsm"}` ou `"fra"`) via `MediaItem.SubtitleConfiguration`
+(Media3).
+
+Pistes du MPD — mesuré le 2026-11-06 sur 7 titres (fixture
+`app/src/test/resources/fixtures/ftv_mpd_tracks.mpd`, tronquée, sans URL signée) : l'en-tête
+`manifest_edit … element_remove` ne retire que `mimeType: text/vtt`. Les sous-titres en **WebVTT
+dans MP4** (`application/mp4`, `codecs="wvtt"`) restent dans le MPD : `fr` (« Sous-Titres
+Français », présent avec la VO) et `qsm` (« Sous-Titres Malentendant », toujours). Audio : `fr`
+(rôle `main`), `qaa` (rôle `alternate`, « Audio Originale ») et `qad` (rôle `description`,
+« Audio Description »), selon le titre. Vidéo : hauteurs 432 à 1080, sans DRM. Le side-load reste
+(décision Q9) : `fra` est normalisé en `fr` par Media3 et dédoublonné avec la piste du MPD.
 
 ## Cache et mode dégradé (ADR 0002)
 
@@ -148,10 +155,19 @@ Sous-titres (mesuré, lot 5/6 M1) : France TV → WebVTT side-loadé (`Stream.su
 `SELECTION_FLAG_DEFAULT`, le manifest retire lui-même ses pistes texte, cf. §Provider France TV) ;
 TF1 → pistes dans le manifest MPD (mesuré M0, flag default non vérifié contenu par contenu).
 Garantie « activé par défaut » : à `onTracksChanged`, si une piste texte existe et n'est pas
-sélectionnée → override Media3 sur la première piste texte. Toggle un appui : chip « Sous-titres »
-sur le player (visible seulement si une piste texte existe — pas de chip = pas de promesse),
+sélectionnée → override Media3 sur la piste par défaut : `fr` d'abord, sinon `qsm`, sinon la
+première (décision Q7). Toggle un appui : bouton « Sous-titres » des contrôles et touche CC
+(visible seulement si une piste texte existe — pas de bouton = pas de promesse),
 `setTrackTypeDisabled(TRACK_TYPE_TEXT, …)` + ré-sélection. Pas de piste pour un contenu → pas de
-chip, pas d'échec.
+bouton, pas d'échec.
+
+Options (décisions Q2–Q10, `PlaybackChoices`) : un panneau ouvert depuis les contrôles ou la touche
+MENU. Chaque rangée vient des pistes réellement exposées par le lecteur, rien n'est inventé ; une
+rangée sans choix est masquée. Audio : Français / Version originale / Audiodescription (codes
+ci-dessus). Sous-titres : Désactivés + pistes. Qualité : Auto + hauteurs ≥ 576 présentes, appliquées
+en plafond (`setMaxVideoSize`). Vitesse : 0,75× à 1,5×, remise à 1× à chaque Épisode. Le type
+d'audio et le plafond de qualité sont mémorisés sur l'appareil (SharedPreferences `playback`).
+TF1 : pistes à valider une fois connecté (Q10).
 
 ## Recherche
 

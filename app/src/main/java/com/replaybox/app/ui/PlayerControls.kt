@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -35,19 +36,21 @@ import com.replaybox.R
  * Remote keys over the player (decisions Q1, Q28). While the controls are
  * hidden the arrows seek, OK plays or pauses and other D-pad keys reveal the
  * controls; once shown, the D-pad belongs to the buttons. CC toggles the
- * subtitles in one press either way. Media keys stay with the MediaSession.
+ * subtitles and MENU opens Options (Q2) either way. Media keys stay with the
+ * MediaSession.
  */
 object PlayerKeys {
-    enum class Action { NONE, SHOW, SEEK_BACK, SEEK_FORWARD, PLAY_PAUSE, TOGGLE_SUBTITLES }
+    enum class Action { NONE, SHOW, SEEK_BACK, SEEK_FORWARD, PLAY_PAUSE, TOGGLE_SUBTITLES, OPTIONS }
 
     fun action(keyCode: Int, controlsVisible: Boolean): Action {
         if (keyCode == KeyEvent.KEYCODE_CAPTIONS) return Action.TOGGLE_SUBTITLES
+        if (keyCode == KeyEvent.KEYCODE_MENU) return Action.OPTIONS
         if (controlsVisible) return Action.NONE
         return when (keyCode) {
             KeyEvent.KEYCODE_DPAD_LEFT -> Action.SEEK_BACK
             KeyEvent.KEYCODE_DPAD_RIGHT -> Action.SEEK_FORWARD
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> Action.PLAY_PAUSE
-            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_MENU -> Action.SHOW
+            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> Action.SHOW
             else -> Action.NONE
         }
     }
@@ -55,7 +58,8 @@ object PlayerKeys {
 
 /**
  * Player controls on the design system (Q26–Q30): title, timeline, then
- * Pause/Lecture (initial focus), −10 s, +10 s, Recommencer, Sous-titres.
+ * Pause/Lecture (initial focus), −10 s, +10 s, Recommencer, Sous-titres,
+ * Options (Q2).
  */
 @Composable
 internal fun PlayerControls(
@@ -72,6 +76,7 @@ internal fun PlayerControls(
     onSeekForward: () -> Unit,
     onRestart: () -> Unit,
     onToggleSubtitles: () -> Unit,
+    onOptions: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -135,6 +140,13 @@ internal fun PlayerControls(
                     onClick = { onInteract(); onToggleSubtitles() },
                 )
             }
+            PanelButton(
+                label = stringResource(R.string.options_title),
+                icon = Icons.Filled.Settings,
+                requester = remember { FocusRequester() },
+                onFocused = onInteract,
+                onClick = onOptions,
+            )
         }
     }
 }
