@@ -307,9 +307,55 @@ Shown only on a cold first launch with an empty cache. It uses the same geometry
 ### Copy
 French, tutoiement, glossary terms capitalized (Chaîne, Programme, Saison, Épisode, Flux, Progression, Genre). Time is written in words. Sources and dates are stated plainly.
 
+### Programme page
+The same world as Home, one level down. Verified on the Bbox (2026-11-06).
+
+**Hero.**
+- Key art 640 dp at the top right, with the Home scrims.
+- Title in Display (stepping to Display Compact on two lines), then « Chaîne · Genre » in Body Strong Mist, then a synopsis of up to 3 lines in Body Mist.
+- Two panel buttons:
+  - the primary is « Reprendre » (newest unfinished Épisode of this Programme) or « Lecture » (first listed Épisode), with the play icon;
+  - the secondary is « Épingler » / « Épinglé », with no icon.
+- 14 dp below the buttons, a line names what the primary plays: a 120 dp progress bar plus « Épisode · 3 min restantes », or just the Épisode title.
+- Initial focus goes to the primary.
+
+**Reprendre plays at once.** A « Reprendre » action (billboard, Reprendre card, Programme hero) resumes without the player's Reprendre / Débuter prompt. Opening an Épisode row keeps the prompt, with the position written as the player clock (« 0:45 »).
+
+**Saisons.** Pills only when there is more than one Saison; otherwise an « Épisodes » Rail Title.
+- Focused: white fill with a 1.06 lift.
+- Selected: raised slate.
+- Other: Mist with no fill.
+- Selection happens on OK, never on focus, so crossing the pills fires no request. Focus stays on the pill while its Épisodes load.
+
+**Épisode row.** A 208 dp 16:9 thumbnail at 104 dp, then 32 dp of space, then:
+- the title in Body Strong (2 lines);
+- the meta line in Meta Mist: « 02/11/2026 · 4 min », plus « · 3 min restantes » or « · ✓ Vu »;
+- the synopsis in Body Mist (2 lines).
+
+Duration is rounded up, so 3 min 45 s reads « 4 min ».
+
+**Progression on a row.** In progress: an amber bar along the thumbnail plus the remaining time in words. Watched (95 % or more): a full bar in Mist plus a check and « Vu ». Never amber, never dimmed.
+
+**Row focus (second focus idiom).**
+- The thumbnail takes the card ring and the 1.1 lift.
+- The whole row sits on a raised-slate plate: 32 dp inset, 24 dp vertical padding, 26 dp corners concentric with the ring. The ring stays at least 10 dp inside the plate.
+- The plate ends at the 48 dp safe edge.
+
+**Scrolling.**
+- Column pivot 0.45, so the hero stays whole while its buttons are focused.
+- Once the list scrolls, the key art sinks under 92 % ground (300 ms), so rows never sit on unscrimmed art.
+- A 64 dp top fade (solid to about 40 dp) dissolves the cut line.
+- Back from the list returns to the hero; Back from the hero leaves.
+- Returning from the player focuses the Épisode just watched.
+
+**States.** Loading shows 3 skeleton rows. An error reads « Impossible de charger les Épisodes. » with a focused « Réessayer ». Empty uses « Aucun Épisode disponible. ».
+
+### Focus targets
+Every D-pad target uses `tvClickable`: one focus node and no Material ripple. `focusable()` + `clickable()` made two nodes, so after OK the visible focus was lost and a grey ripple rectangle appeared.
+
 ### Not yet specified
 These are not built in this system yet. Do not infer them from Home:
-- Programme page, Search, Player and TF1+ login. They still read the raw Material color scheme and typography and have not been through this pass.
+- Search, Player and TF1+ login. They still read the raw Material color scheme and typography and have not been through this pass.
 - The Genre page and "Tout voir".
 - The Paramètres page (the rail currently opens the TF1+ account screen).
 - Subtitle styling (size, background, legibility setting).

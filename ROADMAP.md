@@ -57,7 +57,7 @@ Accueil & navigation :
 Épisodes enrichis :
 
 - [ ] Badges de fraîcheur (Hier soir, Nouveau, Inédit, J-n avant expiration)
-- [ ] État de Progression sur chaque Épisode (non commencé, % vu, vu)
+- [x] État de Progression sur chaque Épisode (non commencé, % vu, vu)
 - [ ] « Marquer comme vu »
 
 Lecteur complet :

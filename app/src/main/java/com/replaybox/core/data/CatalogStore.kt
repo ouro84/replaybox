@@ -158,8 +158,8 @@ class CatalogStore(
     }
 
     /**
-     * The Home "Reprendre" rail: one card per Programme (its latest
-     * Épisode), most recent first, finished Épisodes and rows without a
+     * The Home "Reprendre" rail: one card per Programme (its newest
+     * unfinished Épisode), most recent first, finished Épisodes and rows without a
      * Programme context left out (ResumePolicy). Art and Chaîne come from the
      * cached listings of [channelIds] when the Programme is still listed.
      */
@@ -172,9 +172,12 @@ class CatalogStore(
         val items = ArrayList<ResumeItem>()
         for (row in dao.recentProgress(RESUME_SCAN)) {
             val showId = row.showId ?: continue
-            if (!seenShows.add(showId)) continue
+            if (showId in seenShows) continue
             val progress = Progress(EpisodeId(row.episodeId), row.positionSeconds, row.updatedAt)
+            // A finished row does not claim its Programme: an older unfinished
+            // Épisode still resumes (same rule as the Programme page hero).
             if (ResumePolicy.resumeAt(progress, row.durationSeconds) == null) continue
+            seenShows.add(showId)
             val listing = listed[showId]
             items += ResumeItem(
                 episodeId = EpisodeId(row.episodeId),
