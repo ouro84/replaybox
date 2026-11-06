@@ -5,8 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import com.replaybox.app.ReplayboxApplication
+import com.replaybox.core.model.Episode
 import com.replaybox.core.model.EpisodeId
 import com.replaybox.core.model.ProgressContext
 import com.replaybox.core.model.ShowId
@@ -20,6 +22,8 @@ sealed interface Screen {
         val progressContext: ProgressContext? = null,
         /** True when the user pressed « Reprendre »: no second prompt. */
         val autoResume: Boolean = false,
+        /** Displayed list of a numbered Saison, for Épisode suivant (empty otherwise). */
+        val queue: List<Episode> = emptyList(),
     ) : Screen
     object Login : Screen
     object Search : Screen
@@ -57,16 +61,31 @@ class MainActivity : ComponentActivity() {
                         showId = current.showId,
                         title = current.title,
                         state = showStates.getOrPut(current.showId.value) { ShowUiState() },
-                        onOpenEpisode = { episode, progressContext, autoResume ->
-                            backStack.add(Screen.Player(episode.id, episode.title, progressContext, autoResume))
+                        onOpenEpisode = { episode, progressContext, autoResume, queue ->
+                            backStack.add(Screen.Player(episode.id, episode.title, progressContext, autoResume, queue))
                         },
                     )
-                    is Screen.Player -> PlayerScreen(
+                    // Keyed by Épisode: Épisode suivant swaps the entry in place, and the
+                    // player state (Flux, ExoPlayer) must start over, not stay on the ended one.
+                    is Screen.Player -> key(current.episodeId) { PlayerScreen(
                         episodeId = current.episodeId,
                         title = current.title,
                         progressContext = current.progressContext,
                         autoResume = current.autoResume,
-                    )
+                        queue = current.queue,
+                        onPlayNext = { next ->
+                            // Replaces the ended Épisode: Back returns to the Programme page.
+                            backStack[backStack.lastIndex] = current.copy(
+                                episodeId = next.id,
+                                title = next.title,
+                                progressContext = current.progressContext?.copy(
+                                    episodeTitle = next.title,
+                                    thumbnailUrl = next.thumbnailUrl,
+                                ),
+                                autoResume = false,
+                            )
+                        },
+                    ) }
                     Screen.Login -> LoginScreen(onDone = { backStack.removeAt(backStack.lastIndex) })
                     Screen.Search -> SearchScreen(
                         onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },

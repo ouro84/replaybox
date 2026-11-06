@@ -61,5 +61,11 @@
     <string name="action_play">Lecture</string>
     <string name="episode_watched">Vu</string>
     <string name="duration_minutes">%1$d min</string>
+    <string name="next_up_title">Épisode suivant</string>
+    <string name="next_up_play">Lire maintenant</string>
+    <plurals name="next_up_countdown">
+        <item quantity="one">Lecture dans %1$d s</item>
+        <item quantity="other">Lecture dans %1$d s</item>
+    </plurals>
     <string name="show_load_error">Impossible de charger les Épisodes.</string>
 </resources>

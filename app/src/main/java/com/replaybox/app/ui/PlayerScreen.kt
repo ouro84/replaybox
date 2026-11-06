@@ -1,5 +1,13 @@
 package com.replaybox.app.ui
 
+import androidx.compose.foundation.background
+import com.replaybox.core.model.Episode
+import com.replaybox.core.data.NextEpisodePolicy
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.Icons
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -78,6 +86,9 @@ fun PlayerScreen(
     title: String,
     progressContext: ProgressContext? = null,
     autoResume: Boolean = false,
+    /** Displayed list of a numbered Saison (empty otherwise): drives Épisode suivant. */
+    queue: List<Episode> = emptyList(),
+    onPlayNext: (Episode) -> Unit = {},
 ) {
     val provider = Providers.resolveEpisode(episodeId.value)
     var state by remember { mutableStateOf<PlayerState>(PlayerState.Resolving) }
@@ -146,6 +157,8 @@ fun PlayerScreen(
             resumeAtMs = current.resumeAtMs,
             progressContext = progressContext,
             autoResume = autoResume,
+            next = NextEpisodePolicy.next(queue, episodeId),
+            onPlayNext = onPlayNext,
         )
     }
 }
@@ -173,6 +186,8 @@ private fun PlayerSurface(
     resumeAtMs: Long?,
     progressContext: ProgressContext?,
     autoResume: Boolean,
+    next: Episode?,
+    onPlayNext: (Episode) -> Unit,
 ) {
     val context = LocalContext.current
     val catalog = ReplayboxApplication.catalog
@@ -327,6 +342,19 @@ private fun PlayerSurface(
 
     val playerViewRef = remember { mutableStateOf<PlayerView?>(null) }
 
+    // Épisode suivant: shown when the Flux ends and a next Épisode exists.
+    var nextUp by remember(manifestUrl) { mutableStateOf(false) }
+    DisposableEffect(player, next) {
+        val endListener = object : androidx.media3.common.Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                if (playbackState == androidx.media3.common.Player.STATE_ENDED && next != null) nextUp = true
+            }
+        }
+        player.addListener(endListener)
+        onDispose { player.removeListener(endListener) }
+    }
+    BackHandler(enabled = nextUp) { nextUp = false }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -342,7 +370,7 @@ private fun PlayerSurface(
                         event.key == Key.DirectionCenter ||
                             event.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_CAPTIONS
                         )
-                if (ok && !showResumeChoice && hasTextTracks &&
+                if (ok && !showResumeChoice && !nextUp && hasTextTracks &&
                     playerViewRef.value?.isControllerFullyVisible != true
                 ) {
                     toggleSubtitles()
@@ -363,7 +391,14 @@ private fun PlayerSurface(
                 }
             },
         )
-        if (showResumeChoice && resumeAtMs != null) {
+        if (nextUp && next != null) {
+            NextUp(
+                episode = next,
+                onPlay = { onPlayNext(next) },
+                onCancel = { nextUp = false },
+                modifier = Modifier.align(Alignment.BottomEnd),
+            )
+        } else if (showResumeChoice && resumeAtMs != null) {
             ResumeChoice(
                 resumeAtMs = resumeAtMs,
                 onResume = {
@@ -451,5 +486,63 @@ object Playhead {
         val minutes = (total % 3600) / 60
         val seconds = total % 60
         return if (hours > 0) "%d:%02d:%02d".format(hours, minutes, seconds) else "%d:%02d".format(minutes, seconds)
+    }
+}
+
+/** Seconds before the next Épisode starts on its own. */
+private const val NEXT_UP_SECONDS = 10
+
+/**
+ * End-of-Épisode panel (DESIGN.md world): Épisode suivant with a 10 s
+ * countdown; « Lire maintenant » is focused, « Annuler » or Back stays put.
+ */
+@Composable
+private fun NextUp(episode: Episode, onPlay: () -> Unit, onCancel: () -> Unit, modifier: Modifier) {
+    val play = remember { FocusRequester() }
+    var remaining by remember(episode.id) { mutableStateOf(NEXT_UP_SECONDS) }
+    LaunchedEffect(episode.id) {
+        runCatching { play.requestFocus() }
+        while (remaining > 0) {
+            delay(1_000)
+            remaining -= 1
+        }
+        onPlay()
+    }
+    Column(
+        modifier = modifier
+            .padding(end = Rb.safeHorizontal, bottom = Rb.safeVertical + 24.dp)
+            .width(420.dp)
+            .background(Rb.surface, Rb.cardShape)
+            .padding(24.dp),
+    ) {
+        Text(stringResource(R.string.next_up_title), style = RbType.railTitle, color = Rb.text)
+        Text(
+            episode.title,
+            style = RbType.body,
+            color = Rb.text,
+            maxLines = 2,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+            modifier = Modifier.padding(top = 6.dp),
+        )
+        Text(
+            pluralStringResource(R.plurals.next_up_countdown, remaining, remaining),
+            style = RbType.meta,
+            color = Rb.textSecondary,
+            modifier = Modifier.padding(top = 4.dp),
+        )
+        Row(Modifier.padding(top = 20.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            PanelButton(
+                label = stringResource(R.string.next_up_play),
+                icon = Icons.Filled.PlayArrow,
+                requester = play,
+                onClick = onPlay,
+            )
+            PanelButton(
+                label = stringResource(R.string.cancel),
+                icon = null,
+                requester = remember { FocusRequester() },
+                onClick = onCancel,
+            )
+        }
     }
 }
