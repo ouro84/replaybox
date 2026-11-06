@@ -5,7 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
@@ -158,8 +159,7 @@ internal fun PanelButton(
                 isFocused = it.isFocused
                 if (it.isFocused) onFocused()
             }
-            .focusable()
-            .clickable(onClick = onClick)
+            .tvClickable(onClick)
             .background(if (isFocused) Rb.focus else Rb.surfaceRaised, Rb.buttonShape)
             .height(44.dp)
             .padding(horizontal = 20.dp),
@@ -172,6 +172,20 @@ internal fun PanelButton(
         }
         Text(label, style = RbType.bodyStrong, color = color, maxLines = 1)
     }
+}
+
+/**
+ * D-pad target with exactly one focus node and no Material indication.
+ * `focusable()` + `clickable()` made two nodes: OK moved focus to the inner
+ * one, which onFocusChanged above it never saw (white fill lost) and whose
+ * ripple drew a grey rectangle. Focus visuals are ours (DESIGN.md).
+ */
+internal fun Modifier.tvClickable(onClick: () -> Unit): Modifier = composed {
+    clickable(
+        interactionSource = remember { MutableInteractionSource() },
+        indication = null,
+        onClick = onClick,
+    )
 }
 
 /** Card lift: 1.1 while focused (The Lift Is Focus Rule). */

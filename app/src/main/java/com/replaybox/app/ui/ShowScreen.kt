@@ -19,8 +19,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
@@ -61,6 +61,7 @@ import com.replaybox.core.model.ResumeItem
 import com.replaybox.core.model.Season
 import com.replaybox.core.model.SeasonId
 import com.replaybox.core.model.ShowId
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 /**
@@ -131,6 +132,8 @@ fun ShowScreen(
             if (state.selectedSeason == null || loaded.none { it.id == state.selectedSeason }) {
                 state.selectedSeason = loaded.firstOrNull()?.id
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             failed = true
         }
@@ -140,8 +143,12 @@ fun ShowScreen(
         val loadedSeasons = seasons ?: return@LaunchedEffect
         if (loadedSeasons.isNotEmpty() && state.selectedSeason == null) return@LaunchedEffect
         episodes = null
+        failed = false
         try {
             episodes = provider.episodes(state.selectedSeason)
+        } catch (e: CancellationException) {
+            // Superseded by another Saison: not an error.
+            throw e
         } catch (e: Exception) {
             failed = true
         }
@@ -171,24 +178,27 @@ fun ShowScreen(
             is PlayTarget.Resume -> {
                 val item = target.item
                 val episode = list?.firstOrNull { it.id == item.episodeId }
-                    ?: Episode(item.episodeId, null, item.episodeTitle, null, null, item.durationSeconds, item.thumbnailUrl)
+                    ?: Episode(
+                        item.episodeId, null, item.episodeTitle.ifBlank { item.showTitle },
+                        null, null, item.durationSeconds, item.thumbnailUrl,
+                    )
                 onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl ?: item.thumbnailUrl), true)
             }
         }
     }
 
-    // Initial / restored focus: the Épisode last opened, else the play action,
-    // else Épingler (a Programme without Épisodes), else Réessayer.
-    var refocus by remember { mutableStateOf(0) }
+    // Focus is placed on arrival, after Back to the hero and after Réessayer,
+    // never on a Saison reload (focus stays on the pill the user chose).
+    var restorePending by remember { mutableStateOf(true) }
     val ready = list != null || failed
-    LaunchedEffect(ready, failed, refocus) {
-        if (!ready) return@LaunchedEffect
+    LaunchedEffect(ready, restorePending) {
+        if (!ready || !restorePending) return@LaunchedEffect
         val key = state.focusedKey
         val index = list?.indexOfFirst { episodeKey(it) == key } ?: -1
         if (index >= 0) state.list.scrollToItem(FIRST_EPISODE_INDEX + index)
         withFrameNanos { }
-        val candidates = listOfNotNull(key, KEY_PLAY, KEY_PIN, KEY_RETRY.takeIf { failed })
-        candidates.firstOrNull { runCatching { state.requester(it).requestFocus() }.isSuccess }
+        showFocusCandidates(key, failed).firstOrNull { runCatching { state.requester(it).requestFocus() }.isSuccess }
+        restorePending = false
     }
 
     // Back: from the list, return to the hero; from the hero, leave the page.
@@ -198,13 +208,22 @@ fun ShowScreen(
         scope.launch {
             state.list.scrollToItem(0)
             state.focusedKey = null
-            refocus++
+            restorePending = true
         }
     }
 
     val show = listed?.show
+    val scrolled = state.list.firstVisibleItemIndex > 0 || state.list.firstVisibleItemScrollOffset > 0
+    val fade by animateFloatAsState(if (scrolled) 1f else 0f, tween(Rb.BACKDROP_MS), label = "scrolled")
     Box(Modifier.fillMaxSize()) {
         Backdrop(url = show?.backdropUrl ?: show?.posterUrl)
+        // Rows scroll over the art: sink it under 92 % ground (Contrast Floor Rule).
+        Box(
+            Modifier
+                .fillMaxSize()
+                .graphicsLayer { alpha = fade }
+                .background(Rb.ground.copy(alpha = 0.92f)),
+        )
         TvLazyColumn(
             state = state.list,
             modifier = Modifier.fillMaxSize(),
@@ -244,7 +263,14 @@ fun ShowScreen(
             }
             when {
                 failed -> item(key = "error") {
-                    LoadError(state.requester(KEY_RETRY)) { attempt++ }
+                    LoadError(state.requester(KEY_RETRY)) {
+                        // Park focus on Épingler (always on screen) while the
+                        // error row is replaced by skeletons, then restore.
+                        runCatching { state.requester(KEY_PIN).requestFocus() }
+                        state.focusedKey = null
+                        restorePending = true
+                        attempt++
+                    }
                 }
                 list == null -> items(3) { EpisodeSkeleton() }
                 list.isEmpty() -> item(key = "empty") {
@@ -268,8 +294,6 @@ fun ShowScreen(
         }
         // Once the list scrolls, content fades into the ground at the top edge
         // instead of being cut mid-line (The No Pure Black Rule: ground, not #000).
-        val scrolled = state.list.firstVisibleItemIndex > 0 || state.list.firstVisibleItemScrollOffset > 0
-        val fade by animateFloatAsState(if (scrolled) 1f else 0f, tween(Rb.FOCUS_MS), label = "topFade")
         Box(
             Modifier
                 .fillMaxWidth()
@@ -285,6 +309,18 @@ fun ShowScreen(
 private val TOP_FADE = 64.dp
 
 private const val KEY_RETRY = "show:retry"
+
+/**
+ * Where focus lands once the page is ready: Réessayer first on an error,
+ * else the remembered key (an Épisode or a hero action), the play action,
+ * then Épingler (always present). Unavailable keys are skipped by the caller.
+ */
+internal fun showFocusCandidates(focusedKey: String?, failed: Boolean): List<String> =
+    if (failed) {
+        listOf(KEY_RETRY, KEY_PIN)
+    } else {
+        listOfNotNull(focusedKey, KEY_PLAY, KEY_PIN).distinct()
+    }
 
 @Composable
 private fun Hero(
@@ -347,7 +383,7 @@ private fun Hero(
             }
             PanelButton(
                 label = stringResource(if (pinned) R.string.pin_remove else R.string.pin_add),
-                icon = if (pinned) Icons.Filled.Check else Icons.Filled.Add,
+                icon = null,
                 requester = state.requester(KEY_PIN),
                 onFocused = { state.focusedKey = KEY_PIN },
                 onClick = onPin,
@@ -420,8 +456,7 @@ private fun SeasonPill(label: String, selected: Boolean, onClick: () -> Unit) {
         modifier = Modifier
             .scale(scale)
             .onFocusChanged { focused = it.isFocused }
-            .focusable()
-            .clickable(onClick = onClick)
+            .tvClickable(onClick)
             .then(if (background != null) Modifier.background(background, Rb.pillShape) else Modifier)
             .padding(horizontal = 20.dp, vertical = 8.dp),
     )
@@ -429,6 +464,15 @@ private fun SeasonPill(label: String, selected: Boolean, onClick: () -> Unit) {
 
 /** Row thumbnail width: the Home Reprendre card grown for a list of one per line. */
 private val THUMB_WIDTH = 208.dp
+
+/**
+ * Inner inset of the focused row plate: the thumbnail stays at 104 dp while
+ * its ring (1.1 lift + 3 dp gap + stroke) keeps >= 10 dp from the plate edge.
+ */
+private val ROW_INSET = 32.dp
+
+/** Ring radius (14.5 dp) plus its distance to the plate, so corners stay concentric. */
+private val ROW_SHAPE = RoundedCornerShape(26.dp)
 
 @Composable
 private fun EpisodeRow(
@@ -443,17 +487,16 @@ private fun EpisodeRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = Rb.contentStart - GUTTER, end = Rb.safeHorizontal)
+            .padding(start = Rb.contentStart - ROW_INSET, end = Rb.safeHorizontal)
             .focusRequester(requester)
             .onFocusChanged {
                 focused = it.isFocused
                 if (it.isFocused) onFocused()
             }
-            .focusable()
-            .clickable(onClick = onClick)
-            .then(if (focused) Modifier.background(Rb.surfaceRaised, Rb.cardShape) else Modifier)
-            .padding(horizontal = GUTTER, vertical = 14.dp),
-        horizontalArrangement = Arrangement.spacedBy(GUTTER),
+            .tvClickable(onClick)
+            .then(if (focused) Modifier.background(Rb.surfaceRaised, ROW_SHAPE) else Modifier)
+            .padding(horizontal = ROW_INSET, vertical = 24.dp),
+        horizontalArrangement = Arrangement.spacedBy(ROW_INSET),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
@@ -491,7 +534,7 @@ private fun EpisodeRow(
             episode.synopsis?.takeIf { it.isNotBlank() }?.let {
                 Text(
                     it,
-                    style = RbType.meta,
+                    style = RbType.body,
                     color = Rb.textSecondary,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,

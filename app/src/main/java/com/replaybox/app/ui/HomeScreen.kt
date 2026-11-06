@@ -498,8 +498,7 @@ private fun UpdateChip(update: UpdateState.Ready) {
             .padding(top = 8.dp)
             .scale(scale)
             .onFocusChanged { isFocused = it.isFocused }
-            .focusable()
-            .clickable { UpdateInstaller.install(context, update.apk) }
+            .tvClickable { UpdateInstaller.install(context, update.apk) }
             .background(if (isFocused) Rb.focus else Rb.surfaceRaised, Rb.pillShape)
             .padding(horizontal = 16.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -567,8 +566,7 @@ private fun ResumeCard(
                     false
                 }
             }
-            .focusable()
-            .clickable(onClick = onClick),
+            .tvClickable(onClick),
     ) {
         Box(
             Modifier
@@ -624,8 +622,7 @@ private fun PosterCard(
                 isFocused = it.isFocused
                 if (it.isFocused) onFocused()
             }
-            .focusable()
-            .clickable(onClick = onClick)
+            .tvClickable(onClick)
             .scale(scale)
             .cardFocus(isFocused)
             .background(Rb.surfaceRaised),
