@@ -17,9 +17,13 @@ const ftvKo = {
   provider: 'francetv', label: 'France TV — france-2 (anonyme)', ok: false, step: 'signature',
   error: 'IllegalStateException: no exp', detail: null, checkedAt: '2026-11-07T02:13:30Z',
 };
+const m6Ok = {
+  provider: 'm6', label: 'M6+ (anonyme)', ok: true, step: null, error: null,
+  detail: 'resolved', checkedAt: '2026-11-07T02:13:45Z',
+};
 
 test('all probes reported: one entry each, in known order, detail dropped', () => {
-  const status = buildStatus({ results: [ftvKo, tf1Ok], generatedAt: NOW, runUrl: RUN });
+  const status = buildStatus({ results: [m6Ok, ftvKo, tf1Ok], generatedAt: NOW, runUrl: RUN });
   assert.deepEqual(status, {
     generatedAt: NOW,
     runUrl: RUN,
@@ -28,8 +32,14 @@ test('all probes reported: one entry each, in known order, detail dropped', () =
         checkedAt: '2026-11-07T02:13:00Z' },
       { provider: 'francetv', label: 'France TV — france-2 (anonyme)', ok: false, step: 'signature',
         error: 'IllegalStateException: no exp', checkedAt: '2026-11-07T02:13:30Z' },
+      { provider: 'm6', label: 'M6+ (anonyme)', ok: true, step: null, error: null,
+        checkedAt: '2026-11-07T02:13:45Z' },
     ],
   });
+});
+
+test('known Providers mirror Probes.all: tf1, francetv, m6', () => {
+  assert.deepEqual(KNOWN_PROVIDERS.map(k => k.provider), ['tf1', 'francetv', 'm6']);
 });
 
 test('build failure (no result at all): every known Provider is KO at step build', () => {
@@ -46,10 +56,10 @@ test('a known Provider missing from a partial run is KO at step build', () => {
     ['francetv', false, 'build']);
 });
 
-test('an unknown probe (e.g. m6 before KNOWN_PROVIDERS is updated) is kept', () => {
-  const m6 = { provider: 'm6', label: 'M6+', ok: true, step: null, error: null, checkedAt: NOW };
-  const status = buildStatus({ results: [tf1Ok, ftvKo, m6], generatedAt: NOW, runUrl: RUN });
-  assert.deepEqual(status.providers.map(p => p.provider), ['tf1', 'francetv', 'm6']);
+test('an unknown probe (added before KNOWN_PROVIDERS is updated) is kept', () => {
+  const next = { provider: 'next', label: 'Next', ok: true, step: null, error: null, checkedAt: NOW };
+  const status = buildStatus({ results: [tf1Ok, ftvKo, m6Ok, next], generatedAt: NOW, runUrl: RUN });
+  assert.deepEqual(status.providers.map(p => p.provider), ['tf1', 'francetv', 'm6', 'next']);
 });
 
 test('a probe file without checkedAt falls back to generatedAt', () => {

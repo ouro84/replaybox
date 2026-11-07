@@ -14,7 +14,7 @@ on:
         description: "Force a KO on one Provider to exercise the alert"
         type: choice
         default: none
-        options: [none, tf1, francetv]
+        options: [none, tf1, francetv, m6]
 
 permissions:
   contents: write # push the `status` branch

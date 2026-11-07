@@ -15,6 +15,7 @@ const path = require('path');
 const KNOWN_PROVIDERS = [
   { provider: 'tf1', label: 'TF1+ — Le 20h (anonyme)' },
   { provider: 'francetv', label: 'France TV — france-2 (anonyme)' },
+  { provider: 'm6', label: 'M6+ (anonyme)' },
 ];
 
 /** ISO-8601 UTC, second precision. */
