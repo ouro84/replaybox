@@ -156,9 +156,10 @@ object Tf1Parsers {
         val videos = Tf1Json.obj(root, "data", "programBySlug", "videos") ?: return ReplayPage(0, emptyList())
         val total = Tf1Json.int(videos, "total") ?: 0
         val raw = Tf1Json.objects(videos["items"])
+        val now = serverInstant(root) ?: fetchedAt
         val items = raw
-            .filter { Tf1Json.str(it, "type") == REPLAY_TYPE && isFreeOffer(it) }
-            .map { replayVideoFrom(it, serverInstant(root) ?: fetchedAt) }
+            .filter { Tf1Json.str(it, "type") == REPLAY_TYPE && !isAvantPremiere(it, now) }
+            .map { replayVideoFrom(it, now) }
         return ReplayPage(total, items, itemCount = raw.size)
     }
 
@@ -166,14 +167,18 @@ object Tf1Parsers {
     internal const val FREE_RIGHT = "BASIC"
 
     /**
-     * Measured 2026-11-07: ordinary Épisodes carry `rights: ["BASIC","MAX"]`, avant-premières
-     * (paid offer, broadcast days later) only `["MAX"]`, with `freeRemainingDays` 0. The
-     * household account is a free one, and a video without the BASIC right belongs to the paid
-     * offer only (the title prefix is unreliable: HPI S04E04 lost it). No `rights` field: kept.
+     * An avant-première: paid offer only AND not broadcast yet. Measured 2026-11-07: ordinary
+     * Épisodes carry `rights: ["BASIC","MAX"]`, avant-premières only `["MAX"]` (with
+     * `freeRemainingDays` 0) and a broadcast `date` days ahead. A paid-only Épisode already
+     * broadcast stays listed: HPI S04E04 (« Cheval de Troie », 17/09, a former avant-première
+     * still on `["MAX"]`) is kept at Arnaud's request (2026-11-07). The title prefix is not a
+     * marker (HPI lost it). No `rights` field or no date: kept.
      */
-    private fun isFreeOffer(item: JsonObject): Boolean {
-        val rights = Tf1Json.array(item, "rights") ?: return true
-        return rights.any { (it as? kotlinx.serialization.json.JsonPrimitive)?.content == FREE_RIGHT }
+    private fun isAvantPremiere(item: JsonObject, now: java.time.Instant): Boolean {
+        val rights = Tf1Json.array(item, "rights") ?: return false
+        if (rights.any { (it as? kotlinx.serialization.json.JsonPrimitive)?.content == FREE_RIGHT }) return false
+        val date = Tf1Json.str(item, "date")?.let { runCatching { java.time.Instant.parse(it) }.getOrNull() } ?: return false
+        return date.isAfter(now)
     }
 
     private fun replayVideoFrom(item: JsonObject, countedAt: java.time.Instant): ReplayVideo = ReplayVideo(
