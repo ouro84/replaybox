@@ -66,7 +66,8 @@ fonctionnent sur toutes les Chaînes à la fois.
 
 ## Brand Commitments
 
-- Nom : **Replaybox**. Pas encore de logo.
+- Nom : **Replaybox**. Logo (2026-11-07) : une flèche de reprise ambre autour d'un triangle de
+  lecture, et le mot en Manrope ExtraBold (voir `DESIGN.md`, « Logo and launcher banner »).
 - Voix : **discrète**. L'absence de pub se constate, l'écran ne la revendique pas : aucun badge
   « Zéro pub », aucun jargon technique (Media3, DASH, FTS4, latence, « D-pad actif »). Le contenu
   prend la place. Les textes sont courts, en français, et utilisent les termes du glossaire.
