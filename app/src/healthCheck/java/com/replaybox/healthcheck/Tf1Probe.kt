@@ -15,7 +15,9 @@ class Tf1Probe : ProviderProbe() {
     override val label = "TF1+ — Le 20h (anonyme)"
 
     override suspend fun run(steps: Steps): String {
+        // Defaults: Chaîne `tf1`, its own TF1 Index.
         val provider = Tf1Provider(tokenProvider = null, log = { println("[tf1] $it") })
+        // The listing is the Chaîne's slice of the full Index crawl (unfiltered 483ce0f, 500 per page).
         steps.step("shows") {
             check(provider.shows(null).isNotEmpty()) { "empty TF1 listing" }
         }

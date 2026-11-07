@@ -9,12 +9,16 @@ import com.replaybox.core.model.SeasonId
 import com.replaybox.core.model.Show
 import com.replaybox.core.model.ShowId
 import com.replaybox.core.model.Stream
+import com.replaybox.provider.api.CatalogueIndex
 import com.replaybox.provider.api.Provider
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 /**
- * TF1+ provider. Catalogue over graphql persisted queries; Flux resolution follows
+ * TF1+ provider, one instance per TF1 group Chaîne ([Tf1Channels.GROUP]). The listing is the
+ * Chaîne's slice of the shared TF1 Index ([index]); search is local over the Index
+ * ([localSearch]) and falls back to TF1's remote search when it answers null (Index not
+ * fetched yet). Seasons, Épisodes and Flux are Chaîne-independent. Flux resolution follows
  * the wat.tv chain of yt-dlp (mediainfocombo, anonymous, no DRM). When a TF1
  * account is configured (tokenProvider), the Flux carries a Bearer token and
  * DRM-protected fictions resolve with their Widevine license.
@@ -24,16 +28,16 @@ class Tf1Provider(
     private val tokenProvider: (suspend (forceRefresh: Boolean) -> String?)? = null,
     // Injected so the provider also runs on a plain JVM (nightly health-check, CI).
     private val log: (String) -> Unit = { message -> android.util.Log.w(TAG, message) },
+    override val channel: Channel = Tf1Channels.GROUP.first(),
+    private val index: CatalogueIndex = tf1CatalogueIndex(http),
+    private val localSearch: (suspend (String) -> List<Show>?)? = null,
 ) : Provider {
-
-    override val channel: Channel = Channel("tf1", "TF1+")
 
     private val replayCache = HashMap<ShowId, List<Tf1Parsers.ReplayVideo>>()
     private val replayMutex = Mutex()
 
     override suspend fun shows(genre: Genre?): List<Show> {
-        val root = http.graphql(Tf1QueryIds.PROGRAMS, http.programsVariables(channel.id, offset = 0, limit = 40))
-        val shows = Tf1Parsers.showsFromPrograms(root)
+        val shows = index.shows(channel.id)
         return if (genre == null) shows else shows.filter { genre in it.genres }
     }
 
@@ -52,6 +56,7 @@ class Tf1Provider(
     }
 
     override suspend fun search(query: String): List<Show> {
+        localSearch?.invoke(query)?.let { return it }
         val root = http.graphql(Tf1QueryIds.SEARCH_PROGRAMS, http.searchProgramsVariables(query))
         return Tf1Parsers.showsFromSearch(root)
     }

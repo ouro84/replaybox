@@ -50,6 +50,7 @@ import androidx.tv.foundation.lazy.grid.itemsIndexed
 import com.replaybox.R
 import com.replaybox.core.model.Show
 import com.replaybox.core.model.ShowId
+import com.replaybox.core.data.SearchRanking
 import com.replaybox.core.model.Titles
 import com.replaybox.provider.api.Provider
 import kotlinx.coroutines.async
@@ -77,7 +78,7 @@ object SearchFusion {
                 byTitle.putIfAbsent(show.title.normalizedKey(), show)
             }
         }
-        return byTitle.values.toList()
+        return SearchRanking.rank(query, byTitle.values.toList())
     }
 
     private fun String.normalizedKey(): String = Titles.normalize(this)

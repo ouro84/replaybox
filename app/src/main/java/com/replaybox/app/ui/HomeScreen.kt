@@ -82,6 +82,7 @@ import com.replaybox.core.model.Genre
 import com.replaybox.core.model.ProgressContext
 import com.replaybox.core.model.ResumeItem
 import com.replaybox.core.model.ShowId
+import com.replaybox.provider.tf1.Tf1Channels
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -350,7 +351,7 @@ private suspend fun loadHome(catalog: CatalogStore): HomeData {
     for (id in channelIds) {
         val at = catalog.listingAt(id) ?: continue
         if (now - at > CatalogStore.TTL_MS) {
-            val source = if (id == "tf1") "TF1" else "France TV"
+            val source = if (Tf1Channels.isGroup(id)) "TF1" else "France TV"
             staleSources[source] = minOf(at, staleSources[source] ?: at)
         }
     }

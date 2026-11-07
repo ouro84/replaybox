@@ -43,4 +43,14 @@ class CatalogSearchTest {
             assertThat(store.searchShows(listOf("missing", Channel("x", "X").id), "alpha")).isEmpty()
         }
     }
+
+    @Test
+    fun `cached search is ranked, prefix matches first`() {
+        blocking {
+            val dao = FakeCatalogDao()
+            dao.putListing("tf1", listOf(show("experts", "Les Experts"), show("expedition", "Expédition X")), 0)
+            val hits = CatalogStore(dao).searchShows(listOf("tf1"), "exp")
+            assertThat(hits.map { it.id.value }).containsExactly("expedition", "experts").inOrder()
+        }
+    }
 }

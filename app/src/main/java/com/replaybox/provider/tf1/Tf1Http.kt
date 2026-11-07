@@ -56,14 +56,19 @@ open class Tf1Http(private val client: OkHttpClient = defaultClient()) {
         }
     }
 
-    fun programsVariables(channelSlug: String, offset: Int, limit: Int): JsonObject = buildJsonObject {
+    /**
+     * Variables of the programs listing (483ce0f). A null [channelSlug] omits `filter`: the whole
+     * catalogue, every channel (measured 2026-11-07: `data.programs.total` 4685). `offset` is a
+     * page index, as for programBySlug videos.
+     */
+    fun programsVariables(channelSlug: String?, offset: Int, limit: Int): JsonObject = buildJsonObject {
         put("context", buildJsonObject {
             put("persona", "PERSONA_2")
             put("application", "WEB")
             put("device", "DESKTOP")
             put("os", "WINDOWS")
         })
-        put("filter", buildJsonObject { put("channel", channelSlug) })
+        if (channelSlug != null) put("filter", buildJsonObject { put("channel", channelSlug) })
         put("offset", offset)
         put("limit", limit)
     }
@@ -104,6 +109,9 @@ open class Tf1Http(private val client: OkHttpClient = defaultClient()) {
         const val BROWSER_UA =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
         const val PAGE_LIMIT = 20
+
+        /** Programmes per Index page (10 pages for the 4685-item catalogue, ~3.3 MB each). */
+        const val INDEX_PAGE_SIZE = 500
 
         fun defaultClient(): OkHttpClient = OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)

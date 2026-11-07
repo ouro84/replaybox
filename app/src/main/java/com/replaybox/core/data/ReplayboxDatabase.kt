@@ -16,7 +16,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ProgressEntity::class,
         FavoriteEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = false,
 )
 abstract class ReplayboxDatabase : RoomDatabase() {
@@ -52,6 +52,18 @@ abstract class ReplayboxDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE shows ADD COLUMN firstSeenAt INTEGER NOT NULL DEFAULT 0")
                 db.execSQL("ALTER TABLE shows ADD COLUMN firstSeenRank INTEGER NOT NULL DEFAULT 0")
                 db.execSQL("UPDATE shows SET firstSeenRank = rowid")
+            }
+        }
+
+        /**
+         * v3 → v4: recent Épisode count of each Programme (search ranking of
+         * the Index). Listings are marked stale so the next startup refetches
+         * them with the count; the shows stay served meanwhile.
+         */
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE shows ADD COLUMN recentEpisodeCount INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("DELETE FROM listings")
             }
         }
     }

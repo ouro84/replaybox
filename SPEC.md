@@ -41,7 +41,10 @@ envoie aussi la forme complète `id=sha256:<hex>` :
   « category MAIN_EVENT not found » est une réponse normale)
 - `id=483ce0f` variables `{"context":{"persona":"PERSONA_2","application":"WEB","device":"DESKTOP",
   "os":"WINDOWS"},"filter":{"channel":"tf1"},"offset":N,"limit":N}` → `programs.items[]` (listing
-  catalogue, découvert/mesuré 2026-11-05)
+  catalogue, découvert/mesuré 2026-11-05). **Sans `filter`** → le catalogue complet, toutes chaînes
+  (mesuré 2026-11-07 : `data.programs.total` = 4685). Comme pour `a6f9cf0e`, **`offset` est un
+  index de page** : `limit=500` → pages 0..8 pleines, page 9 = 185 items, page 10 vide (~3,3 Mo
+  décompressé par page). Fixture : `tf1_programs_index_page.json`
 - `id=e78b188` variables `{"query":…}` → searchPrograms
 - `id=b2dc9439` variables `{"query":…}` → searchVideos
 - vidéos d'un programme : `id=a6f9cf0e` (mesuré 2026-11-05) variables `{"programSlug":…,"offset":N,
@@ -58,7 +61,22 @@ Ne garder que `type: REPLAY` (les `EXTRACT`/`BONUS` sont hors périmètre). La t
 chaque programme porte exactement un `GT_` et un `SGT_`, ids `SGT_` en anglais : `SGT_COMEDY`,
 `SGT_DRAMA`, `SGT_DOCUMENTARY`… ; Genres = union des deux). Pas de policier/thriller natif TF1 pour
 les séries → retombe sur Séries ; `SGT_THRILLER`/`SGT_DETECTIVE` n'existent que sur les films
-(`GT_MOVIES`), mesuré 2026-11-07 sur le catalogue complet.
+(`GT_MOVIES`), mesuré 2026-11-07 sur le catalogue complet. Pour les fictions et films
+(`GT_SERIES_AND_FICTIONS`/`GT_MOVIES`), « Policier & Thriller » est ajouté par une heuristique de
+mots-clés sur titre + synopsis normalisés (`Tf1CrimeKeywords`, 555 des 2446 fictions/films du
+groupe sur la capture du 2026-11-07), avec deux listes de slugs commentées pour les ratés connus
+(fixture `tf1_crime_cases.json`).
+
+Index TF1 (`CatalogueIndex`, mesuré 2026-11-07) — le listing d'une Chaîne TF1 est sa part de
+l'Index : crawl de `483ce0f` sans filtre, 500 par page, offset = index de page, jusqu'à
+`data.programs.total` (ou une page vide). Chaque page est tentée 3 fois ; une page en échec fait
+échouer tout le crawl (rien n'est écrit, l'ancien Index reste servi). Un doublon entre pages
+(dérive d'offset) est gardé une fois. Le crawl est mémorisé 10 min : les 5 Chaînes rafraîchies
+d'affilée ne font qu'un crawl. Chaînes du groupe, clé `initialChannel.slug` : `tf1` « TF1 »,
+`tmc` « TMC », `tfx` « TFX », `tf1-series-films` « TF1 Séries Films », `lci` « LCI » (2881
+Programmes) ; tout autre `initialChannel` (arte, novo19, public-senat…) est écarté, de même que les
+programmes à `replay.total == 0`. `replayRecent.total` alimente `Show.recentEpisodeCount`
+(départage de la recherche). Saisons, Épisodes et Flux ne dépendent pas de la Chaîne.
 
 Flux — résoudre l'id média interne (`videoBySlug.streamId`) puis suivre la chaîne de
 l'**extracteur `wat` de yt-dlp** : `GET https://mediainfo.tf1.fr/mediainfocombo/<streamId>?pver=5010000`
@@ -183,8 +201,12 @@ TF1 : pistes à valider une fois connecté (Q10).
 ## Recherche
 
 Cross-chaînes, debounce 300 ms, minimum 3 caractères, fusion des Provider.search() par titre
-normalisé (casse/accents). La recherche TF1 utilise searchPrograms ; France TV : filtrage local du
-cache (pas de route de recherche découverte).
+normalisé (casse/accents). La recherche TF1 est locale, sur l'Index stocké de chaque Chaîne du
+groupe ; tant que l'Index n'est pas stocké (premier lancement), la seule Chaîne `tf1` retombe sur
+searchPrograms distant (une fois, pas cinq). France TV : filtrage local du cache (pas de route de
+recherche découverte). Classement (`SearchRanking`) : titre qui commence par la requête, puis titre
+qui la contient ; égalités départagées par `recentEpisodeCount` décroissant, puis ordre d'arrivée.
+Les rails Genre de la Home sont plafonnés à 40 cartes.
 
 ## Auto-update
 

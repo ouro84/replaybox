@@ -146,4 +146,16 @@ class HomeRailsTest {
             assertThat(items.map { it.episodeId.value }).containsExactly("pitch-nov")
         }
     }
+
+    @Test
+    fun genreRailsAreCapped() {
+        blocking {
+            val dao = FakeCatalogDao()
+            dao.putListing("tf1", (1..100).map { show("s$it", "Série $it", Genre.SERIES) }, 0)
+            val rails = CatalogStore(dao).genreRails(listOf("tf1"))
+            val series = rails.first { it.first == Genre.SERIES }.second
+            assertThat(series).hasSize(CatalogStore.GENRE_RAIL_LIMIT)
+            assertThat(CatalogStore.GENRE_RAIL_LIMIT).isEqualTo(40)
+        }
+    }
 }

@@ -142,4 +142,41 @@ class CatalogStoreTest {
             1,
             "Saison 1",
         )
+
+    @Test
+    fun failedCrawlKeepsOldListing() {
+        blocking {
+            val dao = FakeCatalogDao()
+            val stale = now - CatalogStore.TTL_MS - 1
+            dao.putListing("tf1", listOf(show("old", "Ancien", Genre.SERIES)), stale)
+            val provider = FakeProvider(Channel("tf1", "TF1"), showsError = IOException("page 3 timed out"))
+            val catalog = store(dao)
+
+            assertThat(catalog.shows(provider, null).map { it.id.value }).containsExactly("old")
+            assertThat(catalog.refreshListings(listOf(provider))).isEqualTo(1)
+            assertThat(catalog.listingAt("tf1")).isEqualTo(stale)
+            assertThat(catalog.genreRails(listOf("tf1")).single().second.map { it.show.id.value })
+                .containsExactly("old")
+        }
+    }
+
+    @Test
+    fun listingMemoInvalidatedOnWrite() {
+        blocking {
+            val dao = FakeCatalogDao()
+            dao.putListing("tf1", listOf(show("a", "Alpha", Genre.SERIES)), now - 1 * hour)
+            val catalog = store(dao)
+            assertThat(catalog.genreRails(listOf("tf1")).single().second.map { it.show.id.value })
+                .containsExactly("a")
+
+            val provider = FakeProvider(
+                Channel("tf1", "TF1"),
+                showsResult = listOf(show("a", "Alpha", Genre.SERIES), show("b", "Beta", Genre.SERIES)),
+            )
+            catalog.refreshListings(listOf(provider))
+
+            assertThat(catalog.genreRails(listOf("tf1")).single().second.map { it.show.id.value })
+                .containsExactly("a", "b")
+        }
+    }
 }
