@@ -392,10 +392,19 @@ Verified on the Bbox (2026-11-07). One list, one level of pages; Back from a pag
 
 **Account form.** Rail Title « Connexion <Provider> », the account state in Body Strong, a Meta Mist hint, two 540 x 52 dp fields (Search field look: raised slate, 8 dp corners, ring on focus), then panel buttons « Se connecter » and, when signed in, « Se déconnecter ». The initial focus is « Se connecter », never a field, so reading the Santé does not raise the keyboard. UP/DOWN leave a field instead of moving its cursor. Errors read in Body Soft Coral, in French; the English exception text stays in the logs and the Santé line.
 
-**À propos.** Title in Display Compact, « Version X.Y.Z » in Body Strong, one status line in Body Mist, then one panel button, which is the initial focus:
+**À propos.** Title in Display Compact, the logo (see Logo), « Version X.Y.Z » in Body Strong, one status line in Body Mist, then one panel button, which is the initial focus:
 - « Rechercher une mise à jour » runs the GitHub check; the status reads « Recherche en cours… », then « Tu as la dernière version. » or « Impossible de vérifier les mises à jour. Vérifie la connexion. ».
 - Once a newer APK is downloaded, the status reads « La version X.Y.Z est prête à être installée. » and the button becomes « Installer ».
 The Home update chip stays; « À propos » is where to look when it is not shown.
+
+### Logo and launcher banner
+Chosen 2026-11-07 (piste A « Reprise »), verified in the Bbox launcher (« Mes services » row).
+- **Symbol:** an amber (Progression Amber) replay arrow, counterclockwise with its gap at the top and its head at the top right, around a Paper White play triangle. The logo is the one sanctioned use of amber outside Progression and the current destination: amber means « reprendre ».
+- **Wordmark:** « Replaybox » in Manrope ExtraBold (SIL OFL 1.1), vectorised, Paper White, -0.6 tracking.
+- **Banner** (`android:banner`, 320 x 180 dp): Night Ground plate, symbol at left (centre 74,90, radius 30, 8 dp stroke), wordmark from x 124 on a 101 dp baseline.
+- **Icon** (`android:icon`, adaptive): Night Ground background, the symbol alone centred in the 66 dp safe zone.
+- **Source:** `scripts/logo/make_logo.py` regenerates both vectors from the Manrope variable font (instanced at weight 800); the font itself is not in the repo.
+- **In the app:** only on « À propos », 240 x 90 dp (banner cropped top and bottom, pulled 30 dp left so the symbol sits on the 104 dp text column). No splash screen, no logo in the nav rail.
 
 ### Not yet specified
 These are not built in this system yet. Do not infer them from Home:

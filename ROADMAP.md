@@ -110,7 +110,7 @@ Fondations :
 - [ ] Design system Compose for TV (couleurs, typo, formes, focus) documenté dans `DESIGN.md`
 - [ ] États de focus D-pad lisibles à 3 m sur tous les écrans, focus initial défini partout
 - [x] Lisibilité des sous-titres réglable (taille, fond)
-- [ ] Logo et bannière launcher
+- [x] Logo et bannière launcher
 
 Accueil & navigation :
 
