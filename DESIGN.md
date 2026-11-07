@@ -372,11 +372,29 @@ The video owns the screen. Every overlay sits at the bottom over a ground scrim 
 ### Failure states
 A failure is never shown as an empty result. Search with every Provider failing reads « Recherche indisponible. » with « Réessayer » (DOWN from the field reaches it); one Provider failing shows the other's results as they are. An empty Home after a refresh where every Chaîne failed reads « Catalogue indisponible. Vérifie la connexion. » with a focused « Réessayer »; with a cache, Home keeps its rails and the dated stale notice.
 
+### Paramètres
+Verified on the Bbox (2026-11-07). One list, one level of pages; Back from a page lands on the row that opened it.
+
+**List.** Title « Paramètres » in Display Compact at 104 dp, then 600 dp rows, 16 dp apart, in this order: the Providers (TF1+, France TV, M6+), then « À propos ». (« Sous-titres » joins at the top in M4.)
+- **Row:** slate-surface plate with 10 dp corners, 24 x 16 dp padding. Title in Rail Title, one summary line in Meta Mist (ellipsis after one line). Provider rows end with the Santé badge, 16 dp after the text.
+- **Focus:** raised-slate plate plus the white ring 3 dp outside (`focusRing`), no scale, since rows are wide.
+- **Summaries:** « Connecté : <e-mail> », « Non connecté » or « Sans compte » for a Provider; « Version 0.4.0 » for « À propos », or « Version 0.4.0 · mise à jour 0.5.0 prête » once one is downloaded.
+- **Initial focus:** the first row; after Back, the row that opened the page.
+
+**Santé badge.** A 12 dp dot plus a Body Strong label, never color alone: filled Paper White « Fonctionne », filled Soft Coral « En panne », hollow Mist ring « État inconnu ». Shown in Paramètres only (list and Provider page), never on Home.
+
+**Provider page.** Title (the Provider name) in Display Compact, the Santé badge 12 dp below, then two Body Mist lines in a 720 dp column: « Vérification de cette nuit : … » and « Sur cette box : … », dated « le 07/11 à 21:02 ». Then, 28 dp below, the account form when the Provider needs one. The page scrolls when the form and the keyboard need room.
+
+**Account form.** Rail Title « Connexion <Provider> », the account state in Body Strong, a Meta Mist hint, two 540 x 52 dp fields (Search field look: raised slate, 8 dp corners, ring on focus), then panel buttons « Se connecter » and, when signed in, « Se déconnecter ». The initial focus is « Se connecter », never a field, so reading the Santé does not raise the keyboard. UP/DOWN leave a field instead of moving its cursor. Errors read in Body Soft Coral, in French; the English exception text stays in the logs and the Santé line.
+
+**À propos.** Title in Display Compact, « Version X.Y.Z » in Body Strong, one status line in Body Mist, then one panel button, which is the initial focus:
+- « Rechercher une mise à jour » runs the GitHub check; the status reads « Recherche en cours… », then « Tu as la dernière version. » or « Impossible de vérifier les mises à jour. Vérifie la connexion. ».
+- Once a newer APK is downloaded, the status reads « La version X.Y.Z est prête à être installée. » and the button becomes « Installer ».
+The Home update chip stays; « À propos » is where to look when it is not shown.
+
 ### Not yet specified
 These are not built in this system yet. Do not infer them from Home:
-- TF1+ login. It still reads the raw Material color scheme and typography and has not been through this pass.
 - The Genre page and "Tout voir".
-- The Paramètres page (the rail currently opens the TF1+ account screen).
 - Subtitle styling (size, background, legibility setting).
 - Freshness or "new" badges.
 - Error states beyond the stale notice and the empty-catalog line.
