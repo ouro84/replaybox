@@ -141,7 +141,7 @@ fun GenreGridScreen(state: GenreGridUiState, onOpenShow: (ShowId, String) -> Uni
                 ) {
                     for (chip in filters) {
                         val key = GenreGridUiState.chipKey(chip.groupId)
-                        ChannelChip(
+                        FilterChip(
                             label = stringResource(filterLabel(chip.groupId)),
                             selected = chip == filter,
                             requester = state.requester(key),
@@ -181,7 +181,7 @@ fun GenreGridScreen(state: GenreGridUiState, onOpenShow: (ShowId, String) -> Uni
 /** Two rows of placeholders while the cache is read (no spinner, DESIGN.md « Skeleton »). */
 private const val SKELETON_POSTERS = 12
 
-private fun filterLabel(groupId: String?): Int = when (groupId) {
+internal fun filterLabel(groupId: String?): Int = when (groupId) {
     null -> R.string.filter_all
     ProviderGroups.TF1 -> R.string.filter_tf1
     ProviderGroups.FRANCETV -> R.string.filter_francetv
@@ -189,16 +189,17 @@ private fun filterLabel(groupId: String?): Int = when (groupId) {
 }
 
 /**
- * Chaîne-group chip. Selection happens on OK, never on focus (like the Saison pills): crossing
- * the row reloads nothing. Selected: raised slate plus a check, never colour alone. Focused:
- * white fill and the 1.06 lift.
+ * Filter chip (Chaîne group on « Tout voir » and Search, Genre on Search). Selection happens on
+ * OK, never on focus (like the Saison pills): crossing the row reloads nothing. Selected: raised
+ * slate plus a check, never colour alone. Focused: white fill and the 1.06 lift.
  */
 @Composable
-private fun ChannelChip(
+internal fun FilterChip(
     label: String,
     selected: Boolean,
     requester: FocusRequester,
     onFocused: () -> Unit,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     var focused by remember { mutableStateOf(false) }
@@ -214,7 +215,7 @@ private fun ChannelChip(
         else -> Rb.textSecondary
     }
     Row(
-        modifier = Modifier
+        modifier = modifier
             .scale(scale)
             .focusRequester(requester)
             .onFocusChanged {

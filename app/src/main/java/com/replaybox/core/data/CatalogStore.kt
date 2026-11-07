@@ -354,6 +354,16 @@ class CatalogStore(
         return GenreGrid.arrange(all, genre, channelIds = null)
     }
 
+    /**
+     * Search with an empty query and an active filter: every Programme of [genre] (null: every
+     * Genre) on [channelIds], cache only, in the « Tout voir » order (GenreGrid: recency, then
+     * title), the same title on two Chaînes kept once.
+     */
+    suspend fun browse(channelIds: List<String>, genre: Genre?): List<ChannelShow> {
+        val all = channelIds.flatMap { channelId -> listing(channelId).map { ChannelShow(it, channelId) } }
+        return GenreGrid.arrange(all, genre, channelIds = null)
+    }
+
     /** Favorites with the Chaîne they are listed on, most recently pinned first. */
     suspend fun favoriteChannelShows(channelIds: List<String>): List<ChannelShow> {
         val ids = dao.favoriteIds()

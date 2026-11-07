@@ -127,6 +127,10 @@ class MainActivity : ComponentActivity() {
                     Screen.Search -> SearchScreen(
                         state = searchState,
                         onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
+                        // « Reprendre » on the best result resumes at once, like Home.
+                        onPlay = { id, title, progressContext ->
+                            backStack.add(Screen.Player(id, title, progressContext, autoResume = true))
+                        },
                     )
                     Screen.Genres -> GenresScreen(state = genresState, onOpenGenre = ::openGrid)
                     is Screen.GenreGrid -> key(current.genre) {

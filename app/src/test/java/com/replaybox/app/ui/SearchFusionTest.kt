@@ -43,22 +43,6 @@ class SearchFusionTest {
     }
 
     @Test
-    fun `origins credit the Provider whose result was kept`() {
-        val tf1 = listOf(show("tf1-marleau", "Capitaine Marleau"), show("tf1-chrono", "Enquête Chrono"))
-        val ftv = listOf(show("ftv-marleau", "Capitaine Marleau"), show("ftv-vera", "Les enquêtes de Vera"))
-        val results = listOf(tf1, ftv)
-        val fused = SearchFusion.fuse("e", results)
-
-        val origins = SearchFusion.origins(fused, listOf("tf1", "france-3"), results)
-
-        assertThat(origins.mapKeys { it.key.value }).containsExactly(
-            "tf1-marleau", "tf1",
-            "tf1-chrono", "tf1",
-            "ftv-vera", "france-3",
-        )
-    }
-
-    @Test
     fun `every Provider failing is a failure, not an empty result`() {
         val hits = blocking {
             SearchFusion.search(
@@ -70,7 +54,7 @@ class SearchFusionTest {
             )
         }
         assertThat(hits.failed).isTrue()
-        assertThat(hits.shows).isEmpty()
+        assertThat(hits.filtered(null, null)).isEmpty()
     }
 
     @Test
@@ -85,7 +69,8 @@ class SearchFusionTest {
             )
         }
         assertThat(hits.failed).isFalse()
-        assertThat(hits.shows.map { it.title }).containsExactly("Tracker")
+        assertThat(hits.filtered(null, null).map { it.show.title }).containsExactly("Tracker")
+        assertThat(hits.channels.map { it.channelId }).containsExactly("tf1", "ftv").inOrder()
     }
 
     @Test(expected = kotlinx.coroutines.CancellationException::class)
@@ -96,6 +81,28 @@ class SearchFusionTest {
                 "tracker",
             )
         }
+    }
+
+    @Test
+    fun `one character searches every Provider`() {
+        val provider = FakeProvider(channel = Channel("tf1", "TF1+"), showsResult = listOf(show("t", "Tracker")))
+
+        val hits = blocking { SearchFusion.search(listOf(provider), " t ") }
+
+        assertThat(provider.searchCalls).isEqualTo(1)
+        assertThat(hits.query).isEqualTo("t")
+        assertThat(hits.filtered(null, null).map { it.show.title }).containsExactly("Tracker")
+    }
+
+    @Test
+    fun `an empty query asks no Provider`() {
+        val provider = FakeProvider(channel = Channel("tf1", "TF1+"))
+
+        val hits = blocking { SearchFusion.search(listOf(provider), "  ") }
+
+        assertThat(provider.searchCalls).isEqualTo(0)
+        assertThat(hits.channels).isEmpty()
+        assertThat(hits.failed).isFalse()
     }
 
     @Test
