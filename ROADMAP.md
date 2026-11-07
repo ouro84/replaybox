@@ -71,30 +71,73 @@ Refonte visuelle à partir des maquettes Stitch, cadrée par `PRODUCT.md` (TV 55
 contraste texte AAA, voix discrète). Toute donnée affichée (expiration, pistes audio, qualités) doit
 d'abord exister dans le `SPEC.md` du Provider concerné.
 
+Décisions du grilling du 2026-11-07 :
+
+- **Fondations d'abord.** Le design system est fait quand `DESIGN.md` n'a plus de section « Not yet
+  specified », que tous les écrans (connexions TF1+ et M6+ comprises) lisent les tokens du thème et
+  que l'UI tutoie partout. Le focus se prouve par une checklist par écran dans `DESIGN.md` (focus
+  initial, cible du Back, focus au retour) vérifiée sur la box, sans tests instrumentés.
+- **Sous-titres** : réglage global de l'app, prioritaire sur le style système. Taille (Normal, Grand,
+  Très grand) et fond (Contour seul, Bandeau semi-opaque, Bandeau opaque), Grand + semi-opaque par
+  défaut. Réglable dans Paramètres > Sous-titres (aperçu en direct) et dans les Options du lecteur.
+- **Paramètres** : liste puis page, dans l'ordre Sous-titres, TF1+, France TV, M6+, À propos
+  (version, mise à jour, logo).
+- **Genres** : entrée du rail de navigation vers une grille 3 × 3 de tuiles texte ; chaque tuile
+  ouvre la grille « Tout voir » (6 affiches par ligne, récence puis titre, chips de groupe de
+  Chaîne). Carte « Tout voir » au bout des rails d'accueil tronqués seulement. France TV y figure
+  avec son cache, sans Index dédié. Jeunesse devient exclusif (aucun autre Genre), son rail reste à
+  l'accueil. Policier & Thriller TF1 : SGT natifs seuls pour les films ; pour les séries, un
+  mot-clé dans le titre ou deux dans le synopsis.
+- **Badges de fraîcheur** : un seul par Épisode, par priorité « Dernier jour » / « Plus que N
+  jours » (≤ 7 j), « Hier soir » (veille, à partir de 18 h), « Nouveau » (< 48 h). « Inédit » est
+  abandonné tant qu'aucun Provider ne l'expose. Pastille texte sans ambre. Un badge n'existe pour
+  un Provider qu'après mesure au `SPEC.md`, sans requête supplémentaire par Épisode. Sur une carte
+  « À suivre », seule l'expiration s'affiche. Un Épisode expiré sort d'« À suivre » et des listes.
+- **« À suivre »** remplace Reprendre : Épisodes en cours et prochain Épisode non vu de chaque
+  Programme épinglé, par événement le plus récent. Les épinglés se rafraîchissent en arrière-plan
+  au-delà de 12 h. La fiche Programme propose Reprendre, sinon le prochain non vu, sinon le premier
+  Épisode. Épisode suivant s'affiche à 10 s de la fin et passe d'une Saison à la suivante.
+- **Recherche** : clavier alphabétique intégré à gauche, résultats à droite (requête, chips Chaîne
+  et Genre, meilleur résultat sur titre exact ou préfixe, grille de 4). Recherche dès 1 caractère,
+  filtres seuls possibles, état complet restauré au retour.
+- **Logo** : bannière launcher et icône adaptative, choisies sur trois pistes ; dans l'app, le logo
+  n'apparaît que sur « À propos ».
+- Release intermédiaire après les sous-titres, release finale en fin de jalon. Les cases se cochent
+  après vérification sur la box ; le critère se valide par Arnaud, sur le canapé.
+
 Fondations :
 
 - [ ] Design system Compose for TV (couleurs, typo, formes, focus) documenté dans `DESIGN.md`
 - [ ] États de focus D-pad lisibles à 3 m sur tous les écrans, focus initial défini partout
 - [ ] Lisibilité des sous-titres réglable (taille, fond)
+- [ ] Logo et bannière launcher
 
 Accueil & navigation :
 
 - [ ] Rail de navigation latéral (Accueil, Genres, Recherche, Paramètres)
 - [x] Billboard « à la une » avec action Reprendre
-- [x] Rail « Reprendre la lecture » en tête d'accueil
+- [ ] Rail « À suivre » en tête d'accueil (Épisodes en cours et nouveaux Épisodes des Programmes épinglés)
 - [x] Fond dynamique tiré du visuel focalisé
 - [ ] Grille « Tout voir » par Genre
 
+Catalogue (dettes M3) :
+
+- [ ] Genres TF1 corrigés (Policier & Thriller sans faux positifs connus)
+- [ ] Jeunesse exclusif (plus de programmes enfants dans Séries)
+- [ ] Images M6 mesurées sur la box (rail affiché en moins de 1 s, cache chaud)
+
 Épisodes enrichis :
 
-- [ ] Badges de fraîcheur (Hier soir, Nouveau, Inédit, J-n avant expiration)
+- [ ] Badges de fraîcheur (Hier soir, Nouveau, J-n avant expiration)
 - [x] État de Progression sur chaque Épisode (non commencé, % vu, vu)
 - [ ] « Marquer comme vu »
+- [ ] Prochain Épisode non vu proposé sur la fiche Programme
 
 Lecteur complet :
 
 - [x] −10 s / +10 s, recommencer
 - [x] Épisode suivant, avec enchaînement automatique
+- [ ] Épisode suivant annoncé avant la fin, d'une Saison à la suivante
 - [x] Choix de la piste audio et de la qualité
 - [x] Vitesse de lecture
 
