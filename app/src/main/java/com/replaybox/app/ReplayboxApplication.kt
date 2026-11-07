@@ -90,6 +90,11 @@ class ReplayboxApplication : Application(), ImageLoaderFactory {
         private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
         /** Remembered audio kind and quality cap (decision Q3). */
+        /** Subtitle legibility (Paramètres > Sous-titres), observed live by the player. */
+        val subtitleStyle: com.replaybox.app.ui.SubtitleStyleStore by lazy {
+            com.replaybox.app.ui.SharedPrefsSubtitleStyleStore(instance)
+        }
+
         val playbackPreferences: com.replaybox.app.ui.PlaybackPreferenceStore by lazy {
             com.replaybox.app.ui.SharedPrefsPlaybackPreferenceStore(instance)
         }

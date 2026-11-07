@@ -31,6 +31,7 @@ sealed interface Screen {
     object Settings : Screen
     data class ProviderDetail(val groupId: String) : Screen
     object About : Screen
+    object SubtitleSettings : Screen
     object Search : Screen
 }
 
@@ -100,10 +101,12 @@ class MainActivity : ComponentActivity() {
                     ) }
                     Screen.Settings -> SettingsScreen(
                         state = settingsState,
+                        onOpenSubtitles = { backStack.add(Screen.SubtitleSettings) },
                         onOpenProvider = { groupId -> backStack.add(Screen.ProviderDetail(groupId)) },
                         onOpenAbout = { backStack.add(Screen.About) },
                     )
                     Screen.About -> AboutScreen()
+                    Screen.SubtitleSettings -> SubtitleSettingsScreen()
                     is Screen.ProviderDetail -> key(current.groupId) { ProviderScreen(groupId = current.groupId) }
                     Screen.Search -> SearchScreen(
                         state = searchState,

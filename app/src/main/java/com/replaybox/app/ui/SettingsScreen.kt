@@ -45,20 +45,29 @@ class SettingsUiState {
 /** Row key of « À propos » in [SettingsUiState.lastGroupId] (Provider rows use their group id). */
 internal const val ABOUT_ROW = "about"
 
+/** Row key of « Sous-titres ». */
+internal const val SUBTITLES_ROW = "subtitles"
+
 /**
  * Paramètres: one row per Provider with its Santé badge and account summary
  * (ROADMAP M3 « Paramètres par Provider »). The CI file is fetched in the
  * background; the list composes at once from what is in memory.
  */
 @Composable
-fun SettingsScreen(state: SettingsUiState, onOpenProvider: (String) -> Unit, onOpenAbout: () -> Unit) {
+fun SettingsScreen(
+    state: SettingsUiState,
+    onOpenSubtitles: () -> Unit,
+    onOpenProvider: (String) -> Unit,
+    onOpenAbout: () -> Unit,
+) {
     val groups = ProviderGroups.all
     val ci = rememberCiHealth()
-    val requesters = remember { (groups.map { it.id } + ABOUT_ROW).associateWith { FocusRequester() } }
+    val requesters = remember { (listOf(SUBTITLES_ROW) + groups.map { it.id } + ABOUT_ROW).associateWith { FocusRequester() } }
+    val subtitles by ReplayboxApplication.subtitleStyle.style.collectAsState()
     val update by ReplayboxApplication.updater.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        val target = state.lastGroupId?.takeIf { it in requesters } ?: groups.first().id
+        val target = state.lastGroupId?.takeIf { it in requesters } ?: SUBTITLES_ROW
         runCatching { requesters.getValue(target).requestFocus() }
     }
 
@@ -66,10 +75,23 @@ fun SettingsScreen(state: SettingsUiState, onOpenProvider: (String) -> Unit, onO
         modifier = Modifier
             .fillMaxSize()
             .padding(start = Rb.contentStart, top = Rb.safeVertical + 8.dp, end = Rb.safeHorizontal),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(ROW_GAP),
     ) {
         Text(stringResource(R.string.settings_title), style = RbType.displayCompact, color = Rb.text)
-        Spacer(Modifier.size(8.dp))
+        Spacer(Modifier.size(4.dp))
+        SettingsRow(
+            title = stringResource(R.string.settings_subtitles),
+            summary = stringResource(
+                R.string.subtitle_summary,
+                sizeLabel(subtitles.size),
+                backgroundLabel(subtitles.background).lowercase(),
+            ),
+            requester = requesters.getValue(SUBTITLES_ROW),
+            onClick = {
+                state.lastGroupId = SUBTITLES_ROW
+                onOpenSubtitles()
+            },
+        )
         for (group in groups) {
             SettingsRow(
                 title = group.name,
@@ -118,7 +140,7 @@ private fun SettingsRow(
             .tvClickable(onClick)
             .focusRing(focused, ROW_RADIUS)
             .background(if (focused) Rb.surfaceRaised else Rb.surface, Rb.cardShape)
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .padding(horizontal = 24.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
@@ -187,6 +209,9 @@ internal fun rememberCiHealth(): Map<String, CiHealth> {
 }
 
 private val ROW_WIDTH = 600.dp
+
+/** Five 72 dp rows and the title fit the 540 dp canvas inside the safe frame. */
+private val ROW_GAP = 12.dp
 
 /** Matches Rb.cardShape so the ring stays concentric with the row. */
 private val ROW_RADIUS = 10.dp
