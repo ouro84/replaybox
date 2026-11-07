@@ -1,0 +1,75 @@
+{
+ "id": "clip_13179913",
+ "type": "vi",
+ "title": "Épisode 12 - finale - Partie 2",
+ "description": "La capitale thaïlandaise, Bangkok, sera le théâtre de la grande finale de cette 22e saison. Les finalistes s’y affronteront dans des lieux emblématiques, offrant un décor spectaculaire pour cette ultime étape.\r\nCette course unique sera formée de trois sprints intermédiaires pendant lesquels les deux équipes tenteront de gagner un maximum d’argent, jusqu’à 100 000 euros. C’est la fameuse règle du « Time is money » : la première équipe arrivée déclenchera une balise qui, chaque seconde, fera perdre 10 euros à la deuxième équipe. Ensuite, place au grand sprint final qui verra l’un des binômes repartir avec le montant de sa cagnotte et décrocher le titre !\r\nLes nerfs des candidats seront mis à rude épreuve lors de missions redoutables : dégustation de mets thaïlandais dans le marché flottant de Damnoen Saduak, mission vertigineuse au sommet de la tour MahaNakhon et défis au stade de boxe de Rangsit. \r\nLes équipes ne se feront plus de cadeaux et c’est une lutte acharnée que se livreront les finalistes. Quel binôme aura la chance de remporter le titre si convoité de gagnant de la saison 22 de Pékin Express ?",
+ "duration": 4004,
+ "display_image": {
+  "external_key": "4946687",
+  "role": "vignette",
+  "id": 4683118
+ },
+ "service_display": {
+  "code": "m6replay"
+ },
+ "program": {
+  "id": 945,
+  "code": "pekin-express"
+ },
+ "clips": [
+  {
+   "product": {
+    "season": 22,
+    "episode": 12,
+    "part_number": 2,
+    "first_diffusion": "2026-05-22 22:10:00",
+    "season_title": "Saison 22"
+   },
+   "type": "vi",
+   "assets": [
+    {
+     "type": "usp_dashcenc_h264",
+     "video_quality": "sd",
+     "video_container": "mpd",
+     "video_protection": "software",
+     "full_physical_path": "https://lbcdn.6cloud.fr/resource/m6web/s/m6web/output/4/a/b/4abfcc2c2ef26cb7d4023d854f98ea2aeb653aaf/static/13179913_ed12e9c85441a5cb6ef53e812943b57b_web_dash_upTo720p_720p_vbr_cae_drm_software.mpd?expiration=1794084229&scheme=https&groups%5B0%5D=m6web&countries=QUR8RlJ8R1B8R0Z8TVF8WVR8TUN8TkN8UEZ8UkV8Qkx8TUZ8UE18VEZ8V0Y%3D&token=trimmed"
+    },
+    {
+     "type": "usp_dashcenc_h264",
+     "video_quality": "hd",
+     "video_container": "mpd",
+     "video_protection": "software",
+     "full_physical_path": "https://lbcdn.6cloud.fr/resource/m6web/s/m6web/output/4/a/b/4abfcc2c2ef26cb7d4023d854f98ea2aeb653aaf/static/13179913_565a2f1f38bbdecbd023a54b02cae7e0_web_dash_upTo1080p_1080p_vbr_cae_drm_software.mpd?expiration=1794084229&scheme=https&groups%5B0%5D=m6web&countries=QUR8RlJ8R1B8R0Z8TVF8WVR8TUN8TkN8UEZ8UkV8Qkx8TUZ8UE18VEZ8V0Y%3D&token=trimmed"
+    },
+    {
+     "type": "usp_hlsfp_h264",
+     "video_quality": "sd",
+     "video_container": "m3u8",
+     "video_protection": "software",
+     "full_physical_path": "https://lbcdn.6cloud.fr/resource/m6web/s/m6web/output/4/a/b/4abfcc2c2ef26cb7d4023d854f98ea2aeb653aaf/static/13179913_416ffb1cd02001807d683940aa3f0878_web_hls_upTo720p_720p_vbr_cae_drm_software.m3u8?expiration=1794084229&scheme=https&groups%5B0%5D=m6web&countries=QUR8RlJ8R1B8R0Z8TVF8WVR8TUN8TkN8UEZ8UkV8Qkx8TUZ8UE18VEZ8V0Y%3D&token=trimmed"
+    },
+    {
+     "type": "usp_hlsfp_h264",
+     "video_quality": "hd",
+     "video_container": "m3u8",
+     "video_protection": "software",
+     "full_physical_path": "https://lbcdn.6cloud.fr/resource/m6web/s/m6web/output/4/a/b/4abfcc2c2ef26cb7d4023d854f98ea2aeb653aaf/static/13179913_00b5eb7a84a8197f174a9d3c0bcba432_web_hls_upTo1080p_1080p_vbr_cae_drm_software.m3u8?expiration=1794084229&scheme=https&groups%5B0%5D=m6web&countries=QUR8RlJ8R1B8R0Z8TVF8WVR8TUN8TkN8UEZ8UkV8Qkx8TUZ8UE18VEZ8V0Y%3D&token=trimmed"
+    },
+    {
+     "type": "usp_dashcenc_h264",
+     "video_quality": "sd",
+     "video_container": "mpd",
+     "video_protection": "software",
+     "full_physical_path": "https://lbcdn.6cloud.fr/resource/m6web/s/m6web/output/4/a/b/4abfcc2c2ef26cb7d4023d854f98ea2aeb653aaf/static/13179913_1640704d5944f75b9b856dad0c392afe_web_dash_upTo576p_540p_vbr_cae_drm_software.mpd?expiration=1794084229&scheme=https&groups%5B0%5D=m6web&countries=QUR8RlJ8R1B8R0Z8TVF8WVR8TUN8TkN8UEZ8UkV8Qkx8TUZ8UE18VEZ8V0Y%3D&token=trimmed"
+    },
+    {
+     "type": "usp_hlsfp_h264",
+     "video_quality": "sd",
+     "video_container": "m3u8",
+     "video_protection": "software",
+     "full_physical_path": "https://lbcdn.6cloud.fr/resource/m6web/s/m6web/output/4/a/b/4abfcc2c2ef26cb7d4023d854f98ea2aeb653aaf/static/13179913_99ffef32ea8f0f812b91a6f682b9f9c6_web_hls_upTo576p_540p_vbr_cae_drm_software.m3u8?expiration=1794084229&scheme=https&groups%5B0%5D=m6web&countries=QUR8RlJ8R1B8R0Z8TVF8WVR8TUN8TkN8UEZ8UkV8Qkx8TUZ8UE18VEZ8V0Y%3D&token=trimmed"
+    }
+   ]
+  }
+ ]
+}
