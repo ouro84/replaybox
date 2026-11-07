@@ -1,0 +1,59 @@
+{
+ "item": {
+  "program_path": "france-2_envoye-special",
+  "label": "Envoyé spécial"
+ },
+ "collections": [
+  {
+   "type": "playlist_video",
+   "label": "Les émissions",
+   "items": [
+    {
+     "id": 8952957,
+     "title": "Émission du jeudi 29 octobre 2026",
+     "type": "integrale",
+     "season": null,
+     "episode": null,
+     "broadcast_begin_date": 1793304564,
+     "broadcast_end_date": 1793311359,
+     "begin_date": 1793311395,
+     "end_date": 1808949795,
+     "duration": 6795,
+     "si_id": "c50fc04d-988b-493b-bf04-a0b9fc386a56",
+     "episode_title": "Émission du jeudi 29 octobre 2026",
+     "broadcast_channel": "france-2"
+    },
+    {
+     "id": 9031819,
+     "title": "La grande brocante des trumpistes",
+     "type": "integrale",
+     "season": null,
+     "episode": null,
+     "broadcast_begin_date": 1793311200,
+     "broadcast_end_date": 1793312450,
+     "begin_date": 1793311200,
+     "end_date": 1816811999,
+     "duration": 1250,
+     "si_id": "fb7ba4ee-e1a3-4830-a65d-daa10a96a033",
+     "episode_title": "La grande brocante des trumpistes",
+     "broadcast_channel": null
+    },
+    {
+     "id": 9031612,
+     "title": "Immersion en eaux profondes",
+     "type": "integrale",
+     "season": null,
+     "episode": null,
+     "broadcast_begin_date": 1793285412,
+     "broadcast_end_date": 1793288464,
+     "begin_date": 1793306605,
+     "end_date": 1808948580,
+     "duration": 3052,
+     "si_id": "bb0802b2-d3a7-11f1-88b7-19616fa871f9",
+     "episode_title": "Immersion en eaux profondes",
+     "broadcast_channel": null
+    }
+   ]
+  }
+ ]
+}

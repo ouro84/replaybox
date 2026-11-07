@@ -1,0 +1,62 @@
+[
+ {
+  "id": "clip_13203441",
+  "type": "vi",
+  "title": "Épisode 5",
+  "duration": 3031,
+  "service_display": {
+   "code": "m6replay"
+  },
+  "program": {
+   "id": 28540,
+   "code": "wanted-attrape-moi-si-tu-peux"
+  },
+  "publication_date": "2026-11-05 22:15:56",
+  "update_date": "2026-11-07 07:38:35",
+  "clips": [
+   {
+    "product": {
+     "season": 1,
+     "episode": 3,
+     "part_number": 1,
+     "first_diffusion": "2026-11-05 21:10:00",
+     "last_diffusion": "2026-11-05 21:10:00",
+     "first_local_air_date": "2026-11-05 00:00:00",
+     "displayed_broadcast_date": null,
+     "season_title": "Saison 1"
+    },
+    "type": "vi"
+   }
+  ]
+ },
+ {
+  "id": "clip_13202596",
+  "type": "vi",
+  "title": "Épisode 3",
+  "duration": 2892,
+  "service_display": {
+   "code": "m6replay"
+  },
+  "program": {
+   "id": 28540,
+   "code": "wanted-attrape-moi-si-tu-peux"
+  },
+  "publication_date": "2026-11-05 22:05:56",
+  "update_date": "2026-11-07 07:38:14",
+  "clips": [
+   {
+    "product": {
+     "season": 1,
+     "episode": 2,
+     "part_number": 1,
+     "first_diffusion": "2026-10-29 21:10:00",
+     "last_diffusion": "2026-10-29 21:10:00",
+     "first_local_air_date": "2026-10-29 00:00:00",
+     "displayed_broadcast_date": null,
+     "season_title": "Saison 1"
+    },
+    "type": "vi"
+   }
+  ]
+ }
+]

@@ -1,0 +1,91 @@
+{
+ "data": {
+  "programBySlug": {
+   "slug": "jt-20h",
+   "videos": {
+    "total": 7,
+    "items": [
+     {
+      "id": "1e5b27a0-96e8-40be-b9f2-33b4483ee701",
+      "slug": "le-jt-de-20-heures-de-tf1-du-vendredi-6-novembre-2026-37896181",
+      "emId": "2124713",
+      "type": "REPLAY",
+      "rating": "CSA_ALL",
+      "date": "2026-11-06T18:57:51Z",
+      "episode": 133,
+      "season": 26,
+      "authEnabled": true,
+      "isRecent": true,
+      "published": "2026-11-06T19:39:50Z",
+      "url": "https://www.tf1.fr/tf1/jt-20h/videos/le-jt-de-20-heures-de-tf1-du-vendredi-6-novembre-2026-37896181.html",
+      "broadcastChannel": {
+       "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+       "slug": "tf1",
+       "__typename": "Channel"
+      },
+      "playingInfos": {
+       "duration": 2520,
+       "remainingDays": 7,
+       "freeRemainingDays": 7,
+       "__typename": "PlayingInfos"
+      },
+      "rights": [
+       "BASIC",
+       "MAX"
+      ],
+      "__typename": "Video",
+      "decoration": {
+       "label": "Le JT de 20 heures de TF1 du vendredi 6 novembre 2026"
+      }
+     },
+     {
+      "id": "184b9757-5871-4cef-84bf-1cfa342d7c97",
+      "slug": "le-jt-de-20-heures-de-tf1-du-samedi-31-octobre-2026-59774585",
+      "emId": "2124711",
+      "type": "REPLAY",
+      "rating": "CSA_ALL",
+      "date": "2026-10-31T18:57:54Z",
+      "episode": 131,
+      "season": 26,
+      "authEnabled": true,
+      "isRecent": false,
+      "published": "2026-10-31T19:39:59Z",
+      "url": "https://www.tf1.fr/tf1/jt-20h/videos/le-jt-de-20-heures-de-tf1-du-samedi-31-octobre-2026-59774585.html",
+      "broadcastChannel": {
+       "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+       "slug": "tf1",
+       "__typename": "Channel"
+      },
+      "playingInfos": {
+       "duration": 2525,
+       "remainingDays": 1,
+       "freeRemainingDays": 1,
+       "__typename": "PlayingInfos"
+      },
+      "rights": [
+       "BASIC",
+       "MAX"
+      ],
+      "__typename": "Video",
+      "decoration": {
+       "label": "Le JT de 20 heures de TF1 du samedi 31 octobre 2026"
+      }
+     }
+    ],
+    "__typename": "VideosConnector"
+   }
+  }
+ },
+ "extensions": {
+  "report": {
+   "stream": "web",
+   "catalogCode": "fr-fr",
+   "version": "v1.36.3",
+   "execution": {
+    "start": 1794059302965137290,
+    "end": 1794059302982673089,
+    "time": 17535972
+   }
+  }
+ }
+}

@@ -21,7 +21,7 @@ class Tf1ReplayPaginationTest {
 
     @Test
     fun `last page of profilage is a partial page of the same total`() {
-        val page = Tf1Parsers.replayPage(TestFixtures.load("tf1_program_by_slug_profilage_last_page.json"))
+        val page = Tf1Parsers.replayPage(TestFixtures.load("tf1_program_by_slug_profilage_last_page.json"), java.time.Instant.EPOCH)
         assertThat(page.total).isEqualTo(102)
         assertThat(page.videos.map { it.season }).containsExactly(2, 2)
     }

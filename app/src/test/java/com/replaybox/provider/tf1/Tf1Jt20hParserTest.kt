@@ -13,7 +13,7 @@ class Tf1Jt20hParserTest {
     @Test
     fun `le 20h is one numbered Saison with the latest replay first`() {
         val show = ShowId("jt-20h")
-        val page = Tf1Parsers.replayPage(TestFixtures.load("tf1_program_by_slug_jt_20h.json"))
+        val page = Tf1Parsers.replayPage(TestFixtures.load("tf1_program_by_slug_jt_20h.json"), java.time.Instant.EPOCH)
         assertThat(page.total).isEqualTo(7)
 
         val seasons = Tf1Parsers.seasonsFromVideos(show, page.videos)

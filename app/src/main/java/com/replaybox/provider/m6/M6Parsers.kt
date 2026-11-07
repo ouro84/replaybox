@@ -15,7 +15,9 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 /**
@@ -92,7 +94,10 @@ object M6Parsers {
         val firstDiffusion: String?,
         val durationSeconds: Int?,
         val thumbnailUrl: String?,
-    )
+    ) {
+        /** [firstDiffusion] read as Paris local time (SPEC §Provider M6+). */
+        val broadcastAt: Instant? get() = firstDiffusion?.let(::parisInstant)
+    }
 
     /** One page of `/programs/{id}/videos?type=vi`; [totalHeader] is `x-rest-collection-count`. */
     fun videoPage(body: String, totalHeader: Int?): VideoPage {
@@ -154,6 +159,9 @@ object M6Parsers {
                     broadcastDate = v.firstDiffusion?.let(::displayDate),
                     durationSeconds = v.durationSeconds,
                     thumbnailUrl = v.thumbnailUrl,
+                    // Measured 2026-11-07: `publication_date` is rewritten a week after the
+                    // broadcast and no end of availability is listed, so only this instant.
+                    broadcastAt = v.broadcastAt,
                 )
             }
     }
@@ -164,6 +172,12 @@ object M6Parsers {
     /** `first_diffusion` is Paris local time « 2026-05-22 22:10:00 »; shown « 22/05/2026 ». */
     private fun displayDate(raw: String): String? =
         runCatching { DISPLAY_DATE.format(LocalDateTime.parse(raw, SOURCE_DATE)) }.getOrNull()
+
+    private val PARIS: ZoneId = ZoneId.of("Europe/Paris")
+
+    /** Paris wall-clock time to an instant; in the autumn overlap hour the earlier offset wins. */
+    internal fun parisInstant(raw: String): Instant? =
+        runCatching { LocalDateTime.parse(raw, SOURCE_DATE).atZone(PARIS).toInstant() }.getOrNull()
 
     // ---- One video → manifest ----
 
