@@ -8,11 +8,14 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 /**
  * One JUnit case per [ProviderProbe]. Each writes
- * `build/healthcheck/<probe>.json` {provider, label, ok, step, error, detail}
- * that the workflow turns into the « health-check KO » issue.
+ * `build/healthcheck/<probe>.json` {provider, label, ok, step, error, detail,
+ * checkedAt} that the workflow turns into the « health-check KO » issue and the
+ * public status file (.github/scripts/healthcheck-status.js).
  *
  * Run: ./gradlew testDebugUnitTest -PhealthCheck
  * Simulate a KO: HEALTHCHECK_SIMULATE_FAILURE=tf1|francetv.
@@ -48,6 +51,7 @@ class NightlyHealthCheck(private val probe: ProviderProbe) {
             put("step", result.step)
             put("error", result.error)
             put("detail", result.detail)
+            put("checkedAt", Instant.now().truncatedTo(ChronoUnit.SECONDS).toString())
         }
         File(dir, "${probe.name}.json").writeText(json.toString())
     }

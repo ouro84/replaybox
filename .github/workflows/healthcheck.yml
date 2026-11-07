@@ -1,6 +1,8 @@
 # Nightly health-check (SPEC §CI, ADR 0002): one Épisode per Provider pushed
 # through the real Provider chain up to its Flux. The only real-network test of
 # the project. On failure, opens (or updates) the « health-check KO » issue.
+# Every run also force-pushes healthcheck.json to the orphan `status` branch,
+# read by the app (SPEC §CI).
 name: health-check
 
 on:
@@ -15,7 +17,7 @@ on:
         options: [none, tf1, francetv]
 
 permissions:
-  contents: read
+  contents: write # push the `status` branch
   issues: write
 
 concurrency:
@@ -100,6 +102,25 @@ jobs:
                 state: 'closed', state_reason: 'completed' });
               core.notice(`Closed issue #${existing.number}`);
             }
+
+      # Single-commit orphan branch, force-pushed each run: the file is always
+      # at raw.githubusercontent.com/<repo>/status/healthcheck.json. No result
+      # at all (build broken) still publishes every known Provider KO at `build`.
+      - name: Publish healthcheck.json to the status branch
+        if: always()
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          out="$RUNNER_TEMP/status"
+          node .github/scripts/healthcheck-status.js app/build/healthcheck "$out/healthcheck.json"
+          cd "$out"
+          git init -q -b status
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add healthcheck.json
+          git commit -q -m "chore: health-check status $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push -q --force "https://x-access-token:${GH_TOKEN}@${GITHUB_SERVER_URL#https://}/${GITHUB_REPOSITORY}.git" HEAD:status
 
       - name: Fail the job on KO
         if: steps.run.outcome != 'success'
