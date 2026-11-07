@@ -216,11 +216,11 @@ A cool, low-chroma neutral ramp with one warm accent. The key art supplies all o
 ### Hierarchy
 - **Display** (Bold 700, 40 sp, 46 sp line): The title of the focused or billboard item in the detail panel. One line.
 - **Display Compact** (Bold 700, 30 sp, 36 sp line): Replaces Display when the title overflows one line. Up to two lines, then ellipsis.
-- **Rail Title** (Medium 500, 20 sp, 26 sp line): Rail headings ("Reprendre", "Favoris", Genre names) and dialog titles.
+- **Rail Title** (Medium 500, 20 sp, 26 sp line): Rail headings ("Reprendre", "Favoris", Genre names), Genre tiles and dialog titles.
 - **Body** (Regular 400, 18 sp, 26 sp line): Synopsis (max 2 lines in a 540 dp column), dialog hint, empty-catalog line.
 - **Body Strong** (Medium 500, 18 sp, 24 sp line): Metadata line under the title ("France 3 · Policier & Thriller"), button labels, nav labels.
 - **Meta** (Regular 400, 16 sp, 22 sp line): Remaining time ("34 min restantes"), stale notice, update chip.
-- **Card Title** (Medium 500, 16 sp, 22 sp line): Title under a Reprendre card and on missing-art plates.
+- **Card Title** (Medium 500, 16 sp, 22 sp line): Title under a Reprendre card or a grid poster, on missing-art plates, and the « Tout voir » card label.
 - **Label** (Regular 400, 14 sp, 20 sp line): The floor. Defined and mapped to Material `bodySmall`/`labelSmall`, but not used on Home.
 
 The Material3 mapping covers screens that still read `MaterialTheme.typography`: headlineLarge = Display, headlineMedium = 32/38 sp Bold, headlineSmall = 24/30 sp Medium, titleLarge = Rail Title, titleMedium and labelLarge = Body Strong, bodyLarge = Body, bodyMedium and labelMedium = Meta, bodySmall and labelSmall = Label.
@@ -288,6 +288,7 @@ Quiet at rest, unmistakable on focus.
 
 ### Cards
 - **Poster card (Programme):** 3:4, 116 dp wide, 10 dp corners, no caption. The detail panel names the focused item.
+- **« Tout voir » card:** ends a Home Genre rail only when the rail is truncated (more Programmes than its 40 cards); a complete rail has none. Same size as a poster (116 dp, 3:4, 10 dp corners), Raised Slate plate, « Tout voir » centred in Card Title, Paper White. Card focus. While focused, the detail panel shows the Genre name alone. OK opens the « Tout voir » grid of that Genre.
 - **Reprendre card (Épisode):** 16:9 thumbnail, 176 dp wide, 10 dp corners, with a 4 dp progress bar along the bottom edge (amber over track). Below it, 14 dp down: the Programme title (Card Title, Paper White, 1 line) and the remaining time in words (Meta, Mist). It shows no Chaîne.
 - **Expiry on a Reprendre card:** when the Épisode ends within 7 days, a freshness pill (« Dernier jour », « Plus qu'un jour », « Plus que N jours ») replaces the remaining-time line, 2 dp below the title. It is never added next to it. The progress bar stays. « Hier soir » and « Nouveau » never appear on these cards.
 - **Focus:** scale 1.1 in 200 ms plus the concentric white ring (see Shapes).
@@ -301,8 +302,8 @@ The top of Home always describes something. On launch it shows the most recent R
 A 4 dp pill, amber fill over the track, always paired with the remaining time in words ("34 min restantes", "1 h 05 restantes", "Moins d'une minute"). Progression is never coded by the bar alone.
 
 ### Navigation (nav rail)
-- **Collapsed (content focused):** 72 dp, on the ground, icons only (Home, Search, Settings, 24 dp). Items are 48 dp pills with 12 dp inset and 8 dp spacing, starting 27 + 72 dp from the top.
-- **Expanded (focus inside):** widens to 232 dp over a slate-surface panel in 200 ms, labels fade in ("Accueil", "Recherche", "Paramètres", Body Strong, 16 dp after the icon), and the content dims to 72 %.
+- **Collapsed (content focused):** 72 dp, on the ground, icons only, 24 dp. Four destinations in this order: Accueil (Home), Genres (Material « Category »: triangle, circle, square), Recherche (Search), Paramètres (Settings). Items are 48 dp pills with 12 dp inset and 8 dp spacing, starting 27 + 72 dp from the top.
+- **Expanded (focus inside):** widens to 232 dp over a slate-surface panel in 200 ms, labels fade in ("Accueil", "Genres", "Recherche", "Paramètres", Body Strong, 16 dp after the icon), and the content dims to 72 %.
 - **Selected:** raised-slate pill, amber icon, Paper White label.
 - **Focused:** white pill, ink icon and label, scaled 1.06 over 200 ms (same lift as panel buttons), so focus never relies on color alone.
 - **Entry:** focus entering the rail always lands on the current destination.
@@ -422,14 +423,40 @@ Verified on the Bbox (2026-11-07). One list, one level of pages; Back from a pag
 
 **Account form.** Rail Title « Connexion <Provider> », the account state in Body Strong, a Meta Mist hint, two 540 x 52 dp fields (Search field look: raised slate, 8 dp corners, ring on focus), then panel buttons « Se connecter » and, when signed in, « Se déconnecter ». The initial focus is « Se connecter », never a field, so reading the Santé does not raise the keyboard. UP/DOWN leave a field instead of moving its cursor. Errors read in Body Soft Coral, in French; the English exception text stays in the logs and the Santé line.
 
-**À propos.** Title in Display Compact, « Version X.Y.Z » in Body Strong, one status line in Body Mist, then one panel button, which is the initial focus:
+**À propos.** Title in Display Compact, the logo (see Logo), « Version X.Y.Z » in Body Strong, one status line in Body Mist, then one panel button, which is the initial focus:
 - « Rechercher une mise à jour » runs the GitHub check; the status reads « Recherche en cours… », then « Tu as la dernière version. » or « Impossible de vérifier les mises à jour. Vérifie la connexion. ».
 - Once a newer APK is downloaded, the status reads « La version X.Y.Z est prête à être installée. » and the button becomes « Installer ».
 The Home update chip stays; « À propos » is where to look when it is not shown.
 
+### Genres
+The nav rail's « Genres » destination.
+- **Layout:** title « Genres » in Display Compact at 104 dp, then 28 dp below, the 9 canonical Genres in glossary order (Séries, Films, Policier & Thriller / Comédie, Drame, Documentaire / Jeunesse, Divertissement, Sport & Info) as a 3 × 3 grid of text tiles, 20 dp apart, from 104 dp to the 48 dp safe edge (256 x 112 dp each).
+- **Tile:** Raised Slate plate with 10 dp corners, the Genre name in Rail Title, Paper White, bottom left with a 20 x 16 dp inset. No image, no count.
+- **Focus:** the card idiom, a 1.1 lift plus the concentric white ring 3 dp outside. The plate stays Raised Slate.
+- **OK** opens the « Tout voir » grid of that Genre.
+- **Focus line:** initial focus is the first tile (Séries) on each entry from the rail; Back goes to Home, on the card that had focus; on return from a grid, focus is on the tile that opened it.
+
+### Tout voir
+The grid of one Genre, opened from a Genres tile or from the « Tout voir » card of a Home rail.
+- **Header:** the Genre name in Display Compact at 104 dp, then one row of Chaîne-group chips 16 dp below, 12 dp apart: « Tout », « TF1 », « France TV », « M6+ ». A group shows only when one of its Chaînes is listed, so « M6+ » appears only with an M6+ account. The header scrolls away with the grid.
+- **Chips:** single choice, selected on OK, never on focus, so crossing the row reloads nothing (like the Saison pills). Selected: Raised Slate plus a 20 dp check before the label, never colour alone. Focused: white fill, ink label, 1.06 lift. Other: Mist label, no fill. 40 dp tall, 20 dp horizontal padding, Body Strong.
+- **Grid:** the Search results grid. Six 3:4 posters per row, 20 dp gap, 28 dp between rows, between 104 dp and the 48 dp safe edge, with the Home card focus. Each poster has the Search caption: the title in Card Title (2 lines), then « Chaîne · Genre » in Meta Mist. One shared component (`PosterCaptionCard`) draws both grids.
+- **Content:** every Programme of the Genre on every listed Chaîne of every Provider, from the cached listings only (no crawl). France TV shows what its cache holds. The same title on two Chaînes is shown once, inside the selected filter.
+- **Order:** most recent first, then title (case- and accent-insensitive). No listing gives the date of a Programme's latest Épisode: TF1's `replayRecent.total` is a count on TF1 only, and France TV and M6 expose nothing. Recency is therefore the day the box first listed the Programme (`firstSeenAt`, kept across refreshes), the same signal that orders the Home rails. Within a day the exact time is ignored: one refresh writes the Chaînes seconds apart. On a fresh install every Programme shares one day and the grid reads alphabetically; newcomers lead from the next day on.
+- **States:** loading shows two rows of skeleton posters (slate surface, with a caption bar), no spinner. Empty reads « Aucun Programme dans ce Genre. » in Body Mist at 104 dp.
+- **Focus line:** initial focus is the first poster (the selected chip when the grid is empty). Back goes to where the grid was opened: the Genres page, on the tile, or Home, on the « Tout voir » card. On return from a Programme page, the filter, scroll and focused poster (or chip) are restored.
+
+### Logo and launcher banner
+Chosen 2026-11-07 (piste A « Reprise »), verified in the Bbox launcher (« Mes services » row).
+- **Symbol:** an amber (Progression Amber) replay arrow, counterclockwise with its gap at the top and its head at the top right, around a Paper White play triangle. The logo is the one sanctioned use of amber outside Progression and the current destination: amber means « reprendre ».
+- **Wordmark:** « Replaybox » in Manrope ExtraBold (SIL OFL 1.1), vectorised, Paper White, -0.6 tracking.
+- **Banner** (`android:banner`, 320 x 180 dp): Night Ground plate, symbol at left (centre 74,90, radius 30, 8 dp stroke), wordmark from x 124 on a 101 dp baseline.
+- **Icon** (`android:icon`, adaptive): Night Ground background, the symbol alone centred in the 66 dp safe zone.
+- **Source:** `scripts/logo/make_logo.py` regenerates both vectors from the Manrope variable font (instanced at weight 800); the font itself is not in the repo.
+- **In the app:** only on « À propos », 240 x 90 dp (banner cropped top and bottom, pulled 30 dp left so the symbol sits on the 104 dp text column). No splash screen, no logo in the nav rail.
+
 ### Not yet specified
 These are not built in this system yet. Do not infer them from Home:
-- The Genre page and "Tout voir".
 - Error states beyond the stale notice and the empty-catalog line.
 
 ## Do's and Don'ts

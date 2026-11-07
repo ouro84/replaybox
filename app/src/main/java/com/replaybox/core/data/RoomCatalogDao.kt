@@ -144,6 +144,7 @@ class RoomCatalogDao(
                 synopsis = it.synopsis,
                 backdropUrl = it.backdropUrl,
                 recentEpisodeCount = it.recentEpisodeCount,
+                firstSeenAt = it.firstSeenAt,
                 genres = genres[it.id].orEmpty().mapNotNull { g -> runCatching { Genre.valueOf(g) }.getOrNull() }.toSet(),
             )
         }

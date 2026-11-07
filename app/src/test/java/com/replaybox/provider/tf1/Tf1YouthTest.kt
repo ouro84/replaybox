@@ -45,7 +45,7 @@ class Tf1YouthTest {
             for ((channel, group) in entries.groupBy { it.channelId }) {
                 dao.putListing(channel, group.map { it.show }, 0L)
             }
-            val rails = CatalogStore(dao, clock = { 0L }).genreRails(entries.map { it.channelId }.distinct()).toMap()
+            val rails = CatalogStore(dao, clock = { 0L }).genreRails(entries.map { it.channelId }.distinct()).associate { it.genre to it.shows }
             assertThat(rails.getValue(Genre.YOUTH).map { it.show.id.value }).contains("pokemon")
             assertThat(rails[Genre.SERIES]).isNull()
         }

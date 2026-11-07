@@ -40,7 +40,7 @@ class FakeCatalogDao : CatalogDao {
     }
 
     override suspend fun shows(channelId: String): List<Show> =
-        shows[channelId].orEmpty().sortedWith(
+        shows[channelId].orEmpty().map { it.copy(firstSeenAt = firstSeen[it.id.value]?.first ?: 0) }.sortedWith(
             compareByDescending<Show> { (firstSeen[it.id.value]?.first ?: 0) / 86_400_000 }
                 .thenBy { firstSeen[it.id.value]?.first ?: 0 }
                 .thenBy { firstSeen[it.id.value]?.second ?: 0 },

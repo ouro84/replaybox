@@ -110,15 +110,15 @@ Fondations :
 - [ ] Design system Compose for TV (couleurs, typo, formes, focus) documenté dans `DESIGN.md`
 - [ ] États de focus D-pad lisibles à 3 m sur tous les écrans, focus initial défini partout
 - [x] Lisibilité des sous-titres réglable (taille, fond)
-- [ ] Logo et bannière launcher
+- [x] Logo et bannière launcher
 
 Accueil & navigation :
 
-- [ ] Rail de navigation latéral (Accueil, Genres, Recherche, Paramètres)
+- [x] Rail de navigation latéral (Accueil, Genres, Recherche, Paramètres)
 - [x] Billboard « à la une » avec action Reprendre
 - [ ] Rail « À suivre » en tête d'accueil (Épisodes en cours et nouveaux Épisodes des Programmes épinglés)
 - [x] Fond dynamique tiré du visuel focalisé
-- [ ] Grille « Tout voir » par Genre
+- [x] Grille « Tout voir » par Genre
 
 Catalogue (dettes M3) :
 

@@ -92,9 +92,9 @@ class HomeRailsTest {
             )
 
             val rails = catalog.genreRails(listOf("tf1", "france-2"))
-            assertThat(rails.map { it.first })
+            assertThat(rails.map { it.genre })
                 .containsExactly(Genre.SERIES, Genre.CRIME_THRILLER, Genre.ENTERTAINMENT).inOrder()
-            val crime = rails.first { it.first == Genre.CRIME_THRILLER }.second
+            val crime = rails.first { it.genre == Genre.CRIME_THRILLER }.shows
             assertThat(crime.map { it.show.id.value }).containsExactly("t1", "f1", "t2").inOrder()
             assertThat(crime.map { it.channelId }).containsExactly("tf1", "france-2", "tf1").inOrder()
         }
@@ -111,11 +111,11 @@ class HomeRailsTest {
             dao.putListing("tf1", listOf(a, b, c), 0)
             // Same evening, editorial reshuffle plus a newcomer.
             dao.putListing("tf1", listOf(c, show("d", "Delta", Genre.SERIES), a, b), 1_000)
-            val sameDay = catalog.genreRails(listOf("tf1")).single().second.map { it.show.id.value }
+            val sameDay = catalog.genreRails(listOf("tf1")).single().shows.map { it.show.id.value }
             assertThat(sameDay).containsExactly("a", "b", "c", "d").inOrder()
             // Next day: the newcomer of that day leads, the rest stays put.
             dao.putListing("tf1", listOf(show("e", "Epsilon", Genre.SERIES), b, a), 86_400_000L + 5)
-            val nextDay = catalog.genreRails(listOf("tf1")).single().second.map { it.show.id.value }
+            val nextDay = catalog.genreRails(listOf("tf1")).single().shows.map { it.show.id.value }
             assertThat(nextDay).containsExactly("e", "a", "b").inOrder()
         }
     }
@@ -153,9 +153,31 @@ class HomeRailsTest {
             val dao = FakeCatalogDao()
             dao.putListing("tf1", (1..100).map { show("s$it", "Série $it", Genre.SERIES) }, 0)
             val rails = CatalogStore(dao).genreRails(listOf("tf1"))
-            val series = rails.first { it.first == Genre.SERIES }.second
+            val series = rails.first { it.genre == Genre.SERIES }.shows
             assertThat(series).hasSize(CatalogStore.GENRE_RAIL_LIMIT)
             assertThat(CatalogStore.GENRE_RAIL_LIMIT).isEqualTo(40)
+        }
+    }
+
+    @Test
+    fun `genre rails say when they are truncated`() {
+        blocking {
+            val dao = FakeCatalogDao()
+            dao.putListing(
+                "tf1",
+                (1..4).map { show("s$it", "Série $it", Genre.SERIES) } +
+                    (1..3).map { show("c$it", "Comédie $it", Genre.COMEDY) },
+                0,
+            )
+            // Same title on another Chaîne: merged, so it does not count as one more.
+            dao.putListing("france-2", listOf(show("dup", "Comédie 1", Genre.COMEDY)), 0)
+            val rails = CatalogStore(dao).genreRails(listOf("tf1", "france-2"), perRail = 3)
+                .associateBy { it.genre }
+            assertThat(rails.getValue(Genre.SERIES).shows).hasSize(3)
+            assertThat(rails.getValue(Genre.SERIES).hasMore).isTrue()
+            // Exactly full: no « Tout voir » card.
+            assertThat(rails.getValue(Genre.COMEDY).shows).hasSize(3)
+            assertThat(rails.getValue(Genre.COMEDY).hasMore).isFalse()
         }
     }
 }

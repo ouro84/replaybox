@@ -321,12 +321,13 @@ class CatalogStore(
      * Programmes across [channelIds], interleaved Chaîne by Chaîne (the
      * listings carry no broadcast date to sort on) and de-duplicated on the
      * normalized title. Empty Genres are dropped; each rail is capped at
-     * [perRail] cards (the TF1 Index alone lists ~2900 Programmes).
+     * [perRail] cards (the TF1 Index alone lists ~2900 Programmes) and says
+     * whether the cap cut it ([GenreRail.hasMore]: the « Tout voir » card).
      */
     suspend fun genreRails(
         channelIds: List<String>,
         perRail: Int = GENRE_RAIL_LIMIT,
-    ): List<Pair<Genre, List<ChannelShow>>> {
+    ): List<GenreRail> {
         val listings = channelIds.map { channelId -> listing(channelId).map { ChannelShow(it, channelId) } }
         return Genre.values().mapNotNull { genre ->
             val perChannel = listings.map { listing -> listing.filter { genre in it.show.genres } }
@@ -339,8 +340,18 @@ class CatalogStore(
                     if (seen.add(Titles.normalize(candidate.show.title))) merged += candidate
                 }
             }
-            if (merged.isEmpty()) null else genre to merged.take(perRail)
+            if (merged.isEmpty()) null else GenreRail(genre, merged.take(perRail), hasMore = merged.size > perRail)
         }
+    }
+
+    /**
+     * The « Tout voir » grid of [genre], cache only (no crawl, ADR 0002): every Programme of
+     * the Genre on [channelIds], arranged by [GenreGrid] (recency, then title). France TV
+     * shows what its cached listings hold.
+     */
+    suspend fun genreGrid(genre: Genre, channelIds: List<String>): List<ChannelShow> {
+        val all = channelIds.flatMap { channelId -> listing(channelId).map { ChannelShow(it, channelId) } }
+        return GenreGrid.arrange(all, genre, channelIds = null)
     }
 
     /** Favorites with the Chaîne they are listed on, most recently pinned first. */
@@ -486,3 +497,6 @@ class CatalogStore(
         val FTV_CHANNEL_IDS = listOf("france-2", "france-3", "france-4", "france-5", "franceinfo")
     }
 }
+
+/** One Home Genre rail; [hasMore] when the cap left Programmes out (« Tout voir » card). */
+data class GenreRail(val genre: Genre, val shows: List<ChannelShow>, val hasMore: Boolean)
