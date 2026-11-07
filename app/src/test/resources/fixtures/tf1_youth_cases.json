@@ -1,0 +1,219 @@
+{
+  "data": {
+    "programs": {
+      "total": 5,
+      "items": [
+        {
+          "slug": "pokemon",
+          "name": "Pokémon",
+          "initialChannel": {
+            "slug": "tfx"
+          },
+          "categories": [
+            {
+              "id": "GT_SERIES_AND_FICTIONS"
+            },
+            {
+              "id": "SGT_SERIES"
+            }
+          ],
+          "decoration": {
+            "description": "Sacha oublie une promesse faite à Solgaleo et Lunala dans un rêve. Avec Doudou et ses amis de l'école Pokémon, il explore la Fondation Æther. Mais des secrets s'y cachent. Sacha et ses compagnons devront s'unir pour protéger leurs amis et affronter une mystérieuse puissance.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-1-ac0675-8ede71-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-059764-48032f-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 145
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "yu-gi-oh",
+          "name": "Yu-Gi-Oh!",
+          "initialChannel": {
+            "slug": "tfx"
+          },
+          "categories": [
+            {
+              "id": "GT_SERIES_AND_FICTIONS"
+            },
+            {
+              "id": "SGT_SERIES"
+            }
+          ],
+          "decoration": {
+            "description": "Yugi, lycéen passionné, découvre avec ses amis Joey, Tristan et Téa le Duel de Monstres, un jeu de cartes où des créatures mystiques s'affrontent dans des combats spectaculaires qui font fureur auprès des jeunes.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-1-a51b29-85ca8a-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-300d9d-8683a6-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 97
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "miraculous-chibi",
+          "name": "Miraculous Chibi",
+          "initialChannel": {
+            "slug": "tf1"
+          },
+          "categories": [
+            {
+              "id": "GT_SERIES_AND_FICTIONS"
+            },
+            {
+              "id": "SGT_SERIES"
+            }
+          ],
+          "decoration": {
+            "description": "Miraculous Chibi est une version humoristique de Miraculous : les Aventures de Ladybug et Chat Noir. Ladybug, Chat Noir et leurs amis vivent des situations drôles et décalées avec plein de bonne humeur. ",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-2-a82ae7-6392a2-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-a044ef-ba418d-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 62
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "pawpatrol",
+          "name": "Paw Patrol, la Pat'Patrouille",
+          "initialChannel": {
+            "slug": "tf1"
+          },
+          "categories": [
+            {
+              "id": "GT_YOUTH"
+            },
+            {
+              "id": "SGT_THREE_TO_SIX_YEARS"
+            }
+          ],
+          "decoration": {
+            "description": "Ryder, 10 ans, dirige la Pat'Patrouille : 6 chiots héroïques aux talents uniques. Marcus le pompier, Ruben le constructeur, Stella l'aviatrice, Chase le policier, Rocky le recycleur et Zuma le sauveteur en mer. Ensemble, ils accomplissent les missions de sauvetage dans la Grande Vallée.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-1-paw-patrol_10-06-2026-44b68e-af395f-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-paw-patrol_10-06-2026-d9e400-4455b2-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 227
+          },
+          "replayRecent": {
+            "total": 3
+          }
+        },
+        {
+          "slug": "oui-oui-enquetes-au-pays-des-jouets",
+          "name": "Oui-Oui, enquêtes au Pays des jouets",
+          "initialChannel": {
+            "slug": "tf1"
+          },
+          "categories": [
+            {
+              "id": "GT_YOUTH"
+            },
+            {
+              "id": "SGT_THREE_TO_SIX_YEARS"
+            }
+          ],
+          "decoration": {
+            "description": "Oui-Oui, le détective du Pays des Jouets, résout tous les mystères ! Avec sa tablette, son chien Zim-Zim et sa voiture Vroum, il part à l'aventure. Il collecte des indices et dénoue les énigmes pour aider ses amis. Chaque enquête est une nouvelle chance pour Oui-Oui de briller !",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/flux-program-card-portrait-1-png-ouioui-692abc-12f4ba-5366fb-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-png-ouioui-405fef-cfce23-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 52
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        }
+      ]
+    }
+  }
+}

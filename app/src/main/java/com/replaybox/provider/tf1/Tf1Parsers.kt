@@ -56,7 +56,7 @@ object Tf1Parsers {
             if (!Tf1Channels.isGroup(channelId)) return@mapNotNull null
             if ((Tf1Json.int(item, "replay", "total") ?: 0) <= 0) return@mapNotNull null
             val base = showFromProgram(item)
-            val crime = SERIES_ROOT in categoryIds(item) &&
+            val crime = SERIES_ROOT in categoryIds(item) && Genre.YOUTH !in base.genres &&
                 Tf1CrimeKeywords.matches(base.id.value, base.title, base.synopsis)
             IndexEntry(
                 channelId!!,
@@ -76,13 +76,13 @@ object Tf1Parsers {
         Tf1Json.objects(Tf1Json.array(item, "categories")).mapNotNull { Tf1Json.str(it, "id") }
 
     private fun showFromProgram(item: JsonObject): Show {
-        val categoryIds = Tf1Json.objects(Tf1Json.array(item, "categories")).mapNotNull { Tf1Json.str(it, "id") }
+        val slug = Tf1Json.str(item, "slug") ?: ""
         return Show(
-            id = ShowId(Tf1Json.str(item, "slug") ?: ""),
+            id = ShowId(slug),
             title = Tf1Json.str(item, "name") ?: "",
             posterUrl = posterFrom(item),
             synopsis = Tf1Json.str(item, "decoration", "description"),
-            genres = Tf1Genres.map(categoryIds),
+            genres = Tf1Genres.forProgram(slug, categoryIds(item)),
             backdropUrl = backdropFrom(item),
         )
     }
