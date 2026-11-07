@@ -394,6 +394,17 @@ Au démarrage à froid, toutes les images (toutes Chaînes) mettent 1 à 2,2 s, 
 
 ## Cache et mode dégradé (ADR 0002)
 
+Démarrage à froid (mesuré sur la box le 2026-11-07, build release, `adb logcat -s ReplayboxStartup`) :
+l'Accueil avec ses données s'affichait 4,1 à 5 s après le lancement du processus, il s'affiche en
+2,1 à 2,4 s. Causes trouvées : la Bbox se déclare `ro.config.low_ram`, donc Room y prenait un journal
+rollback et chaque écriture du rafraîchissement bloquait les lectures de l'Accueil (WAL forcé) ;
+« À suivre » et Favoris lisaient tous les listings (≈ 4 500 Programmes, 1,3 s) pour une douzaine de
+lignes (lecture par identifiants) ; `Providers.all` (≈ 350 ms, coffre M6+ chiffré) se lisait sur le
+thread principal. L'Accueil s'affiche en deux temps (« À suivre » et Favoris, puis les rails de
+Genres) et le rafraîchissement réseau attend que l'Accueil soit affiché. Un build debug reste bien
+plus lent (≈ 7 s avant la première image) : mesurer en release.
+
+
 Room : `shows`, `seasons`, `episodes`, `genre_map` + `progress`, `favorites`. TTL 12 h, refresh au
 démarrage en arrière-plan, priorité Home. Provider KO au refresh → servir le cache + bannière
 « Données du [date] ». La résolution du Flux reste toujours live (URLs signées, courte durée).
