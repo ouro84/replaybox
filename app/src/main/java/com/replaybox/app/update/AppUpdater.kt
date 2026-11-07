@@ -24,6 +24,9 @@ sealed interface UpdateState {
     data class Ready(val version: AppVersion, val apk: File) : UpdateState
 }
 
+/** How the last check ended, for « À propos » (Home only reads [UpdateState]). */
+enum class CheckOutcome { UP_TO_DATE, READY, FAILED }
+
 /**
  * Launch-time self-update from the GitHub Releases. One GET per check; the APK
  * is downloaded only when the tag is strictly newer than the running version,
@@ -40,20 +43,37 @@ class AppUpdater(
     private val _state = MutableStateFlow<UpdateState>(UpdateState.Idle)
     val state: StateFlow<UpdateState> = _state.asStateFlow()
 
+    private val _lastCheck = MutableStateFlow<CheckOutcome?>(null)
+
+    /** Null until a check has finished in this process. */
+    val lastCheck: StateFlow<CheckOutcome?> = _lastCheck.asStateFlow()
+
+    private val _checking = MutableStateFlow(false)
+    val checking: StateFlow<Boolean> = _checking.asStateFlow()
+
     private val mutex = Mutex()
 
     suspend fun check() {
         if (!mutex.tryLock()) return // a check is already running
+        _checking.value = true
         try {
-            _state.value = runCatching { resolve() }
+            val resolved = runCatching { resolve() }
                 .onFailure { log("update check failed: $it") }
-                .getOrNull() ?: UpdateState.Idle
+                .getOrNull()
+            _state.value = resolved ?: UpdateState.Idle
+            _lastCheck.value = when (resolved) {
+                null -> CheckOutcome.FAILED
+                is UpdateState.Ready -> CheckOutcome.READY
+                UpdateState.Idle -> CheckOutcome.UP_TO_DATE
+            }
         } finally {
+            _checking.value = false
             mutex.unlock()
         }
     }
 
-    private suspend fun resolve(): UpdateState {
+    /** Idle when up to date, null when the download could not be completed. */
+    private suspend fun resolve(): UpdateState? {
         val release = source.latestRelease()?.let(GitHubReleaseParser::parse)
         if (release == null || release.version <= current) {
             purge(keep = null)
@@ -69,10 +89,10 @@ class AppUpdater(
                 source.download(release.apkUrl, partial)
                 if (partial.length() != release.apkSize) {
                     log("update ${release.version}: size ${partial.length()} != ${release.apkSize}, discarded")
-                    return UpdateState.Idle
+                    return null
                 }
                 apk.delete()
-                if (!partial.renameTo(apk)) return UpdateState.Idle
+                if (!partial.renameTo(apk)) return null
             } finally {
                 partial.delete()
             }
