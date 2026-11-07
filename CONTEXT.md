@@ -44,3 +44,12 @@ _Éviter_: catégorie (terme des chaînes), tag (champ TF1 non fiable)
 Module qui encapsule l'API d'une chaîne : listing catalogue, recherche, résolution de flux. Une
 interface, une implémentation par chaîne.
 _Éviter_: résolver, backend, connector
+
+**Index** (code: `CatalogueIndex`):
+Copie locale complète des Programmes d'un Provider, rafraîchie toutes les 12 h, qui alimente le
+catalogue, les Genres et la recherche.
+_Éviter_: base, crawl
+
+**Santé** (code: `Health`):
+État d'un Provider : vérification CI de la nuit combinée à ce qui a été observé sur le boîtier.
+_Éviter_: statut, monitoring
