@@ -19,4 +19,8 @@ object M6Channels {
     val GROUP: List<Channel> = byService.values.toList()
 
     fun forService(code: String?): Channel? = code?.let { byService[it] }
+
+    private val ids: Set<String> = GROUP.map { it.id }.toSet()
+
+    fun isGroup(channelId: String?): Boolean = channelId != null && channelId in ids
 }

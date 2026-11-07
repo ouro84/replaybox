@@ -82,6 +82,7 @@ import com.replaybox.core.model.Genre
 import com.replaybox.core.model.ProgressContext
 import com.replaybox.core.model.ResumeItem
 import com.replaybox.core.model.ShowId
+import com.replaybox.provider.m6.M6Channels
 import com.replaybox.provider.tf1.Tf1Channels
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -102,6 +103,9 @@ class HomeUiState {
     var focusedKey: String? = null
     var data: HomeData? = null
     var refreshed = false
+
+    /** Chaînes whose listing this process refreshed: an M6+ sign-in adds new ones to refresh. */
+    var refreshedChannels: Set<String> = emptySet()
 
     /** Every Chaîne failed the last refresh (Round 8 Q4). */
     var unavailable = false
@@ -158,17 +162,30 @@ fun HomeScreen(
     var focused by remember { mutableStateOf<Featured?>(null) }
     var removing by remember { mutableStateOf<ResumeItem?>(null) }
     val scope = rememberCoroutineScope()
-    val channelNames = remember { Providers.all.associate { it.channel.id to it.channel.name } }
+    // Read once per visit: Providers.all follows the M6+ account (Paramètres), and Home
+    // leaves composition while Paramètres is open.
+    val providers = remember { Providers.all }
+    val channelNames = remember { providers.associate { it.channel.id to it.channel.name } }
 
     // ADR 0002: background refresh once per process, Home listings first.
     // The rails compose instantly from the cache; catalog.updates re-ticks them.
     LaunchedEffect(refreshRun) {
-        // Once per process, unless the viewer asks again (« Réessayer »).
-        if (state.refreshed && refreshRun == 0) return@LaunchedEffect
-        refreshing = true
-        val failed = withContext(Dispatchers.IO) { catalog.refreshListings(Providers.all) }
-        unavailable = Providers.all.isNotEmpty() && failed == Providers.all.size
-        state.unavailable = unavailable
+        // Once per process, unless the viewer asks again (« Réessayer »); after an
+        // M6+ sign-in, only the Chaînes not refreshed yet.
+        val pending = if (state.refreshed && refreshRun == 0) {
+            providers.filter { it.channel.id !in state.refreshedChannels }
+        } else {
+            providers
+        }
+        if (pending.isEmpty()) return@LaunchedEffect
+        val full = pending.size == providers.size
+        if (full) refreshing = true
+        val failed = withContext(Dispatchers.IO) { catalog.refreshListings(pending) }
+        state.refreshedChannels = state.refreshedChannels + pending.map { it.channel.id }
+        if (full) {
+            unavailable = providers.isNotEmpty() && failed == providers.size
+            state.unavailable = unavailable
+        }
         state.refreshed = true
         refreshing = false
         // Réessayer left composition with the skeleton: focus the loaded Home.
@@ -351,7 +368,11 @@ private suspend fun loadHome(catalog: CatalogStore): HomeData {
     for (id in channelIds) {
         val at = catalog.listingAt(id) ?: continue
         if (now - at > CatalogStore.TTL_MS) {
-            val source = if (Tf1Channels.isGroup(id)) "TF1" else "France TV"
+            val source = when {
+                Tf1Channels.isGroup(id) -> "TF1"
+                M6Channels.isGroup(id) -> "M6+"
+                else -> "France TV"
+            }
             staleSources[source] = minOf(at, staleSources[source] ?: at)
         }
     }

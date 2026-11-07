@@ -1,6 +1,7 @@
 package com.replaybox.app
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.room.Room
 import com.replaybox.BuildConfig
@@ -21,7 +22,9 @@ import com.replaybox.core.data.CatalogStore
 import com.replaybox.core.data.ProgressRecorder
 import com.replaybox.core.data.ReplayboxDatabase
 import com.replaybox.core.data.RoomCatalogDao
+import com.replaybox.provider.m6.M6Auth
 import com.replaybox.provider.tf1.Tf1Auth
+import java.util.UUID
 
 class ReplayboxApplication : Application() {
 
@@ -35,6 +38,24 @@ class ReplayboxApplication : Application() {
 
         /** TF1 sign-in session: token cache + encrypted credential store. */
         val tf1Auth: Tf1Auth by lazy { Tf1Auth(CredentialStore(instance, "tf1")) }
+
+        /** M6+ sign-in session (Paramètres > M6+); the M6 Chaînes exist only while it has credentials. */
+        val m6Auth: M6Auth by lazy { M6Auth(CredentialStore(instance, "m6"), deviceId = ::m6DeviceId) }
+
+        /**
+         * `x-auth-device-id` of the M6+ chain: a random UUID made once per install and kept in
+         * plain prefs (an install identifier, not a secret; reinstalling makes a new one).
+         */
+        @Synchronized
+        private fun m6DeviceId(): String {
+            val prefs = instance.getSharedPreferences("replaybox_m6_device", Context.MODE_PRIVATE)
+            prefs.getString(KEY_DEVICE_ID, null)?.let { return it }
+            val id = UUID.randomUUID().toString()
+            prefs.edit().putString(KEY_DEVICE_ID, id).apply()
+            return id
+        }
+
+        private const val KEY_DEVICE_ID = "device_id"
 
         private val database: ReplayboxDatabase by lazy {
             Room.databaseBuilder(instance, ReplayboxDatabase::class.java, "replaybox.db")
