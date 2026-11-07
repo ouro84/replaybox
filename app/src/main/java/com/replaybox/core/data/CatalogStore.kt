@@ -4,6 +4,7 @@ import com.replaybox.core.model.Episode
 import com.replaybox.core.model.EpisodeId
 import com.replaybox.core.model.EpisodeProgress
 import com.replaybox.core.model.Genre
+import com.replaybox.core.model.Genres
 import com.replaybox.core.model.ChannelShow
 import com.replaybox.core.model.Progress
 import com.replaybox.core.model.ProgressContext
@@ -46,7 +47,7 @@ class CatalogStore(
                 dao.putListing(channel, fetched, clock())
                 forget(channel)
                 tick()
-                return filter(fetched, genre)
+                return filter(fetched.map(Genres::canonical), genre)
             } catch (error: Exception) {
                 val cached = listing(channel)
                 if (cached.isEmpty()) throw error
@@ -148,7 +149,9 @@ class CatalogStore(
      * Per-Chaîne memo of the cached listing: the TF1 Index holds ~2900
      * Programmes and every Home / search read would otherwise reload them
      * from Room. An entry is valid only for the listing date it was read
-     * at, and every write through this store drops it.
+     * at, and every write through this store drops it. Genres go through
+     * [Genres.canonical] on read, so a listing stored before a Genre rule
+     * changed follows the new rule without waiting for a crawl.
      */
     private val listingMemo = HashMap<String, Pair<Long, List<Show>>>()
     private val listingMutex = Mutex()
@@ -158,7 +161,7 @@ class CatalogStore(
         listingMutex.withLock {
             listingMemo[channelId]?.takeIf { at != null && it.first == at }?.let { return it.second }
         }
-        val shows = dao.shows(channelId)
+        val shows = dao.shows(channelId).map(Genres::canonical)
         if (at != null) listingMutex.withLock { listingMemo[channelId] = at to shows }
         return shows
     }
