@@ -27,6 +27,7 @@ object FtvParsers {
     internal const val MISC_SEASON = "Divers"
 
     private const val PLAYLIST_VIDEO = "playlist_video"
+    private const val NO_END = 2147483647L
     private val SEASON_LABEL = Regex("^Saison\\s*(\\d+)$", RegexOption.IGNORE_CASE)
     private val DATE_FORMAT: DateTimeFormatter =
         DateTimeFormatter.ofPattern("dd/MM/yyyy").withZone(ZoneId.of("Europe/Paris"))
@@ -101,6 +102,9 @@ object FtvParsers {
                     broadcastDate = broadcastDateFrom(item),
                     durationSeconds = FtvJson.int(item, "duration"),
                     thumbnailUrl = vignetteFrom(item),
+                    broadcastAt = broadcastInstantFrom(item),
+                    publishedAt = FtvJson.long(item, "begin_date")?.let(Instant::ofEpochSecond),
+                    availableUntil = availableUntilFrom(item),
                 )
             }
         }
@@ -114,6 +118,20 @@ object FtvParsers {
             ?: return null
         return DATE_FORMAT.format(Instant.ofEpochSecond(seconds.toLong()))
     }
+
+    /**
+     * Broadcast start with its time (measured 2026-11-07): france.tv shows « Diffusé le … à … »
+     * only for items with a `broadcast_channel`; without one (web exclusives, catalogue
+     * re-uploads) `broadcast_begin_date` is a placeholder, so no instant is given.
+     */
+    private fun broadcastInstantFrom(item: JsonObject): Instant? {
+        if (FtvJson.string(item, "broadcast_channel").isNullOrBlank()) return null
+        return FtvJson.long(item, "broadcast_begin_date")?.let(Instant::ofEpochSecond)
+    }
+
+    /** `end_date` is the end of availability; [NO_END] (int32 max, « 19/01/2038 ») means none. */
+    private fun availableUntilFrom(item: JsonObject): Instant? =
+        FtvJson.long(item, "end_date")?.takeIf { it != NO_END }?.let(Instant::ofEpochSecond)
 
     // ---- Flux: k7 + hdfauth (see SPEC for the measured contract) ----
 

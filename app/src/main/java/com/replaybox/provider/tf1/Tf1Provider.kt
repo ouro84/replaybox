@@ -31,6 +31,8 @@ class Tf1Provider(
     override val channel: Channel = Tf1Channels.GROUP.first(),
     private val index: CatalogueIndex = tf1CatalogueIndex(http),
     private val localSearch: (suspend (String) -> List<Show>?)? = null,
+    // Fallback anchor of TF1's relative `remainingDays` when a page has no server instant.
+    private val clock: java.time.Clock = java.time.Clock.systemUTC(),
 ) : Provider {
 
     private val replayCache = HashMap<ShowId, List<Tf1Parsers.ReplayVideo>>()
@@ -124,6 +126,7 @@ class Tf1Provider(
                     Tf1QueryIds.PROGRAM_BY_SLUG,
                     http.programVideosVariables(show.value, pageIndex, Tf1Http.PAGE_LIMIT),
                 ),
+                clock.instant(),
             )
             total = page.total
             page.videos.forEach { collected.putIfAbsent(it.slug, it) }

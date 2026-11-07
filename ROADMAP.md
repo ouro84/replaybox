@@ -109,7 +109,7 @@ Fondations :
 
 - [ ] Design system Compose for TV (couleurs, typo, formes, focus) documenté dans `DESIGN.md`
 - [ ] États de focus D-pad lisibles à 3 m sur tous les écrans, focus initial défini partout
-- [ ] Lisibilité des sous-titres réglable (taille, fond)
+- [x] Lisibilité des sous-titres réglable (taille, fond)
 - [ ] Logo et bannière launcher
 
 Accueil & navigation :
@@ -124,7 +124,7 @@ Catalogue (dettes M3) :
 
 - [ ] Genres TF1 corrigés (Policier & Thriller sans faux positifs connus)
 - [ ] Jeunesse exclusif (plus de programmes enfants dans Séries)
-- [ ] Images M6 mesurées sur la box (rail affiché en moins de 1 s, cache chaud)
+- [x] Images M6 mesurées sur la box (rail affiché en moins de 1 s, cache chaud)
 
 Épisodes enrichis :
 

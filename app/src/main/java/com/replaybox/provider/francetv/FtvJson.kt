@@ -49,6 +49,18 @@ internal object FtvJson {
 
     fun int(element: JsonElement?, vararg path: String): Int? = str(element, *path)?.toIntOrNull()
 
+    fun long(element: JsonElement?, vararg path: String): Long? = str(element, *path)?.toLongOrNull()
+
+    /** A JSON string value; null for a missing key and for JSON `null` (which [str] reads as "null"). */
+    fun string(element: JsonElement?, vararg path: String): String? {
+        var current: JsonElement? = element
+        for (key in path) {
+            current = (current as? JsonObject)?.get(key)
+            if (current == null) return null
+        }
+        return (current as? JsonPrimitive)?.takeIf { it.isString }?.content
+    }
+
     fun bool(element: JsonElement?, vararg path: String): Boolean? =
         (element?.let { str(it, *path) })?.toBooleanStrictOrNull()
 

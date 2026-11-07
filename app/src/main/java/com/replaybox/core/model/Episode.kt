@@ -1,5 +1,12 @@
 package com.replaybox.core.model
 
+import java.time.Instant
+
+/**
+ * An Épisode (glossary). [broadcastDate] is the display string (« 04/11/2026 »). The three
+ * instants feed the freshness badges (ROADMAP §M4); each Provider fills only what it was
+ * measured to expose in its listing (SPEC.md, Provider sections) and leaves the rest null.
+ */
 data class Episode(
     val id: EpisodeId,
     val seasonId: SeasonId?,
@@ -8,4 +15,10 @@ data class Episode(
     val broadcastDate: String?,
     val durationSeconds: Int?,
     val thumbnailUrl: String?,
+    /** Start of the TV broadcast, time of day included. Null when unknown or not a real airing. */
+    val broadcastAt: Instant? = null,
+    /** Start of online availability. */
+    val publishedAt: Instant? = null,
+    /** End of availability. TF1 gives it to the day only: an upper bound (SPEC §Provider TF1+). */
+    val availableUntil: Instant? = null,
 )

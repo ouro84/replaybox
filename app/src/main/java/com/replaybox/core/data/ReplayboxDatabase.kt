@@ -16,7 +16,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ProgressEntity::class,
         FavoriteEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = false,
 )
 abstract class ReplayboxDatabase : RoomDatabase() {
@@ -64,6 +64,20 @@ abstract class ReplayboxDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE shows ADD COLUMN recentEpisodeCount INTEGER NOT NULL DEFAULT 0")
                 db.execSQL("DELETE FROM listings")
+            }
+        }
+
+        /**
+         * v4 → v5: freshness instants of each Épisode (broadcast, publication, end of
+         * availability; epoch millis, nullable). The Seasons/Épisodes freshness markers are
+         * cleared so cached Épisodes refetch with them; the rows stay served meanwhile.
+         */
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE episodes ADD COLUMN broadcastAt INTEGER")
+                db.execSQL("ALTER TABLE episodes ADD COLUMN publishedAt INTEGER")
+                db.execSQL("ALTER TABLE episodes ADD COLUMN availableUntil INTEGER")
+                db.execSQL("DELETE FROM programs")
             }
         }
     }

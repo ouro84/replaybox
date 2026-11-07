@@ -4,6 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.room.Room
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import com.replaybox.app.image.ImageTimingListener
 import com.replaybox.BuildConfig
 import com.replaybox.app.update.AppUpdater
 import com.replaybox.app.update.AppVersion
@@ -26,12 +29,17 @@ import com.replaybox.provider.m6.M6Auth
 import com.replaybox.provider.tf1.Tf1Auth
 import java.util.UUID
 
-class ReplayboxApplication : Application() {
+class ReplayboxApplication : Application(), ImageLoaderFactory {
 
     override fun onCreate() {
         super.onCreate()
         instance = this
     }
+
+    /** Coil defaults (memory + disk cache honouring HTTP headers); debug builds log image timings. */
+    override fun newImageLoader(): ImageLoader = ImageLoader.Builder(this)
+        .apply { if (BuildConfig.DEBUG) eventListenerFactory(ImageTimingListener.Factory) }
+        .build()
 
     companion object {
         private lateinit var instance: ReplayboxApplication
@@ -63,6 +71,7 @@ class ReplayboxApplication : Application() {
                     ReplayboxDatabase.MIGRATION_1_2,
                     ReplayboxDatabase.MIGRATION_2_3,
                     ReplayboxDatabase.MIGRATION_3_4,
+                    ReplayboxDatabase.MIGRATION_4_5,
                 )
                 .fallbackToDestructiveMigration()
                 .build()
@@ -82,6 +91,11 @@ class ReplayboxApplication : Application() {
         private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
         /** Remembered audio kind and quality cap (decision Q3). */
+        /** Subtitle legibility (Paramètres > Sous-titres), observed live by the player. */
+        val subtitleStyle: com.replaybox.app.ui.SubtitleStyleStore by lazy {
+            com.replaybox.app.ui.SharedPrefsSubtitleStyleStore(instance)
+        }
+
         val playbackPreferences: com.replaybox.app.ui.PlaybackPreferenceStore by lazy {
             com.replaybox.app.ui.SharedPrefsPlaybackPreferenceStore(instance)
         }

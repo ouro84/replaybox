@@ -57,6 +57,23 @@ envoie aussi la forme complète `id=sha256:<hex>` :
   `9b80783950b85247541dd1d851f9cc7fa36574af015621f853ab111a679ce26f` variables
   `{"programSlug":…,"slug":…}` → `videoBySlug.streamId` (id numérique wat)
 
+Fraîcheur des Épisodes (mesuré le 2026-11-07 sur `a6f9cf0e` : jt-20h, les-feux-de-l-amour,
+demain-nous-appartient, koh-lanta, profilage, the-voice, sept-a-huit) — `date` (ISO UTC) = début
+de la diffusion TV, heure comprise (JT 19:57:51 heure de Paris, Demain nous appartient 19:13, Les
+feux de l'amour 10:57) → `Episode.broadcastAt` ; le fonds ancien porte des bouche-trous (Profilage
+`2023-09-01T07:00:00Z`). `published` (ISO UTC) = mise en ligne → `publishedAt` (JT : ~40 min après
+le début ; feuilletons : égal à `date` ; avant-premières : des jours avant `date`). **Pas de date de
+fin** : `playingInfos.remainingDays` est un nombre entier de jours restants, compté par le serveur
+au moment de la réponse et arrondi au supérieur (Les feux de l'amour, disponibles 30 jours après
+diffusion : 29 pour l'Épisode du 06/11, 7 pour celui du 15/10, à 14 h 48) ; la page tf1.fr et
+`videoBySlug` ne portent que ce même compteur. `availableUntil` = `extensions.report.execution.start`
+(instant serveur, epoch ns ; à défaut l'horloge de la box) + `remainingDays` × 24 h : **borne
+haute**, la fin réelle tombe dans les 24 h qui précèdent (le dernier jour TF1 s'affiche « 1 jour »
+et non « dernier jour », mais aucun Épisode n'est masqué trop tôt). `freeRemainingDays` vaut la même
+chose, sauf sur les avant-premières (0 : offre payante). `remainingPlayingHours` n'existe que sur la
+page web, pas dans le listing. Fixtures : `tf1_program_by_slug_jt_20h_freshness.json`,
+`tf1_program_by_slug_feux_de_l_amour_freshness.json`.
+
 Ne garder que `type: REPLAY` (les `EXTRACT`/`BONUS` sont hors périmètre). La taxonomie
 `GT_*`/`SGT_*` de `program.categories[]` mappe vers les Genres canoniques (table en code ;
 chaque programme porte exactement un `GT_` et un `SGT_`, ids `SGT_` en anglais : `SGT_COMEDY`,
@@ -167,6 +184,21 @@ Détails mesurés le 2026-11-05 (lot 1 M1, fixtures `ftv_*.json`) :
   « Ça commence aujourd'hui »). `markers.pub` = config CSAI du player officiel, absente du
   manifest brut — ignorée.
 
+Fraîcheur des Épisodes (mesuré le 2026-11-07 sur journal-20h00, capitaine-marleau, envoye-special,
+quelle-epoque ; comparé à « Diffusé le … à … - Disponible jusqu'au … » des pages france.tv de 9
+Épisodes) — items `integrale` du détail programme, en secondes unix (UTC) : `end_date` = fin de
+disponibilité → `Episode.availableUntil` (identique au site sur les 9 ; JT : mise en ligne + 30 j ;
+magazines 6 à 12 mois ; fictions : dates fixes, souvent 23:59:59) ; `2147483647` (« 19/01/2038 »
+sur le site, archives du JT) = sans fin → null. `begin_date` = mise en ligne → `publishedAt` (JT :
+fin de diffusion + ~2 min ; Capitaine Marleau S4E17 en ligne 8 jours avant sa diffusion ; un
+ré-import du catalogue porte la date du ré-import). `broadcast_begin_date` = début de diffusion à la
+seconde (JT 19:57:47) → `broadcastAt`, **seulement si `broadcast_channel` est renseigné** : sans
+lui (exclusivités web, ré-imports), le site n'affiche pas « Diffusé le » et la valeur est un
+bouche-trou (égale à `begin_date`, ou une heure sans rapport) — 23 Épisodes sur 27 pour Capitaine
+Marleau, 90 sur 106 pour Envoyé spécial, 2 sur 443 pour le JT. La date affichée (`broadcastDate`)
+ne change pas. `content_diffusion_date` (marqueur piano, `DDMMYYYY` sans heure) n'est pas utilisé.
+Fixtures : `ftv_program_journal-20h00_freshness.json`, `ftv_program_envoye-special_freshness.json`.
+
 Flux — `GET https://k7.ftven.fr/videos/<si_id>?country_code=FR&capabilities=drm&os=androidtv&offline=false`
 → `video.url` (format `dash`, `drm: false`) → signer via la base donnée dans la réponse
 `video.token` (= `https://hdfauth.ftven.fr/esi/TA?format=json`) + `&url=<url encodée>` → `{"url":
@@ -244,6 +276,20 @@ pour les magazines et films. Dans une Saison : épisode puis partie croissants. 
 années (`2025`, `2026`). Fixtures : `m6_videos_945_p0.json` / `_p1.json` (offsets 0 et 100, 3 + 2
 vidéos, sans assets).
 
+Fraîcheur des Épisodes (mesuré le 2026-11-07 sur Pékin Express 945, Wanted 28540, Scènes de ménages
+829, 66 minutes 825, Les sisters 21200 sur Gulli) — `clips[0].product.first_diffusion` = première
+diffusion, heure de Paris sans décalage (Wanted 21:10 et 22:10, Scènes de ménages 20:40, 66 minutes
+17:05) → `Episode.broadcastAt` (fuseau Europe/Paris, heure d'été comprise) ; absente sur une partie
+du fonds (64 vidéos sur 100 de Scènes de ménages) → null. `last_diffusion` = dernière rediffusion
+(Gulli : rediffusions du matin), non utilisée. `publication_date` n'est **pas** une date de mise en
+ligne : elle est réécrite à J+7 de la diffusion (Wanted E2, diffusé le 29/10 à 21:10, porte
+`publication_date` 05/11 22:05, heure de mise en ligne de E3 ; même motif sur Scènes de ménages et 66
+minutes) → `publishedAt` null, « Nouveau » retombe sur la diffusion. **Aucune fin de
+disponibilité** en anonyme : ni dans la liste des vidéos, ni dans la vidéo seule (appel du Flux),
+ni dans le catalogue (`rights` vaut null ; `publication_date_vi.date_end_max` est par Programme) →
+`availableUntil` null, pas de badge d'expiration M6. Fixtures : `m6_videos_28540_freshness.json`,
+`m6_videos_829_no_diffusion.json`.
+
 Flux — `GET {host}/services/{service}/videos/{clipId}?csa=6&with=clips,freemiumpacks` →
 `clips[0].assets[]`. `usp_dashcenc_h264` = DASH CENC (Widevine + PlayReady), `video_quality` `hd`
 (1080p) ou `sd` (720p, 540p) ; on prend `hd`, sinon le premier `sd`. `usp_hlsfp_h264` est FairPlay :
@@ -313,6 +359,13 @@ périmé : source « M6+ ».
 Images : fichiers bruts de 120 à 400 Ko. Coil (`AsyncImage` sans taille explicite) décode à la
 taille de la mise en page (contraintes) avec sous-échantillonnage : la mémoire suit la taille de la
 carte ou du fond, pas celle du fichier.
+Mesuré sur la box le 2026-11-07 (listener Coil des builds debug, `adb logcat -s ReplayboxImage`) :
+les fichiers bruts (jusqu'à 478 Ko) portent `Cache-Control: max-age=5184000, public`, donc le cache
+disque de Coil les garde 60 jours. App lancée, en descendant les rails de l'Accueil : M6 depuis le
+disque médiane 242 ms (max 548 ms, n = 14), réseau 393–630 ms (n = 3), au niveau de TF1 (disque
+médiane 289 ms) et de France TV (282 ms) ; un rail se remplit en moins de 1 s, aucun correctif.
+Au démarrage à froid, toutes les images (toutes Chaînes) mettent 1 à 2,2 s, pendant un GC soutenu
+(gros objets de 6 à 9 Mo) : sujet de démarrage, pas propre à M6.
 
 ## Cache et mode dégradé (ADR 0002)
 
@@ -328,6 +381,15 @@ un nouvel Index : `refreshListings` recrawle toutes les Chaînes à chaque lance
 regarder le TTL, et l'installation d'un APK redémarre le processus ; tant que ce crawl échoue,
 l'ancien Index reste servi (ADR 0002). Pas de version de mapping à incrémenter.
 
+Schéma v5 (2026-11-07) : `episodes` porte `broadcastAt`, `publishedAt`, `availableUntil` (epoch
+ms, nullables, cf. chaque Provider) ; la migration 4 → 5 vide les marqueurs `programs` pour que
+les Épisodes en cache soient relus avec ces dates.
+
+Fraîcheur (`FreshnessPolicy`, fuseau Europe/Paris, au plus un badge, par priorité) : fin de
+disponibilité aujourd'hui → `LastDay` (une fin à 00:00 compte pour la veille), sinon dans 1 à 7
+jours calendaires → `DaysLeft(n)` (demain = 1) ; diffusion la veille à partir de 18:00 →
+`LastNight` ; mise en ligne (à défaut diffusion) il y a moins de 48 h → `New`. Un Épisode dont la
+fin est passée (`isExpired`) n'a aucun badge. Une date null saute sa règle.
 ## Player
 
 Media3/ExoPlayer, DASH et HLS auto-détectés. **Sous-titres FR activés par défaut** quand la piste

@@ -124,18 +124,28 @@ object Tf1Parsers {
         val season: Int?,
         val episode: Int?,
         val thumbnailUrl: String?,
+        /** `date`: broadcast start (ISO UTC). Old back-catalogue carries placeholders. */
+        val broadcastAt: java.time.Instant? = null,
+        /** `published`: start of online availability (ISO UTC). */
+        val publishedAt: java.time.Instant? = null,
+        /** Upper bound of the end of availability, from `playingInfos.remainingDays`. */
+        val availableUntil: java.time.Instant? = null,
     )
 
-    fun replayPage(root: JsonObject): ReplayPage {
+    /**
+     * One page of a programme's replay videos. [fetchedAt] anchors `remainingDays` when the
+     * response has no `extensions.report.execution.start` (server instant, epoch ns).
+     */
+    fun replayPage(root: JsonObject, fetchedAt: java.time.Instant): ReplayPage {
         val videos = Tf1Json.obj(root, "data", "programBySlug", "videos") ?: return ReplayPage(0, emptyList())
         val total = Tf1Json.int(videos, "total") ?: 0
         val items = Tf1Json.objects(videos["items"])
             .filter { Tf1Json.str(it, "type") == REPLAY_TYPE }
-            .map { replayVideoFrom(it) }
+            .map { replayVideoFrom(it, serverInstant(root) ?: fetchedAt) }
         return ReplayPage(total, items)
     }
 
-    private fun replayVideoFrom(item: JsonObject): ReplayVideo = ReplayVideo(
+    private fun replayVideoFrom(item: JsonObject, countedAt: java.time.Instant): ReplayVideo = ReplayVideo(
         slug = Tf1Json.str(item, "slug") ?: "",
         title = Tf1Json.str(item, "decoration", "label") ?: "",
         synopsis = Tf1Json.str(item, "decoration", "description"),
@@ -144,7 +154,25 @@ object Tf1Parsers {
         season = Tf1Json.int(item, "season"),
         episode = Tf1Json.int(item, "episode"),
         thumbnailUrl = thumbnailFrom(item),
+        broadcastAt = Tf1Json.str(item, "date")?.let(::isoInstant),
+        publishedAt = Tf1Json.str(item, "published")?.let(::isoInstant),
+        availableUntil = Tf1Json.int(item, "playingInfos", "remainingDays")
+            ?.takeIf { it >= 0 }
+            ?.let { countedAt.plus(java.time.Duration.ofDays(it.toLong())) },
     )
+
+    /**
+     * TF1 gives no end date (measured 2026-11-07): `remainingDays` is the whole number of days
+     * left, rounded up, when the server answered. Anchored on that instant, the result is an
+     * upper bound: availability really ends during the last 24 h before it.
+     */
+    private fun serverInstant(root: JsonObject): java.time.Instant? {
+        val nanos = Tf1Json.str(root, "extensions", "report", "execution", "start")?.toLongOrNull() ?: return null
+        return java.time.Instant.ofEpochSecond(nanos / 1_000_000_000, nanos % 1_000_000_000)
+    }
+
+    private fun isoInstant(raw: String): java.time.Instant? =
+        runCatching { java.time.OffsetDateTime.parse(raw).toInstant() }.getOrNull()
 
     private fun thumbnailFrom(item: JsonObject): String? {
         val images = Tf1Json.objects(Tf1Json.array(item, "decoration", "images"))
@@ -211,6 +239,9 @@ object Tf1Parsers {
                 broadcastDate = v.date?.let(::displayDate),
                 durationSeconds = v.durationSeconds,
                 thumbnailUrl = v.thumbnailUrl,
+                broadcastAt = v.broadcastAt,
+                publishedAt = v.publishedAt,
+                availableUntil = v.availableUntil,
             )
         }
     }

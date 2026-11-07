@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,17 +28,25 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.replaybox.BuildConfig
 import com.replaybox.R
 import com.replaybox.app.ReplayboxApplication
+import com.replaybox.app.update.UpdateState
 import com.replaybox.core.health.CiHealth
 import com.replaybox.core.health.Health
 import com.replaybox.core.health.HealthState
 import com.replaybox.core.health.LocalHealth
 
-/** Survives the trip to a Provider page: Back lands on the row that opened it. */
+/** Survives the trip to a Provider page or « À propos »: Back lands on the row that opened it. */
 class SettingsUiState {
     var lastGroupId: String? = null
 }
+
+/** Row key of « À propos » in [SettingsUiState.lastGroupId] (Provider rows use their group id). */
+internal const val ABOUT_ROW = "about"
+
+/** Row key of « Sous-titres ». */
+internal const val SUBTITLES_ROW = "subtitles"
 
 /**
  * Paramètres: one row per Provider with its Santé badge and account summary
@@ -45,13 +54,20 @@ class SettingsUiState {
  * background; the list composes at once from what is in memory.
  */
 @Composable
-fun SettingsScreen(state: SettingsUiState, onOpenProvider: (String) -> Unit) {
+fun SettingsScreen(
+    state: SettingsUiState,
+    onOpenSubtitles: () -> Unit,
+    onOpenProvider: (String) -> Unit,
+    onOpenAbout: () -> Unit,
+) {
     val groups = ProviderGroups.all
     val ci = rememberCiHealth()
-    val requesters = remember { groups.associate { it.id to FocusRequester() } }
+    val requesters = remember { (listOf(SUBTITLES_ROW) + groups.map { it.id } + ABOUT_ROW).associateWith { FocusRequester() } }
+    val subtitles by ReplayboxApplication.subtitleStyle.style.collectAsState()
+    val update by ReplayboxApplication.updater.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        val target = state.lastGroupId?.takeIf { it in requesters } ?: groups.first().id
+        val target = state.lastGroupId?.takeIf { it in requesters } ?: SUBTITLES_ROW
         runCatching { requesters.getValue(target).requestFocus() }
     }
 
@@ -59,26 +75,62 @@ fun SettingsScreen(state: SettingsUiState, onOpenProvider: (String) -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .padding(start = Rb.contentStart, top = Rb.safeVertical + 8.dp, end = Rb.safeHorizontal),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(ROW_GAP),
     ) {
         Text(stringResource(R.string.settings_title), style = RbType.displayCompact, color = Rb.text)
-        Spacer(Modifier.size(8.dp))
+        Spacer(Modifier.size(4.dp))
+        SettingsRow(
+            title = stringResource(R.string.settings_subtitles),
+            summary = stringResource(
+                R.string.subtitle_summary,
+                sizeLabel(subtitles.size),
+                backgroundLabel(subtitles.background).lowercase(),
+            ),
+            requester = requesters.getValue(SUBTITLES_ROW),
+            onClick = {
+                state.lastGroupId = SUBTITLES_ROW
+                onOpenSubtitles()
+            },
+        )
         for (group in groups) {
-            ProviderRow(
-                group = group,
-                state = groupState(ci[group.id], ReplayboxApplication.localHealth.read(group.id)),
+            SettingsRow(
+                title = group.name,
+                summary = accountSummary(group),
                 requester = requesters.getValue(group.id),
                 onClick = {
                     state.lastGroupId = group.id
                     onOpenProvider(group.id)
                 },
-            )
+            ) {
+                HealthBadge(groupState(ci[group.id], ReplayboxApplication.localHealth.read(group.id)))
+            }
         }
+        val ready = update as? UpdateState.Ready
+        SettingsRow(
+            title = stringResource(R.string.settings_about),
+            summary = if (ready != null) {
+                stringResource(R.string.about_version_update, BuildConfig.VERSION_NAME, ready.version.toString())
+            } else {
+                stringResource(R.string.about_version, BuildConfig.VERSION_NAME)
+            },
+            requester = requesters.getValue(ABOUT_ROW),
+            onClick = {
+                state.lastGroupId = ABOUT_ROW
+                onOpenAbout()
+            },
+        )
     }
 }
 
+/** A Paramètres row: title, one summary line, optional trailing status (the Santé badge). */
 @Composable
-private fun ProviderRow(group: ProviderGroup, state: HealthState, requester: FocusRequester, onClick: () -> Unit) {
+private fun SettingsRow(
+    title: String,
+    summary: String,
+    requester: FocusRequester,
+    onClick: () -> Unit,
+    trailing: (@Composable () -> Unit)? = null,
+) {
     var focused by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
@@ -88,21 +140,23 @@ private fun ProviderRow(group: ProviderGroup, state: HealthState, requester: Foc
             .tvClickable(onClick)
             .focusRing(focused, ROW_RADIUS)
             .background(if (focused) Rb.surfaceRaised else Rb.surface, Rb.cardShape)
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .padding(horizontal = 24.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
-            Text(group.name, style = RbType.railTitle, color = Rb.text)
+            Text(title, style = RbType.railTitle, color = Rb.text)
             Text(
-                text = accountSummary(group),
+                text = summary,
                 style = RbType.meta,
                 color = Rb.textSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
         }
-        Spacer(Modifier.width(16.dp))
-        HealthBadge(state)
+        trailing?.let {
+            Spacer(Modifier.width(16.dp))
+            it()
+        }
     }
 }
 
@@ -155,6 +209,9 @@ internal fun rememberCiHealth(): Map<String, CiHealth> {
 }
 
 private val ROW_WIDTH = 600.dp
+
+/** Five 72 dp rows and the title fit the 540 dp canvas inside the safe frame. */
+private val ROW_GAP = 12.dp
 
 /** Matches Rb.cardShape so the ring stays concentric with the row. */
 private val ROW_RADIUS = 10.dp

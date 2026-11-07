@@ -147,4 +147,41 @@ class AppUpdaterTest {
     private companion object {
         const val APK_SIZE = 64
     }
+
+    @Test
+    fun `last check outcome tells up to date, ready and failed apart`() {
+        runBlocking {
+            val upToDate = updater(FakeSource(release("v0.3.0")))
+            assertThat(upToDate.lastCheck.value).isNull()
+            upToDate.check()
+            assertThat(upToDate.lastCheck.value).isEqualTo(CheckOutcome.UP_TO_DATE)
+            assertThat(upToDate.checking.value).isFalse()
+
+            val none = updater(FakeSource(null))
+            none.check()
+            assertThat(none.lastCheck.value).isEqualTo(CheckOutcome.UP_TO_DATE)
+
+            val ready = updater(FakeSource(release("v0.3.1")))
+            ready.check()
+            assertThat(ready.lastCheck.value).isEqualTo(CheckOutcome.READY)
+        }
+    }
+
+    @Test
+    fun `offline, broken or truncated downloads report a failed check`() {
+        runBlocking {
+            val offline = updater(FakeSource(release("v0.3.1"), failLatest = true))
+            offline.check()
+            assertThat(offline.lastCheck.value).isEqualTo(CheckOutcome.FAILED)
+
+            val broken = updater(FakeSource(release("v0.3.1"), failDownload = true))
+            broken.check()
+            assertThat(broken.lastCheck.value).isEqualTo(CheckOutcome.FAILED)
+
+            val truncated = updater(FakeSource(release("v0.3.1", size = APK_SIZE + 10)))
+            truncated.check()
+            assertThat(truncated.lastCheck.value).isEqualTo(CheckOutcome.FAILED)
+            assertThat(truncated.state.value).isEqualTo(UpdateState.Idle)
+        }
+    }
 }

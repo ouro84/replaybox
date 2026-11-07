@@ -26,6 +26,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -303,6 +304,7 @@ private fun PlayerSurface(
     var audioKind by remember(manifestUrl) { mutableStateOf<AudioKind?>(null) }
     var subtitleKind by remember(manifestUrl) { mutableStateOf<SubtitleKind?>(null) }
     var subtitlesOn by remember(manifestUrl) { mutableStateOf(true) }
+    val subtitleStyle by ReplayboxApplication.subtitleStyle.style.collectAsState()
     var speed by remember(manifestUrl) { mutableStateOf(1f) }
     var audioDefaulted by remember(manifestUrl) { mutableStateOf(false) }
     var textDefaulted by remember(manifestUrl) { mutableStateOf(false) }
@@ -527,6 +529,8 @@ private fun PlayerSurface(
     // Declared after the controls handler: with the panel open, Back closes it
     // first. Never while Épisode suivant shows: there Back cancels the countdown.
     BackHandler(enabled = optionsOpen && !nextUp) { closeOptions() }
+    // Legibility setting (Paramètres > Sous-titres or Options), applied live.
+    LaunchedEffect(subtitleStyle) { playerViewRef.value?.subtitleView?.applyStyle(subtitleStyle) }
     // Captions climb above the controls panel while it is shown, never under it.
     // France TV WebVTT cues carry explicit line positions, which ignore the
     // SubtitleView bottom padding: the whole caption layer is lifted instead.
@@ -583,6 +587,7 @@ private fun PlayerSurface(
                     this.player = player
                     // Compose draws the controls; the view only renders video and captions.
                     useController = false
+                    subtitleView?.applyStyle(subtitleStyle)
                     isFocusable = false
                     descendantFocusability = android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS
                     playerViewRef.value = this
@@ -623,8 +628,10 @@ private fun PlayerSurface(
                     subtitleKind = subtitleKind.takeIf { subtitlesOn },
                     maxHeight = preferences.maxHeight,
                     speed = speed,
+                    style = subtitleStyle,
                     onAudio = { chooseAudio(it, remember = true) },
                     onSubtitle = { chooseSubtitle(it) },
+                    onStyle = { ReplayboxApplication.subtitleStyle.set(it) },
                     onQuality = { chooseQuality(it) },
                     onSpeed = { chooseSpeed(it) },
                 ),
@@ -798,8 +805,10 @@ private fun optionRows(
     subtitleKind: SubtitleKind?,
     maxHeight: Int?,
     speed: Float,
+    style: SubtitleStyle,
     onAudio: (AudioChoice) -> Unit,
     onSubtitle: (SubtitleChoice?) -> Unit,
+    onStyle: (SubtitleStyle) -> Unit,
     onQuality: (Int?) -> Unit,
     onSpeed: (Float) -> Unit,
 ): List<OptionRow> {
@@ -832,6 +841,20 @@ private fun optionRows(
                     }
                     OptionChip(label, selected = choice.kind == subtitleKind && choice.kind != SubtitleKind.OTHER) { onSubtitle(choice) }
                 },
+        )
+        rows += OptionRow(
+            stringResource(R.string.subtitle_size),
+            SubtitleSize.values().map { size ->
+                OptionChip(sizeLabel(size), selected = size == style.size) { onStyle(style.copy(size = size)) }
+            },
+        )
+        rows += OptionRow(
+            stringResource(R.string.subtitle_background),
+            SubtitleBackground.values().map { background ->
+                OptionChip(backgroundLabel(background), selected = background == style.background) {
+                    onStyle(style.copy(background = background))
+                }
+            },
         )
     }
     val qualities = PlaybackChoices.qualities(tracks)
