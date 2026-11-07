@@ -130,7 +130,7 @@ Catalogue (dettes M3) :
 
 - [ ] Badges de fraîcheur (Hier soir, Nouveau, J-n avant expiration)
 - [x] État de Progression sur chaque Épisode (non commencé, % vu, vu)
-- [ ] « Marquer comme vu »
+- [x] « Marquer comme vu »
 - [ ] Prochain Épisode non vu proposé sur la fiche Programme
 
 Lecteur complet :
