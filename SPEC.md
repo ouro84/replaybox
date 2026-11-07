@@ -168,6 +168,87 @@ Français », présent avec la VO) et `qsm` (« Sous-Titres Malentendant », tou
 « Audio Description »), selon le titre. Vidéo : hauteurs 432 à 1080, sans DRM. Le side-load reste
 (décision Q9) : `fra` est normalisé en `fr` par Media3 et dédoublonné avec la piste du MPD.
 
+## Provider M6+
+
+Middleware 6play, plateforme **`m6group_web`** partout (décision Q18) : host
+`https://pc.middleware.6play.fr/6play/v2/platforms/m6group_web`. Chaque appel porte
+`x-customer-name: m6web` + l'UA navigateur de `Tf1Http.BROWSER_UA`. Tout ce qui suit est mesuré
+en **anonyme** le 2026-11-07 (200), sans compte. Code : `provider.m6` (`M6Http`, `M6Parsers`,
+`M6Genres`, `M6Channels`, `M6Provider`, `m6CatalogueIndex`) — **pas encore branché** dans
+`Providers` ni l'UI : le spike DRM (compte d'Arnaud) décide si M6+ sort en M3 (ROADMAP §M3, Q22).
+
+Listing — `GET {host}/services/6play/programs?limit=100&offset=N&csa=6&with=rights` → tableau JSON
+de Programmes. `limit` plafonné à 100 ; **`offset` est un index d'item** (pas de page) ; le total est
+dans l'en-tête `x-rest-collection-count` (1288). Un 503 HTML Varnish arrive de temps en temps, et la
+pagination par offset dérive un peu (1289 items lus pour 1288) : retry et dédoublonnage par id sont
+ceux de `CatalogueIndex`. Champs utilisés : `id`, `title`, `description`, `images[]`,
+`service_display.code`, `count.vi`, `neustar.category`, `program_type_wording.code`.
+Fixture : `m6_programs_page.json` (12 Programmes élagués aux champs utilisés).
+
+Index M6 (`CatalogueIndex`) — 13 pages de 100, jusqu'au total de l'en-tête (ou une page vide), même
+règles que l'Index TF1 (3 essais par page, échec = tout le crawl échoue, mémo 10 min partagé par les
+5 Chaînes). Chaînes gardées (décision Q16), clé `service_display.code` : `m6replay` « M6 » (id `m6`),
+`w9replay` « W9 » (`w9`), `6terreplay` « 6ter » (`6ter`), `gulli` « Gulli » (`gulli`), `6play`
+« M6+ » (`m6plus`). Tout autre service (parispremierereplay, tevareplay, 6playmaxott, podcast…) est
+écarté, de même que les Programmes à `count.vi == 0` (872 gardés sur 1286). Pas de signal de
+récence dans le catalogue : `recentEpisodeCount = 0`. Recherche : locale uniquement (décision Q17).
+
+Ids préfixés `m6:` (routables plus tard par `Providers.resolveShow`) : Programme
+`m6:{service}:{programId}`, Saison `m6:{service}:{programId}:{saison ou ""}`, Épisode
+`m6:{service}:{clipId}`.
+
+Images — `images[]` = `{external_key, role}` sans URL. Fichier brut :
+`https://images.6play.fr/v2/images/{external_key}/raw` (200 anonyme ; `v1` identique). Les variantes
+redimensionnées (`?width=…`) exigent un paramètre `hash` signé (403 sans) : on sert le brut. Rôles
+mesurés : `portrait` 1000×1500 → affiche (repli `cover` 750×1000) ; `jumbotron` 2732×1536 sans titre
+incrusté → fond 16:9 de la Home (`vignette`, même taille, porte le titre). Épisode : `display_image`
+(rôle `vignette`).
+
+Genres (`M6Genres`) — union de `neustar.category` (documentaire, serie-policiere, telefilm-drame,
+kids…) et `program_type_wording.code` (episode, telefilm, film, emission, dessin-anime,
+documentaire). `serie-policiere` et `telefilm-frissons` → Séries + Policier & Thriller ; une
+catégorie inconnue de la famille serie/series/telefilm/telenovela → Séries ; `serie-realite` →
+Divertissement. `action` (54 Programmes) n'a pas de Genre propre : seul le type (`film`) le classe.
+
+Vidéos d'un Programme — `GET {host}/services/{service}/programs/{programId}/videos?csa=6&with=clips,freemiumpacks&type=vi&limit=100&offset=N`,
+mêmes plafond, offset d'item et en-tête de total (Pékin Express 945 : 155 → 2 appels).
+`type=vi` = Épisodes complets seulement (pas d'extraits `vc`). Numérotation dans
+`clips[0].product` : `season`, `episode`, `part_number`, `first_diffusion` (heure de Paris
+« 2026-05-22 22:10:00 », affichée « 22/05/2026 »). Id vidéo `clip_13179913`, `duration` en
+secondes. L'ordre de l'API n'est pas trié (S16 au milieu de S22). Saisons : numérotées, la plus
+récente d'abord ; les vidéos sans numéro vont dans une Saison non numérotée « Épisodes », la seule
+pour les magazines et films. Dans une Saison : épisode puis partie croissants. Des saisons sont des
+années (`2025`, `2026`). Fixtures : `m6_videos_945_p0.json` / `_p1.json` (offsets 0 et 100, 3 + 2
+vidéos, sans assets).
+
+Flux — `GET {host}/services/{service}/videos/{clipId}?csa=6&with=clips,freemiumpacks` →
+`clips[0].assets[]`. `usp_dashcenc_h264` = DASH CENC (Widevine + PlayReady), `video_quality` `hd`
+(1080p) ou `sd` (720p, 540p) ; on prend `hd`, sinon le premier `sd`. `usp_hlsfp_h264` est FairPlay :
+ignoré. URL dans `full_physical_path`, sur le redirecteur `lbcdn.6cloud.fr`, signée (`token=` JWT,
+`expiration=` epoch ~10 h) et **géo-restreinte** : son paramètre `countries` décode en
+`AD|FR|GP|GF|MQ|YT|MC|NC|PF|RE|BL|MF|PM|TF|WF`. Depuis la France, la GET répond 302 vers
+`*.cdn.bedrock.tech` puis 200 : MPD statique à 1 Period, zéro marqueur pub, sous-titres TTML dans
+le MPD. Les assets figurent aussi dans la liste des vidéos, mais le Flux relit la vidéo seule (URL
+fraîche). Fixtures : `m6_video_clip.json` (tokens remplacés par `trimmed`), `m6_video_hls_only.json`
+(la même sans DASH : erreur claire, pas un plantage).
+
+Licence — **SOURCÉE, pas encore mesurée** (catchup-tv-and-more
+`resources/lib/channels/fr/6play.py` @ fa49e5a0c4bfb5f501ac8d5486c5f6465cc16745) ; c'est l'étape 4b
+(compte) :
+1. `POST https://login-gigya.m6.fr/accounts.login` (form Gigya : loginID, password, apiKey du
+   login web, format jsonp) → `UID`, `UIDSignature`, `signatureTimestamp`.
+2. `GET https://front-auth.6cloud.fr/v2/platforms/m6group_web/getJwt` avec `x-auth-gigya-uid`,
+   `x-auth-gigya-signature`, `x-auth-gigya-signature-timestamp`, `x-auth-device-id`,
+   `x-customer-name: m6web` → `{token}` (JWT).
+3. `GET https://drm.6cloud.fr/v1/customers/m6web/platforms/m6group_web/services/m6replay/users/{UID}/videos/{clipId}/upfront-token`
+   avec `Authorization: Bearer <JWT>` → `{token}`.
+4. Licence Widevine : `POST https://lic.drmtoday.com/license-proxy-widevine/cenc/` avec
+   `x-dt-auth-token: <token>` ; la réponse est un JSON dont le champ `license` porte la licence en
+   base64 (à déballer avant de la rendre à ExoPlayer).
+Sans compte, `M6Provider.stream()` lève l'erreur « compte requis » que le player connaît déjà ; avec
+un fournisseur de token, il rend le Flux DASH + l'URL drmtoday + l'en-tête `x-dt-auth-token` (le
+déballage de la réponse reste à faire en 4b).
+
 ## Cache et mode dégradé (ADR 0002)
 
 Room : `shows`, `seasons`, `episodes`, `genre_map` + `progress`, `favorites`. TTL 12 h, refresh au
@@ -255,14 +336,14 @@ avant toute distribution hors de la box.
 
 - **PR** : `./gradlew assembleDebug testDebugUnitTest` — **en local** pour l'instant (décision du
   06/11 : pas de workflow de PR sur GitHub ; les releases aussi se construisent en local, §Releases).
-- **Nightly health-check** : un épisode TF1 et un épisode France TV poussés **jusqu'à l'URL du
-  manifest** ; échec → alerte. C'est le seul test d'intégration réel ; tout le reste est sur fixtures.
+- **Nightly health-check** : un épisode TF1, un épisode France TV et un épisode M6+ poussés
+  **jusqu'à l'URL du manifest** ; échec → alerte. C'est le seul test d'intégration réel ; tout le reste est sur fixtures.
 
 Health-check (`.github/workflows/healthcheck.yml`, seul workflow Actions) :
 - Cron `0 2 * * *` (03:00 Paris l'hiver) + `workflow_dispatch` avec `simulate_failure`
-  (`none`/`tf1`/`francetv`) pour exercer l'alerte. Runner `ubuntu-latest`, JDK 11.
-- Code : `app/src/healthCheck/` (sondes `ProviderProbe` listées dans `Probes.all` — ajouter M6 =
-  une entrée), compilé et lancé **uniquement** avec `./gradlew testDebugUnitTest -PhealthCheck` ;
+  (`none`/`tf1`/`francetv`/`m6`) pour exercer l'alerte. Runner `ubuntu-latest`, JDK 11.
+- Code : `app/src/healthCheck/` (sondes `ProviderProbe` listées dans `Probes.all` — ajouter un
+  Provider = une entrée, plus `KNOWN_PROVIDERS` du script de statut), compilé et lancé **uniquement** avec `./gradlew testDebugUnitTest -PhealthCheck` ;
   sans ce flag la suite unitaire les exclut explicitement (zéro réseau en test). Chaque sonde
   appelle les vrais `Provider` étape par étape — étapes nommées comme les méthodes `Provider` —
   et écrit `app/build/healthcheck/<provider>.json` {provider, label, ok, step, error, detail,
@@ -277,6 +358,14 @@ Health-check (`.github/workflows/healthcheck.yml`, seul workflow Actions) :
   hdfauth répondent 200. L'étape `signature` vérifie que le 1er segment du chemin décode en
   `exp=…~acl=…~hmac=…` avec `exp` futur (sinon `FtvProvider` serait retombé sur l'URL k7 non
   signée sans le dire).
+- **M6+** (`m6`, « M6+ (anonyme) ») : sans compte, donc sans `stream` (tout Flux M6 est Widevine,
+  cf. §Provider M6+). `shows` (crawl de l'Index, Chaîne `m6`) puis, pour les 5 premiers Programmes
+  listés, `seasons` → `episodes` → `manifest` jusqu'au premier qui résout — aucun id codé en dur.
+  `manifest` = `M6Provider.manifestUrl()` et **s'arrête à l'URL signée** comme France TV : https,
+  `.mpd`, `token=` présent, `expiration` future. Raison : l'URL est géo-restreinte à la France et
+  ses territoires (paramètre `countries`), la GET serait refusée depuis un runner US. Mesuré depuis
+  la France le 07/11 (lancement local de la sonde) : chaîne entière OK, et la GET du MPD répond 302
+  puis 200 (`*.cdn.bedrock.tech`, `<MPD`, 1 Period).
 - Alerte : au moindre KO, l'issue ouverte au titre « health-check KO » (label `alerte`) est
   **commentée** (date, provider, étape, erreur, lien du run) ; s'il n'y en a pas, elle est créée
   avec les labels `ci` + `alerte` (créés au besoin). Au premier run entièrement OK, l'issue reçoit
@@ -301,7 +390,7 @@ Health-check (`.github/workflows/healthcheck.yml`, seul workflow Actions) :
     ]
   }
   ```
-  Dates ISO-8601 UTC à la seconde. `provider` = nom de la sonde (`tf1`, `francetv` ; `m6` en V2).
+  Dates ISO-8601 UTC à la seconde. `provider` = nom de la sonde (`tf1`, `francetv`, `m6`).
   `step`/`error` valent `null` quand `ok`. `detail` n'est pas publié. Tout Provider connu
   (`KNOWN_PROVIDERS` du script, à garder aligné sur `Probes.all`) sans résultat — build cassé ou
   sonde absente — est publié `ok: false`, `step: "build"`, `checkedAt` = `generatedAt` ; une sonde
