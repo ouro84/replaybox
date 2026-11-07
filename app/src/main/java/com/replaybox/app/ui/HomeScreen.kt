@@ -76,6 +76,7 @@ import com.replaybox.app.ReplayboxApplication
 import com.replaybox.app.update.UpdateInstaller
 import com.replaybox.app.update.UpdateState
 import com.replaybox.core.data.CatalogStore
+import com.replaybox.core.data.GenreRail
 import com.replaybox.core.model.ChannelShow
 import com.replaybox.core.model.EpisodeId
 import com.replaybox.core.model.Genre
@@ -118,7 +119,7 @@ class HomeUiState {
 data class HomeData(
     val resume: List<ResumeItem>,
     val favorites: List<ChannelShow>,
-    val genres: List<Pair<Genre, List<ChannelShow>>>,
+    val genres: List<GenreRail>,
     val stale: StaleNotice?,
 )
 
@@ -149,6 +150,7 @@ fun HomeScreen(
     onOpenShow: (ShowId, String) -> Unit,
     onPlay: (EpisodeId, String, ProgressContext) -> Unit,
     onNavigate: (RailDestination) -> Unit,
+    onOpenGenre: (Genre) -> Unit,
 ) {
     val catalog = Providers.catalog
     val updates by catalog.updates.collectAsState()
@@ -319,9 +321,10 @@ fun HomeScreen(
                             }
                         }
                     }
-                    items(current.genres, key = { "rail:${it.first.name}" }) { (genre, shows) ->
+                    items(current.genres, key = { "rail:${it.genre.name}" }) { rail ->
+                        val genre = rail.genre
                         Rail(title = genre.genreLabel(), rowState = state.row(genre.name)) {
-                            items(shows, key = { it.show.id.value }) { entry ->
+                            items(rail.shows, key = { it.show.id.value }) { entry ->
                                 val key = "genre:${genre.name}:${entry.show.id.value}"
                                 PosterCard(
                                     entry = entry,
@@ -329,6 +332,17 @@ fun HomeScreen(
                                     onFocused = { track(key, showFeatured(entry, channelNames)) },
                                     onClick = { onOpenShow(entry.show.id, entry.show.title) },
                                 )
+                            }
+                            // Only a rail the cap cut gets the way to the full grid.
+                            if (rail.hasMore) {
+                                val key = seeAllKey(genre)
+                                item(key = key) {
+                                    SeeAllCard(
+                                        requester = state.requester(key),
+                                        onFocused = { track(key, Featured(genre.genreLabel(), null, null, null)) },
+                                        onClick = { onOpenGenre(genre) },
+                                    )
+                                }
                             }
                         }
                     }
@@ -389,7 +403,10 @@ private suspend fun loadHome(catalog: CatalogStore): HomeData {
 private fun firstCardKey(data: HomeData): String? =
     data.resume.firstOrNull()?.let { "resume:${it.episodeId.value}" }
         ?: data.favorites.firstOrNull()?.let { "fav:${it.show.id.value}" }
-        ?: data.genres.firstOrNull()?.let { (genre, shows) -> "genre:${genre.name}:${shows.first().show.id.value}" }
+        ?: data.genres.firstOrNull()?.let { rail -> "genre:${rail.genre.name}:${rail.shows.first().show.id.value}" }
+
+/** Home focus key of the « Tout voir » card of a Genre rail: Back from the grid lands on it. */
+private fun seeAllKey(genre: Genre): String = "more:${genre.name}"
 
 private fun ResumeItem.toContext() = ProgressContext(showId, showTitle, episodeTitle, thumbnailUrl)
 
@@ -681,6 +698,36 @@ private fun PosterCard(
             .background(Rb.surfaceRaised),
     ) {
         Artwork(url = entry.show.posterUrl, fallback = entry.show.title)
+    }
+}
+
+/** « Tout voir » at the end of a truncated Genre rail: a poster-sized Raised Slate plate. */
+@Composable
+private fun SeeAllCard(requester: FocusRequester, onFocused: () -> Unit, onClick: () -> Unit) {
+    var isFocused by remember { mutableStateOf(false) }
+    val scale = focusScale(isFocused)
+    Box(
+        Modifier
+            .width(116.dp)
+            .aspectRatio(3f / 4f)
+            .focusRequester(requester)
+            .onFocusChanged {
+                isFocused = it.isFocused
+                if (it.isFocused) onFocused()
+            }
+            .tvClickable(onClick)
+            .scale(scale)
+            .cardFocus(isFocused)
+            .background(Rb.surfaceRaised)
+            .padding(12.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = stringResource(R.string.see_all),
+            style = RbType.cardTitle,
+            color = Rb.text,
+            maxLines = 2,
+        )
     }
 }
 

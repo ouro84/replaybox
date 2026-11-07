@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -51,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.replaybox.R
+import com.replaybox.core.model.Show
 
 // Building blocks shared by Home and the Programme page (DESIGN.md components).
 
@@ -262,5 +264,63 @@ internal fun LoadingRing(modifier: Modifier = Modifier) {
             color = Rb.text,
             strokeWidth = 4.dp,
         )
+    }
+}
+
+/** Six 3:4 posters of ~118 dp fill the 808 dp between the content start and the safe edge. */
+internal const val POSTER_GRID_COLUMNS = 6
+
+/**
+ * Captioned poster of the Search results and « Tout voir » grids: 3:4 art with the Home card
+ * focus, then the title (Card Title, 2 lines) and « Chaîne · Genre » (Meta Mist) 14 dp below.
+ * [channel] is null when the cache does not know the Chaîne (never guessed).
+ */
+@Composable
+internal fun PosterCaptionCard(
+    show: Show,
+    channel: String?,
+    focusRequesters: List<FocusRequester>,
+    onFocused: () -> Unit = {},
+    onClick: () -> Unit,
+) {
+    var focused by remember { mutableStateOf(false) }
+    val scale = focusScale(focused)
+    Column(
+        modifier = Modifier
+            .then(focusRequesters.fold(Modifier as Modifier) { acc, requester -> acc.focusRequester(requester) })
+            .onFocusChanged {
+                focused = it.isFocused
+                if (it.isFocused) onFocused()
+            }
+            .tvClickable(onClick),
+    ) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .scale(scale)
+                .aspectRatio(3f / 4f)
+                .cardFocus(focused)
+                .background(Rb.surface),
+        ) {
+            Artwork(url = show.posterUrl, fallback = show.title)
+        }
+        Text(
+            text = show.title,
+            style = RbType.cardTitle,
+            color = Rb.text,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(top = 14.dp),
+        )
+        val meta = listOfNotNull(channel, show.genres.firstOrNull()?.genreLabel()).joinToString(" · ")
+        if (meta.isNotEmpty()) {
+            Text(
+                text = meta,
+                style = RbType.meta,
+                color = Rb.textSecondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }

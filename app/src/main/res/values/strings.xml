@@ -43,9 +43,17 @@
     <string name="update_ready">Mise à jour %1$s prête</string>
     <string name="update_install">Installer</string>
     <string name="nav_home">Accueil</string>
+    <string name="nav_genres">Genres</string>
     <string name="nav_search">Recherche</string>
     <string name="nav_settings">Paramètres</string>
     <string name="rail_resume">Reprendre</string>
+    <string name="see_all">Tout voir</string>
+    <string name="genres_title">Genres</string>
+    <string name="genre_grid_empty">Aucun Programme dans ce Genre.</string>
+    <string name="filter_all">Tout</string>
+    <string name="filter_tf1">TF1</string>
+    <string name="filter_francetv">France TV</string>
+    <string name="filter_m6">M6+</string>
     <string name="action_resume">Reprendre</string>
     <string name="action_episodes">Épisodes</string>
     <plurals name="remaining_minutes">

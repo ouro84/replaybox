@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import com.replaybox.app.ReplayboxApplication
 import com.replaybox.core.model.Episode
 import com.replaybox.core.model.EpisodeId
+import com.replaybox.core.model.Genre
 import com.replaybox.core.model.ProgressContext
 import com.replaybox.core.model.ShowId
 
@@ -33,6 +34,8 @@ sealed interface Screen {
     object About : Screen
     object SubtitleSettings : Screen
     object Search : Screen
+    object Genres : Screen
+    data class GenreGrid(val genre: Genre) : Screen
 }
 
 class MainActivity : ComponentActivity() {
@@ -50,6 +53,14 @@ class MainActivity : ComponentActivity() {
             val showStates = remember { HashMap<String, ShowUiState>() }
             // Back from a Provider page lands on its row.
             val settingsState = remember { SettingsUiState() }
+            // One state per visit of Genres: Back from a grid lands on the tile that opened it.
+            var genresState by remember { mutableStateOf(GenresUiState()) }
+            // One state per opened grid: kept while a Programme opened from it is on top.
+            var gridState by remember { mutableStateOf<GenreGridUiState?>(null) }
+            fun openGrid(genre: Genre) {
+                gridState = GenreGridUiState(genre)
+                backStack.add(Screen.GenreGrid(genre))
+            }
             BackHandler(enabled = backStack.size > 1) { backStack.removeAt(backStack.lastIndex) }
             ReplayboxThemeSurface {
                 when (val current = backStack.last()) {
@@ -62,6 +73,10 @@ class MainActivity : ComponentActivity() {
                         onNavigate = { destination ->
                             when (destination) {
                                 RailDestination.HOME -> Unit
+                                RailDestination.GENRES -> {
+                                    genresState = GenresUiState()
+                                    backStack.add(Screen.Genres)
+                                }
                                 RailDestination.SEARCH -> {
                                     searchState = SearchUiState()
                                     backStack.add(Screen.Search)
@@ -69,6 +84,7 @@ class MainActivity : ComponentActivity() {
                                 RailDestination.SETTINGS -> backStack.add(Screen.Settings)
                             }
                         },
+                        onOpenGenre = ::openGrid,
                     )
                     is Screen.ShowDetail -> ShowScreen(
                         showId = current.showId,
@@ -112,6 +128,13 @@ class MainActivity : ComponentActivity() {
                         state = searchState,
                         onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
                     )
+                    Screen.Genres -> GenresScreen(state = genresState, onOpenGenre = ::openGrid)
+                    is Screen.GenreGrid -> key(current.genre) {
+                        GenreGridScreen(
+                            state = remember { gridState?.takeIf { it.genre == current.genre } ?: GenreGridUiState(current.genre) },
+                            onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
+                        )
+                    }
                 }
             }
         }

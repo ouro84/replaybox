@@ -25,6 +25,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.materialIcon
+import androidx.compose.material.icons.materialPath
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,7 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.replaybox.R
 
-enum class RailDestination { HOME, SEARCH, SETTINGS }
+enum class RailDestination { HOME, GENRES, SEARCH, SETTINGS }
 
 /**
  * Left navigation rail (Google TV / Netflix pattern): icons only while the
@@ -83,6 +85,7 @@ fun NavRail(
     ) {
         val items = listOf(
             Triple(RailDestination.HOME, Icons.Filled.Home, R.string.nav_home),
+            Triple(RailDestination.GENRES, GenresIcon, R.string.nav_genres),
             Triple(RailDestination.SEARCH, Icons.Filled.Search, R.string.nav_search),
             Triple(RailDestination.SETTINGS, Icons.Filled.Settings, R.string.nav_settings),
         )
@@ -146,5 +149,31 @@ private fun RailItem(
                 )
             }
         }
+    }
+}
+
+/**
+ * Material « Category » (filled): triangle, circle and square, the Material icon for
+ * categories. Drawn from its path because the extended icon set is not a dependency.
+ */
+private val GenresIcon: ImageVector = materialIcon(name = "Filled.Category") {
+    materialPath {
+        moveTo(12f, 2f)
+        lineToRelative(-5.5f, 9f)
+        horizontalLineToRelative(11f)
+        close()
+    }
+    materialPath {
+        moveTo(17.5f, 17.5f)
+        moveToRelative(-4.5f, 0f)
+        arcToRelative(4.5f, 4.5f, 0f, true, true, 9f, 0f)
+        arcToRelative(4.5f, 4.5f, 0f, true, true, -9f, 0f)
+    }
+    materialPath {
+        moveTo(3f, 13.5f)
+        horizontalLineToRelative(8f)
+        verticalLineToRelative(8f)
+        horizontalLineTo(3f)
+        close()
     }
 }
