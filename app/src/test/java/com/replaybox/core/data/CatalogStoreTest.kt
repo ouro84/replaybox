@@ -155,7 +155,7 @@ class CatalogStoreTest {
             assertThat(catalog.shows(provider, null).map { it.id.value }).containsExactly("old")
             assertThat(catalog.refreshListings(listOf(provider))).isEqualTo(1)
             assertThat(catalog.listingAt("tf1")).isEqualTo(stale)
-            assertThat(catalog.genreRails(listOf("tf1")).single().second.map { it.show.id.value })
+            assertThat(catalog.genreRails(listOf("tf1")).single().shows.map { it.show.id.value })
                 .containsExactly("old")
         }
     }
@@ -174,7 +174,7 @@ class CatalogStoreTest {
             val provider = FakeProvider(Channel("tfx", "TFX"))
             val catalog = store(dao)
 
-            val rails = catalog.genreRails(listOf("tfx")).toMap()
+            val rails = catalog.genreRails(listOf("tfx")).associate { it.genre to it.shows }
             assertThat(rails.getValue(Genre.SERIES).map { it.show.id.value }).containsExactly("hpi")
             assertThat(rails.getValue(Genre.YOUTH).map { it.show.id.value }).containsExactly("pokemon")
             assertThat(catalog.shows(provider, Genre.SERIES).map { it.id.value }).containsExactly("hpi")
@@ -203,7 +203,7 @@ class CatalogStoreTest {
             val dao = FakeCatalogDao()
             dao.putListing("tf1", listOf(show("a", "Alpha", Genre.SERIES)), now - 1 * hour)
             val catalog = store(dao)
-            assertThat(catalog.genreRails(listOf("tf1")).single().second.map { it.show.id.value })
+            assertThat(catalog.genreRails(listOf("tf1")).single().shows.map { it.show.id.value })
                 .containsExactly("a")
 
             val provider = FakeProvider(
@@ -212,7 +212,7 @@ class CatalogStoreTest {
             )
             catalog.refreshListings(listOf(provider))
 
-            assertThat(catalog.genreRails(listOf("tf1")).single().second.map { it.show.id.value })
+            assertThat(catalog.genreRails(listOf("tf1")).single().shows.map { it.show.id.value })
                 .containsExactly("a", "b")
         }
     }
