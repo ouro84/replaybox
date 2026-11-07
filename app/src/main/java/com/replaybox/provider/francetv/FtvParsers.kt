@@ -105,6 +105,7 @@ object FtvParsers {
                     broadcastAt = broadcastInstantFrom(item),
                     publishedAt = FtvJson.long(item, "begin_date")?.let(Instant::ofEpochSecond),
                     availableUntil = availableUntilFrom(item),
+                    number = FtvJson.int(item, "episode"),
                 )
             }
         }

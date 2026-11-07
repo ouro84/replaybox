@@ -95,6 +95,14 @@ class FakeCatalogDao : CatalogDao {
     }
 
     override suspend fun favoriteIds(): List<String> = favorites.keys.toList()
+
+    val dismissed = LinkedHashMap<String, String>()
+
+    override suspend fun putDismissal(showId: String, episodeId: String) {
+        dismissed[showId] = episodeId
+    }
+
+    override suspend fun dismissals(): Map<String, String> = HashMap(dismissed)
 }
 
 /** Deterministic Provider double recording its calls. */

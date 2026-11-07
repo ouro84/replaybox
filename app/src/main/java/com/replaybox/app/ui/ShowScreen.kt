@@ -52,6 +52,8 @@ import androidx.tv.foundation.lazy.list.TvLazyListState
 import androidx.tv.foundation.lazy.list.TvLazyRow
 import androidx.tv.foundation.lazy.list.items
 import com.replaybox.R
+import com.replaybox.core.data.HeroTarget
+import com.replaybox.core.data.ProgrammeView
 import com.replaybox.core.model.ChannelShow
 import com.replaybox.core.model.Episode
 import com.replaybox.core.model.EpisodeId
@@ -81,6 +83,12 @@ class ShowUiState {
     private val requesters = HashMap<String, FocusRequester>()
 
     fun requester(key: String): FocusRequester = requesters.getOrPut(key) { FocusRequester() }
+
+    /** Épisode suivant moved on to [episode]: Back from the player lands on it, in its Saison. */
+    fun focusEpisode(episode: Episode) {
+        focusedKey = episodeKey(episode)
+        episode.seasonId?.let { selectedSeason = it }
+    }
 }
 
 private const val KEY_PLAY = "show:play"
@@ -90,10 +98,20 @@ private fun episodeKey(episode: Episode) = "ep:${episode.id.value}"
 /** Items before the first Épisode row: hero, then Saisons pills or the "Épisodes" title. */
 private const val FIRST_EPISODE_INDEX = 2
 
-/** What the hero's primary action plays: the Reprendre target, else the first listed Épisode. */
+/**
+ * What the hero's primary action plays (ProgrammeHeroPolicy): the Reprendre target, else the
+ * next unwatched Épisode, else the first (series) or newest (magazine) Épisode.
+ */
 private sealed interface PlayTarget {
     data class Resume(val item: ResumeItem) : PlayTarget
-    data class Start(val episode: Episode) : PlayTarget
+
+    /** [seasonNumber] feeds the « S2 E4 · Titre » line; null when unnumbered or unknown. */
+    data class Start(val episode: Episode, val seasonNumber: Int?) : PlayTarget
+}
+
+private fun HeroTarget.toPlayTarget(): PlayTarget = when (this) {
+    is HeroTarget.Resume -> PlayTarget.Resume(item)
+    is HeroTarget.Play -> PlayTarget.Start(episode, season?.number)
 }
 
 /**
@@ -107,11 +125,10 @@ fun ShowScreen(
     title: String,
     state: ShowUiState,
     /**
-     * Third argument: true for the hero « Reprendre » (resume without asking).
-     * Fourth: the queue for Épisode suivant, the displayed list of a numbered
-     * Saison, empty for an unnumbered one (NextEpisodePolicy).
+     * Third argument: true for the hero « Reprendre » (resume without asking). The player
+     * finds Épisode suivant itself (CatalogStore.nextEpisode).
      */
-    onOpenEpisode: (Episode, ProgressContext, Boolean, List<Episode>) -> Unit,
+    onOpenEpisode: (Episode, ProgressContext, Boolean) -> Unit,
 ) {
     val provider = Providers.resolveShow(showId.value)
     val catalog = Providers.catalog
@@ -124,7 +141,8 @@ fun ShowScreen(
     var seasons by remember { mutableStateOf<List<Season>?>(null) }
     var episodes by remember { mutableStateOf<List<Episode>?>(null) }
     var progress by remember { mutableStateOf<Map<EpisodeId, EpisodeProgress>>(emptyMap()) }
-    var resume by remember { mutableStateOf<ResumeItem?>(null) }
+    // Hero target and checked Saisons; null until first computed.
+    var view by remember { mutableStateOf<ProgrammeView?>(null) }
     var pinned by remember { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
     var attempt by remember { mutableStateOf(0) }
@@ -138,15 +156,32 @@ fun ShowScreen(
         failed = false
         try {
             val loaded = provider.seasons(showId)
-            seasons = loaded
-            if (state.selectedSeason == null || loaded.none { it.id == state.selectedSeason }) {
-                state.selectedSeason = loaded.firstOrNull()?.id
+            if (state.selectedSeason != null && loaded.none { it.id == state.selectedSeason }) {
+                state.selectedSeason = null
             }
+            seasons = loaded
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             failed = true
         }
+    }
+    // Hero target (Reprendre, else the next unwatched Épisode, else the first / newest) and
+    // checked Saisons, re-read on every catalog tick so returning from the player shows what
+    // was just watched. On first open, the target's Saison is the one selected.
+    LaunchedEffect(seasons, updates) {
+        val loadedSeasons = seasons ?: return@LaunchedEffect
+        val computed = try {
+            catalog.programmeView(provider, showId, loadedSeasons, channelIds)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            ProgrammeView(null, emptySet())
+        }
+        if (state.selectedSeason == null) {
+            state.selectedSeason = computed.target?.season?.id ?: loadedSeasons.firstOrNull()?.id
+        }
+        view = computed
     }
     LaunchedEffect(seasons, state.selectedSeason, attempt) {
         // A Programme without Saisons lists its Épisodes under a null Saison.
@@ -166,29 +201,29 @@ fun ShowScreen(
             failed = true
         }
     }
-    // Progression and the Reprendre target re-read on every catalog tick, so
-    // returning from the player shows the position just saved.
+    // Progression re-reads on every catalog tick, so returning from the player shows the
+    // position just saved.
     LaunchedEffect(episodes, updates) {
-        resume = catalog.resumeFor(showId, channelIds)
         progress = catalog.episodeProgress(episodes.orEmpty().map { it.id })
     }
 
     val list = episodes
-    val numbered = seasons.orEmpty().firstOrNull { it.id == state.selectedSeason }?.number != null
-    val queue = if (numbered) list.orEmpty() else emptyList()
-    val playTarget: PlayTarget? = resume?.let { PlayTarget.Resume(it) }
-        ?: list?.firstOrNull()?.let { PlayTarget.Start(it) }
+    val selectedNumber = seasons.orEmpty().firstOrNull { it.id == state.selectedSeason }?.number
+    val playTarget: PlayTarget? = view?.let { computed ->
+        computed.target?.toPlayTarget() ?: list?.firstOrNull()?.let { PlayTarget.Start(it, selectedNumber) }
+    }
 
     fun open(episode: Episode) {
         state.focusedKey = episodeKey(episode)
-        onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl), false, queue)
+        onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl), false)
     }
 
     fun play(target: PlayTarget) {
         state.focusedKey = KEY_PLAY
         when (target) {
             is PlayTarget.Start -> target.episode.let { episode ->
-                onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl), false, queue)
+                // Played from the start: the target is unwatched, or a fallback the viewer chose.
+                onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl), false)
             }
             is PlayTarget.Resume -> {
                 val item = target.item
@@ -197,7 +232,7 @@ fun ShowScreen(
                         item.episodeId, null, item.episodeTitle.ifBlank { item.showTitle },
                         null, null, item.durationSeconds, item.thumbnailUrl,
                     )
-                onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl ?: item.thumbnailUrl), true, queue)
+                onOpenEpisode(episode, ProgressContext(showId, title, episode.title, episode.thumbnailUrl ?: item.thumbnailUrl), true)
             }
         }
     }
@@ -205,7 +240,9 @@ fun ShowScreen(
     // Focus is placed on arrival, after Back to the hero and after Réessayer,
     // never on a Saison reload (focus stays on the pill the user chose).
     var restorePending by remember { mutableStateOf(true) }
-    val ready = list != null || failed
+    // The hero's play action exists once the view is computed: wait for it, so a focus
+    // remembered on it is not lost to Épingler.
+    val ready = (list != null && view != null) || failed
     LaunchedEffect(ready, restorePending) {
         if (!ready || !restorePending) return@LaunchedEffect
         val key = state.focusedKey
@@ -266,7 +303,7 @@ fun ShowScreen(
             item(key = "seasons") {
                 val seasonList = seasons.orEmpty()
                 if (seasonList.size > 1) {
-                    SeasonPills(seasonList, state.selectedSeason) { state.selectedSeason = it }
+                    SeasonPills(seasonList, state.selectedSeason, view?.watchedSeasons.orEmpty()) { state.selectedSeason = it }
                 } else {
                     Text(
                         text = stringResource(R.string.episodes_title),
@@ -463,7 +500,7 @@ private fun PlayTargetLine(target: PlayTarget?) {
             }
         }
         is PlayTarget.Start -> Text(
-            text = target.episode.title,
+            text = shortEpisodeLabel(target.seasonNumber, target.episode.number, target.episode.title),
             style = RbType.meta,
             color = Rb.textSecondary,
             maxLines = 1,
@@ -474,19 +511,25 @@ private fun PlayTargetLine(target: PlayTarget?) {
 }
 
 @Composable
-private fun SeasonPills(seasons: List<Season>, selected: SeasonId?, onSelect: (SeasonId) -> Unit) {
+private fun SeasonPills(
+    seasons: List<Season>,
+    selected: SeasonId?,
+    watched: Set<SeasonId>,
+    onSelect: (SeasonId) -> Unit,
+) {
     TvLazyRow(
         contentPadding = PaddingValues(start = Rb.contentStart, end = Rb.safeHorizontal, top = 8.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         items(seasons, key = { it.id.value }) { season ->
-            SeasonPill(season.title, season.id == selected) { onSelect(season.id) }
+            SeasonPill(season.title, season.id == selected, season.id in watched) { onSelect(season.id) }
         }
     }
 }
 
+/** A Saison pill; [watched] (every Épisode watched) adds a check before the label: shape, not colour. */
 @Composable
-private fun SeasonPill(label: String, selected: Boolean, onClick: () -> Unit) {
+private fun SeasonPill(label: String, selected: Boolean, watched: Boolean, onClick: () -> Unit) {
     var focused by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(if (focused) Rb.BUTTON_FOCUS_SCALE else 1f, tween(Rb.FOCUS_MS), label = "season")
     val background = when {
@@ -494,22 +537,31 @@ private fun SeasonPill(label: String, selected: Boolean, onClick: () -> Unit) {
         selected -> Rb.surfaceRaised
         else -> null
     }
-    Text(
-        text = label,
-        style = RbType.bodyStrong,
-        color = when {
-            focused -> Rb.onFocus
-            selected -> Rb.text
-            else -> Rb.textSecondary
-        },
-        maxLines = 1,
+    val color = when {
+        focused -> Rb.onFocus
+        selected -> Rb.text
+        else -> Rb.textSecondary
+    }
+    Row(
         modifier = Modifier
             .scale(scale)
             .onFocusChanged { focused = it.isFocused }
             .tvClickable(onClick)
             .then(if (background != null) Modifier.background(background, Rb.pillShape) else Modifier)
             .padding(horizontal = 20.dp, vertical = 8.dp),
-    )
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (watched) {
+            Icon(
+                Icons.Filled.Check,
+                contentDescription = stringResource(R.string.season_watched),
+                tint = color,
+                modifier = Modifier.size(20.dp),
+            )
+            Spacer(Modifier.width(8.dp))
+        }
+        Text(text = label, style = RbType.bodyStrong, color = color, maxLines = 1)
+    }
 }
 
 /** Row thumbnail width: the Home Reprendre card grown for a list of one per line. */

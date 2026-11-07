@@ -92,7 +92,7 @@ Décisions du grilling du 2026-11-07 :
   jours » (≤ 7 j), « Hier soir » (veille, à partir de 18 h), « Nouveau » (< 48 h). « Inédit » est
   abandonné tant qu'aucun Provider ne l'expose. Pastille texte sans ambre. Un badge n'existe pour
   un Provider qu'après mesure au `SPEC.md`, sans requête supplémentaire par Épisode. Sur une carte
-  « À suivre », seule l'expiration s'affiche. Un Épisode expiré sort d'« À suivre » et des listes.
+  « À suivre » en cours, seule l'expiration s'affiche ; un nouvel Épisode porte son badge. Un Épisode expiré sort d'« À suivre » et des listes.
 - **« À suivre »** remplace Reprendre : Épisodes en cours et prochain Épisode non vu de chaque
   Programme épinglé, par événement le plus récent. Les épinglés se rafraîchissent en arrière-plan
   au-delà de 12 h. La fiche Programme propose Reprendre, sinon le prochain non vu, sinon le premier
@@ -116,7 +116,7 @@ Accueil & navigation :
 
 - [x] Rail de navigation latéral (Accueil, Genres, Recherche, Paramètres)
 - [x] Billboard « à la une » avec action Reprendre
-- [ ] Rail « À suivre » en tête d'accueil (Épisodes en cours et nouveaux Épisodes des Programmes épinglés)
+- [x] Rail « À suivre » en tête d'accueil (Épisodes en cours et nouveaux Épisodes des Programmes épinglés)
 - [x] Fond dynamique tiré du visuel focalisé
 - [x] Grille « Tout voir » par Genre
 
@@ -131,7 +131,7 @@ Catalogue (dettes M3) :
 - [x] Badges de fraîcheur (Hier soir, Nouveau, J-n avant expiration)
 - [x] État de Progression sur chaque Épisode (non commencé, % vu, vu)
 - [x] « Marquer comme vu »
-- [ ] Prochain Épisode non vu proposé sur la fiche Programme
+- [x] Prochain Épisode non vu proposé sur la fiche Programme
 
 Lecteur complet :
 

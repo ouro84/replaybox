@@ -91,7 +91,7 @@ components:
     backgroundColor: "{colors.surface-raised}"
     rounded: "{rounded.card}"
     width: "116dp"
-  card-resume:
+  card-up-next:
     backgroundColor: "{colors.surface-raised}"
     rounded: "{rounded.card}"
     width: "176dp"
@@ -186,7 +186,7 @@ A cool, low-chroma neutral ramp with one warm accent. The key art supplies all o
 - **Screen White** (focus): The focus color. It is used for the focus ring around cards, the fill of a focused button, nav item or chip, and nothing else. Material `primary` maps to it.
 
 ### Secondary
-- **Progression Amber** (accent): The single accent. It fills the progress bar on Reprendre cards and in the detail panel, and it tints the icon of the current navigation destination. Material `secondary` maps to it.
+- **Progression Amber** (accent): The single accent. It fills the progress bar on « À suivre » cards in progress and in the detail panel, and it tints the icon of the current navigation destination. Material `secondary` maps to it.
 
 ### Neutral
 - **Night Ground** (ground): The app background and the base color of every scrim. It is cool near-black, never pure black, which avoids OLED smear and harsh edges. It also serves as the 72 % dim behind the expanded nav rail and the 85 % backing of the stale-catalog pill.
@@ -216,11 +216,11 @@ A cool, low-chroma neutral ramp with one warm accent. The key art supplies all o
 ### Hierarchy
 - **Display** (Bold 700, 40 sp, 46 sp line): The title of the focused or billboard item in the detail panel. One line.
 - **Display Compact** (Bold 700, 30 sp, 36 sp line): Replaces Display when the title overflows one line. Up to two lines, then ellipsis.
-- **Rail Title** (Medium 500, 20 sp, 26 sp line): Rail headings ("Reprendre", "Favoris", Genre names), Genre tiles and dialog titles.
+- **Rail Title** (Medium 500, 20 sp, 26 sp line): Rail headings ("À suivre", "Favoris", Genre names), Genre tiles and dialog titles.
 - **Body** (Regular 400, 18 sp, 26 sp line): Synopsis (max 2 lines in a 540 dp column), dialog hint, empty-catalog line.
 - **Body Strong** (Medium 500, 18 sp, 24 sp line): Metadata line under the title ("France 3 · Policier & Thriller"), button labels, nav labels.
 - **Meta** (Regular 400, 16 sp, 22 sp line): Remaining time ("34 min restantes"), stale notice, update chip.
-- **Card Title** (Medium 500, 16 sp, 22 sp line): Title under a Reprendre card or a grid poster, on missing-art plates, and the « Tout voir » card label.
+- **Card Title** (Medium 500, 16 sp, 22 sp line): Title under an « À suivre » card or a grid poster, on missing-art plates, and the « Tout voir » card label.
 - **Label** (Regular 400, 14 sp, 20 sp line): The floor. Defined and mapped to Material `bodySmall`/`labelSmall`, but not used on Home.
 
 The Material3 mapping covers screens that still read `MaterialTheme.typography`: headlineLarge = Display, headlineMedium = 32/38 sp Bold, headlineSmall = 24/30 sp Medium, titleLarge = Rail Title, titleMedium and labelLarge = Body Strong, bodyLarge = Body, bodyMedium and labelMedium = Meta, bodySmall and labelSmall = Label.
@@ -272,7 +272,7 @@ The system is flat. No shadows are used anywhere. Depth comes from three things.
 
 ## Shapes
 
-Soft, consistent corners in the 8 to 12 dp band. Cards use 10 dp (card), panel buttons 8 dp (button), and nav items, chips, the stale pill, progress bars and skeleton title bars are fully rounded (pill). Card art clips to the card shape. The progress bar on a Reprendre card runs flush along the bottom edge inside that clip.
+Soft, consistent corners in the 8 to 12 dp band. Cards use 10 dp (card), panel buttons 8 dp (button), and nav items, chips, the stale pill, progress bars and skeleton title bars are fully rounded (pill). Card art clips to the card shape. The progress bar on an « À suivre » card runs flush along the bottom edge inside that clip.
 
 ### Named Rules
 **The Concentric Ring Rule.** The focus ring is drawn outside the art, never over it. It has a 3 dp white stroke and sits 3 dp beyond the card edge. Its corner radius is the card radius plus its reach (10 dp + 4.5 dp), so ring and card stay concentric.
@@ -282,21 +282,30 @@ Soft, consistent corners in the 8 to 12 dp band. Cards use 10 dp (card), panel b
 ### Buttons (panel button)
 Quiet at rest, unmistakable on focus.
 - **Shape:** gently rounded (8 dp), 44 dp tall, 20 dp horizontal padding.
-- **Rest:** raised slate fill, Paper White Body Strong label. Optional leading play icon (24 dp, 8 dp gap) on "Reprendre" only.
+- **Rest:** raised slate fill, Paper White Body Strong label. Optional leading play icon (24 dp, 8 dp gap) on the play actions only ("Reprendre", "Lecture", "Lire maintenant").
 - **Focus:** white fill, ink label and icon, scale 1.06 in 200 ms.
-- **Variants:** none. Dialog actions ("Marquer comme vu", "Retirer de Reprendre") use the same style as "Annuler". Initial focus goes to "Annuler".
+- **Variants:** none. Dialog actions ("Marquer comme vu", "Retirer d'À suivre") use the same style as "Annuler". Initial focus goes to "Annuler".
 
 ### Cards
 - **Poster card (Programme):** 3:4, 116 dp wide, 10 dp corners, no caption. The detail panel names the focused item.
 - **« Tout voir » card:** ends a Home Genre rail only when the rail is truncated (more Programmes than its 40 cards); a complete rail has none. Same size as a poster (116 dp, 3:4, 10 dp corners), Raised Slate plate, « Tout voir » centred in Card Title, Paper White. Card focus. While focused, the detail panel shows the Genre name alone. OK opens the « Tout voir » grid of that Genre.
-- **Reprendre card (Épisode):** 16:9 thumbnail, 176 dp wide, 10 dp corners, with a 4 dp progress bar along the bottom edge (amber over track). Below it, 14 dp down: the Programme title (Card Title, Paper White, 1 line) and the remaining time in words (Meta, Mist). It shows no Chaîne.
-- **Expiry on a Reprendre card:** when the Épisode ends within 7 days, a freshness pill (« Dernier jour », « Plus qu'un jour », « Plus que N jours ») replaces the remaining-time line, 2 dp below the title. It is never added next to it. The progress bar stays. « Hier soir » and « Nouveau » never appear on these cards.
+- **« À suivre » card (Épisode):** 16:9 thumbnail, 176 dp wide, 10 dp corners. Below it, 14 dp down: the Programme title (Card Title, Paper White, 1 line), then one line. It shows no Chaîne. One card per Programme.
+  - **In progress:** a 4 dp progress bar along the bottom edge (amber over track) and the remaining time in words (Meta, Mist). When the Épisode ends within 7 days, a freshness pill (« Dernier jour », « Plus qu'un jour », « Plus que N jours ») replaces the remaining-time line, 2 dp below the title, never next to it; the bar stays. « Hier soir » and « Nouveau » never appear on these cards.
+  - **New Épisode of a pinned Programme:** no bar. Its freshness pill (« Hier soir », « Nouveau » or the expiry, the one `FreshnessPolicy` picks), else its label in Meta Mist: « S2 E4 · Titre » with the numbers the Chaîne gives (the title alone when it already reads « S02 E04 » or a number is missing).
 - **Focus:** scale 1.1 in 200 ms plus the concentric white ring (see Shapes).
 - **Missing art:** a flat raised-slate plate with the title in Card Title, bottom-left, 12 dp inset, max 3 lines.
-- **Options key** on a Reprendre card opens its options dialog (see Options dialogs).
+- **Options key** on an « À suivre » card opens its options dialog (see Options dialogs).
+
+### « À suivre » rail
+The first rail of Home, replacing « Reprendre ».
+- **Content:** the Épisodes in progress (one per Programme, the « Reprendre » rule), plus for each pinned Programme without one its next Épisode: for a series, the Épisode after the last one watched (95 % or marked watched), only once one was watched, across Saisons; for a magazine, the newest unwatched Épisode broadcast 7 days ago or less. Expired Épisodes never appear; a dismissed Épisode stays off until its Programme offers another one.
+- **Order:** the most recent event first: last playback for an Épisode in progress, broadcast (else publication) for a new one. The order only changes when the data does, never by algorithm.
+- **OK:** an Épisode in progress resumes at once; a new Épisode plays from the start, both without the Reprendre / Débuter prompt.
+- **Freshness:** each time Home opens, pinned Programmes whose Épisodes are older than 12 h refetch in the background, three at a time. The rail updates in place without moving focus; a failure keeps the cache and shows nothing.
+- **Focus line:** the card keeps its focus when its content changes (one key per Programme, so an Épisode in progress that becomes the next one stays focused); after a dialog action takes the card off, focus returns to the billboard.
 
 ### Detail panel (billboard)
-The top of Home always describes something. On launch it shows the most recent Reprendre item with "Reprendre" (play icon) focused, plus "Épisodes", then the remaining time and a 120 x 4 dp progress bar. With no Reprendre item, it falls back to the most recently pinned favourite with a single "Épisodes" button. When a card has focus, the panel shows that card instead: the synopsis for a Programme, or the remaining time and progress for an Épisode. In that state the panel has no buttons. With nothing to show, the panel is empty and focus starts on the first card.
+The top of Home always describes something. On launch it shows the first « À suivre » item with its primary action focused, plus "Épisodes": "Reprendre" (play icon) then the remaining time and a 120 x 4 dp progress bar for an Épisode in progress; "Lecture" (play icon) for a new Épisode, whose metadata line reads « Chaîne · S2 E4 · Titre » over its synopsis. With no « À suivre » item, it falls back to the most recently pinned favourite with a single "Épisodes" button. When a card has focus, the panel shows that card instead: the synopsis for a Programme, the remaining time and progress for an Épisode in progress, the label and synopsis for a new Épisode. In that state the panel has no buttons. With nothing to show, the panel is empty and focus starts on the first card.
 
 ### Progress bar
 A 4 dp pill, amber fill over the track, always paired with the remaining time in words ("34 min restantes", "1 h 05 restantes", "Moins d'une minute"). Progression is never coded by the bar alone.
@@ -313,22 +322,22 @@ A 4 dp pill, amber fill over the track, always paired with the remaining time in
 - **Update chip:** a focusable pill with 16 dp x 6 dp padding. It shows "Mise à jour %s prête" and then "Installer" in Medium, 12 dp apart. At rest it has a raised-slate fill. On focus it turns white with ink text and scales 1.06 over 200 ms, like panel buttons. It is never the initial focus.
 
 ### Options dialogs
-The remote's Options key (MENU) opens a dialog on a Reprendre card or on an Épisode row of the Programme page.
+The remote's Options key (MENU) opens a dialog on an « À suivre » card or on an Épisode row of the Programme page.
 - **Panel:** 440 dp slate surface, 10 dp corners, 24 dp padding. Title in Rail Title (2 lines), an optional hint in Body Mist (2 lines), then the panel buttons 24 dp below, 12 dp apart.
 - **Order and focus:** « Annuler » comes first and takes the initial focus. One action sits in a row next to it. Two or more actions do not fit the 392 dp row, so all the buttons stack full width.
-- **Reprendre card:** title = the Programme, hint = the Épisode title. Buttons « Annuler », « Marquer comme vu », « Retirer de Reprendre ». Both actions take the card off the rail. Focus then goes back to the billboard, as after a removal.
+- **« À suivre » card:** title = the Programme, hint = the Épisode title. Buttons « Annuler », « Marquer comme vu », « Retirer d'À suivre ». Both actions take the card off the rail (a pinned series then offers its following Épisode). « Retirer d'À suivre » forgets the Progression of an Épisode in progress, and on any card records the Épisode as dismissed for its Programme (stored on the box), so the same Épisode is not offered again; a newer one is. Focus then goes back to the billboard, as after a removal.
 - **Épisode row:** title = the Épisode. Buttons « Annuler » and « Marquer comme vu », or « Marquer comme non vu » on a watched row. Focus returns to the row.
-- **Marquer comme vu** stores the Progression at 100 %. The Épisode leaves Reprendre and its row reads « ✓ Vu » with the full Mist bar. **Marquer comme non vu** forgets the Progression. There is no Saison-wide marking.
+- **Marquer comme vu** stores the Progression at 100 %. The Épisode leaves « À suivre » and its row reads « ✓ Vu » with the full Mist bar. **Marquer comme non vu** forgets the Progression. There is no Saison-wide marking.
 
 ### Freshness pill
 At most one per Épisode (`FreshnessPolicy`): « Dernier jour », « Plus qu'un jour » / « Plus que N jours » (7 days at most), « Hier soir » (broadcast yesterday from 18:00), « Nouveau » (online less than 48 h).
 - **Look:** Meta in Mist on a Raised Slate pill, 10 x 2 dp padding. Never amber, never an alert colour: the One Amber Rule holds.
 - **On a focused Épisode row:** the row plate is Raised Slate too, so the pill fill steps down to Slate Surface.
-- **Where:** at the end of the Épisode row's meta line, 12 dp after the text, and on Reprendre cards (expiry only, see Cards). Nowhere else: not on posters, the billboard or the detail panel.
+- **Where:** at the end of the Épisode row's meta line, 12 dp after the text, and on « À suivre » cards (expiry only on an Épisode in progress, see Cards). Nowhere else: not on posters, the billboard or the detail panel.
 - **Watched rows:** no pill. « ✓ Vu » already says enough.
 
 ### Expired Épisodes
-An Épisode whose known end of availability has passed leaves Reprendre and the billboard. Its Progression stays stored. It is not listed on the Programme page either, even while the 12 h cache still holds it. An Épisode with no known end (M6+, or missing from the cache) never counts as expired.
+An Épisode whose known end of availability has passed leaves « À suivre » and the billboard. Its Progression stays stored. It is not listed on the Programme page either, even while the 12 h cache still holds it. An Épisode with no known end (M6+, or missing from the cache) never counts as expired.
 
 ### Skeleton
 Shown only on a cold first launch with an empty cache. It uses the same geometry as real rails: a 16 dp pill title bar, then a row of slate-surface cards. The first rail holds 16:9 cards at 176 dp, the second 3:4 cards at 116 dp. There is no spinner and no shimmer.
@@ -343,17 +352,18 @@ The same world as Home, one level down. Verified on the Bbox (2026-11-06).
 - Key art 640 dp at the top right, with the Home scrims.
 - Title in Display (stepping to Display Compact on two lines), then « Chaîne · Genre » in Body Strong Mist, then a synopsis of up to 3 lines in Body Mist.
 - Two panel buttons:
-  - the primary is « Reprendre » (newest unfinished Épisode of this Programme) or « Lecture » (first listed Épisode), with the play icon;
+  - the primary, with the play icon, follows a cascade: « Reprendre » on the newest unfinished Épisode of this Programme; else « Lecture » on the next unwatched Épisode after the last watched one (95 % or marked watched), across Saisons in their number order; else « Lecture » on the first Épisode of the first Saison for a series, the newest Épisode for a magazine;
   - the secondary is « Épingler » / « Épinglé », with no icon.
-- 14 dp below the buttons, a line names what the primary plays: a 120 dp progress bar plus « Épisode · 3 min restantes », or just the Épisode title.
+- 14 dp below the buttons, a line names what the primary plays: a 120 dp progress bar plus « Épisode · 3 min restantes », or « S2 E4 · Titre » with the numbers the Chaîne gives (the title alone when it already carries them or one is missing).
 - Initial focus goes to the primary.
 
-**Reprendre plays at once.** A « Reprendre » action (billboard, Reprendre card, Programme hero) resumes without the player's Reprendre / Débuter prompt. Opening an Épisode row keeps the prompt, with the position written as the player clock (« 0:45 »).
+**Reprendre plays at once.** A « Reprendre » action (billboard, « À suivre » card, Programme hero) resumes without the player's Reprendre / Débuter prompt. Opening an Épisode row keeps the prompt, with the position written as the player clock (« 0:45 »). « Lecture » on the hero plays from the start.
 
 **Saisons.** Pills only when there is more than one Saison; otherwise an « Épisodes » Rail Title.
 - Focused: white fill with a 1.06 lift.
-- Selected: raised slate.
+- Selected: raised slate. On opening, the selected Saison is the one holding the primary's target, not necessarily the first listed.
 - Other: Mist with no fill.
+- Watched: a Saison whose listed Épisodes are all watched carries a 20 dp check 8 dp before its label, in the label colour (shape, never colour alone). Nothing else changes on the rows.
 - Selection happens on OK, never on focus, so crossing the pills fires no request. Focus stays on the pill while its Épisodes load.
 
 **Épisode row.** A 208 dp 16:9 thumbnail at 104 dp, then 32 dp of space, then:
@@ -377,7 +387,7 @@ Duration is rounded up, so 3 min 45 s reads « 4 min ».
 - Once the list scrolls, the key art sinks under 92 % ground (300 ms), so rows never sit on unscrimmed art.
 - A 64 dp top fade (solid to about 40 dp) dissolves the cut line.
 - Back from the list returns to the hero; Back from the hero leaves.
-- Returning from the player focuses the Épisode just watched.
+- Returning from the player focuses the Épisode just watched; after Épisode suivant moved on, the last one played, in its Saison. Opened from the hero, focus returns to the primary.
 
 **States.** Loading shows 3 skeleton rows. An error reads « Impossible de charger les Épisodes. » with a focused « Réessayer ». Empty uses « Aucun Épisode disponible. ».
 
@@ -421,7 +431,12 @@ The video owns the screen. Every overlay sits at the bottom over a ground scrim 
 - **Controls.** Programme title in Rail Title, Épisode title in Meta Mist, then the timeline: tabular clocks either side of a 6 dp track with the amber Progression fill (One Amber Rule). Below, panel buttons: Pause/Lecture (initial focus), −10 s, +10 s, Recommencer, Sous-titres (check or cross: state by shape), Options. They hide 5 s after the last key while playing and stay while paused.
 - **Options panel.** Takes the controls' place. Title « Options », then one row per setting (Audio, Sous-titres, Taille du texte and Fond du texte when the Flux has subtitles, Qualité, Vitesse): label in Body Strong Mist on a 180 dp column, choices as panel buttons with a check on the selected one. Rows come only from the tracks the player has; a row with nothing to choose is left out. Initial focus is the selected choice of the first row.
 - **Captions.** While controls or Options are shown, the caption layer lifts (34 % and 62 % of its height) so no cue sits under an overlay.
-- **Resume prompt, Épisode suivant, error.** Slate panels with panel buttons, bottom left for the prompt and bottom right for Épisode suivant (10 s countdown, « Lire maintenant » focused). The error reuses Display Compact with a focused « Réessayer ».
+- **Resume prompt, Épisode suivant, error.** Slate panels with panel buttons, bottom left for the prompt and bottom right for Épisode suivant. The error reuses Display Compact with a focused « Réessayer ».
+- **Épisode suivant.** A 420 dp panel shown over the last 10 s of the video while it keeps playing underneath (no credit markers exist in the listings): « Épisode suivant » in Rail Title, the numbering in Meta Mist (« Saison 3 · Épisode 1 », only the numbers the Chaîne gives), the title in Body (2 lines), then « Lecture dans N s » in Meta Mist, counting the time left in the video (it holds while paused). Panel buttons « Lire maintenant » (play icon, initial focus) and « Annuler ». The controls and Options make way while it shows.
+  - **Next:** the following Épisode of the numbered Saison in number order (Chaînes list the newest first), else the first Épisode of the next Saison number. Its Épisodes load while the current one plays, so the panel never waits. None after the last Saison, and none for an unnumbered magazine Saison.
+  - **At 0** (the end of the video) or on « Lire maintenant », the next Épisode plays in the same player entry, and the one just left reads watched.
+  - **« Annuler » or Back** hides the panel and lets the Épisode finish; its end then leaves the player for the screen that opened it (the Programme page, on the Épisode just watched). The same happens at the end of an Épisode with no next one.
+  - **Seeking** back before the last 10 s hides the panel and forgets « Annuler »; a resume or a seek landing inside them shows it at once.
 - **Loading.** One indicator everywhere a Flux loads: a 48 dp Paper White ring (4 dp stroke), centred, no text, shown only after 500 ms so quick loads never flash. It covers the Flux resolution on ground and buffering over the video.
 - **Playback error.** The first error re-resolves the Flux silently and resumes at the last position; a second one in a row shows « Flux indisponible » / « La lecture s'est interrompue. » with « Réessayer », which resumes there.
 - **Focus holder.** The idle focus target is a sibling of the overlays, never their parent: Compose maps Back to a focus exit, and a focusable parent swallows the first press.
@@ -439,7 +454,7 @@ Verified on the Bbox (2026-11-07). One list, one level of pages; Back from a pag
 - **Initial focus:** the first row; after Back, the row that opened the page.
 
 **Sous-titres.** Title in Display Compact, a 400 x 225 dp preview (10 dp corners), then two choice rows 14 dp apart: « Taille du texte » (Normal, Grand, Très grand) and « Fond du texte » (Contour, Semi-opaque, Opaque). Each row is a 180 dp Body Strong Mist label plus panel buttons; the saved choice carries a check, never colour alone. Initial focus: the saved size.
-- **Preview:** the player's own Media3 SubtitleView over the key art of the latest Reprendre item (a slate gradient without one), showing a two-line cue. It follows the focused choice; OK saves at once and the player follows live, even mid-Épisode.
+- **Preview:** the player's own Media3 SubtitleView over the key art of the latest Épisode in progress (a slate gradient without one), showing a two-line cue. It follows the focused choice; OK saves at once and the player follows live, even mid-Épisode.
 - **Values:** text 5.33 %, 6.66 % and 8 % of the video height (Media3 default, x1.25, x1.5); band Night Ground at 70 % or 100 %; Contour draws a Night Ground outline with no band. Text is Paper White. Default: Grand on a semi-opaque band.
 - **Override:** the setting replaces the system caption style and the colours and font sizes embedded in the cues (`setApplyEmbeddedStyles(false)`), so the three Providers look alike; cue positions are kept.
 

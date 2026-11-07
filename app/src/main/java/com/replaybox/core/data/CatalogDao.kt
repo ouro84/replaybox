@@ -58,4 +58,12 @@ interface CatalogDao {
     suspend fun removeFavorite(showId: String)
 
     suspend fun favoriteIds(): List<String>
+
+    // ---- « À suivre » dismissals (device-local) ----
+
+    /** Records that [episodeId] was taken off « À suivre » for [showId] (replaces an older one). */
+    suspend fun putDismissal(showId: String, episodeId: String)
+
+    /** Programme id → dismissed Épisode id. */
+    suspend fun dismissals(): Map<String, String>
 }

@@ -80,8 +80,10 @@ import com.replaybox.core.model.ChannelShow
 import com.replaybox.core.model.EpisodeId
 import com.replaybox.core.model.Genre
 import com.replaybox.core.model.ProgressContext
+import com.replaybox.core.data.FreshnessPolicy
 import com.replaybox.core.model.ResumeItem
 import com.replaybox.core.model.ShowId
+import com.replaybox.core.model.UpNextItem
 import com.replaybox.provider.m6.M6Channels
 import com.replaybox.provider.tf1.Tf1Channels
 import kotlinx.coroutines.Dispatchers
@@ -116,7 +118,8 @@ class HomeUiState {
 }
 
 data class HomeData(
-    val resume: List<ResumeItem>,
+    /** The « À suivre » rail: Épisodes in progress and new Épisodes of pinned Programmes. */
+    val upNext: List<UpNextItem>,
     val favorites: List<ChannelShow>,
     val genres: List<GenreRail>,
     val stale: StaleNotice?,
@@ -131,12 +134,13 @@ private data class Featured(
     val meta: String?,
     val detail: String?,
     val backdropUrl: String?,
-    /** Set for Reprendre items: remaining time and progress in the panel. */
+    /** Set for Épisodes in progress: remaining time and progress in the panel. */
     val resume: ResumeItem? = null,
 )
 
 private sealed interface Billboard {
-    data class Resume(val item: ResumeItem) : Billboard
+    /** The first « À suivre » item: « Reprendre » in progress, « Lecture » for a new Épisode. */
+    data class UpNext(val item: UpNextItem) : Billboard
     data class Favorite(val entry: ChannelShow) : Billboard
 }
 
@@ -161,7 +165,7 @@ fun HomeScreen(
     var refocus by remember { mutableStateOf(0) }
     val retryFocus = remember { FocusRequester() }
     var focused by remember { mutableStateOf<Featured?>(null) }
-    var removing by remember { mutableStateOf<ResumeItem?>(null) }
+    var removing by remember { mutableStateOf<UpNextItem?>(null) }
     val scope = rememberCoroutineScope()
     // Read once per visit: Providers.all follows the M6+ account (Paramètres), and Home
     // leaves composition while Paramètres is open.
@@ -197,10 +201,18 @@ fun HomeScreen(
         state.data = loaded
         data = loaded
     }
+    // « À suivre »: pinned Programmes whose Épisodes are older than 12 h refresh in the
+    // background on each visit; catalog.updates re-ticks the rail, focus stays put, and a
+    // failure keeps the cache without a banner.
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            runCatching { catalog.refreshPinned(providers.map { it.channel.id }, { Providers.resolveShow(it.value) }) }
+        }
+    }
 
     val current = data
     val billboard: Billboard? = current?.let {
-        it.resume.firstOrNull()?.let(Billboard::Resume)
+        it.upNext.firstOrNull()?.let(Billboard::UpNext)
             ?: it.favorites.firstOrNull()?.let(Billboard::Favorite)
     }
     val billboardFeatured = billboard?.let { featuredOf(it, channelNames) }
@@ -256,7 +268,7 @@ fun HomeScreen(
             )
             when {
                 current == null || (current.genres.isEmpty() && refreshing) -> SkeletonRails()
-                current.genres.isEmpty() && current.resume.isEmpty() && current.favorites.isEmpty() -> Column(
+                current.genres.isEmpty() && current.upNext.isEmpty() && current.favorites.isEmpty() -> Column(
                     Modifier.padding(start = GUTTER, top = 16.dp),
                 ) {
                     // A failed refresh is never presented as an empty catalogue.
@@ -288,13 +300,13 @@ fun HomeScreen(
                     contentPadding = PaddingValues(bottom = Rb.safeVertical),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    if (current.resume.isNotEmpty()) {
-                        item(key = "rail:resume") {
-                            Rail(title = stringResource(R.string.rail_resume), rowState = state.row("resume")) {
-                                items(current.resume, key = { it.episodeId.value }) { item ->
-                                    val key = "resume:${item.episodeId.value}"
-                                    val featured = resumeFeatured(item, channelNames)
-                                    ResumeCard(
+                    if (current.upNext.isNotEmpty()) {
+                        item(key = "rail:upnext") {
+                            Rail(title = stringResource(R.string.rail_up_next), rowState = state.row("upnext")) {
+                                items(current.upNext, key = { it.showId.value }) { item ->
+                                    val key = upNextKey(item)
+                                    val featured = upNextFeatured(item, channelNames)
+                                    UpNextCard(
                                         item = item,
                                         requester = state.requester(key),
                                         onFocused = { track(key, featured) },
@@ -368,15 +380,19 @@ fun HomeScreen(
             state.focusedKey = null
             refocus++
         }
+        val duration = when (item) {
+            is UpNextItem.InProgress -> item.resume.durationSeconds
+            is UpNextItem.NewEpisode -> item.episode.durationSeconds
+        }
         ActionDialog(
             title = item.showTitle,
             hint = item.episodeTitle.takeIf { it != item.showTitle },
             actions = listOf(
                 DialogAction(stringResource(R.string.mark_watched)) {
-                    leaveRail { catalog.markWatched(item.episodeId, item.durationSeconds, item.toContext()) }
+                    leaveRail { catalog.markWatched(item.episodeId, duration, item.toContext()) }
                 },
-                DialogAction(stringResource(R.string.remove_resume_confirm)) {
-                    leaveRail { catalog.removeFromContinueWatching(item.episodeId) }
+                DialogAction(stringResource(R.string.remove_up_next)) {
+                    leaveRail { catalog.removeFromUpNext(item) }
                 },
             ),
             onDismiss = { removing = null },
@@ -400,7 +416,7 @@ private suspend fun loadHome(catalog: CatalogStore): HomeData {
         }
     }
     return HomeData(
-        resume = catalog.continueWatching(channelIds),
+        upNext = catalog.upNext(channelIds),
         favorites = catalog.favoriteChannelShows(channelIds),
         genres = catalog.genreRails(channelIds),
         stale = staleSources.takeIf { it.isNotEmpty() }?.let {
@@ -410,30 +426,51 @@ private suspend fun loadHome(catalog: CatalogStore): HomeData {
 }
 
 private fun firstCardKey(data: HomeData): String? =
-    data.resume.firstOrNull()?.let { "resume:${it.episodeId.value}" }
+    data.upNext.firstOrNull()?.let(::upNextKey)
         ?: data.favorites.firstOrNull()?.let { "fav:${it.show.id.value}" }
         ?: data.genres.firstOrNull()?.let { rail -> "genre:${rail.genre.name}:${rail.shows.first().show.id.value}" }
 
 /** Home focus key of the « Tout voir » card of a Genre rail: Back from the grid lands on it. */
 private fun seeAllKey(genre: Genre): String = "more:${genre.name}"
 
-private fun ResumeItem.toContext() = ProgressContext(showId, showTitle, episodeTitle, thumbnailUrl)
+/** Home focus key of an « À suivre » card: one card per Programme, whichever Épisode it offers. */
+private fun upNextKey(item: UpNextItem): String = "upnext:${item.showId.value}"
 
+private fun UpNextItem.toContext() = ProgressContext(showId, showTitle, episodeTitle, thumbnailUrl)
+
+@Composable
 private fun featuredOf(billboard: Billboard, names: Map<String, String>): Featured = when (billboard) {
-    is Billboard.Resume -> resumeFeatured(billboard.item, names)
+    is Billboard.UpNext -> upNextFeatured(billboard.item, names)
     is Billboard.Favorite -> showFeatured(billboard.entry, names)
 }
 
-private fun resumeFeatured(item: ResumeItem, names: Map<String, String>) = Featured(
-    title = item.showTitle,
-    meta = listOfNotNull(
-        item.channelId?.let { names[it] },
-        item.episodeTitle.takeIf { it.isNotBlank() && it != item.showTitle },
-    ).joinToString(" · ").ifBlank { null },
-    detail = null,
-    backdropUrl = item.backdropUrl,
-    resume = item,
-)
+/**
+ * Detail panel of an « À suivre » item: in progress, the remaining time and progress; a new
+ * Épisode, its « S2 E4 · Titre » label in the metadata line and its synopsis.
+ */
+@Composable
+private fun upNextFeatured(item: UpNextItem, names: Map<String, String>): Featured = when (item) {
+    is UpNextItem.InProgress -> Featured(
+        title = item.showTitle,
+        meta = listOfNotNull(
+            item.channelId?.let { names[it] },
+            item.episodeTitle.takeIf { it.isNotBlank() && it != item.showTitle },
+        ).joinToString(" · ").ifBlank { null },
+        detail = null,
+        backdropUrl = item.backdropUrl,
+        resume = item.resume,
+    )
+    is UpNextItem.NewEpisode -> Featured(
+        title = item.showTitle,
+        meta = listOfNotNull(
+            item.channelId?.let { names[it] },
+            shortEpisodeLabel(item.seasonNumber, item.episode.number, item.episodeTitle)
+                .takeIf { it.isNotBlank() && it != item.showTitle },
+        ).joinToString(" · ").ifBlank { null },
+        detail = item.episode.synopsis?.takeIf { it.isNotBlank() },
+        backdropUrl = item.backdropUrl,
+    )
+}
 
 private fun showFeatured(entry: ChannelShow, names: Map<String, String>) = Featured(
     title = entry.show.title,
@@ -457,7 +494,7 @@ private fun DetailPanel(
     stale: StaleNotice?,
     update: UpdateState.Ready?,
     onFocusButton: (String) -> Unit,
-    onPlay: (ResumeItem) -> Unit,
+    onPlay: (UpNextItem) -> Unit,
     onOpenShow: (ShowId, String) -> Unit,
 ) {
     Box(
@@ -509,22 +546,25 @@ private fun DetailPanel(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     when (billboard) {
-                        is Billboard.Resume -> {
+                        is Billboard.UpNext -> {
+                            val item = billboard.item
                             PanelButton(
-                                label = stringResource(R.string.action_resume),
+                                label = stringResource(
+                                    if (item is UpNextItem.InProgress) R.string.action_resume else R.string.action_play,
+                                ),
                                 icon = Icons.Filled.PlayArrow,
                                 requester = state.requester(KEY_PRIMARY),
                                 onFocused = { onFocusButton(KEY_PRIMARY) },
-                                onClick = { onPlay(billboard.item) },
+                                onClick = { onPlay(item) },
                             )
                             PanelButton(
                                 label = stringResource(R.string.action_episodes),
                                 icon = null,
                                 requester = state.requester(KEY_SECONDARY),
                                 onFocused = { onFocusButton(KEY_SECONDARY) },
-                                onClick = { onOpenShow(billboard.item.showId, billboard.item.showTitle) },
+                                onClick = { onOpenShow(item.showId, item.showTitle) },
                             )
-                            ResumeProgress(billboard.item)
+                            if (item is UpNextItem.InProgress) ResumeProgress(item.resume)
                         }
                         is Billboard.Favorite -> PanelButton(
                             label = stringResource(R.string.action_episodes),
@@ -618,9 +658,14 @@ private fun Rail(
     }
 }
 
+/**
+ * « À suivre » card (16:9). In progress: the amber bar along the art, then the expiry pill
+ * or the remaining time. A new Épisode: no bar, its freshness pill (« Hier soir »,
+ * « Nouveau », expiry), else its « S2 E4 · Titre » label.
+ */
 @Composable
-private fun ResumeCard(
-    item: ResumeItem,
+private fun UpNextCard(
+    item: UpNextItem,
     requester: FocusRequester,
     onFocused: () -> Unit,
     onClick: () -> Unit,
@@ -656,7 +701,7 @@ private fun ResumeCard(
                 .background(Rb.surfaceRaised),
         ) {
             Artwork(url = item.thumbnailUrl, fallback = item.showTitle)
-            val ratio = item.watchedRatio
+            val ratio = (item as? UpNextItem.InProgress)?.resume?.watchedRatio
             if (ratio != null) {
                 Box(
                     Modifier
@@ -677,13 +722,31 @@ private fun ResumeCard(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(top = 14.dp),
         )
-        // An expiry pill replaces the remaining time; the bar above still shows Progression.
-        val expiry = cardBadge(item.availableUntil, Instant.now())
-        if (expiry != null) {
-            FreshnessPill(expiry, modifier = Modifier.padding(top = 2.dp))
-        } else {
-            remainingText(item.remainingSeconds)?.let {
-                Text(it, style = RbType.meta, color = Rb.textSecondary, maxLines = 1)
+        when (item) {
+            is UpNextItem.InProgress -> {
+                // An expiry pill replaces the remaining time; the bar above still shows Progression.
+                val expiry = cardBadge(item.resume.availableUntil, Instant.now())
+                if (expiry != null) {
+                    FreshnessPill(expiry, modifier = Modifier.padding(top = 2.dp))
+                } else {
+                    remainingText(item.resume.remainingSeconds)?.let {
+                        Text(it, style = RbType.meta, color = Rb.textSecondary, maxLines = 1)
+                    }
+                }
+            }
+            is UpNextItem.NewEpisode -> {
+                val badge = FreshnessPolicy.badge(item.episode, Instant.now())
+                if (badge != null) {
+                    FreshnessPill(badge, modifier = Modifier.padding(top = 2.dp))
+                } else {
+                    Text(
+                        shortEpisodeLabel(item.seasonNumber, item.episode.number, item.episodeTitle),
+                        style = RbType.meta,
+                        color = Rb.textSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
     }

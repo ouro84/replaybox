@@ -21,4 +21,10 @@ data class Episode(
     val publishedAt: Instant? = null,
     /** End of availability. TF1 gives it to the day only: an upper bound (SPEC §Provider TF1+). */
     val availableUntil: Instant? = null,
+    /**
+     * Number of the Épisode within its numbered Saison, as the Chaîne lists it (TF1, France TV
+     * and M6 all carry `episode`). The play order of a numbered Saison (NextEpisodePolicy);
+     * null when the Chaîne gives none.
+     */
+    val number: Int? = null,
 )

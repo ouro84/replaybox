@@ -242,6 +242,7 @@ object Tf1Parsers {
                 broadcastAt = v.broadcastAt,
                 publishedAt = v.publishedAt,
                 availableUntil = v.availableUntil,
+                number = v.episode,
             )
         }
     }
