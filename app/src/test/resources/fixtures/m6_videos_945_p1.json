@@ -1,0 +1,64 @@
+[
+ {
+  "id": "clip_13005621",
+  "type": "vi",
+  "title": "S17 E10 - Finale",
+  "description": "Pour la grande finale, la course sera formée de trois sprints intermédiaires pendant lesquels les deux équipes tenteront de gagner un maximum d’argent. C’est la fameuse règle du « time is money » : la première équipe arrivée déclenchera une balise qui, chaque seconde, fera perdre 10 euros à la deuxième équipe.\r\nEt c’est dans une ambiance apocalyptique que la finale va démarrer à Rio de Janeiro ! Une tempête tropicale s’abat sur le pays et c’est sous une pluie battante que les candidats vont vivre leur première course qui les emmènera sur les plages mythiques de Rio de Janeiro pour une épreuve de beach volley, sport emblématique de la ville ! \r\nÀ ce stade de la compétition, les deux équipes finalistes ne se feront plus de cadeaux et se livreront une lutte acharnée lors du sprint final ! Quelle équipe aura la chance de remporter le titre si convoité de gagnant de la saison 17 de Pékin Express ?",
+  "duration": 6666,
+  "display_image": {
+   "external_key": "3977914",
+   "role": "vignette",
+   "id": 3724937
+  },
+  "service_display": {
+   "code": "m6replay"
+  },
+  "program": {
+   "id": 945,
+   "code": "pekin-express"
+  },
+  "clips": [
+   {
+    "product": {
+     "season": 17,
+     "episode": 10,
+     "part_number": null,
+     "first_diffusion": "2023-04-20 21:14:00",
+     "season_title": "Saison 17"
+    },
+    "type": "vi"
+   }
+  ]
+ },
+ {
+  "id": "clip_13004628",
+  "type": "vi",
+  "title": "S17 E9 - Demi-finale",
+  "description": "Pour la 9e étape et demi-finale de l’aventure, les binômes devront disputer trois courses à l’issues desquelles les premiers remporteront une amulette et les derniers une enveloppe noire. \r\nCes trois courses donneront du fil à retordre aux candidats, qui seront rapidement mis dans le bain en démarrant avec un saut à plus de 40 mètres dans le vide ! De quoi mettre leurs nerfs à rude épreuve et faire tomber les moins bons ! \r\nDurant cette étape, les équipes découvriront Sao Paulo et son quartier d’artiste où le street art règne en maître ! La dernière course leur fera découvrir un des plus beaux parcs nationaux du sud du Brésil pour un treck rythmé au son des cloches de vache ! De quoi rendre fous nos binômes…\r\nLa détermination des candidats pour décrocher leur place en finale sera plus forte que jamais ! Quel binôme tirera son épingle du jeu ? Quelle équipe n’aura pas la main heureuse et tirera l’enveloppe noire éliminatoire ?",
+  "duration": 6318,
+  "display_image": {
+   "external_key": "3976686",
+   "role": "vignette",
+   "id": 3723711
+  },
+  "service_display": {
+   "code": "m6replay"
+  },
+  "program": {
+   "id": 945,
+   "code": "pekin-express"
+  },
+  "clips": [
+   {
+    "product": {
+     "season": 17,
+     "episode": 9,
+     "part_number": null,
+     "first_diffusion": "2023-04-13 21:11:00",
+     "season_title": "Saison 17"
+    },
+    "type": "vi"
+   }
+  ]
+ }
+]

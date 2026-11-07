@@ -1,0 +1,95 @@
+[
+ {
+  "id": "clip_13179913",
+  "type": "vi",
+  "title": "Épisode 12 - finale - Partie 2",
+  "description": "La capitale thaïlandaise, Bangkok, sera le théâtre de la grande finale de cette 22e saison. Les finalistes s’y affronteront dans des lieux emblématiques, offrant un décor spectaculaire pour cette ultime étape.\r\nCette course unique sera formée de trois sprints intermédiaires pendant lesquels les deux équipes tenteront de gagner un maximum d’argent, jusqu’à 100 000 euros. C’est la fameuse règle du « Time is money » : la première équipe arrivée déclenchera une balise qui, chaque seconde, fera perdre 10 euros à la deuxième équipe. Ensuite, place au grand sprint final qui verra l’un des binômes repartir avec le montant de sa cagnotte et décrocher le titre !\r\nLes nerfs des candidats seront mis à rude épreuve lors de missions redoutables : dégustation de mets thaïlandais dans le marché flottant de Damnoen Saduak, mission vertigineuse au sommet de la tour MahaNakhon et défis au stade de boxe de Rangsit. \r\nLes équipes ne se feront plus de cadeaux et c’est une lutte acharnée que se livreront les finalistes. Quel binôme aura la chance de remporter le titre si convoité de gagnant de la saison 22 de Pékin Express ?",
+  "duration": 4004,
+  "display_image": {
+   "external_key": "4946687",
+   "role": "vignette",
+   "id": 4683118
+  },
+  "service_display": {
+   "code": "m6replay"
+  },
+  "program": {
+   "id": 945,
+   "code": "pekin-express"
+  },
+  "clips": [
+   {
+    "product": {
+     "season": 22,
+     "episode": 12,
+     "part_number": 2,
+     "first_diffusion": "2026-05-22 22:10:00",
+     "season_title": "Saison 22"
+    },
+    "type": "vi"
+   }
+  ]
+ },
+ {
+  "id": "clip_13179912",
+  "type": "vi",
+  "title": "Épisode 12 - finale - Partie 1",
+  "description": "La capitale thaïlandaise, Bangkok, sera le théâtre de la grande finale de cette 22e saison. Les finalistes s’y affronteront dans des lieux emblématiques, offrant un décor spectaculaire pour cette ultime étape.\r\nCette course unique sera formée de trois sprints intermédiaires pendant lesquels les deux équipes tenteront de gagner un maximum d’argent, jusqu’à 100 000 euros. C’est la fameuse règle du « Time is money » : la première équipe arrivée déclenchera une balise qui, chaque seconde, fera perdre 10 euros à la deuxième équipe. Ensuite, place au grand sprint final qui verra l’un des binômes repartir avec le montant de sa cagnotte et décrocher le titre !\r\nLes nerfs des candidats seront mis à rude épreuve lors de missions redoutables : dégustation de mets thaïlandais dans le marché flottant de Damnoen Saduak, mission vertigineuse au sommet de la tour MahaNakhon et défis au stade de boxe de Rangsit. \r\nLes équipes ne se feront plus de cadeaux et c’est une lutte acharnée que se livreront les finalistes. Quel binôme aura la chance de remporter le titre si convoité de gagnant de la saison 22 de Pékin Express ?",
+  "duration": 2855,
+  "display_image": {
+   "external_key": "4946688",
+   "role": "vignette",
+   "id": 4683119
+  },
+  "service_display": {
+   "code": "m6replay"
+  },
+  "program": {
+   "id": 945,
+   "code": "pekin-express"
+  },
+  "clips": [
+   {
+    "product": {
+     "season": 22,
+     "episode": 12,
+     "part_number": 1,
+     "first_diffusion": "2026-05-22 21:10:00",
+     "season_title": "Saison 22"
+    },
+    "type": "vi"
+   }
+  ]
+ },
+ {
+  "id": "clip_12957152",
+  "type": "vi",
+  "title": "S16 E5 - demi-finale",
+  "description": "Pour la demi-finale de l’aventure, les binômes devront disputer trois courses, à l’issues desquelles les premiers remporteront une amulette, et les derniers une enveloppe noire. \r\nCes courses donneront du fil à retordre aux candidats, qui seront rapidement mis dans le bain en démarrant une course effrénée en rafting dans les remous de la rivière de Kitulgala. Certains binômes se feront même de grosses frayeurs.\r\nDurant cette 5e étape, les équipes seront confrontées à des épreuves dans différents décors typiques du Sri Lanka : les mines de pierres précieuses, où il leur faudra se comprendre et communiquer au mieux, puis un décor idyllique au bord de la plage, où les binômes devront avoir du bon sens et de l’esprit sous une chaleur écrasante. De quoi mettre leurs nerfs à rude épreuve et faire tomber les moins bons.\r\nLa détermination des candidats pour décrocher leur place pour la grande finale de Pékin Express sera plus forte que jamais. Quel binôme tirera son épingle du jeu ? Quelle équipe n’aura pas la main heureuse et tirera l’enveloppe noire éliminatoire ?",
+  "duration": 7200,
+  "display_image": {
+   "external_key": "3778765",
+   "role": "vignette",
+   "id": 3529269
+  },
+  "service_display": {
+   "code": "m6replay"
+  },
+  "program": {
+   "id": 945,
+   "code": "pekin-express"
+  },
+  "clips": [
+   {
+    "product": {
+     "season": 16,
+     "episode": 5,
+     "part_number": null,
+     "first_diffusion": "2022-08-03 21:13:00",
+     "season_title": "Saison 16"
+    },
+    "type": "vi"
+   }
+  ]
+ }
+]

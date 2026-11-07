@@ -8,12 +8,14 @@ package com.replaybox.healthcheck
  * and run only with `-PhealthCheck` (see app/build.gradle.kts) — never as part
  * of the unit test suite (AGENTS.md: zero network in unit tests).
  *
- * Adding a Chaîne (M6+ in V2) = one more [ProviderProbe] in [Probes.all].
+ * Adding a Chaîne = one more [ProviderProbe] in [Probes.all] (and in KNOWN_PROVIDERS of
+ * .github/scripts/healthcheck-status.js).
  */
 object Probes {
     val all: List<ProviderProbe> = listOf(
         Tf1Probe(),
         FtvProbe(),
+        M6Probe(),
     )
 }
 

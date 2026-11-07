@@ -47,4 +47,17 @@ object Manifests {
         val expiry = token.substringAfter("exp=").substringBefore('~').toLongOrNull()
         check(expiry != null && expiry > nowSeconds) { "signed Flux URL already expired (exp=$expiry)" }
     }
+
+    /**
+     * M6 `full_physical_path` (fixture m6_video_clip.json): an https `.mpd` on the lbcdn
+     * redirector, signed by `token=` and valid until `expiration=` (epoch seconds).
+     */
+    fun checkM6Signature(url: String, nowSeconds: Long = System.currentTimeMillis() / 1000) {
+        val uri = URI(url)
+        check(uri.scheme == "https" && uri.path.endsWith(".mpd")) { "M6 manifest URL at ${host(url)} is not an https MPD" }
+        val params = uri.rawQuery.orEmpty().split('&').associate { it.substringBefore('=') to it.substringAfter('=', "") }
+        check(!params["token"].isNullOrEmpty()) { "M6 manifest URL at ${host(url)} carries no token" }
+        val expiry = params["expiration"]?.toLongOrNull()
+        check(expiry != null && expiry > nowSeconds) { "M6 manifest URL already expired (expiration=$expiry)" }
+    }
 }
