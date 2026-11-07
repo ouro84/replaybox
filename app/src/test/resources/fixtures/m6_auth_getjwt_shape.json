@@ -1,0 +1,4 @@
+{
+  "_note": "SHAPE from catchup-tv-and-more 6play.py @ fa49e5a0 (getJwt answer read as {token}), NOT recorded: the token is a hand-made unsigned JWT whose payload carries exp 1793876489.",
+  "token": "eyJhbGciOiJub25lIn0.eyJleHAiOjE3OTM4NzY0ODksIm5vdGUiOiJzaGFwZSwgbm90IGEgcmVjb3JkZWQgdG9rZW4ifQ.c2hhcGU"
+}

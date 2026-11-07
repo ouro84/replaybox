@@ -1,0 +1,9 @@
+{
+  "_note": "SHAPE from catchup-tv-and-more 6play.py @ fa49e5a0, NOT a recorded response: get_login_token() reads UID, signatureTimestamp and UIDSignature at the top level of the accounts.login answer. The spike PR replaces it with a recorded one.",
+  "callId": "shape",
+  "errorCode": 0,
+  "statusCode": 200,
+  "UID": "uid-shape-0001",
+  "UIDSignature": "signature-shape=",
+  "signatureTimestamp": "1793876489"
+}
