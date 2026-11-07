@@ -106,14 +106,36 @@ grilling M4 du 2026-11-07) : les films ne le reçoivent que de `SGT_THRILLER`/`S
 séries (`GT_SERIES_AND_FICTIONS`) le reçoivent d'une heuristique de mots-clés sur titre et synopsis
 normalisés (`Tf1CrimeKeywords`) : un mot-clé dans le titre, ou au moins deux mots-clés distincts
 dans le synopsis (les flexions d'un mot-clé comptent une fois). Deux listes de slugs commentées
-corrigent les ratés connus : l'inclusion porte HPI et les 29 séries policières que la règle à deux
-mots-clés écartait (Alice Nevers, Julie Lescaut, Les Experts : Miami, Elsbeth…), l'exclusion Plus
-belle la vie (fixture `tf1_crime_cases.json`, avec les pièges vus sur la box : La desalmada,
-Twilight, La Ligne verte). Mesuré le 2026-11-07 sur la capture complète (4687 programmes, 2448
-fictions/films du groupe avec replay) : 562 « Policier & Thriller » avec l'ancienne règle (un seul
-mot-clé suffisait, films compris ; la mesure M3 du même jour donnait 555 des 2446) → 278
-(268 séries dont 30 par la liste d'inclusion, 10 films par SGT natif). Les téléfilms d'un seul
-Épisode à un seul mot-clé (« Piégée par mon mari »…) sortent du Genre.
+corrigent les ratés connus : l'inclusion porte HPI, les séries policières que la règle à deux
+mots-clés écartait (Julie Lescaut, Les Experts : Miami, Elsbeth…) et celles de la revue des faux
+négatifs ; l'exclusion porte Plus belle la vie (fixture `tf1_crime_cases.json`, avec les pièges vus
+sur la box : La desalmada, Twilight, La Ligne verte). Mesuré le 2026-11-07 sur la capture complète
+(4687 programmes, 2448 fictions/films du groupe avec replay) : 562 « Policier & Thriller » avec
+l'ancienne règle (un seul mot-clé suffisait, films compris ; la mesure M3 du même jour donnait 555
+des 2446) → 278 avec la règle M4 (268 séries dont 31 par la liste d'inclusion, 10 films par SGT
+natif). Les téléfilms d'un seul Épisode à un seul mot-clé (« Piégée par mon mari »…) sortent du
+Genre.
+
+Revue des faux négatifs (mesuré le 2026-11-07, même capture) : les 207 séries du groupe à un seul
+mot-clé dans le synopsis et aucun dans le titre, relues une à une. Aucun mot-clé seul n'est assez
+fort pour compter double (« enquête » ramène Infidèle, Spirou et Fantasio, Petits secrets en
+famille ; « meurtre » La desalmada et Nazaré ; « commissaire » un commissaire-priseur). Deux
+mots-clés s'ajoutent, chacun n'ayant ramené que de la fiction policière ou judiciaire : « flic »
+(Le Rebelle, Flics, Mercato, Jailbreak, The Fatal Raid) et « juge d'instruction » (À tort ou à
+raison, Le Juge, L'Affaire Bruay-en-Artois, Le Prix de la vérité). Écartés après mesure : « police »
+(Le Gendre idéal et 14 téléfilms), « traque » (La desalmada), « coupable » (Amours coupables),
+« disparition » (Grand Hotel, Sous le soleil de Saint-Tropez), « investigation », « juge » seul
+(Clara et son juge), « avocat » (Leverage : Redemption). Vingt séries entrent par la liste
+d'inclusion : Sauveur Giordano, Intraçables, Une chance de trop, Noces rouges, Le Mystère de la
+chambre jaune, Psycho-Pass, Menace imminente, Norskov, Rien ne t'efface, Carpe Diem, La part du
+soupçon, Nightsleeper, Ransom, Mon ange, Au-delà des apparences, Accusé, Indéfendable, Les Liens du
+sang, Mammon et Florence Larrieu (juge d'instruction, hors revue : « juge » n'est que dans son
+titre). Alice Nevers, Boulevard du Palais, Deux flics sur les docks, La loi selon Bartoli, Panda et
+Un flic quittent la liste, la règle les trouve désormais. Restent hors du Genre, jugés limites :
+Louis la Brocante, Avocats et Associés, Manipulations, High Class, Le parfum du mensonge, Grand
+Hotel, Leverage : Redemption, Return Man, Le JAP, et les téléfilms d'un seul Épisode. Résultat :
+268 → 297 séries (252 par la règle, 45 par la liste d'inclusion), soit 307 « Policier & Thriller »
+avec les 10 films ; aucune série ne sort.
 
 Jeunesse (`GT_YOUTH`, sous-genres `SGT_THREE_TO_SIX_YEARS`/`SGT_SIX_TO_TEN_YEARS`) : 79
 Programmes du groupe, tous sans autre Genre. TF1 range quelques dessins animés en fiction pure
