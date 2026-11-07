@@ -510,7 +510,7 @@ class CatalogStore(
      */
     suspend fun genreGrid(genre: Genre, channelIds: List<String>): List<ChannelShow> {
         val all = channelIds.flatMap { channelId -> listing(channelId).map { ChannelShow(it, channelId) } }
-        return GenreGrid.arrange(all, genre, channelIds = null)
+        return GenreGrid.arrange(all, genre, channelIds = null, now = clock())
     }
 
     /**
@@ -520,7 +520,7 @@ class CatalogStore(
      */
     suspend fun browse(channelIds: List<String>, genre: Genre?): List<ChannelShow> {
         val all = channelIds.flatMap { channelId -> listing(channelId).map { ChannelShow(it, channelId) } }
-        return GenreGrid.arrange(all, genre, channelIds = null)
+        return GenreGrid.arrange(all, genre, channelIds = null, now = clock())
     }
 
     /** Favorites with the Chaîne they are listed on, most recently pinned first. */

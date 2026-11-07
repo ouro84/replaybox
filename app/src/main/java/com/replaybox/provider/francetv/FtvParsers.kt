@@ -27,6 +27,7 @@ object FtvParsers {
     internal const val MISC_SEASON = "Divers"
 
     private const val PLAYLIST_VIDEO = "playlist_video"
+    private const val LIVE = "live"
     private const val NO_END = 2147483647L
     private val SEASON_LABEL = Regex("^Saison\\s*(\\d+)$", RegexOption.IGNORE_CASE)
     private val DATE_FORMAT: DateTimeFormatter =
@@ -35,6 +36,7 @@ object FtvParsers {
     // ---- Channel listing (flat items across all collections) ----
 
     fun showsFromChannel(root: JsonObject): List<Show> {
+        val featured = featuredEpisodeDates(root)
         val byPath = LinkedHashMap<String, Show>()
         for (collection in FtvJson.objects(root["collections"])) {
             for (item in FtvJson.objects(collection["items"])) {
@@ -51,10 +53,32 @@ object FtvParsers {
                             .mapNotNull { FtvJson.str(it, "url_complete") },
                     ),
                     backdropUrl = imageOf(item, "background_16x9", "vignette_16x9"),
+                    recencyAt = featured[path],
                 )
             }
         }
         return byPath.values.toList()
+    }
+
+    /**
+     * Show.recencyAt from a Chaîne page (SPEC §Provider France TV, measured 2026-11-07):
+     * `program` items carry no date, but the page also features `integrale` items (an Épisode,
+     * its Programme under `program.program_path`) whose `begin_date` is the online date. The
+     * latest one per Programme dates it (epoch ms). The `live` collection is skipped: it holds
+     * the broadcast on air, whose `begin_date` is still ahead (not an available Épisode yet).
+     */
+    private fun featuredEpisodeDates(root: JsonObject): Map<String, Long> {
+        val latest = HashMap<String, Long>()
+        for (collection in FtvJson.objects(root["collections"])) {
+            if (FtvJson.str(collection, "type") == LIVE) continue
+            for (item in FtvJson.objects(collection["items"])) {
+                if (FtvJson.str(item, "type") != INTEGRALE) continue
+                val path = FtvJson.str(item, "program", "program_path") ?: continue
+                val at = FtvJson.long(item, "begin_date")?.times(1000) ?: continue
+                latest[path] = maxOf(latest[path] ?: at, at)
+            }
+        }
+        return latest
     }
 
     // ---- Program detail: Seasons + Episodes ----

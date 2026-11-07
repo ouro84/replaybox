@@ -31,6 +31,12 @@ data class ShowEntity(
     @ColumnInfo(defaultValue = "0") val firstSeenRank: Int = 0,
     /** Show.recentEpisodeCount (schema v4), the search tie-breaker. */
     @ColumnInfo(defaultValue = "0") val recentEpisodeCount: Int = 0,
+    /**
+     * Show.recencyAt (schema v7, epoch ms), the « Tout voir » order: the latest value any
+     * refresh gave (GenreGrid.mergeRecency), so a sign seen once is not lost when the next
+     * listing omits it.
+     */
+    val recencyAt: Long? = null,
 )
 
 @Entity(tableName = "genre_map", primaryKeys = ["showId", "genre"])

@@ -67,8 +67,11 @@ object M6Parsers {
                     synopsis = str(item, "description")?.takeIf { it.isNotBlank() },
                     genres = M6Genres.map(str(item, "neustar", "category"), str(item, "program_type_wording", "code")),
                     backdropUrl = imageUrl(images, "jumbotron"),
-                    // No recency signal in the catalogue (count.vi is the whole back-catalogue).
+                    // No recent Épisode count in the catalogue (count.vi is the whole back-catalogue).
                     recentEpisodeCount = 0,
+                    // Latest publication of a full Épisode, Paris time (SPEC §Provider M6+).
+                    recencyAt = str(item, "publication_date_vi", "date_start_max")
+                        ?.let(::parisInstant)?.toEpochMilli(),
                 ),
             )
         }

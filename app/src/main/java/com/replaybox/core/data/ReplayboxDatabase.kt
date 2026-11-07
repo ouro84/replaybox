@@ -17,7 +17,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         FavoriteEntity::class,
         UpNextDismissalEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = false,
 )
 abstract class ReplayboxDatabase : RoomDatabase() {
@@ -95,6 +95,18 @@ abstract class ReplayboxDatabase : RoomDatabase() {
                         "(`showId` TEXT NOT NULL, `episodeId` TEXT NOT NULL, PRIMARY KEY(`showId`))",
                 )
                 db.execSQL("DELETE FROM programs")
+            }
+        }
+
+        /**
+         * v6 → v7: recency of each Programme (Show.recencyAt, the « Tout voir » order).
+         * Listings are marked stale so the next startup refetches them with it; the shows
+         * stay served meanwhile and keep their first-seen order.
+         */
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE shows ADD COLUMN recencyAt INTEGER")
+                db.execSQL("DELETE FROM listings")
             }
         }
     }

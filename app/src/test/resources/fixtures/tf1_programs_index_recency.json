@@ -1,0 +1,322 @@
+{
+ "data": {
+  "programs": {
+   "total": 4687,
+   "items": [
+    {
+     "id": "6ac85a7a-2cf4-4fe6-5fc3-ae5696b6a856",
+     "slug": "star-academy",
+     "name": "Star Academy",
+     "initialChannel": {
+      "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+      "slug": "tf1",
+      "label": "TF1",
+      "__typename": "Channel"
+     },
+     "categories": [
+      {
+       "id": "GT_ENTERTAINMENT",
+       "label": "Divertissements",
+       "main": true,
+       "slug": "divertissements",
+       "type": "MAIN_ENTERTAINEMENT",
+       "__typename": "Category"
+      },
+      {
+       "id": "SGT_ENTERTAINMENT",
+       "label": "Divertissements",
+       "main": false,
+       "slug": "divertissements",
+       "type": "SUB_ENTERTAINEMENT",
+       "__typename": "Category"
+      }
+     ],
+     "replay": {
+      "total": 737,
+      "__typename": "VideosConnector"
+     },
+     "replayRecent": {
+      "total": 5,
+      "__typename": "VideosConnector"
+     },
+     "allVideos": {
+      "total": 3008,
+      "__typename": "VideosConnector"
+     },
+     "allVideosRecent": {
+      "total": 36,
+      "__typename": "VideosConnector"
+     },
+     "releaseYear": "",
+     "__typename": "Program",
+     "decoration": {
+      "description": "Le Château le plus célèbre de France s'apprête, pour la cinquième année consécutive, à ouvrir ses portes à une nouvelle promotion d'élèves. Nikos Aliagas accueille les candidats pour cette nouvelle aventure musicale."
+     }
+    },
+    {
+     "id": "1b6acaf9-85a7-449c-a412-611a7ba5f4ba",
+     "slug": "doc-martin",
+     "name": "Doc Martin",
+     "initialChannel": {
+      "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+      "slug": "tf1",
+      "label": "TF1",
+      "__typename": "Channel"
+     },
+     "categories": [
+      {
+       "id": "GT_SERIES_AND_FICTIONS",
+       "label": "Séries & Fictions",
+       "main": true,
+       "slug": "series-et-fictions",
+       "type": "MAIN_SERIES_AND_FICTIONS",
+       "__typename": "Category"
+      },
+      {
+       "id": "SGT_SERIES",
+       "label": "Séries",
+       "main": false,
+       "slug": "series",
+       "type": "SUB_SERIES",
+       "__typename": "Category"
+      }
+     ],
+     "replay": {
+      "total": 26,
+      "__typename": "VideosConnector"
+     },
+     "replayRecent": {
+      "total": 0,
+      "__typename": "VideosConnector"
+     },
+     "allVideos": {
+      "total": 26,
+      "__typename": "VideosConnector"
+     },
+     "allVideosRecent": {
+      "total": 0,
+      "__typename": "VideosConnector"
+     },
+     "releaseYear": "",
+     "__typename": "Program",
+     "decoration": {
+      "description": "Le docteur Martin Le Foll, chirurgien renommé, développe une phobie du sang qui met fin à sa carrière. Il s'installe comme médecin généraliste à Port Garrec, une petite ville côtière. Habitué aux patients endormis, il doit s'adapter à une clientèle éveillée. Son caractère peu loquace provoque des malentendus dans cette communauté où chacun campe sur ses positions."
+     }
+    },
+    {
+     "id": "f9792451-b523-4b3a-889c-ed42ffeac684",
+     "slug": "koh-lanta",
+     "name": "Koh-Lanta",
+     "initialChannel": {
+      "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+      "slug": "tf1",
+      "label": "TF1",
+      "__typename": "Channel"
+     },
+     "categories": [
+      {
+       "id": "GT_ENTERTAINMENT",
+       "label": "Divertissements",
+       "main": true,
+       "slug": "divertissements",
+       "type": "MAIN_ENTERTAINEMENT",
+       "__typename": "Category"
+      },
+      {
+       "id": "SGT_ENTERTAINMENT",
+       "label": "Divertissements",
+       "main": false,
+       "slug": "divertissements",
+       "type": "SUB_ENTERTAINEMENT",
+       "__typename": "Category"
+      }
+     ],
+     "replay": {
+      "total": 413,
+      "__typename": "VideosConnector"
+     },
+     "replayRecent": {
+      "total": 0,
+      "__typename": "VideosConnector"
+     },
+     "allVideos": {
+      "total": 1032,
+      "__typename": "VideosConnector"
+     },
+     "allVideosRecent": {
+      "total": 0,
+      "__typename": "VideosConnector"
+     },
+     "releaseYear": "",
+     "__typename": "Program",
+     "decoration": {
+      "description": "18 aventuriers emblématiques débarquent sur un îlot du Pacifique pour une saison totalement inédite. L'aventure démarre en \"Destins Liés\" avec des surprises dès les premières minutes qui vont déstabiliser ces candidats aguerris."
+     }
+    },
+    {
+     "id": "515c63f1-d63b-4ea1-a6e6-ed23bc6b5f06",
+     "slug": "jt-20h",
+     "name": "Journal de 20 heures",
+     "initialChannel": {
+      "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+      "slug": "tf1",
+      "label": "TF1",
+      "__typename": "Channel"
+     },
+     "categories": [
+      {
+       "id": "GT_INFOS_MAG_AND_SPORT",
+       "label": "Infos, Mag & Sport",
+       "main": true,
+       "slug": "infos-mag-et-sport",
+       "type": "MAIN_INFOS_MAGAZINE_SPORTS",
+       "__typename": "Category"
+      },
+      {
+       "id": "SGT_INFOS",
+       "label": "Infos",
+       "main": false,
+       "slug": "infos",
+       "type": "SUB_INFOS",
+       "__typename": "Category"
+      }
+     ],
+     "replay": {
+      "total": 7,
+      "__typename": "VideosConnector"
+     },
+     "replayRecent": {
+      "total": 1,
+      "__typename": "VideosConnector"
+     },
+     "allVideos": {
+      "total": 230,
+      "__typename": "VideosConnector"
+     },
+     "allVideosRecent": {
+      "total": 15,
+      "__typename": "VideosConnector"
+     },
+     "releaseYear": "",
+     "__typename": "Program",
+     "decoration": {
+      "description": "Présenté par Gilles Bouleau, Jean-Baptiste Boursier, Anne-Claire Coudray ou Audrey Crespo-Mara, \"Le 20h\" met en lumière de nombreux reportages, documentaires et duplex informant les français sur les sujets sociétaux, environnementaux et économiques. "
+     }
+    },
+    {
+     "id": "3e5a76b8-4cbd-4e4c-5cd6-407ee391bf2e",
+     "slug": "cats-eyes",
+     "name": "Cat's Eyes",
+     "initialChannel": {
+      "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+      "slug": "tf1",
+      "label": "TF1",
+      "__typename": "Channel"
+     },
+     "categories": [
+      {
+       "id": "GT_SERIES_AND_FICTIONS",
+       "label": "Séries & Fictions",
+       "main": true,
+       "slug": "series-et-fictions",
+       "type": "MAIN_SERIES_AND_FICTIONS",
+       "__typename": "Category"
+      },
+      {
+       "id": "SGT_FRENCH_FICTION",
+       "label": "Fictions françaises",
+       "main": false,
+       "slug": "fictions-francaises",
+       "type": "SUB_FRENCH_FICTION",
+       "__typename": "Category"
+      }
+     ],
+     "replay": {
+      "total": 16,
+      "__typename": "VideosConnector"
+     },
+     "replayRecent": {
+      "total": 1,
+      "__typename": "VideosConnector"
+     },
+     "allVideos": {
+      "total": 29,
+      "__typename": "VideosConnector"
+     },
+     "allVideosRecent": {
+      "total": 1,
+      "__typename": "VideosConnector"
+     },
+     "releaseYear": "",
+     "__typename": "Program",
+     "decoration": {
+      "description": "Tamara, Sylia et Alexia, trois sœurs séparées depuis longtemps, se réunissent à Paris en 2024. Elles décident de voler une œuvre de leur père disparu, exposée à la Tour Eiffel, pour élucider le mystère de sa mort. Poursuivies par le capitaine Quentin Chapuis, elles jonglent entre leur vie quotidienne et leurs activités clandestines, tout en affrontant des défis émotionnels et dangereux."
+     }
+    },
+    {
+     "id": "4771fb63-b3df-4197-a47b-eee8ae9048b9",
+     "slug": "quotidien-avec-yann-barthes",
+     "name": "Quotidien",
+     "initialChannel": {
+      "id": "11b242d2-2a37-4f5c-a64f-9337517669b1",
+      "slug": "tmc",
+      "label": "TMC",
+      "__typename": "Channel"
+     },
+     "categories": [
+      {
+       "id": "GT_INFOS_MAG_AND_SPORT",
+       "label": "Infos, Mag & Sport",
+       "main": true,
+       "slug": "infos-mag-et-sport",
+       "type": "MAIN_INFOS_MAGAZINE_SPORTS",
+       "__typename": "Category"
+      },
+      {
+       "id": "SGT_MAG_INFOS",
+       "label": "Magazine d'info",
+       "main": false,
+       "slug": "mag-info",
+       "type": "SUB_MAGAZINE_INFOS",
+       "__typename": "Category"
+      }
+     ],
+     "replay": {
+      "total": 131,
+      "__typename": "VideosConnector"
+     },
+     "replayRecent": {
+      "total": 4,
+      "__typename": "VideosConnector"
+     },
+     "allVideos": {
+      "total": 30788,
+      "__typename": "VideosConnector"
+     },
+     "allVideosRecent": {
+      "total": 13,
+      "__typename": "VideosConnector"
+     },
+     "releaseYear": "",
+     "__typename": "Program",
+     "decoration": {
+      "description": "Yann Barthès et son équipe vous proposent un rendez-vous incontournable mêlant information, culture, sport et humour. Cette émission dynamique offre un panorama complet de l'actualité, avec un regard décalé et des analyses pertinentes. Un moment de divertissement intelligent pour rester informé tout en se détendant. "
+     }
+    }
+   ],
+   "__typename": "ProgramsConnector"
+  }
+ },
+ "extensions": {
+  "report": {
+   "stream": "web",
+   "catalogCode": "fr-fr",
+   "version": "v1.36.3",
+   "execution": {
+    "start": 1794068975472269311,
+    "end": 1794068975580401320,
+    "time": 108132206
+   }
+  }
+ }
+}
