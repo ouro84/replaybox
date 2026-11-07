@@ -62,11 +62,26 @@ Ne garder que `type: REPLAY` (les `EXTRACT`/`BONUS` sont hors périmètre). La t
 chaque programme porte exactement un `GT_` et un `SGT_`, ids `SGT_` en anglais : `SGT_COMEDY`,
 `SGT_DRAMA`, `SGT_DOCUMENTARY`… ; Genres = union des deux). Pas de policier/thriller natif TF1 pour
 les séries → retombe sur Séries ; `SGT_THRILLER`/`SGT_DETECTIVE` n'existent que sur les films
-(`GT_MOVIES`), mesuré 2026-11-07 sur le catalogue complet. Pour les fictions et films
-(`GT_SERIES_AND_FICTIONS`/`GT_MOVIES`), « Policier & Thriller » est ajouté par une heuristique de
-mots-clés sur titre + synopsis normalisés (`Tf1CrimeKeywords`, 555 des 2446 fictions/films du
-groupe sur la capture du 2026-11-07), avec deux listes de slugs commentées pour les ratés connus
-(fixture `tf1_crime_cases.json`).
+(`GT_MOVIES`), mesuré 2026-11-07 sur le catalogue complet. « Policier & Thriller » (règle du
+grilling M4 du 2026-11-07) : les films ne le reçoivent que de `SGT_THRILLER`/`SGT_DETECTIVE` ; les
+séries (`GT_SERIES_AND_FICTIONS`) le reçoivent d'une heuristique de mots-clés sur titre et synopsis
+normalisés (`Tf1CrimeKeywords`) : un mot-clé dans le titre, ou au moins deux mots-clés distincts
+dans le synopsis (les flexions d'un mot-clé comptent une fois). Deux listes de slugs commentées
+corrigent les ratés connus : l'inclusion porte HPI et les 29 séries policières que la règle à deux
+mots-clés écartait (Alice Nevers, Julie Lescaut, Les Experts : Miami, Elsbeth…), l'exclusion Plus
+belle la vie (fixture `tf1_crime_cases.json`, avec les pièges vus sur la box : La desalmada,
+Twilight, La Ligne verte). Mesuré le 2026-11-07 sur la capture complète (4687 programmes, 2448
+fictions/films du groupe avec replay) : 562 « Policier & Thriller » avec l'ancienne règle (un seul
+mot-clé suffisait, films compris ; la mesure M3 du même jour donnait 555 des 2446) → 278
+(268 séries dont 30 par la liste d'inclusion, 10 films par SGT natif). Les téléfilms d'un seul
+Épisode à un seul mot-clé (« Piégée par mon mari »…) sortent du Genre.
+
+Jeunesse (`GT_YOUTH`, sous-genres `SGT_THREE_TO_SIX_YEARS`/`SGT_SIX_TO_TEN_YEARS`) : 79
+Programmes du groupe, tous sans autre Genre. TF1 range quelques dessins animés en fiction pure
+(`GT_SERIES_AND_FICTIONS` + `SGT_SERIES`, aucun signal jeunesse dans le programme) : `pokemon`,
+`yu-gi-oh`, `miraculous-chibi` reçoivent Jeunesse par une liste de slugs commentée dans
+`Tf1Genres` (fixture `tf1_youth_cases.json`), mesuré le 2026-11-07. Les animés ados (Naruto,
+Boruto, One Piece) restent en fiction.
 
 Index TF1 (`CatalogueIndex`, mesuré 2026-11-07) — le listing d'une Chaîne TF1 est sa part de
 l'Index : crawl de `483ce0f` sans filtre, 500 par page, offset = index de page, jusqu'à
@@ -123,6 +138,8 @@ Listing — `GET https://api-mobile.yatta.francetv.fr/apps/channels/<slug>?platf
 (type `playlist_video`) → `items[]` plats avec `si_id`, `season`, `episode`, `duration`,
 `type: integrale` ; `/apps/program/meta/<path>` donne `category` + `sub_categories` (→ Genres
 canoniques ; mapping natif riche : séries-policieres, thriller, comédie, drame, doc histoire…).
+Jeunesse = catégorie `enfants`, exclusive (aucun autre Genre) : 46 Programmes sur les 238 des cinq
+listings de Chaîne, aucun ne portait un autre Genre (mesuré le 2026-11-07).
 
 Détails mesurés le 2026-11-05 (lot 1 M1, fixtures `ftv_*.json`) :
 - **Plafond 250** (mesuré 2026-11-06) : sans `size`, chaque collection s'arrête à 250 items.
@@ -211,6 +228,10 @@ kids…) et `program_type_wording.code` (episode, telefilm, film, emission, dess
 documentaire). `serie-policiere` et `telefilm-frissons` → Séries + Policier & Thriller ; une
 catégorie inconnue de la famille serie/series/telefilm/telenovela → Séries ; `serie-realite` →
 Divertissement. `action` (54 Programmes) n'a pas de Genre propre : seul le type (`film`) le classe.
+Jeunesse = catégorie `kids`, `tous-petits` ou `teens`, ou type `dessin-anime` (décidé par la
+catégorie, jamais par la Chaîne Gulli), exclusive : 77 Programmes gardés, un seul portait un autre
+Genre (Zig et Sharko, `kids` + `episode`, M6), mesuré le 2026-11-07. `les-plus-grands` (Gulli) et
+les Programmes Gulli sans catégorie ni type restent sans Genre.
 
 Vidéos d'un Programme — `GET {host}/services/{service}/programs/{programId}/videos?csa=6&with=clips,freemiumpacks&type=vi&limit=100&offset=N`,
 mêmes plafond, offset d'item et en-tête de total (Pékin Express 945 : 155 → 2 appels).
@@ -298,6 +319,15 @@ carte ou du fond, pas celle du fichier.
 Room : `shows`, `seasons`, `episodes`, `genre_map` + `progress`, `favorites`. TTL 12 h, refresh au
 démarrage en arrière-plan, priorité Home. Provider KO au refresh → servir le cache + bannière
 « Données du [date] ». La résolution du Flux reste toujours live (URLs signées, courte durée).
+
+Genres et mise à jour de l'app : `genre_map` garde les Genres tels que chaque Provider les a
+mappés ; les règles communes (`Genres.canonical` : Jeunesse exclusive) s'appliquent à la lecture
+par `CatalogStore`, donc un Index déjà stocké les suit dès la première lecture après la mise à
+jour, même hors ligne. Le mapping propre à un Provider (mots-clés TF1, slugs) ne change qu'avec
+un nouvel Index : `refreshListings` recrawle toutes les Chaînes à chaque lancement, sans
+regarder le TTL, et l'installation d'un APK redémarre le processus ; tant que ce crawl échoue,
+l'ancien Index reste servi (ADR 0002). Pas de version de mapping à incrémenter.
+
 ## Player
 
 Media3/ExoPlayer, DASH et HLS auto-détectés. **Sous-titres FR activés par défaut** quand la piste
