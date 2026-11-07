@@ -89,6 +89,17 @@
     <string name="show_load_error">Impossible de charger les Épisodes.</string>
     <string name="settings_title">Paramètres</string>
     <string name="settings_about">À propos</string>
+    <string name="settings_subtitles">Sous-titres</string>
+    <string name="subtitle_size">Taille du texte</string>
+    <string name="subtitle_background">Fond du texte</string>
+    <string name="subtitle_size_normal">Normal</string>
+    <string name="subtitle_size_large">Grand</string>
+    <string name="subtitle_size_xlarge">Très grand</string>
+    <string name="subtitle_bg_outline">Contour</string>
+    <string name="subtitle_bg_semi">Semi-opaque</string>
+    <string name="subtitle_bg_opaque">Opaque</string>
+    <string name="subtitle_summary">%1$s · fond %2$s</string>
+    <string name="subtitle_preview_text">On se retrouve demain soir,\nmême heure, même endroit.</string>
     <string name="about_version">Version %1$s</string>
     <string name="about_version_update">Version %1$s · mise à jour %2$s prête</string>
     <string name="about_check">Rechercher une mise à jour</string>

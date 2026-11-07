@@ -362,7 +362,7 @@ Every D-pad target uses `tvClickable`: one focus node and no Material ripple. `f
 The video owns the screen. Every overlay sits at the bottom over a ground scrim (transparent to 92–94 % ground), inside the 48 dp safe frame, and one Back closes it.
 - **Keys with nothing shown.** Left/Right seek 10 s and show the controls, OK plays or pauses, Up/Down show the controls, CC toggles subtitles, MENU opens Options.
 - **Controls.** Programme title in Rail Title, Épisode title in Meta Mist, then the timeline: tabular clocks either side of a 6 dp track with the amber Progression fill (One Amber Rule). Below, panel buttons: Pause/Lecture (initial focus), −10 s, +10 s, Recommencer, Sous-titres (check or cross: state by shape), Options. They hide 5 s after the last key while playing and stay while paused.
-- **Options panel.** Takes the controls' place. Title « Options », then one row per setting: label in Body Strong Mist on a 180 dp column, choices as panel buttons with a check on the selected one. Rows come only from the tracks the player has; a row with nothing to choose is left out. Initial focus is the selected choice of the first row.
+- **Options panel.** Takes the controls' place. Title « Options », then one row per setting (Audio, Sous-titres, Taille du texte and Fond du texte when the Flux has subtitles, Qualité, Vitesse): label in Body Strong Mist on a 180 dp column, choices as panel buttons with a check on the selected one. Rows come only from the tracks the player has; a row with nothing to choose is left out. Initial focus is the selected choice of the first row.
 - **Captions.** While controls or Options are shown, the caption layer lifts (34 % and 62 % of its height) so no cue sits under an overlay.
 - **Resume prompt, Épisode suivant, error.** Slate panels with panel buttons, bottom left for the prompt and bottom right for Épisode suivant (10 s countdown, « Lire maintenant » focused). The error reuses Display Compact with a focused « Réessayer ».
 - **Loading.** One indicator everywhere a Flux loads: a 48 dp Paper White ring (4 dp stroke), centred, no text, shown only after 500 ms so quick loads never flash. It covers the Flux resolution on ground and buffering over the video.
@@ -375,11 +375,16 @@ A failure is never shown as an empty result. Search with every Provider failing 
 ### Paramètres
 Verified on the Bbox (2026-11-07). One list, one level of pages; Back from a page lands on the row that opened it.
 
-**List.** Title « Paramètres » in Display Compact at 104 dp, then 600 dp rows, 16 dp apart, in this order: the Providers (TF1+, France TV, M6+), then « À propos ». (« Sous-titres » joins at the top in M4.)
-- **Row:** slate-surface plate with 10 dp corners, 24 x 16 dp padding. Title in Rail Title, one summary line in Meta Mist (ellipsis after one line). Provider rows end with the Santé badge, 16 dp after the text.
+**List.** Title « Paramètres » in Display Compact at 104 dp, then 600 dp rows, 12 dp apart, in this order: « Sous-titres », the Providers (TF1+, France TV, M6+), then « À propos ». Five 72 dp rows end on the 27 dp bottom safe edge: a sixth row needs a scrolling list.
+- **Row:** slate-surface plate with 10 dp corners, 24 x 12 dp padding. Title in Rail Title, one summary line in Meta Mist (ellipsis after one line). Provider rows end with the Santé badge, 16 dp after the text.
 - **Focus:** raised-slate plate plus the white ring 3 dp outside (`focusRing`), no scale, since rows are wide.
-- **Summaries:** « Connecté : <e-mail> », « Non connecté » or « Sans compte » for a Provider; « Version 0.4.0 » for « À propos », or « Version 0.4.0 · mise à jour 0.5.0 prête » once one is downloaded.
+- **Summaries:** « Grand · fond semi-opaque » for « Sous-titres »; « Connecté : <e-mail> », « Non connecté » or « Sans compte » for a Provider; « Version 0.4.0 » for « À propos », or « Version 0.4.0 · mise à jour 0.5.0 prête » once one is downloaded.
 - **Initial focus:** the first row; after Back, the row that opened the page.
+
+**Sous-titres.** Title in Display Compact, a 400 x 225 dp preview (10 dp corners), then two choice rows 14 dp apart: « Taille du texte » (Normal, Grand, Très grand) and « Fond du texte » (Contour, Semi-opaque, Opaque). Each row is a 180 dp Body Strong Mist label plus panel buttons; the saved choice carries a check, never colour alone. Initial focus: the saved size.
+- **Preview:** the player's own Media3 SubtitleView over the key art of the latest Reprendre item (a slate gradient without one), showing a two-line cue. It follows the focused choice; OK saves at once and the player follows live, even mid-Épisode.
+- **Values:** text 5.33 %, 6.66 % and 8 % of the video height (Media3 default, x1.25, x1.5); band Night Ground at 70 % or 100 %; Contour draws a Night Ground outline with no band. Text is Paper White. Default: Grand on a semi-opaque band.
+- **Override:** the setting replaces the system caption style and the colours and font sizes embedded in the cues (`setApplyEmbeddedStyles(false)`), so the three Providers look alike; cue positions are kept.
 
 **Santé badge.** A 12 dp dot plus a Body Strong label, never color alone: filled Paper White « Fonctionne », filled Soft Coral « En panne », hollow Mist ring « État inconnu ». Shown in Paramètres only (list and Provider page), never on Home.
 
@@ -395,7 +400,6 @@ The Home update chip stays; « À propos » is where to look when it is not show
 ### Not yet specified
 These are not built in this system yet. Do not infer them from Home:
 - The Genre page and "Tout voir".
-- Subtitle styling (size, background, legibility setting).
 - Freshness or "new" badges.
 - Error states beyond the stale notice and the empty-catalog line.
 
