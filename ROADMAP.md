@@ -44,14 +44,14 @@ nouvelle UI d'exploration (grille « Tout voir », filtres) reste en M4 et s'app
   lu de bout en bout (Gigya → JWT → upfront-token → licence drmtoday) et niveau Widevine confirmé.
   Lecture plafonnée à 720p ou moins : on continue. Aucune licence ou connexion bloquée : M6+ repart
   en V2 (mesures consignées au SPEC) et M3 se réduit à l'Index TF1 et aux Paramètres par Provider.
-- [ ] **Index générique + TF1** : un seul indexeur Room + FTS (page de catalogue et mapping de Genres
+- [x] **Index générique + TF1** : un seul indexeur Room + FTS (page de catalogue et mapping de Genres
   fournis par chaque Provider), refresh en arrière-plan par pages de 500. Périmètre TF1 : les 5
   Chaînes du groupe (TF1, TMC, TFX, TF1 Séries Films, LCI), Programmes sans replay exclus,
   partenaires exclus. `shows()` TF1 lit l'Index (rangées d'accueil courtes, ordre éditorial TF1).
   Genres fins par SGT_, « Policier & Thriller » par mots-clés sur titre et description (fixture de
   vrais positifs et de pièges). Recherche TF1 locale (préfixe du titre, puis contient, puis replays
   récents), `searchPrograms` en secours tant que l'Index est vide.
-- [ ] **Paramètres par Provider** : une page par Provider avec son compte quand il en faut un
+- [x] **Paramètres par Provider** : une page par Provider avec son compte quand il en faut un
   (credentials génériques au Keystore Android) et sa Santé. Santé = vérification CI de la nuit
   (`healthcheck.json` sur la branche `status`, lu via `raw.githubusercontent.com`, « inconnue »
   au-delà de 48 h) + état observé sur la box ; le badge prend la pire des deux. Badge dans les

@@ -5,6 +5,7 @@ import com.replaybox.core.data.CatalogStore
 import com.replaybox.core.model.Channel
 import com.replaybox.core.model.Show
 import com.replaybox.provider.api.CachedProvider
+import com.replaybox.provider.api.HealthTrackingProvider
 import com.replaybox.provider.api.Provider
 import com.replaybox.provider.francetv.FtvHttp
 import com.replaybox.provider.francetv.FtvParsers
@@ -21,6 +22,7 @@ import com.replaybox.provider.tf1.tf1CatalogueIndex
  * Chaîne-independent (SPEC: program_path prefixes are navigation slugs).
  * The 5 TF1 group Chaînes share one HTTP layer and one TF1 Index (a single
  * crawl feeds every listing); each keeps the TF1+ account token provider.
+ * Each network Provider reports its Santé under its ProviderGroups id.
  */
 object Providers {
     private val ftvHttp = FtvHttp()
@@ -31,7 +33,8 @@ object Providers {
     private val tf1Index = tf1CatalogueIndex(tf1Http)
 
     private val tf1Group: List<CachedProvider> = Tf1Channels.GROUP.map { channel ->
-        CachedProvider(
+        cached(
+            ProviderGroups.TF1,
             Tf1Provider(
                 http = tf1Http,
                 tokenProvider = { forceRefresh -> ReplayboxApplication.tf1Auth.token(forceRefresh) },
@@ -39,9 +42,15 @@ object Providers {
                 index = tf1Index,
                 localSearch = { query -> tf1LocalSearch(channel.id, query) },
             ),
-            ReplayboxApplication.catalog,
         )
     }
+
+    /** Cache-first over the Santé tracker, so only real network calls feed the on-box Santé. */
+    private fun cached(groupId: String, network: Provider): CachedProvider =
+        CachedProvider(
+            HealthTrackingProvider(network, groupId, ReplayboxApplication.localHealth),
+            ReplayboxApplication.catalog,
+        )
 
     /**
      * TF1 search is local over each Chaîne's stored Index slice (SPEC §Recherche).
@@ -63,7 +72,7 @@ object Providers {
         FtvProvider("france-4", Channel("france-4", "France 4"), ftvHttp, ftvSearch),
         FtvProvider("france-5", Channel("france-5", "France 5"), ftvHttp, ftvSearch),
         FtvProvider("franceinfo", Channel("franceinfo", "franceinfo"), ftvHttp, ftvSearch),
-    ).map { CachedProvider(it, ReplayboxApplication.catalog) }
+    ).map { cached(ProviderGroups.FRANCETV, it) }
 
     val all: List<Provider> = tf1Group + ftv
 

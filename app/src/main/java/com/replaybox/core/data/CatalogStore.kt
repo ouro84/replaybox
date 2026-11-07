@@ -92,7 +92,10 @@ class CatalogStore(
      * ADR 0002). A failing Chaîne is skipped — the evening never blocks on
      * the network; its stale date surfaces in the Home banner instead.
      * Returns how many Chaînes failed, so an empty Home can tell « offline »
-     * from « nothing listed » (decision Round 8 Q4).
+     * from « nothing listed » (decision Round 8 Q4). Santé: each Chaîne's
+     * `origin.shows` goes through its HealthTrackingProvider, which records
+     * the outcome per Chaîne; LocalHealthStore reports the group KO while any
+     * Chaîne failed its latest pass.
      */
     suspend fun refreshListings(providers: List<Provider>): Int {
         var failed = 0

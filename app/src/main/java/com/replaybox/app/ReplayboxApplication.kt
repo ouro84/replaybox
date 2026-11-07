@@ -12,13 +12,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.io.File
+import com.replaybox.core.account.CredentialStore
 import com.replaybox.core.data.CatalogDao
+import com.replaybox.core.health.CiHealthSource
+import com.replaybox.core.health.LocalHealthStore
+import com.replaybox.core.health.SharedPrefsLocalHealthStore
 import com.replaybox.core.data.CatalogStore
 import com.replaybox.core.data.ProgressRecorder
 import com.replaybox.core.data.ReplayboxDatabase
 import com.replaybox.core.data.RoomCatalogDao
 import com.replaybox.provider.tf1.Tf1Auth
-import com.replaybox.provider.tf1.Tf1CredentialStore
 
 class ReplayboxApplication : Application() {
 
@@ -31,7 +34,7 @@ class ReplayboxApplication : Application() {
         private lateinit var instance: ReplayboxApplication
 
         /** TF1 sign-in session: token cache + encrypted credential store. */
-        val tf1Auth: Tf1Auth by lazy { Tf1Auth(Tf1CredentialStore(instance)) }
+        val tf1Auth: Tf1Auth by lazy { Tf1Auth(CredentialStore(instance, "tf1")) }
 
         private val database: ReplayboxDatabase by lazy {
             Room.databaseBuilder(instance, ReplayboxDatabase::class.java, "replaybox.db")
@@ -43,6 +46,12 @@ class ReplayboxApplication : Application() {
                 .fallbackToDestructiveMigration()
                 .build()
         }
+
+        /** Santé observed on this box (catalogue refreshes and Flux resolutions per Provider group). */
+        val localHealth: LocalHealthStore by lazy { SharedPrefsLocalHealthStore(instance) }
+
+        /** Last night's CI check, from the public `status` branch (SPEC §Health-check). */
+        val ciHealth: CiHealthSource by lazy { CiHealthSource() }
 
         /** Room-backed catalog cache (ADR 0002): catalogue cache-first, Flux live. */
         val catalog: CatalogStore by lazy { CatalogStore(catalogDao()) }

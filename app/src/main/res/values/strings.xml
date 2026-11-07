@@ -34,7 +34,7 @@
     <string name="empty_episodes">Aucun Épisode disponible.</string>
     <string name="account_button">Compte TF1+</string>
     <string name="account_connected">Connecté</string>
-    <string name="login_title">Connexion TF1+</string>
+    <string name="login_title">Connexion %1$s</string>
     <string name="login_hint">Le compte se stocke chiffré sur le boîtier, jamais ailleurs.</string>
     <string name="login_email">Adresse e-mail</string>
     <string name="login_password">Mot de passe</string>
@@ -87,4 +87,19 @@
         <item quantity="other">Lecture dans %1$d s</item>
     </plurals>
     <string name="show_load_error">Impossible de charger les Épisodes.</string>
+    <string name="settings_title">Paramètres</string>
+    <string name="health_ok">Fonctionne</string>
+    <string name="health_ko">En panne</string>
+    <string name="health_unknown">État inconnu</string>
+    <string name="health_ci_line">Vérification de cette nuit : %1$s</string>
+    <string name="health_box_line">Sur cette box : %1$s</string>
+    <string name="health_ci_unknown">inconnue</string>
+    <string name="health_ci_failed">échec à l’étape %1$s (%2$s)</string>
+    <string name="health_checked_at">le %1$s à %2$s</string>
+    <string name="health_box_none">rien d’observé pour l’instant</string>
+    <string name="health_box_catalogue">catalogue %1$s</string>
+    <string name="health_box_stream">lecture %1$s</string>
+    <string name="account_signed_in">Connecté : %1$s</string>
+    <string name="account_signed_out">Non connecté</string>
+    <string name="account_none">Sans compte</string>
 </resources>
