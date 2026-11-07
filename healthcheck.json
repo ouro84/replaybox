@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2026-11-07T12:42:19Z",
+  "runUrl": "https://github.com/ouro84/replaybox/actions/runs/42373497613",
+  "providers": [
+    {
+      "provider": "tf1",
+      "label": "TF1+ — Le 20h (anonyme)",
+      "ok": true,
+      "step": null,
+      "error": null,
+      "checkedAt": "2026-11-07T12:42:04Z"
+    },
+    {
+      "provider": "francetv",
+      "label": "France TV — france-2 (anonyme)",
+      "ok": true,
+      "step": null,
+      "error": null,
+      "checkedAt": "2026-11-07T12:42:06Z"
+    },
+    {
+      "provider": "m6",
+      "label": "M6+ (anonyme)",
+      "ok": true,
+      "step": null,
+      "error": null,
+      "checkedAt": "2026-11-07T12:42:17Z"
+    }
+  ]
+}
