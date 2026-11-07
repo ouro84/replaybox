@@ -49,12 +49,12 @@ class Tf1AvantPremiereTest {
     }
 
     @Test
-    fun `former avant-premiere renamed but still paid only is dropped`() {
-        // HPI S04E04: slug avant-premiere-hpi-s04-e04-…, title without the prefix, rights ["MAX"].
+    fun `former avant-premiere already broadcast is kept`() {
+        // HPI S04E04: slug avant-premiere-hpi-s04-e04-…, title without the prefix, rights ["MAX"],
+        // broadcast 17/09: no longer an avant-première, kept at Arnaud's request (2026-11-07).
         val videos = Tf1Parsers.replayPage(TestFixtures.load("tf1_program_by_slug_replay.json"), fetchedAt).videos
         val season4 = videos.filter { it.season == 4 }
-        assertThat(season4.map { it.episode }).containsExactly(8, 7, 6, 5, 3, 2, 1).inOrder()
-        assertThat(videos.none { it.slug.startsWith("avant-premiere") }).isTrue()
+        assertThat(season4.map { it.episode }).containsExactly(8, 7, 6, 5, 4, 3, 2, 1).inOrder()
     }
 
     @Test
@@ -63,11 +63,12 @@ class Tf1AvantPremiereTest {
             """{"data":{"programBySlug":{"videos":{"total":3,"items":[
                {"slug":"no-rights","type":"REPLAY"},
                {"slug":"free","type":"REPLAY","rights":["BASIC","MAX"]},
-               {"slug":"paid","type":"REPLAY","rights":["MAX"]}]}}}}""",
+               {"slug":"paid-ahead","type":"REPLAY","rights":["MAX"],"date":"2099-01-01T00:00:00Z"},
+               {"slug":"paid-aired","type":"REPLAY","rights":["MAX"],"date":"2000-01-01T00:00:00Z"}]}}}}""",
         )
         val page = Tf1Parsers.replayPage(root, fetchedAt)
-        assertThat(page.videos.map { it.slug }).containsExactly("no-rights", "free").inOrder()
-        assertThat(page.itemCount).isEqualTo(3)
+        assertThat(page.videos.map { it.slug }).containsExactly("no-rights", "free", "paid-aired").inOrder()
+        assertThat(page.itemCount).isEqualTo(4)
     }
 
     @Test
@@ -91,6 +92,8 @@ class Tf1AvantPremiereTest {
                                             put("season", 1)
                                             put("episode", i + 1)
                                             put("rights", buildJsonArray { rights.forEach { add(it) } })
+                                            // Avant-premières are dated days ahead (measured 2026-11-07).
+                                            if (pageIndex == 0) put("date", "2099-01-01T00:00:00Z")
                                         })
                                     }
                                 })

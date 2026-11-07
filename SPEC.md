@@ -96,6 +96,11 @@ pagination suivent toujours les comptes de TF1. Fixture :
 `tf1_program_by_slug_demain_nous_appartient_avant_premiere.json` (une avant-première, un Épisode
 ordinaire).
 
+Règle d'affichage (décision d'Arnaud, 2026-11-07) : un Épisode n'est écarté que s'il est réservé à
+l'offre payante (`rights` sans `BASIC`) **et** que sa `date` de diffusion est encore à venir, ce qui
+est exactement une avant-première. Une ancienne avant-première déjà diffusée mais restée sur `["MAX"]`
+(HPI S04E04 « Cheval de Troie », diffusé le 17/09) reste listée.
+
 Ne garder que `type: REPLAY` (les `EXTRACT`/`BONUS` sont hors périmètre). La taxonomie
 `GT_*`/`SGT_*` de `program.categories[]` mappe vers les Genres canoniques (table en code ;
 chaque programme porte exactement un `GT_` et un `SGT_`, ids `SGT_` en anglais : `SGT_COMEDY`,

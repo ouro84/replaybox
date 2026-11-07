@@ -12,9 +12,9 @@ class Tf1ReplayParserTest {
     fun `parses replay page of hpi`() {
         val page = Tf1Parsers.replayPage(TestFixtures.load("tf1_program_by_slug_replay.json"), java.time.Instant.EPOCH)
         assertThat(page.total).isEqualTo(40)
-        // 20 items on the page; S04E04, a former avant-premiere still on the paid offer only, is dropped.
+        // 20 items on the page; S04E04 (paid offer only, but broadcast 17/09) is kept.
         assertThat(page.itemCount).isEqualTo(20)
-        assertThat(page.videos).hasSize(19)
+        assertThat(page.videos).hasSize(20)
         val first = page.videos.first()
         assertThat(first.slug).isEqualTo("hpi-s05-e08-supernova-15207545")
         assertThat(first.title).isEqualTo("HPI - S05 E08 - Supernova")
