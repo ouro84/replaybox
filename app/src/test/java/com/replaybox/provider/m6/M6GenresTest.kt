@@ -2,6 +2,7 @@ package com.replaybox.provider.m6
 
 import com.google.common.truth.Truth.assertThat
 import com.replaybox.core.model.Genre
+import com.replaybox.core.model.Genres
 import org.junit.Test
 
 /** neustar.category + program_type_wording.code → canonical Genres (catalogue capture 2026-11-07). */
@@ -63,6 +64,16 @@ class M6GenresTest {
         listOf("serie-fantastique", "serie-romantique", "telefilm-romance", "telenovela").forEach {
             assertThat(M6Genres.map(it, null)).contains(Genre.SERIES)
         }
+    }
+
+    @Test
+    fun kidsAreJeunesseOnly() {
+        // Jeunesse is decided by category or type, never by the Gulli Chaîne, and is exclusive
+        // (Genres.canonical). « Zig et Sharko » (m6replay, 26412) is kids + episode on the capture.
+        assertThat(Genres.canonical(M6Genres.map("kids", "episode"))).containsExactly(Genre.YOUTH)
+        assertThat(Genres.canonical(M6Genres.map("serie-humour", "dessin-anime"))).containsExactly(Genre.YOUTH)
+        assertThat(Genres.canonical(M6Genres.map("teens", "dessin-anime"))).containsExactly(Genre.YOUTH)
+        assertThat(Genres.canonical(M6Genres.map("tous-petits", null))).containsExactly(Genre.YOUTH)
     }
 
     @Test

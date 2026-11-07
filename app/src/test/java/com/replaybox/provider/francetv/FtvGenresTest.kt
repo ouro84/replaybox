@@ -2,6 +2,7 @@ package com.replaybox.provider.francetv
 
 import com.google.common.truth.Truth.assertThat
 import com.replaybox.core.model.Genre
+import com.replaybox.core.model.Genres
 import org.junit.Test
 
 class FtvGenresTest {
@@ -45,6 +46,15 @@ class FtvGenresTest {
             .containsExactly(Genre.DOCUMENTARY)
         assertThat(FtvGenres.map(null, listOf("jeux-et-divertissements/humour")))
             .containsExactly(Genre.ENTERTAINMENT)
+    }
+
+    @Test
+    fun `enfants is Jeunesse only`() {
+        // Jeunesse is exclusive (Genres.canonical): a kids' Programme refined by a series
+        // sub-category stays out of the other rails. None did on the 2026-11-07 listings.
+        assertThat(Genres.canonical(FtvGenres.map("enfants", listOf("series-et-fictions/series-comedie"))))
+            .containsExactly(Genre.YOUTH)
+        assertThat(Genres.canonical(FtvGenres.map("enfants", emptyList()))).containsExactly(Genre.YOUTH)
     }
 
     @Test
