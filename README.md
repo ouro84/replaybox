@@ -11,7 +11,8 @@ joue les flux directs est donc sans pub par architecture, sans blocage ni skip.
 M0 « Ça marche » et M1 « Utile tous les soirs » livrés : providers TF1+ (compte TF1+ embarqué)
 et France TV, cache Room cache-first avec mode dégradé daté, Genres canoniques, recherche
 cross-chaînes, favoris et reprise de lecture, sous-titres FR activés par défaut. M2 « Produit »
-en cours (releases taggées, auto-update, health-check nocturne). Voir ROADMAP.md pour les jalons.
+livré : releases taggées, auto-update in-app depuis les GitHub Releases, health-check nocturne
+avec issue d'alerte, polish UX. Voir ROADMAP.md pour les jalons.
 
 ## Docs
 
