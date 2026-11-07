@@ -48,7 +48,8 @@ object Tf1Parsers {
     fun indexPage(root: JsonObject, pageIndex: Int, pageSize: Int): CataloguePage {
         val programs = Tf1Json.obj(root, "data", "programs")
         val total = Tf1Json.int(programs, "total") ?: 0
-        val entries = Tf1Json.objects(Tf1Json.array(programs, "items")).mapNotNull { item ->
+        val items = Tf1Json.objects(Tf1Json.array(programs, "items"))
+        val entries = items.mapNotNull { item ->
             val channelId = Tf1Json.str(item, "initialChannel", "slug")
             if (!Tf1Channels.isGroup(channelId)) return@mapNotNull null
             if ((Tf1Json.int(item, "replay", "total") ?: 0) <= 0) return@mapNotNull null
@@ -63,7 +64,8 @@ object Tf1Parsers {
                 ),
             )
         }
-        return CataloguePage(entries, hasMore = (pageIndex + 1) * pageSize < total)
+        // An empty page ends the crawl even if the total promised more (catalogue shrinking mid-crawl).
+        return CataloguePage(entries, hasMore = items.isNotEmpty() && (pageIndex + 1) * pageSize < total)
     }
 
     private val FICTION_ROOTS = setOf("GT_SERIES_AND_FICTIONS", "GT_MOVIES")
