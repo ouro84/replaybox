@@ -128,7 +128,7 @@ Catalogue (dettes M3) :
 
 Épisodes enrichis :
 
-- [ ] Badges de fraîcheur (Hier soir, Nouveau, J-n avant expiration)
+- [x] Badges de fraîcheur (Hier soir, Nouveau, J-n avant expiration)
 - [x] État de Progression sur chaque Épisode (non commencé, % vu, vu)
 - [x] « Marquer comme vu »
 - [ ] Prochain Épisode non vu proposé sur la fiche Programme
