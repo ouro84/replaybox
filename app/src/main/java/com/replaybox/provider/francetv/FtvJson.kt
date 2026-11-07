@@ -33,10 +33,33 @@ internal object FtvJson {
 
     /**
      * Display text: like [str], minus the backslash France TV leaves before
-     * quotes in some descriptions (double-escaped upstream, seen 2026-11-06).
+     * quotes in some descriptions (double-escaped upstream, seen 2026-11-06),
+     * and minus the HTML some magazines send (« <p>Faustine accueille… »,
+     * Ça commence aujourd'hui, seen on the box 2026-11-07).
      */
     fun text(element: JsonElement?, vararg path: String): String? =
-        str(element, *path)?.replace("\\\"", "\"")
+        str(element, *path)?.replace("\\\"", "\"")?.let(::plainText)
+
+    /** Tags dropped (a paragraph or line break becomes a space), common entities decoded. */
+    fun plainText(html: String): String {
+        if ('<' !in html && '&' !in html) return html
+        return html
+            .replace(BREAK, " ")
+            .replace(TAG, "")
+            .replace("&nbsp;", " ")
+            .replace("&quot;", "\"")
+            .replace("&#39;", "'")
+            .replace("&rsquo;", "’")
+            .replace("&lt;", "<")
+            .replace("&gt;", ">")
+            .replace("&amp;", "&")
+            .replace(SPACES, " ")
+            .trim()
+    }
+
+    private val BREAK = Regex("""(?i)<br\s*/?>|</p>\s*<p[^>]*>""")
+    private val TAG = Regex("<[^>]+>")
+    private val SPACES = Regex("""\s{2,}""")
 
     fun str(element: JsonElement?, vararg path: String): String? {
         var current: JsonElement? = element
