@@ -111,6 +111,26 @@ Programmes) ; tout autre `initialChannel` (arte, novo19, public-senat…) est é
 programmes à `replay.total == 0`. `replayRecent.total` alimente `Show.recentEpisodeCount`
 (départage de la recherche). Saisons, Épisodes et Flux ne dépendent pas de la Chaîne.
 
+Récence de l'Index (tri de « Tout voir », mesuré le 2026-11-07) — **aucune date** dans les items de
+`483ce0f` : les seuls champs sont `id`, `slug`, `name`, `editor`, `isFullyDigital`, `mainChannel`,
+`initialChannel`, `categories`, `freemium`, `decoration`, `releaseYear` (films seulement),
+`replay`/`replayRecent`/`allVideos`/`allVideosRecent` (`total`, des compteurs). La requête persistée
+ignore une variable `sort` (`{"type":"DATE","order":"DESC"}`, `ALPHABETICAL`, valeur absurde : même
+ordre, aucune erreur), et l'**ordre du listing n'est pas une récence** : éditorial/popularité (Star
+Academy, Ici tout commence, Demain nous appartient… puis Doc Martin, dont les Épisodes datent de
+2014 ; 18 Programmes à `replayRecent > 0` sur les 50 premiers, 3 sur les 50 suivants). La page
+tf1.fr/programmes-tv rend son catalogue côté serveur avec d'autres champs (badge `NEWLY_ADDED`),
+hors des requêtes connues. Seul signal : `replayRecent.total` = nombre d'Épisodes replay marqués
+`isRecent` dans `a6f9cf0e` (diffusés dans les dernières 24 h environ : sur 13 Programmes, `isRecent`
+tombe pile sur les vidéos de moins de 24 h), mais calculé quand TF1 rafraîchit la fiche du
+Programme, donc en retard d'un ou deux jours (Le grand concours du jeudi 21:25 et Noël dans les
+Alpes du jeudi 13:31 comptent encore le samedi à 17:29 ; une avant-première en ligne compte : Cat's
+Eyes). Koh-Lanta (dernier Épisode le mardi) compte 0. `Show.recencyAt` = instant serveur de la
+réponse (`extensions.report.execution.start`) quand `replayRecent.total > 0`, sinon null (sans
+instant serveur : null) ; le cache garde la plus récente valeur vue, si bien qu'un Programme
+reste daté du dernier rafraîchissement où TF1 l'a vu récent. Fixture :
+`tf1_programs_index_recency.json` (page 0, 6 Programmes, `extensions` gardé).
+
 Flux — résoudre l'id média interne (`videoBySlug.streamId`) puis suivre la chaîne de
 l'**extracteur `wat` de yt-dlp** : `GET https://mediainfo.tf1.fr/mediainfocombo/<streamId>?pver=5010000`
 (source de vérité : `yt_dlp/extractor/wat.py`, master @ bc6ff877dd). Sortie : manifest DASH sans
@@ -158,6 +178,21 @@ Listing — `GET https://api-mobile.yatta.francetv.fr/apps/channels/<slug>?platf
 canoniques ; mapping natif riche : séries-policieres, thriller, comédie, drame, doc histoire…).
 Jeunesse = catégorie `enfants`, exclusive (aucun autre Genre) : 46 Programmes sur les 238 des cinq
 listings de Chaîne, aucun ne portait un autre Genre (mesuré le 2026-11-07).
+
+Récence des listings de Chaîne (tri de « Tout voir », mesuré le 2026-11-07 sur les cinq Chaînes) —
+les items `program` ne portent **aucune date** (ni `begin_date`, ni date dans `marker_piano`). Les
+pages mettent aussi en avant des Épisodes : items `integrale` (et `unitaire`, des films sans
+`program_path`) avec `begin_date` (mise en ligne, secondes unix), `broadcast_begin_date`, et le
+Programme sous `program.program_path` (jamais de `program_path` au premier niveau). Ils datent
+28 des 238 Programmes listés (France 2 5/56, France 3 4/59, France 4 2/50, France 5 8/41,
+franceinfo 9/32). `Show.recencyAt` = la plus récente `begin_date` des items `integrale` d'un
+Programme, hors collection `live` (l'émission en cours : sa `begin_date` est encore à venir, 2
+items sur 144) ; les autres Programmes n'ont pas de date. L'ordre des collections n'est pas une
+date : éditorial dans « Magazines », « Info et société », « Divertissements » ; à peu près du plus
+récent au plus ancien dans « Séries et fictions » et « Documentaires » de France 2 (comparé au
+dernier Épisode de chaque Programme), mais un rang ne se compare pas aux dates des autres
+Providers. Fixture : `ftv_channel_france-2_recency.json` (page France 2 du 2026-11-07, toutes les
+collections, items élagués).
 
 Détails mesurés le 2026-11-05 (lot 1 M1, fixtures `ftv_*.json`) :
 - **Plafond 250** (mesuré 2026-11-06, remesuré le 2026-11-07) : sans `size`, la collection
@@ -266,8 +301,26 @@ règles que l'Index TF1 (3 essais par page, échec = tout le crawl échoue, mém
 5 Chaînes). Chaînes gardées (décision Q16), clé `service_display.code` : `m6replay` « M6 » (id `m6`),
 `w9replay` « W9 » (`w9`), `6terreplay` « 6ter » (`6ter`), `gulli` « Gulli » (`gulli`), `6play`
 « M6+ » (`m6plus`). Tout autre service (parispremierereplay, tevareplay, 6playmaxott, podcast…) est
-écarté, de même que les Programmes à `count.vi == 0` (872 gardés sur 1286). Pas de signal de
-récence dans le catalogue : `recentEpisodeCount = 0`. Recherche : locale uniquement (décision Q17).
+écarté, de même que les Programmes à `count.vi == 0` (872 gardés sur 1286). Pas de compteur
+d'Épisodes récents dans le catalogue : `recentEpisodeCount = 0`. Recherche : locale uniquement
+(décision Q17).
+
+Récence du catalogue (tri de « Tout voir », mesuré le 2026-11-07, 1287 Programmes dont 870 gardés)
+— chaque Programme porte `publication_date_vi` {`date_start_min`, `date_start_max`, `date_end_max`}
+(heure de Paris « 2026-11-05 23:13:51 », comme `first_diffusion`), renseigné sur les 870 gardés,
+jamais dans le futur (0 au-delà de l'heure de la mesure). `date_start_max` = la plus récente
+`publication_date` des vidéos `vi` du Programme (vérifié sur Wanted 28540, Scènes de ménages 829,
+Pékin Express 945) : à cause de la réécriture à J+7 (voir Fraîcheur), c'est la mise en ligne du
+dernier Épisode (Wanted E6 diffusé le 05/11 à 22:10 → 23:13:51) ou, pour un Programme arrêté, sept
+jours après sa dernière diffusion (Pékin Express, finale du 22/05 → 29/05). Réparti sur 305 jours
+distincts (122 Programmes en novembre 2026, le plus ancien en 2024). `Show.recencyAt` =
+`date_start_max` → instant (fuseau Europe/Paris). Non retenus : `last_clip_publication.date`
+(identique sur 866 des 870, plus récente sur les 4 autres ; `publication_date_vi` est propre aux
+vidéos `vi`, les Épisodes complets), `update_date` (mise à jour de la fiche : c'est l'**ordre du
+listing**, décroissant, sans rapport avec les Épisodes), `first_local_air_date` (première
+diffusion du Programme, 710/870), `next_diffusions` (toujours vide). Aucune option `with=` à
+ajouter : ces champs viennent déjà avec `with=rights`. Fixture : `m6_programs_recency.json`
+(5 Programmes réels élagués).
 
 Ids préfixés `m6:` (routables plus tard par `Providers.resolveShow`) : Programme
 `m6:{service}:{programId}`, Saison `m6:{service}:{programId}:{saison ou ""}`, Épisode
