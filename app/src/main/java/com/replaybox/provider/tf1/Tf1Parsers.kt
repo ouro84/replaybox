@@ -113,6 +113,8 @@ object Tf1Parsers {
     data class ReplayPage(
         val total: Int,
         val videos: List<ReplayVideo>,
+        /** Items TF1 returned on this page, before any filtering: 0 means past the last page. */
+        val itemCount: Int = videos.size,
     )
 
     data class ReplayVideo(
@@ -135,14 +137,30 @@ object Tf1Parsers {
     /**
      * One page of a programme's replay videos. [fetchedAt] anchors `remainingDays` when the
      * response has no `extensions.report.execution.start` (server instant, epoch ns).
+     * Videos outside the free TF1+ offer (avant-premières) are dropped, see [isFreeOffer].
      */
     fun replayPage(root: JsonObject, fetchedAt: java.time.Instant): ReplayPage {
         val videos = Tf1Json.obj(root, "data", "programBySlug", "videos") ?: return ReplayPage(0, emptyList())
         val total = Tf1Json.int(videos, "total") ?: 0
-        val items = Tf1Json.objects(videos["items"])
-            .filter { Tf1Json.str(it, "type") == REPLAY_TYPE }
+        val raw = Tf1Json.objects(videos["items"])
+        val items = raw
+            .filter { Tf1Json.str(it, "type") == REPLAY_TYPE && isFreeOffer(it) }
             .map { replayVideoFrom(it, serverInstant(root) ?: fetchedAt) }
-        return ReplayPage(total, items)
+        return ReplayPage(total, items, itemCount = raw.size)
+    }
+
+    /** Right of the free TF1+ offer; `MAX` is the paid one (SPEC §Provider TF1+). */
+    internal const val FREE_RIGHT = "BASIC"
+
+    /**
+     * Measured 2026-11-07: ordinary Épisodes carry `rights: ["BASIC","MAX"]`, avant-premières
+     * (paid offer, broadcast days later) only `["MAX"]`, with `freeRemainingDays` 0. The
+     * household account is a free one, and a video without the BASIC right belongs to the paid
+     * offer only (the title prefix is unreliable: HPI S04E04 lost it). No `rights` field: kept.
+     */
+    private fun isFreeOffer(item: JsonObject): Boolean {
+        val rights = Tf1Json.array(item, "rights") ?: return true
+        return rights.any { (it as? kotlinx.serialization.json.JsonPrimitive)?.content == FREE_RIGHT }
     }
 
     private fun replayVideoFrom(item: JsonObject, countedAt: java.time.Instant): ReplayVideo = ReplayVideo(

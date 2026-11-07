@@ -128,7 +128,8 @@ class Tf1Provider(
             )
             total = page.total
             page.videos.forEach { collected.putIfAbsent(it.slug, it) }
-            if (page.videos.isEmpty()) break
+            // A page of avant-premières only is filtered to nothing but is not the last page.
+            if (page.itemCount == 0) break
             pageIndex++
         }
         val videos = collected.values.toList()
