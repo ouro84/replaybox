@@ -3,6 +3,10 @@ package com.replaybox.core.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.replaybox.core.model.Episode
+import com.replaybox.core.model.EpisodeId
+import com.replaybox.core.model.SeasonId
+import java.time.Instant
 
 /**
  * Room cache of the Chaînes' catalogues (ADR 0002, SPEC §Cache). TTL 12 h,
@@ -59,6 +63,36 @@ data class EpisodeEntity(
     val broadcastDate: String?,
     val durationSeconds: Int?,
     val thumbnailUrl: String?,
+    /** Episode.broadcastAt / publishedAt / availableUntil in epoch millis (schema v5). */
+    val broadcastAt: Long? = null,
+    val publishedAt: Long? = null,
+    val availableUntil: Long? = null,
+)
+
+fun Episode.toEntity(): EpisodeEntity = EpisodeEntity(
+    id = id.value,
+    seasonId = seasonId?.value,
+    title = title,
+    synopsis = synopsis,
+    broadcastDate = broadcastDate,
+    durationSeconds = durationSeconds,
+    thumbnailUrl = thumbnailUrl,
+    broadcastAt = broadcastAt?.toEpochMilli(),
+    publishedAt = publishedAt?.toEpochMilli(),
+    availableUntil = availableUntil?.toEpochMilli(),
+)
+
+fun EpisodeEntity.toEpisode(): Episode = Episode(
+    id = EpisodeId(id),
+    seasonId = seasonId?.let(::SeasonId),
+    title = title,
+    synopsis = synopsis,
+    broadcastDate = broadcastDate,
+    durationSeconds = durationSeconds,
+    thumbnailUrl = thumbnailUrl,
+    broadcastAt = broadcastAt?.let(Instant::ofEpochMilli),
+    publishedAt = publishedAt?.let(Instant::ofEpochMilli),
+    availableUntil = availableUntil?.let(Instant::ofEpochMilli),
 )
 
 /**
