@@ -157,11 +157,11 @@ quand le correctif est vérifié sur la box.
 
 - [x] Démarrage à froid : environ 10 s de skeleton avant l'Accueil, 138 frames sautées sur le thread
   principal. Viser l'Accueil affiché en moins de 3 s depuis le cache.
-- [ ] Avant-premières TF1 (offre payante) listées parmi les Épisodes : les écarter tant que le compte
+- [x] Avant-premières TF1 (offre payante) listées parmi les Épisodes : les écarter tant que le compte
   n'y donne pas accès.
-- [ ] Faux négatifs « Policier & Thriller » TF1 après la règle M4 (Sauveur Giordano, Intraçables, Le
+- [x] Faux négatifs « Policier & Thriller » TF1 après la règle M4 (Sauveur Giordano, Intraçables, Le
   Rebelle…) : relire les cas et compléter la liste d'inclusion.
-- [ ] Tri de « Tout voir » : la date de première apparition sur la box rend la grille alphabétique au
+- [x] Tri de « Tout voir » : la date de première apparition sur la box rend la grille alphabétique au
   premier jour ; trouver un signal de récence mesuré chez les Providers.
 
 ## V2 (décisions prises, exécution repoussée)
