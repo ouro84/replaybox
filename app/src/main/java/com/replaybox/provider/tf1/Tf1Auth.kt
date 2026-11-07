@@ -1,5 +1,7 @@
 package com.replaybox.provider.tf1
 
+import com.replaybox.core.account.CredentialStore
+import com.replaybox.core.account.ProviderAccount
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -26,25 +28,25 @@ import java.util.concurrent.TimeUnit
  * device: they live in the encrypted store (Android Keystore-backed).
  */
 class Tf1Auth(
-    private val store: Tf1CredentialStore,
+    private val store: CredentialStore,
     private val client: OkHttpClient = defaultClient(),
     private val now: () -> Long = System::currentTimeMillis,
-) {
+) : ProviderAccount {
 
     @Volatile private var cachedToken: String? = null
     @Volatile private var expiresAt: Long = 0
     private val mutex = Mutex()
 
-    fun hasCredentials(): Boolean = store.read() != null
+    override fun hasCredentials(): Boolean = store.read() != null
 
-    fun storedEmail(): String? = store.read()?.first
+    override fun storedEmail(): String? = store.read()?.first
 
-    suspend fun signIn(email: String, password: String) {
+    override suspend fun signIn(email: String, password: String) {
         store.save(email, password)
         token(forceRefresh = true)
     }
 
-    fun signOut() {
+    override fun signOut() {
         store.clear()
         cachedToken = null
         expiresAt = 0

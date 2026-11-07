@@ -12,13 +12,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.io.File
+import com.replaybox.core.account.CredentialStore
 import com.replaybox.core.data.CatalogDao
 import com.replaybox.core.data.CatalogStore
 import com.replaybox.core.data.ProgressRecorder
 import com.replaybox.core.data.ReplayboxDatabase
 import com.replaybox.core.data.RoomCatalogDao
 import com.replaybox.provider.tf1.Tf1Auth
-import com.replaybox.provider.tf1.Tf1CredentialStore
 
 class ReplayboxApplication : Application() {
 
@@ -31,7 +31,7 @@ class ReplayboxApplication : Application() {
         private lateinit var instance: ReplayboxApplication
 
         /** TF1 sign-in session: token cache + encrypted credential store. */
-        val tf1Auth: Tf1Auth by lazy { Tf1Auth(Tf1CredentialStore(instance)) }
+        val tf1Auth: Tf1Auth by lazy { Tf1Auth(CredentialStore(instance, "tf1")) }
 
         private val database: ReplayboxDatabase by lazy {
             Room.databaseBuilder(instance, ReplayboxDatabase::class.java, "replaybox.db")
