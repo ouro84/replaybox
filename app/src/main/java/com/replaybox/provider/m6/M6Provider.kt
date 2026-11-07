@@ -23,9 +23,11 @@ import kotlinx.coroutines.sync.withLock
  * Saisons and Épisodes come from every `vi` page of the Programme, loaded once and kept in
  * memory.
  *
- * Every M6 Flux is Widevine (drmtoday). Without [drmTokenProvider] (no account: step 4b of M3
- * supplies it), [stream] fails with the account-required error the player already maps to
- * « compte requis ». Not wired into Providers yet: the DRM spike decides.
+ * Every M6 Flux is Widevine (drmtoday). Without [drmTokenProvider] (no account), [stream]
+ * fails with the account-required error the player already maps to « compte requis ». With
+ * it ([M6Auth.upfrontToken]), the Flux carries the drmtoday licence URL, the upfront token as
+ * `x-dt-auth-token` and [LICENSE_RESPONSE_FIELD] for the JSON-wrapped answer. Providers lists
+ * the M6 Chaînes only while an M6+ account is stored.
  */
 class M6Provider(
     override val channel: Channel,
@@ -67,12 +69,13 @@ class M6Provider(
         val (serviceCode, clipId) = M6Parsers.episodeParts(episode)
         val manifest = manifestUrl(episode)
         val token = tokens(serviceCode, clipId)
-        // The drmtoday licence answer is JSON-wrapped; unwrapping it is step 4b (auth).
         return Stream(
             manifestUrl = manifest,
             type = StreamType.DASH,
             licenseUrl = LICENSE_URL,
             licenseHeaders = mapOf(LICENSE_TOKEN_HEADER to token),
+            // drmtoday answers {"license": "<base64>"} (source: inputstream key `|JBlicense`).
+            licenseResponseField = LICENSE_RESPONSE_FIELD,
         )
     }
 
@@ -101,6 +104,7 @@ class M6Provider(
     companion object {
         const val LICENSE_URL = "https://lic.drmtoday.com/license-proxy-widevine/cenc/"
         const val LICENSE_TOKEN_HEADER = "x-dt-auth-token"
+        const val LICENSE_RESPONSE_FIELD = "license"
         private const val MAX_VIDEOS = 1000
     }
 }

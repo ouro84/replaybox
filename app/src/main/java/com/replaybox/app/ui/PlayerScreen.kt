@@ -53,6 +53,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.PlayerView
 import com.replaybox.R
+import com.replaybox.core.account.AccountException
+import com.replaybox.provider.m6.M6Parsers
 import com.replaybox.app.ReplayboxApplication
 import com.replaybox.core.model.EpisodeId
 import com.replaybox.core.model.ProgressContext
@@ -74,6 +76,7 @@ private sealed interface PlayerState {
         val subtitleUrl: String?,
         val subtitleLanguage: String?,
         val resumeAtMs: Long?,
+        val licenseResponseField: String? = null,
     ) : PlayerState
     /** [playback]: the Flux resolved but failed while playing. */
     data class Error(val message: String, val accountRequired: Boolean, val playback: Boolean = false) : PlayerState
@@ -94,6 +97,8 @@ fun PlayerScreen(
     onPlayNext: (Episode) -> Unit = {},
 ) {
     val provider = Providers.resolveEpisode(episodeId.value)
+    val context = LocalContext.current
+    val isM6 = episodeId.value.startsWith(M6Parsers.ID_PREFIX)
     var state by remember { mutableStateOf<PlayerState>(PlayerState.Resolving) }
     var attempt by remember { mutableStateOf(0) }
     val recovery = remember { PlaybackRecovery() }
@@ -113,6 +118,7 @@ fun PlayerScreen(
                     stream.subtitleUrl,
                     stream.subtitleLanguage,
                     resumeAtMs,
+                    stream.licenseResponseField,
                 )
                 return
             } catch (error: kotlinx.coroutines.CancellationException) {
@@ -121,7 +127,13 @@ fun PlayerScreen(
                 failures += 1
                 if (failures >= 2) {
                     val account = error is StreamResolutionException && error.accountOrDrmRequired
-                    state = PlayerState.Error(error.message ?: "error", account)
+                    // Account steps (M6+ upfront token) explain themselves in French.
+                    val message = if (error is AccountException) {
+                        accountErrorText(context, ProviderGroups.byId(ProviderGroups.M6)?.name ?: "M6+", error)
+                    } else {
+                        error.message ?: "error"
+                    }
+                    state = PlayerState.Error(message, account)
                     return
                 }
             }
@@ -153,6 +165,7 @@ fun PlayerScreen(
                     text = when {
                         current.playback -> stringResource(R.string.player_error_playback)
                         !current.accountRequired -> current.message.ifBlank { stringResource(R.string.player_error_generic) }
+                        isM6 -> stringResource(R.string.player_error_m6_account)
                         ReplayboxApplication.tf1Auth.hasCredentials() -> stringResource(R.string.player_error_tf1_content)
                         else -> stringResource(R.string.player_error_tf1_account)
                     },
@@ -181,6 +194,7 @@ fun PlayerScreen(
             licenseHeaders = current.licenseHeaders,
             subtitleUrl = current.subtitleUrl,
             subtitleLanguage = current.subtitleLanguage,
+            licenseResponseField = current.licenseResponseField,
             resumeAtMs = current.resumeAtMs,
             progressContext = progressContext,
             // After a recovery, resume at once (Round 8 Q2): no second prompt.
@@ -208,6 +222,7 @@ private fun PlayerSurface(
     licenseHeaders: Map<String, String>,
     subtitleUrl: String?,
     subtitleLanguage: String?,
+    licenseResponseField: String?,
     resumeAtMs: Long?,
     progressContext: ProgressContext?,
     autoResume: Boolean,
@@ -224,6 +239,13 @@ private fun PlayerSurface(
 
     val player = remember(manifestUrl) {
         ExoPlayer.Builder(context)
+            .apply {
+                // JSON-wrapped licence (M6+ drmtoday): own DRM session manager. Raw licences
+                // (TF1) keep the default path driven by the MediaItem DrmConfiguration.
+                if (licenseUrl != null && licenseResponseField != null) {
+                    setMediaSourceFactory(jsonLicenseMediaSourceFactory(context, licenseUrl, licenseHeaders, licenseResponseField))
+                }
+            }
             .setSeekBackIncrementMs(10_000)
             .setSeekForwardIncrementMs(10_000)
             .build()
