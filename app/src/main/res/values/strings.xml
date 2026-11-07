@@ -65,12 +65,20 @@
     <string name="catalog_stale_one">Catalogue du %1$s · %2$s injoignable</string>
     <string name="catalog_stale_many">Catalogue du %1$s · %2$s injoignables</string>
     <string name="catalog_empty">Aucun Programme pour l\'instant. Le catalogue se met à jour.</string>
-    <string name="remove_resume_title">Retirer « %1$s » de Reprendre ?</string>
-    <string name="remove_resume_hint">La position de lecture sera oubliée.</string>
     <string name="remove_resume_confirm">Retirer de Reprendre</string>
     <string name="cancel">Annuler</string>
     <string name="action_play">Lecture</string>
     <string name="episode_watched">Vu</string>
+    <string name="mark_watched">Marquer comme vu</string>
+    <string name="mark_unwatched">Marquer comme non vu</string>
+    <string name="badge_last_day">Dernier jour</string>
+    <plurals name="badge_days_left">
+        <item quantity="one">Plus qu\'un jour</item>
+        <item quantity="many">Plus que %1$d jours</item>
+        <item quantity="other">Plus que %1$d jours</item>
+    </plurals>
+    <string name="badge_last_night">Hier soir</string>
+    <string name="badge_new">Nouveau</string>
     <string name="duration_minutes">%1$d min</string>
     <string name="control_pause">Pause</string>
     <string name="control_back10">−10 s</string>

@@ -52,6 +52,15 @@ object FreshnessPolicy {
     }
 
     /**
+     * The expiry half of [badge] alone ([FreshnessBadge.LastDay] or [FreshnessBadge.DaysLeft]),
+     * for places that show only expiry (Reprendre cards, ROADMAP §M4). Past or unknown → null.
+     */
+    fun expiryBadge(availableUntil: Instant?, now: Instant): FreshnessBadge? {
+        if (availableUntil == null || availableUntil.isBefore(now)) return null
+        return expiry(availableUntil, now)
+    }
+
+    /**
      * Days are Paris calendar days between today and the day of the last available moment
      * (an end at 00:00 belongs to the day before): 0 → [FreshnessBadge.LastDay]. Calendar days
      * keep « Dernier jour » and « Plus que N jours » on one scale and ignore 23 h / 25 h DST days.

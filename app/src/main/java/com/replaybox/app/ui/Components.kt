@@ -150,12 +150,13 @@ internal fun PanelButton(
     icon: ImageVector?,
     requester: FocusRequester,
     onFocused: () -> Unit = {},
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(if (isFocused) Rb.BUTTON_FOCUS_SCALE else 1f, tween(Rb.FOCUS_MS), label = "btn")
     Row(
-        modifier = Modifier
+        modifier = modifier
             .scale(scale)
             .focusRequester(requester)
             .onFocusChanged {

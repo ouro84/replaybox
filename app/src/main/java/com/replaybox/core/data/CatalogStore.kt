@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.time.Instant
 
 /**
  * Cache-first catalog (ADR 0002): listings and program pages are served from
@@ -72,7 +73,14 @@ class CatalogStore(
         }
     }
 
-    suspend fun episodes(provider: Provider, season: SeasonId?): List<Episode> {
+    /**
+     * Épisodes of a Saison, cache-first. Épisodes whose known end of availability
+     * is past are left out (ROADMAP §M4): a 12 h cache would otherwise list them.
+     */
+    suspend fun episodes(provider: Provider, season: SeasonId?): List<Episode> =
+        loadEpisodes(provider, season).withoutExpired()
+
+    private suspend fun loadEpisodes(provider: Provider, season: SeasonId?): List<Episode> {
         if (season == null) return provider.episodes(null)
         val fresh = dao.programAt(season.value)?.let { clock() - it < TTL_MS } == true
         if (fresh) return dao.episodes(season.value)
@@ -86,6 +94,13 @@ class CatalogStore(
             if (cached.isEmpty()) throw error
             cached
         }
+    }
+
+    private fun now(): Instant = Instant.ofEpochMilli(clock())
+
+    private fun List<Episode>.withoutExpired(): List<Episode> {
+        val now = now()
+        return filterNot { FreshnessPolicy.isExpired(it, now) }
     }
 
     /**
@@ -205,21 +220,29 @@ class CatalogStore(
      * unfinished Épisode), most recent first, finished Épisodes and rows without a
      * Programme context left out (ResumePolicy). Art and Chaîne come from the
      * cached listings of [channelIds] when the Programme is still listed.
+     * The end of availability comes from the episodes cache (no network):
+     * an expired Épisode leaves the rail, its Progression stays stored, and an
+     * Épisode missing from that cache carries no end and never expires here.
      */
     suspend fun continueWatching(channelIds: List<String>, limit: Int = RESUME_LIMIT): List<ResumeItem> {
         val listed = HashMap<String, ChannelShow>()
         for (channelId in channelIds) {
             for (show in listing(channelId)) listed.putIfAbsent(show.id.value, ChannelShow(show, channelId))
         }
+        val rows = dao.recentProgress(RESUME_SCAN)
+        val ends = availabilityEnds(rows.map { it.episodeId })
+        val now = now()
         val seenShows = HashSet<String>()
         val items = ArrayList<ResumeItem>()
-        for (row in dao.recentProgress(RESUME_SCAN)) {
+        for (row in rows) {
             val showId = row.showId ?: continue
             if (showId in seenShows) continue
             val progress = Progress(EpisodeId(row.episodeId), row.positionSeconds, row.updatedAt)
-            // A finished row does not claim its Programme: an older unfinished
-            // Épisode still resumes (same rule as the Programme page hero).
+            // A finished or expired row does not claim its Programme: an older
+            // unfinished Épisode still resumes (same rule as the Programme page hero).
             if (ResumePolicy.resumeAt(progress, row.durationSeconds) == null) continue
+            val availableUntil = ends[row.episodeId]
+            if (availableUntil?.isBefore(now) == true) continue
             seenShows.add(showId)
             val listing = listed[showId]
             items += ResumeItem(
@@ -233,10 +256,19 @@ class CatalogStore(
                 positionSeconds = row.positionSeconds,
                 durationSeconds = row.durationSeconds,
                 updatedAtEpochMs = row.updatedAt,
+                availableUntil = availableUntil,
             )
             if (items.size >= limit) break
         }
         return items
+    }
+
+    /** Known ends of availability of these Épisodes, from the episodes cache only. */
+    private suspend fun availabilityEnds(episodeIds: List<String>): Map<String, Instant> {
+        if (episodeIds.isEmpty()) return emptyMap()
+        return dao.episodesById(episodeIds)
+            .mapNotNull { episode -> episode.availableUntil?.let { episode.id.value to it } }
+            .toMap()
     }
 
     /** "Retirer de Reprendre": forgets the playhead of this Épisode. */
@@ -244,6 +276,45 @@ class CatalogStore(
         dao.deleteProgress(episodeId.value)
         tick()
     }
+
+    /**
+     * « Marquer comme vu »: a Progression at 100 % (position = duration), so the
+     * Épisode leaves Reprendre and reads « ✓ Vu ». An unknown [durationSeconds]
+     * falls back to the saved row, then the cached Épisode. With no duration at
+     * all, the row stores duration = position (at least
+     * ResumePolicy.MIN_POSITION_SECONDS), which [episodeProgress] and
+     * ResumePolicy already read as finished: no extra column. A null [context]
+     * keeps the Programme context an earlier save recorded.
+     */
+    suspend fun markWatched(episodeId: EpisodeId, durationSeconds: Int?, context: ProgressContext? = null) {
+        val previous = dao.progress(episodeId.value)
+        val duration = (durationSeconds ?: previous?.durationSeconds ?: cachedDuration(episodeId))
+            ?.takeIf { it > 0 }
+        val position = duration?.toLong()
+            ?: maxOf(previous?.positionSeconds ?: 0L, ResumePolicy.MIN_POSITION_SECONDS)
+        dao.putProgress(
+            ProgressEntity(
+                episodeId = episodeId.value,
+                positionSeconds = position,
+                durationSeconds = duration ?: position.toInt(),
+                updatedAt = clock(),
+                showId = context?.showId?.value ?: previous?.showId,
+                showTitle = context?.showTitle ?: previous?.showTitle,
+                episodeTitle = context?.episodeTitle ?: previous?.episodeTitle,
+                thumbnailUrl = context?.thumbnailUrl ?: previous?.thumbnailUrl,
+            ),
+        )
+        tick()
+    }
+
+    /** « Marquer comme non vu »: forgets the Progression of this Épisode. */
+    suspend fun markUnwatched(episodeId: EpisodeId) {
+        dao.deleteProgress(episodeId.value)
+        tick()
+    }
+
+    private suspend fun cachedDuration(episodeId: EpisodeId): Int? =
+        dao.episodesById(listOf(episodeId.value)).firstOrNull()?.durationSeconds
 
     /**
      * Home Genre rails, cache only: every Genre in glossary order with its
@@ -337,12 +408,17 @@ class CatalogStore(
     /**
      * The Reprendre target of this Programme: its newest unfinished Épisode,
      * or null. Unlike the Home rail, a newer finished Épisode does not hide an
-     * older unfinished one: on its own page every Progression counts.
+     * older unfinished one: on its own page every Progression counts. An
+     * expired Épisode (episodes cache) is skipped, as on the Home rail.
      */
     suspend fun resumeFor(showId: ShowId, channelIds: List<String>): ResumeItem? {
         // Queried per Programme: a long history of other Programmes never hides it.
-        val row = dao.progressOfShow(showId.value).firstOrNull {
-            ResumePolicy.resumeAt(Progress(EpisodeId(it.episodeId), it.positionSeconds, it.updatedAt), it.durationSeconds) != null
+        val rows = dao.progressOfShow(showId.value)
+        val ends = availabilityEnds(rows.map { it.episodeId })
+        val now = now()
+        val row = rows.firstOrNull {
+            ResumePolicy.resumeAt(Progress(EpisodeId(it.episodeId), it.positionSeconds, it.updatedAt), it.durationSeconds) != null &&
+                ends[it.episodeId]?.isBefore(now) != true
         } ?: return null
         val listing = listedShow(showId, channelIds)
         return ResumeItem(
@@ -356,6 +432,7 @@ class CatalogStore(
             positionSeconds = row.positionSeconds,
             durationSeconds = row.durationSeconds,
             updatedAtEpochMs = row.updatedAt,
+            availableUntil = ends[row.episodeId],
         )
     }
 

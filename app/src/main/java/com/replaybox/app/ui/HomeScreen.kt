@@ -63,7 +63,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.tv.foundation.PivotOffsets
 import androidx.tv.foundation.lazy.list.TvLazyColumn
 import androidx.tv.foundation.lazy.list.TvLazyListState
@@ -361,16 +360,26 @@ fun HomeScreen(
     }
 
     removing?.let { item ->
-        RemoveResumeDialog(
-            item = item,
+        // Both actions take the card off the rail: focus falls back like after a removal.
+        fun leaveRail(action: suspend () -> Unit) {
+            removing = null
+            scope.launch { action() }
+            focused = null
+            state.focusedKey = null
+            refocus++
+        }
+        ActionDialog(
+            title = item.showTitle,
+            hint = item.episodeTitle.takeIf { it != item.showTitle },
+            actions = listOf(
+                DialogAction(stringResource(R.string.mark_watched)) {
+                    leaveRail { catalog.markWatched(item.episodeId, item.durationSeconds, item.toContext()) }
+                },
+                DialogAction(stringResource(R.string.remove_resume_confirm)) {
+                    leaveRail { catalog.removeFromContinueWatching(item.episodeId) }
+                },
+            ),
             onDismiss = { removing = null },
-            onConfirm = {
-                removing = null
-                scope.launch { catalog.removeFromContinueWatching(item.episodeId) }
-                focused = null
-                state.focusedKey = null
-                refocus++
-            },
         )
     }
 }
@@ -668,8 +677,14 @@ private fun ResumeCard(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(top = 14.dp),
         )
-        remainingText(item.remainingSeconds)?.let {
-            Text(it, style = RbType.meta, color = Rb.textSecondary, maxLines = 1)
+        // An expiry pill replaces the remaining time; the bar above still shows Progression.
+        val expiry = cardBadge(item.availableUntil, Instant.now())
+        if (expiry != null) {
+            FreshnessPill(expiry, modifier = Modifier.padding(top = 2.dp))
+        } else {
+            remainingText(item.remainingSeconds)?.let {
+                Text(it, style = RbType.meta, color = Rb.textSecondary, maxLines = 1)
+            }
         }
     }
 }
@@ -765,43 +780,6 @@ private fun SkeletonRail(titleWidth: Dp, cards: Int, cardWidth: Dp, ratio: Float
                 Box(Modifier.width(cardWidth).aspectRatio(ratio).background(Rb.surface, Rb.cardShape))
             }
         }
-    }
-}
-
-// ---- Remove from "Reprendre" ----
-
-@Composable
-private fun RemoveResumeDialog(item: ResumeItem, onDismiss: () -> Unit, onConfirm: () -> Unit) {
-    val cancel = remember { FocusRequester() }
-    Dialog(onDismissRequest = onDismiss) {
-        Column(
-            Modifier
-                .width(440.dp)
-                .background(Rb.surface, Rb.cardShape)
-                .padding(24.dp),
-        ) {
-            Text(stringResource(R.string.remove_resume_title, item.showTitle), style = RbType.railTitle, color = Rb.text)
-            Text(
-                stringResource(R.string.remove_resume_hint),
-                style = RbType.body,
-                color = Rb.textSecondary,
-                modifier = Modifier.padding(top = 8.dp),
-            )
-            Row(Modifier.padding(top = 24.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                PanelButton(stringResource(R.string.cancel), icon = null, requester = cancel, onFocused = {}, onClick = onDismiss)
-                PanelButton(
-                    stringResource(R.string.remove_resume_confirm),
-                    icon = null,
-                    requester = remember { FocusRequester() },
-                    onFocused = {},
-                    onClick = onConfirm,
-                )
-            }
-        }
-    }
-    LaunchedEffect(Unit) {
-        withFrameNanos { }
-        runCatching { cancel.requestFocus() }
     }
 }
 
