@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.withTransaction
+import com.replaybox.core.model.ChannelShow
 import com.replaybox.core.model.Episode
 import com.replaybox.core.model.Genre
 import com.replaybox.core.model.Season
@@ -43,6 +44,12 @@ interface RoomRawDao {
             "WHERE showId IN (SELECT id FROM shows WHERE channelId = :channelId)",
     )
     suspend fun genres(channelId: String): List<GenreMapEntity>
+
+    @Query("SELECT * FROM shows WHERE id IN (:ids)")
+    suspend fun showsByIds(ids: List<String>): List<ShowEntity>
+
+    @Query("SELECT showId, genre FROM genre_map WHERE showId IN (:ids)")
+    suspend fun genresByIds(ids: List<String>): List<GenreMapEntity>
 
     @Query("SELECT fetchedAt FROM programs WHERE `key` = :key")
     suspend fun programAt(key: String): Long?
@@ -143,20 +150,32 @@ class RoomCatalogDao(
         val entities = raw.shows(channelId)
         if (entities.isEmpty()) return emptyList()
         val genres = raw.genres(channelId).groupBy({ it.showId }) { it.genre }
-        return entities.map {
-            Show(
-                id = com.replaybox.core.model.ShowId(it.id),
-                title = it.title,
-                posterUrl = it.posterUrl,
-                synopsis = it.synopsis,
-                backdropUrl = it.backdropUrl,
-                recentEpisodeCount = it.recentEpisodeCount,
-                firstSeenAt = it.firstSeenAt,
-                recencyAt = it.recencyAt,
-                genres = genres[it.id].orEmpty().mapNotNull { g -> runCatching { Genre.valueOf(g) }.getOrNull() }.toSet(),
-            )
-        }
+        return entities.map { it.toShow(genres[it.id].orEmpty()) }
     }
+
+    /**
+     * A few Programmes by id (« À suivre », Favoris): two indexed queries instead of
+     * reading every listing, which took over a second on the Bbox at launch.
+     */
+    override suspend fun listedShows(ids: Collection<String>): List<ChannelShow> {
+        if (ids.isEmpty()) return emptyList()
+        val wanted = ids.toList()
+        val entities = wanted.chunked(500).flatMap { raw.showsByIds(it) }
+        val genres = wanted.chunked(500).flatMap { raw.genresByIds(it) }.groupBy({ it.showId }) { it.genre }
+        return entities.map { ChannelShow(it.toShow(genres[it.id].orEmpty()), it.channelId) }
+    }
+
+    private fun ShowEntity.toShow(genres: List<String>) = Show(
+        id = com.replaybox.core.model.ShowId(id),
+        title = title,
+        posterUrl = posterUrl,
+        synopsis = synopsis,
+        backdropUrl = backdropUrl,
+        recentEpisodeCount = recentEpisodeCount,
+        firstSeenAt = firstSeenAt,
+        recencyAt = recencyAt,
+        genres = genres.mapNotNull { g -> runCatching { Genre.valueOf(g) }.getOrNull() }.toSet(),
+    )
 
     override suspend fun programAt(key: String): Long? = raw.programAt(key)
 

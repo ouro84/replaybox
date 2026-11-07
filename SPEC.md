@@ -74,6 +74,28 @@ chose, sauf sur les avant-premières (0 : offre payante). `remainingPlayingHours
 page web, pas dans le listing. Fixtures : `tf1_program_by_slug_jt_20h_freshness.json`,
 `tf1_program_by_slug_feux_de_l_amour_freshness.json`.
 
+Avant-premières (mesuré le 2026-11-07 sur `a6f9cf0e`, 5 846 Épisodes de 13 Programmes :
+les-feux-de-l-amour, demain-nous-appartient, ici-tout-commence, plus-belle-la-vie, hpi, jt-20h,
+koh-lanta, profilage, the-voice, sept-a-huit, camping-paradis, section-de-recherches, star-academy ;
+au plus les 1 200 plus récents par Programme) — les feuilletons quotidiens publient les deux
+prochains Épisodes en avant-première (« Avant-première - Les feux de l'amour du 10 novembre 2026 -
+Episode 9603 », `date` dans le futur). Le marqueur est le champ **`rights`** : `["BASIC","MAX"]` sur
+un Épisode ordinaire, `["MAX"]` seul sur une avant-première (`BASIC` = offre gratuite TF1+,
+`accessKey: "basic"`, `type: "FREE"` dans les offres de la page tf1.fr ; `MAX` = offre payante).
+`freeRemainingDays == 0` l'accompagne toujours. 9 vidéos sans `BASIC` : les 8 avant-premières des 4
+feuilletons (2 chacun) et HPI S04E04 « Cheval de Troie », ancienne avant-première renommée (slug
+`avant-premiere-hpi-s04-e04-…`, titre sans le préfixe) restée réservée à l'offre payante : le
+préfixe du titre n'est donc pas fiable. Les 5 837 autres portent toutes `["BASIC","MAX"]` et un
+`freeRemainingDays` égal à `remainingDays`. En anonyme, `mediainfocombo` répond 403
+`PERMISSION_DENIED` à l'avant-première comme à l'Épisode ordinaire (seule différence : la mesure
+Médiamétrie `estatS3` vaut `preview` contre `catch-up`) ; `duration` est la durée complète (2 105
+s), pas un extrait. La lecture avec le compte gratuit du foyer n'a pas pu être mesurée depuis ce
+poste. Le compte du foyer étant gratuit, le parser écarte des listes d'Épisodes toute vidéo dont
+`rights` ne contient pas `BASIC` (une vidéo sans champ `rights` est gardée) ; `total` et la
+pagination suivent toujours les comptes de TF1. Fixture :
+`tf1_program_by_slug_demain_nous_appartient_avant_premiere.json` (une avant-première, un Épisode
+ordinaire).
+
 Ne garder que `type: REPLAY` (les `EXTRACT`/`BONUS` sont hors périmètre). La taxonomie
 `GT_*`/`SGT_*` de `program.categories[]` mappe vers les Genres canoniques (table en code ;
 chaque programme porte exactement un `GT_` et un `SGT_`, ids `SGT_` en anglais : `SGT_COMEDY`,
@@ -84,14 +106,36 @@ grilling M4 du 2026-11-07) : les films ne le reçoivent que de `SGT_THRILLER`/`S
 séries (`GT_SERIES_AND_FICTIONS`) le reçoivent d'une heuristique de mots-clés sur titre et synopsis
 normalisés (`Tf1CrimeKeywords`) : un mot-clé dans le titre, ou au moins deux mots-clés distincts
 dans le synopsis (les flexions d'un mot-clé comptent une fois). Deux listes de slugs commentées
-corrigent les ratés connus : l'inclusion porte HPI et les 29 séries policières que la règle à deux
-mots-clés écartait (Alice Nevers, Julie Lescaut, Les Experts : Miami, Elsbeth…), l'exclusion Plus
-belle la vie (fixture `tf1_crime_cases.json`, avec les pièges vus sur la box : La desalmada,
-Twilight, La Ligne verte). Mesuré le 2026-11-07 sur la capture complète (4687 programmes, 2448
-fictions/films du groupe avec replay) : 562 « Policier & Thriller » avec l'ancienne règle (un seul
-mot-clé suffisait, films compris ; la mesure M3 du même jour donnait 555 des 2446) → 278
-(268 séries dont 30 par la liste d'inclusion, 10 films par SGT natif). Les téléfilms d'un seul
-Épisode à un seul mot-clé (« Piégée par mon mari »…) sortent du Genre.
+corrigent les ratés connus : l'inclusion porte HPI, les séries policières que la règle à deux
+mots-clés écartait (Julie Lescaut, Les Experts : Miami, Elsbeth…) et celles de la revue des faux
+négatifs ; l'exclusion porte Plus belle la vie (fixture `tf1_crime_cases.json`, avec les pièges vus
+sur la box : La desalmada, Twilight, La Ligne verte). Mesuré le 2026-11-07 sur la capture complète
+(4687 programmes, 2448 fictions/films du groupe avec replay) : 562 « Policier & Thriller » avec
+l'ancienne règle (un seul mot-clé suffisait, films compris ; la mesure M3 du même jour donnait 555
+des 2446) → 278 avec la règle M4 (268 séries dont 31 par la liste d'inclusion, 10 films par SGT
+natif). Les téléfilms d'un seul Épisode à un seul mot-clé (« Piégée par mon mari »…) sortent du
+Genre.
+
+Revue des faux négatifs (mesuré le 2026-11-07, même capture) : les 207 séries du groupe à un seul
+mot-clé dans le synopsis et aucun dans le titre, relues une à une. Aucun mot-clé seul n'est assez
+fort pour compter double (« enquête » ramène Infidèle, Spirou et Fantasio, Petits secrets en
+famille ; « meurtre » La desalmada et Nazaré ; « commissaire » un commissaire-priseur). Deux
+mots-clés s'ajoutent, chacun n'ayant ramené que de la fiction policière ou judiciaire : « flic »
+(Le Rebelle, Flics, Mercato, Jailbreak, The Fatal Raid) et « juge d'instruction » (À tort ou à
+raison, Le Juge, L'Affaire Bruay-en-Artois, Le Prix de la vérité). Écartés après mesure : « police »
+(Le Gendre idéal et 14 téléfilms), « traque » (La desalmada), « coupable » (Amours coupables),
+« disparition » (Grand Hotel, Sous le soleil de Saint-Tropez), « investigation », « juge » seul
+(Clara et son juge), « avocat » (Leverage : Redemption). Vingt séries entrent par la liste
+d'inclusion : Sauveur Giordano, Intraçables, Une chance de trop, Noces rouges, Le Mystère de la
+chambre jaune, Psycho-Pass, Menace imminente, Norskov, Rien ne t'efface, Carpe Diem, La part du
+soupçon, Nightsleeper, Ransom, Mon ange, Au-delà des apparences, Accusé, Indéfendable, Les Liens du
+sang, Mammon et Florence Larrieu (juge d'instruction, hors revue : « juge » n'est que dans son
+titre). Alice Nevers, Boulevard du Palais, Deux flics sur les docks, La loi selon Bartoli, Panda et
+Un flic quittent la liste, la règle les trouve désormais. Restent hors du Genre, jugés limites :
+Louis la Brocante, Avocats et Associés, Manipulations, High Class, Le parfum du mensonge, Grand
+Hotel, Leverage : Redemption, Return Man, Le JAP, et les téléfilms d'un seul Épisode. Résultat :
+268 → 297 séries (252 par la règle, 45 par la liste d'inclusion), soit 307 « Policier & Thriller »
+avec les 10 films ; aucune série ne sort.
 
 Jeunesse (`GT_YOUTH`, sous-genres `SGT_THREE_TO_SIX_YEARS`/`SGT_SIX_TO_TEN_YEARS`) : 79
 Programmes du groupe, tous sans autre Genre. TF1 range quelques dessins animés en fiction pure
@@ -446,6 +490,17 @@ Au démarrage à froid, toutes les images (toutes Chaînes) mettent 1 à 2,2 s, 
 (gros objets de 6 à 9 Mo) : sujet de démarrage, pas propre à M6.
 
 ## Cache et mode dégradé (ADR 0002)
+
+Démarrage à froid (mesuré sur la box le 2026-11-07, build release, `adb logcat -s ReplayboxStartup`) :
+l'Accueil avec ses données s'affichait 4,1 à 5 s après le lancement du processus, il s'affiche en
+2,1 à 2,4 s. Causes trouvées : la Bbox se déclare `ro.config.low_ram`, donc Room y prenait un journal
+rollback et chaque écriture du rafraîchissement bloquait les lectures de l'Accueil (WAL forcé) ;
+« À suivre » et Favoris lisaient tous les listings (≈ 4 500 Programmes, 1,3 s) pour une douzaine de
+lignes (lecture par identifiants) ; `Providers.all` (≈ 350 ms, coffre M6+ chiffré) se lisait sur le
+thread principal. L'Accueil s'affiche en deux temps (« À suivre » et Favoris, puis les rails de
+Genres) et le rafraîchissement réseau attend que l'Accueil soit affiché. Un build debug reste bien
+plus lent (≈ 7 s avant la première image) : mesurer en release.
+
 
 Room : `shows`, `seasons`, `episodes`, `genre_map` + `progress`, `favorites`. TTL 12 h, refresh au
 démarrage en arrière-plan, priorité Home. Provider KO au refresh → servir le cache + bannière

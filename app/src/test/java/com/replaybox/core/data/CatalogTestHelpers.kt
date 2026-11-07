@@ -50,6 +50,11 @@ class FakeCatalogDao : CatalogDao {
                 .thenBy { firstSeen[it.id.value]?.second ?: 0 },
         )
 
+    override suspend fun listedShows(ids: Collection<String>): List<com.replaybox.core.model.ChannelShow> =
+        shows.keys.flatMap { channelId ->
+            shows(channelId).filter { it.id.value in ids }.map { com.replaybox.core.model.ChannelShow(it, channelId) }
+        }
+
     override suspend fun programAt(key: String): Long? = programs[key]
 
     override suspend fun putSeasons(showId: String, seasons: List<Season>, at: Long) {

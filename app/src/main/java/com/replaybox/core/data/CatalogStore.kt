@@ -234,11 +234,8 @@ class CatalogStore(
      * Épisode missing from that cache carries no end and never expires here.
      */
     suspend fun continueWatching(channelIds: List<String>, limit: Int = RESUME_LIMIT): List<ResumeItem> {
-        val listed = HashMap<String, ChannelShow>()
-        for (channelId in channelIds) {
-            for (show in listing(channelId)) listed.putIfAbsent(show.id.value, ChannelShow(show, channelId))
-        }
         val rows = dao.recentProgress(RESUME_SCAN)
+        val listed = listedByIds(rows.mapNotNull { it.showId }, channelIds)
         val ends = availabilityEnds(rows.map { it.episodeId })
         val now = now()
         val seenShows = HashSet<String>()
@@ -530,11 +527,22 @@ class CatalogStore(
     suspend fun favoriteChannelShows(channelIds: List<String>): List<ChannelShow> {
         val ids = dao.favoriteIds()
         if (ids.isEmpty()) return emptyList()
-        val byId = HashMap<String, ChannelShow>()
-        for (channelId in channelIds) {
-            for (show in listing(channelId)) byId.putIfAbsent(show.id.value, ChannelShow(show, channelId))
-        }
+        val byId = listedByIds(ids, channelIds)
         return ids.mapNotNull { byId[it] }
+    }
+
+    /**
+     * Listed rows of a few Programmes, on the first of [channelIds] that lists each (the
+     * order the full listings used to give), with canonical Genres.
+     */
+    private suspend fun listedByIds(ids: Collection<String>, channelIds: List<String>): Map<String, ChannelShow> {
+        if (ids.isEmpty()) return emptyMap()
+        val rank = channelIds.withIndex().associate { it.value to it.index }
+        // associateBy keeps the last value of a key: sort the preferred Chaîne last.
+        return dao.listedShows(ids.toSet())
+            .filter { it.channelId in rank }
+            .sortedByDescending { rank.getValue(it.channelId) }
+            .associateBy({ it.show.id.value }) { ChannelShow(Genres.canonical(it.show), it.channelId) }
     }
 
     /**

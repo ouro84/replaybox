@@ -6,7 +6,8 @@ import org.junit.Test
 
 /**
  * « Policier & Thriller » heuristic on real TF1 series (capture 2026-11-07): a keyword in the
- * title, or two distinct keywords in the synopsis (ROADMAP M4, grilling 2026-11-07).
+ * title, or two distinct keywords in the synopsis (ROADMAP M4, grilling 2026-11-07), plus the
+ * false-negative review of the same day (« flic », « juge d'instruction », include list).
  */
 class Tf1CrimeKeywordsTest {
 
@@ -20,14 +21,24 @@ class Tf1CrimeKeywordsTest {
 
     @Test
     fun positives() {
-        for (slug in listOf("profilage", "hpi", "les-experts-las-vegas", "section-de-recherches", "alice-nevers", "mentalist")) {
+        val slugs = listOf(
+            "profilage", "hpi", "les-experts-las-vegas", "section-de-recherches", "alice-nevers", "mentalist",
+            "le-rebelle", "flics", "a-tort-ou-a-raison", "sauveur-giordano", "intracables",
+        )
+        for (slug in slugs) {
             assertWithMessage(slug).that(matches(slug)).isTrue()
         }
     }
 
     @Test
     fun negatives() {
-        for (slug in listOf("plus-belle-la-vie", "demain-nous-appartient", "camping-paradis", "josephine-ange-gardien", "la-desalmada")) {
+        val slugs = listOf(
+            "plus-belle-la-vie", "demain-nous-appartient", "camping-paradis", "josephine-ange-gardien", "la-desalmada",
+            // Near misses left out by the false-negative review: a brocanteur who « mène aussi
+            // l'enquête », a law firm between criminal and family cases.
+            "louis-la-brocante", "avocats-et-associes",
+        )
+        for (slug in slugs) {
             assertWithMessage(slug).that(matches(slug)).isFalse()
         }
     }
@@ -58,10 +69,24 @@ class Tf1CrimeKeywordsTest {
 
     @Test
     fun includeListOverridesTheRule() {
-        // Alice Nevers is police fiction whose synopsis names one keyword only: kept by slug.
-        val item = items.getValue("alice-nevers")
-        assertThat(Tf1CrimeKeywords.matches("x", "Alice Nevers", Tf1Json.str(item, "decoration", "description"))).isFalse()
-        assertThat(matches("alice-nevers")).isTrue()
+        // Sauveur Giordano (former Brigade des mineurs officer) names one keyword only: kept by slug.
+        val item = items.getValue("sauveur-giordano")
+        assertThat(Tf1CrimeKeywords.matches("x", "Sauveur Giordano", Tf1Json.str(item, "decoration", "description"))).isFalse()
+        assertThat(matches("sauveur-giordano")).isTrue()
+    }
+
+    @Test
+    fun flicAndInvestigatingJudgeAreKeywords() {
+        // « Le Rebelle »: « flics » and « meurtre »; « À tort ou à raison »: « policier » and
+        // « juge d'instruction ». Both were false negatives of the first M4 rule.
+        for (slug in listOf("le-rebelle", "a-tort-ou-a-raison")) {
+            val description = Tf1Json.str(items.getValue(slug), "decoration", "description")
+            assertWithMessage(slug).that(Tf1CrimeKeywords.matches("x", "Série", description)).isTrue()
+        }
+        assertThat(Tf1CrimeKeywords.matches("x", "Flics", null)).isTrue()
+        assertThat(Tf1CrimeKeywords.matches("x", "Série", "La juge d’instruction et le policier.")).isTrue()
+        // « juge » alone is not a keyword (« Clara et son juge » is a drama).
+        assertThat(Tf1CrimeKeywords.matches("x", "Clara et son juge", null)).isFalse()
     }
 
     @Test

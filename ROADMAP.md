@@ -155,7 +155,7 @@ sans focus perdu, et sous-titres lus confortablement depuis le canapé.
 Relevées pendant la livraison de M4 (2026-11-07), à traiter avant M5. Mêmes règles : une case se coche
 quand le correctif est vérifié sur la box.
 
-- [ ] Démarrage à froid : environ 10 s de skeleton avant l'Accueil, 138 frames sautées sur le thread
+- [x] Démarrage à froid : environ 10 s de skeleton avant l'Accueil, 138 frames sautées sur le thread
   principal. Viser l'Accueil affiché en moins de 3 s depuis le cache.
 - [ ] Avant-premières TF1 (offre payante) listées parmi les Épisodes : les écarter tant que le compte
   n'y donne pas accès.

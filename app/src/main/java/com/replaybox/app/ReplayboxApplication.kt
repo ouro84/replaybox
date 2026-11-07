@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import com.replaybox.app.image.ImageTimingListener
@@ -76,6 +77,10 @@ class ReplayboxApplication : Application(), ImageLoaderFactory {
                     ReplayboxDatabase.MIGRATION_6_7,
                 )
                 .fallbackToDestructiveMigration()
+                // The Bbox reports ro.config.low_ram, so Room's AUTOMATIC mode picks a rollback
+                // journal there and every listing write blocked Home's reads for seconds at
+                // launch. WAL lets the cached Home read while a refresh writes.
+                .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
                 .build()
         }
 

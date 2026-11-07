@@ -71,6 +71,7 @@ import androidx.tv.foundation.lazy.list.items
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.replaybox.R
+import com.replaybox.provider.api.Provider
 import com.replaybox.app.ReplayboxApplication
 import com.replaybox.app.update.UpdateInstaller
 import com.replaybox.app.update.UpdateState
@@ -168,13 +169,20 @@ fun HomeScreen(
     var removing by remember { mutableStateOf<UpNextItem?>(null) }
     val scope = rememberCoroutineScope()
     // Read once per visit: Providers.all follows the M6+ account (Paramètres), and Home
-    // leaves composition while Paramètres is open.
-    val providers = remember { Providers.all }
-    val channelNames = remember { providers.associate { it.channel.id to it.channel.name } }
+    // leaves composition while Paramètres is open. Read off the main thread: the first read
+    // builds every Provider and opens the encrypted M6+ store (~350 ms on the Bbox).
+    var providers by remember { mutableStateOf<List<Provider>?>(null) }
+    LaunchedEffect(Unit) { providers = withContext(Dispatchers.IO) { Providers.all } }
+    val channelNames = remember(providers) { providers?.associate { it.channel.id to it.channel.name }.orEmpty() }
+    // Network work waits for the cached Home to be on screen (ADR 0002, Home first): on the
+    // Bbox its writes used to hold up the first Home read by seconds.
+    val homeShown = providers != null && data != null
 
     // ADR 0002: background refresh once per process, Home listings first.
     // The rails compose instantly from the cache; catalog.updates re-ticks them.
-    LaunchedEffect(refreshRun) {
+    LaunchedEffect(refreshRun, homeShown) {
+        val providers = providers ?: return@LaunchedEffect
+        if (!homeShown) return@LaunchedEffect
         // Once per process, unless the viewer asks again (« Réessayer »); after an
         // M6+ sign-in, only the Chaînes not refreshed yet.
         val pending = if (state.refreshed && refreshRun == 0) {
@@ -197,14 +205,31 @@ fun HomeScreen(
         if (refreshRun > 0 && !unavailable) refocus++
     }
     LaunchedEffect(updates) {
-        val loaded = withContext(Dispatchers.IO) { loadHome(catalog) }
-        state.data = loaded
-        data = loaded
+        // Two steps: « À suivre » and Favoris read a few rows by id and show first; the
+        // Genre rails read every listing (over a second on the Bbox) and follow.
+        val top = withContext(Dispatchers.IO) { loadHomeTop(catalog) }
+        if (data == null && (top.upNext.isNotEmpty() || top.favorites.isNotEmpty())) {
+            data = top.home
+        }
+        val loaded = withContext(Dispatchers.IO) { top.copy(genres = catalog.genreRails(top.channelIds)) }
+        state.data = loaded.home
+        data = loaded.home
+    }
+    // Cold-start metric, once Home shows data: `adb logcat -s ReplayboxStartup` (the Bbox
+    // ROM does not log reportFullyDrawn, which is still called for other tools).
+    val activity = LocalContext.current as? android.app.Activity
+    LaunchedEffect(data != null) {
+        if (data == null) return@LaunchedEffect
+        activity?.reportFullyDrawn()
+        val sinceStart = android.os.SystemClock.elapsedRealtime() - android.os.Process.getStartElapsedRealtime()
+        android.util.Log.i("ReplayboxStartup", "Home shown $sinceStart ms after process start")
     }
     // « À suivre »: pinned Programmes whose Épisodes are older than 12 h refresh in the
     // background on each visit; catalog.updates re-ticks the rail, focus stays put, and a
     // failure keeps the cache without a banner.
-    LaunchedEffect(Unit) {
+    LaunchedEffect(homeShown) {
+        val providers = providers ?: return@LaunchedEffect
+        if (!homeShown) return@LaunchedEffect
         withContext(Dispatchers.IO) {
             runCatching { catalog.refreshPinned(providers.map { it.channel.id }, { Providers.resolveShow(it.value) }) }
         }
@@ -400,7 +425,18 @@ fun HomeScreen(
     }
 }
 
-private suspend fun loadHome(catalog: CatalogStore): HomeData {
+/** Home without its Genre rails, plus the Chaînes it was read for. */
+private data class HomeTop(
+    val channelIds: List<String>,
+    val upNext: List<UpNextItem>,
+    val favorites: List<ChannelShow>,
+    val stale: StaleNotice?,
+    val genres: List<GenreRail> = emptyList(),
+) {
+    val home: HomeData get() = HomeData(upNext, favorites, genres, stale)
+}
+
+private suspend fun loadHomeTop(catalog: CatalogStore): HomeTop {
     val channelIds = Providers.all.map { it.channel.id }
     val now = System.currentTimeMillis()
     val staleSources = LinkedHashMap<String, Long>()
@@ -415,10 +451,10 @@ private suspend fun loadHome(catalog: CatalogStore): HomeData {
             staleSources[source] = minOf(at, staleSources[source] ?: at)
         }
     }
-    return HomeData(
+    return HomeTop(
+        channelIds = channelIds,
         upNext = catalog.upNext(channelIds),
         favorites = catalog.favoriteChannelShows(channelIds),
-        genres = catalog.genreRails(channelIds),
         stale = staleSources.takeIf { it.isNotEmpty() }?.let {
             StaleNotice(it.values.min(), it.keys.joinToString(" et "), it.size)
         },

@@ -1,7 +1,7 @@
 {
   "data": {
     "programs": {
-      "total": 15,
+      "total": 22,
       "items": [
         {
           "slug": "profilage",
@@ -628,6 +628,300 @@
           },
           "replay": {
             "total": 64
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "le-rebelle",
+          "name": "Le Rebelle",
+          "initialChannel": {
+            "slug": "tf1"
+          },
+          "categories": [
+            {
+              "id": "GT_SERIES_AND_FICTIONS"
+            },
+            {
+              "id": "SGT_SERIES"
+            }
+          ],
+          "decoration": {
+            "description": "Reno Raines menait une carrière sans accros dans la police jusqu'à ce qu'il accepte de témoigner contre des flics véreux. Pris pour cible, il assiste impuissant à la mort de la femme qu'il aimait. Accusé du meurtre, il s'évade de prison.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/flux-program-card-portrait-1-72e3e5-e307a8-a33407-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-e37462-5d56d9-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 110
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "flics",
+          "name": "Flics",
+          "initialChannel": {
+            "slug": "tf1"
+          },
+          "categories": [
+            {
+              "id": "GT_SERIES_AND_FICTIONS"
+            },
+            {
+              "id": "SGT_SERIES"
+            }
+          ],
+          "decoration": {
+            "description": "Deux commandants de la PJ parisienne, autrefois amis, sont confrontés à un fantôme du passé qui ravive leurs anciennes blessures. Sous la direction de Léa Legrand, Yach et Constantine doivent faire face à leurs démons personnels tout en gérant leurs responsabilités professionnelles. Leur amitié brisée par un drame passé est mise à l'épreuve, les poussant à leurs limites.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/flux-vignette-portrait-3139e6-a11d39-f1a378-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/cover-showpage-434473-e9edbd-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 8
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "a-tort-ou-a-raison",
+          "name": "À tort ou à raison",
+          "initialChannel": {
+            "slug": "tf1"
+          },
+          "categories": [
+            {
+              "id": "GT_SERIES_AND_FICTIONS"
+            },
+            {
+              "id": "SGT_SERIES"
+            }
+          ],
+          "decoration": {
+            "description": "Une avocate, un policier, un chroniqueur judiciaire et une juge d'instruction, amis de longue date, se retrouvent confrontés aux rouages du système judiciaire. Leurs liens d'amitié sont mis à l'épreuve alors qu'ils naviguent dans les complexités de leurs professions respectives, chacun apportant sa perspective unique sur la justice et ses enjeux.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/flux-program-card-portrait-1-24a130-20eccc-1ba606-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-a1543f-b6785a-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 14
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "sauveur-giordano",
+          "name": "Sauveur Giordano",
+          "initialChannel": {
+            "slug": "tf1"
+          },
+          "categories": [
+            {
+              "id": "GT_SERIES_AND_FICTIONS"
+            },
+            {
+              "id": "SGT_FRENCH_FICTION"
+            }
+          ],
+          "decoration": {
+            "description": "Sauveur Giordano, ancien haut gradé de la Brigade des Mineurs, consacre désormais son temps à l'association Ultime Défense. En tant que bénévole, il met son expérience au service des victimes, leur apportant soutien et assistance dans leurs démarches.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/flux-program-card-portrait-1-png-2fbe79-6636a3-52438c-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-png-afbaad-20abef-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 16
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "intracables",
+          "name": "Intraçables",
+          "initialChannel": {
+            "slug": "tf1"
+          },
+          "categories": [
+            {
+              "id": "GT_SERIES_AND_FICTIONS"
+            },
+            {
+              "id": "SGT_SERIES"
+            }
+          ],
+          "decoration": {
+            "description": "Cinq ans après la mort de son mari David, Giulia reconnaît dans son taxi un visage lié à l'accident. Cette révélation la pousse à enquêter, mais un hackeur mystérieux tente de la faire taire. Contrainte de fuir avec son fils Achille, elle plonge dans une traque numérique où le passé de David pourrait détenir toutes les réponses.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-1-jpg-1-a8dff2-eedbdd-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-jpg-5af5c5-8cafe4-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 6
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "louis-la-brocante",
+          "name": "Louis la Brocante",
+          "initialChannel": {
+            "slug": "tf1"
+          },
+          "categories": [
+            {
+              "id": "GT_SERIES_AND_FICTIONS"
+            },
+            {
+              "id": "SGT_SERIES"
+            }
+          ],
+          "decoration": {
+            "description": "Louis Roman, brocanteur sexagénaire, parcourt la région lyonnaise au volant de son vieux Citroën Type H. Entre sa fille Isabelle qui lui reproche son manque de rigueur et son ex-femme Maryvonne qui tente de le reconquérir, Louis mène aussi l'enquête.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-2-ab213e-f4b2b8-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-fd316f-97c8ba-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 44
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "avocats-et-associes",
+          "name": "Avocats et Associés",
+          "initialChannel": {
+            "slug": "tf1"
+          },
+          "categories": [
+            {
+              "id": "GT_SERIES_AND_FICTIONS"
+            },
+            {
+              "id": "SGT_SERIES"
+            }
+          ],
+          "decoration": {
+            "description": "Le cabinet d'avocats généralistes jongle entre affaires criminelles et droit de la famille. Les membres du cabinet affrontent les défis professionnels et personnels, offrant un aperçu réaliste des enjeux sociétaux. La série explore avec authenticité les problématiques contemporaines, des plus anodines aux plus complexes, à travers le prisme du droit.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/flux-program-card-portrait-1-png-2619a9-a4e1ab-07d7f0-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-png-c404e8-d34320-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 115
           },
           "replayRecent": {
             "total": 0
