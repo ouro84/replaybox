@@ -1,5 +1,6 @@
 package com.replaybox.core.data
 
+import com.replaybox.core.model.ChannelShow
 import com.replaybox.core.model.Episode
 import com.replaybox.core.model.Genre
 import com.replaybox.core.model.Season
@@ -19,6 +20,9 @@ interface CatalogDao {
     suspend fun putListing(channelId: String, shows: List<Show>, at: Long)
 
     suspend fun shows(channelId: String): List<Show>
+
+    /** The listed rows of these Programmes, one per Chaîne that lists them (Home rails by id). */
+    suspend fun listedShows(ids: Collection<String>): List<ChannelShow>
 
     // ---- Program pages (Seasons + Episodes) ----
 
