@@ -143,9 +143,9 @@ Lecteur complet :
 
 Recherche guidée :
 
-- [ ] Clavier à l'écran pensé pour le D-pad
-- [ ] Filtres rapides par Chaîne et par Genre
-- [ ] Meilleur résultat mis en avant
+- [x] Clavier à l'écran pensé pour le D-pad
+- [x] Filtres rapides par Chaîne et par Genre
+- [x] Meilleur résultat mis en avant
 
 **Critère** : une soirée complète sur la Bbox (accueil → reprise → Épisode suivant → recherche)
 sans focus perdu, et sous-titres lus confortablement depuis le canapé.

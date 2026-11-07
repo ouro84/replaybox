@@ -11,7 +11,9 @@
     <string name="stale_data">Données du %1$s</string>
     <string name="search_button">Rechercher</string>
     <string name="search_hint">Titre du Programme…</string>
-    <string name="search_min_chars">Saisis au moins 3 caractères.</string>
+    <string name="search_type_hint">Tape le titre d\'un Programme.</string>
+    <string name="key_space">Espace</string>
+    <string name="key_delete">Effacer</string>
     <string name="search_no_results">Aucun Programme trouvé.</string>
     <string name="favorites_row">Favoris</string>
     <string name="pin_add">Épingler</string>

@@ -33,15 +33,16 @@ object GenreGrid {
             .map { it.first }
 
     /**
-     * The grid of [genre]: [items] of that Genre on [channelIds] (null: every Chaîne), the
+     * The grid of [genre] (null: every Genre, Search with only a Chaîne filter): [items] of
+     * that Genre on [channelIds] (null: every Chaîne), the
      * same Programme on two Chaînes kept once (normalized title, first in [items] order wins,
      * as on the Home rails), then [sort]ed. The filter comes before the merge, so a Chaîne
      * group keeps its own copy of a Programme another group also lists.
      */
-    fun arrange(items: List<ChannelShow>, genre: Genre, channelIds: Set<String>?): List<ChannelShow> {
+    fun arrange(items: List<ChannelShow>, genre: Genre?, channelIds: Set<String>?): List<ChannelShow> {
         val seen = HashSet<String>()
         val kept = items.filter { entry ->
-            genre in entry.show.genres &&
+            (genre == null || genre in entry.show.genres) &&
                 (channelIds == null || entry.channelId in channelIds) &&
                 seen.add(Titles.normalize(entry.show.title))
         }

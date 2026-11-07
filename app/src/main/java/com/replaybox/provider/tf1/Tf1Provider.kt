@@ -59,7 +59,9 @@ class Tf1Provider(
 
     override suspend fun search(query: String): List<Show> {
         localSearch?.invoke(query)?.let { return it }
-        val root = http.graphql(Tf1QueryIds.SEARCH_PROGRAMS, http.searchProgramsVariables(query))
+        // Local search runs from 1 character; the remote fallback keeps TF1's own minimum.
+        if (query.trim().length < REMOTE_SEARCH_MIN_CHARS) return emptyList()
+        val root = http.graphql(Tf1QueryIds.SEARCH_PROGRAMS, http.searchProgramsVariables(query.trim()))
         return Tf1Parsers.showsFromSearch(root)
     }
 
@@ -143,5 +145,8 @@ class Tf1Provider(
     private companion object {
         const val MAX_VIDEOS = 1000
         const val TAG = "Tf1Provider"
+
+        /** SPEC §Recherche: TF1's remote searchPrograms (Index not stored yet) from 3 characters. */
+        const val REMOTE_SEARCH_MIN_CHARS = 3
     }
 }

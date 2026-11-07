@@ -385,9 +385,35 @@ Duration is rounded up, so 3 min 45 s reads « 4 min ».
 Every D-pad target uses `tvClickable`: one focus node and no Material ripple. `focusable()` + `clickable()` made two nodes, so after OK the visible focus was lost and a grey ripple rectangle appeared.
 
 ### Search
-- **Field.** 540 dp wide and 52 dp tall at 104 dp, on raised slate with 8 dp corners. It has a Search icon and a placeholder in Mist (« Titre du Programme… »), and the text in Body Paper White. On focus it takes the white ring 3 dp outside the field (`focusRing`). The keyboard is the system IME.
-- **Status lines.** « Saisis au moins 3 caractères. », loading and « Aucun Programme trouvé. » are set in Body Mist, aligned at 104 dp.
-- **Results.** Six 3:4 posters per row, 20 dp gap, between 104 dp and the 48 dp safe edge. They use the Home card focus (ring plus 1.1 lift). Each poster has a caption 14 dp below: the title in Card Title (2 lines), then « Chaîne · Genre » in Meta Mist. The Chaîne comes from the cached listings only and is never guessed. DOWN from the field reaches the first result.
+The keyboard on the left, the results on the right. No system IME, no voice.
+
+**Keyboard.** An in-app grid at 104 dp, 300 dp wide, top aligned with the query (27 + 8 dp).
+- Six columns: A–Z, then 0–9 (six rows), then « Espace » and « Effacer », each three columns wide. No accents: search is normalized (case and accents ignored).
+- Keys are panel buttons with a centred Body Strong label: 44 dp tall, 8 dp corners, 8 dp apart. Rest: Raised Slate, Paper White label. Focus: white fill, ink label, 1.06 lift.
+- OK types the letter (lower case). « Espace » never leads or doubles. « Effacer » deletes one character. The query stops at 40 characters.
+
+**Results column.** From 440 dp (the keyboard plus 36 dp) to the 48 dp safe edge, 472 dp wide. One scrolling grid, top to bottom:
+- **Query:** the typed text in Display Compact, Paper White, two lines before the ellipsis. Empty: « Titre du Programme… » in Mist.
+- **Chips:** 16 dp below, the Chaîne-group row (« Tout », « TF1 », « France TV », « M6+ », M6+ only with an account); 8 dp below, the Genre row (« Tout », then the 9 Genres in glossary order), which scrolls sideways. Both are the « Tout voir » chips: one choice per row, selected on OK and never on focus, Raised Slate plus a check when selected. Filters apply before the title fusion, so a Chaîne group keeps its own copy of a Programme another group also lists.
+- **Best result:** when the top-ranked result's title equals the query or starts with it (case and accents ignored). A 208 dp 16:9 key art (10 dp corners; the poster cropped when the Chaîne ships no key art), then 20 dp to the right: the title in Rail Title (2 lines), « Chaîne · Genre » in Meta Mist, and with an Épisode in progress, « Épisode · 34 min restantes » in Meta Mist. Below, 16 dp down, panel buttons: « Reprendre » (play icon, resumes at once like the Home « Reprendre ») then « Épisodes » (opens the Programme), or « Épisodes » alone. Otherwise there is no highlight. The best result is not repeated in the grid.
+- **Grid:** four 3:4 posters per row (about 103 dp), 20 dp gap, 28 dp between rows, the Home card focus and the shared caption (`PosterCaptionCard`: title in Card Title on 2 lines, « Chaîne · Genre » in Meta Mist). The Chaîne comes from the cached listings, or the Provider that returned the result; it is never guessed.
+
+**When it searches.** From the first character (local search is instant, 150 ms pause between keys). TF1's remote search, used only while its Index is not stored, waits for 3 characters. An empty query with a chip selected lists the cached Programmes of that filter in the « Tout voir » order (recency, then title), with no best result. An empty query with no chip selected shows the hint. While the next query runs, the previous results stay on screen.
+
+**States.** Body Mist at the top of the grid:
+- empty query, no filter: « Tape le titre d'un Programme. »;
+- loading: « Chargement… », only after 500 ms, never « Aucun Programme trouvé. »;
+- nothing found: « Aucun Programme trouvé. »;
+- every Provider failing: « Recherche indisponible. » with « Réessayer » 20 dp below. One Provider failing shows the others' results as they are.
+
+**Focus line.**
+- Initial focus: « A ».
+- RIGHT from the keyboard's last column (F, L, R, X, 3, 9, « Effacer ») enters the results: on the element focused there last, when the query has not changed since; else the best result's first button; else the first poster; else « Réessayer »; else the selected Chaîne chip.
+- LEFT from the first element of a row (first chip of each row, the best result's first button, the first poster of each grid row) returns to the key focused last.
+- DOWN: Chaîne chips, Genre chips, best result, grid. From the best result DOWN lands on the first poster; from the first grid row UP lands on the best result. Moves never leave the keyboard by its top, bottom or left edge.
+- Back from the results column returns to the key focused last; Back from the keyboard leaves Search.
+- Typing scrolls the results back to the top.
+- On return from a Programme page or the player: query, chips, results, scroll and the focused element (key, chip, button or poster) are restored. « Reprendre » gone after the Épisode was finished: focus is on « Épisodes ».
 
 ### Player
 The video owns the screen. Every overlay sits at the bottom over a ground scrim (transparent to 92–94 % ground), inside the 48 dp safe frame, and one Back closes it.
@@ -401,7 +427,7 @@ The video owns the screen. Every overlay sits at the bottom over a ground scrim 
 - **Focus holder.** The idle focus target is a sibling of the overlays, never their parent: Compose maps Back to a focus exit, and a focusable parent swallows the first press.
 
 ### Failure states
-A failure is never shown as an empty result. Search with every Provider failing reads « Recherche indisponible. » with « Réessayer » (DOWN from the field reaches it); one Provider failing shows the other's results as they are. An empty Home after a refresh where every Chaîne failed reads « Catalogue indisponible. Vérifie la connexion. » with a focused « Réessayer »; with a cache, Home keeps its rails and the dated stale notice.
+A failure is never shown as an empty result. Search with every Provider failing reads « Recherche indisponible. » with « Réessayer » (RIGHT from the keyboard reaches it); one Provider failing shows the other's results as they are. An empty Home after a refresh where every Chaîne failed reads « Catalogue indisponible. Vérifie la connexion. » with a focused « Réessayer »; with a cache, Home keeps its rails and the dated stale notice.
 
 ### Paramètres
 Verified on the Bbox (2026-11-07). One list, one level of pages; Back from a page lands on the row that opened it.
@@ -421,7 +447,7 @@ Verified on the Bbox (2026-11-07). One list, one level of pages; Back from a pag
 
 **Provider page.** Title (the Provider name) in Display Compact, the Santé badge 12 dp below, then two Body Mist lines in a 720 dp column: « Vérification de cette nuit : … » and « Sur cette box : … », dated « le 07/11 à 21:02 ». Then, 28 dp below, the account form when the Provider needs one. The page scrolls when the form and the keyboard need room.
 
-**Account form.** Rail Title « Connexion <Provider> », the account state in Body Strong, a Meta Mist hint, two 540 x 52 dp fields (Search field look: raised slate, 8 dp corners, ring on focus), then panel buttons « Se connecter » and, when signed in, « Se déconnecter ». The initial focus is « Se connecter », never a field, so reading the Santé does not raise the keyboard. UP/DOWN leave a field instead of moving its cursor. Errors read in Body Soft Coral, in French; the English exception text stays in the logs and the Santé line.
+**Account form.** Rail Title « Connexion <Provider> », the account state in Body Strong, a Meta Mist hint, two 540 x 52 dp fields (raised slate, 8 dp corners, ring on focus), then panel buttons « Se connecter » and, when signed in, « Se déconnecter ». The initial focus is « Se connecter », never a field, so reading the Santé does not raise the keyboard. UP/DOWN leave a field instead of moving its cursor. Errors read in Body Soft Coral, in French; the English exception text stays in the logs and the Santé line.
 
 **À propos.** Title in Display Compact, the logo (see Logo), « Version X.Y.Z » in Body Strong, one status line in Body Mist, then one panel button, which is the initial focus:
 - « Rechercher une mise à jour » runs the GitHub check; the status reads « Recherche en cours… », then « Tu as la dernière version. » or « Impossible de vérifier les mises à jour. Vérifie la connexion. ».
@@ -440,7 +466,7 @@ The nav rail's « Genres » destination.
 The grid of one Genre, opened from a Genres tile or from the « Tout voir » card of a Home rail.
 - **Header:** the Genre name in Display Compact at 104 dp, then one row of Chaîne-group chips 16 dp below, 12 dp apart: « Tout », « TF1 », « France TV », « M6+ ». A group shows only when one of its Chaînes is listed, so « M6+ » appears only with an M6+ account. The header scrolls away with the grid.
 - **Chips:** single choice, selected on OK, never on focus, so crossing the row reloads nothing (like the Saison pills). Selected: Raised Slate plus a 20 dp check before the label, never colour alone. Focused: white fill, ink label, 1.06 lift. Other: Mist label, no fill. 40 dp tall, 20 dp horizontal padding, Body Strong.
-- **Grid:** the Search results grid. Six 3:4 posters per row, 20 dp gap, 28 dp between rows, between 104 dp and the 48 dp safe edge, with the Home card focus. Each poster has the Search caption: the title in Card Title (2 lines), then « Chaîne · Genre » in Meta Mist. One shared component (`PosterCaptionCard`) draws both grids.
+- **Grid:** six 3:4 posters per row, 20 dp gap, 28 dp between rows, between 104 dp and the 48 dp safe edge, with the Home card focus. Each poster has the Search caption: the title in Card Title (2 lines), then « Chaîne · Genre » in Meta Mist. One shared component (`PosterCaptionCard`) draws this grid and the Search grid (four per row there).
 - **Content:** every Programme of the Genre on every listed Chaîne of every Provider, from the cached listings only (no crawl). France TV shows what its cache holds. The same title on two Chaînes is shown once, inside the selected filter.
 - **Order:** most recent first, then title (case- and accent-insensitive). No listing gives the date of a Programme's latest Épisode: TF1's `replayRecent.total` is a count on TF1 only, and France TV and M6 expose nothing. Recency is therefore the day the box first listed the Programme (`firstSeenAt`, kept across refreshes), the same signal that orders the Home rails. Within a day the exact time is ignored: one refresh writes the Chaînes seconds apart. On a fresh install every Programme shares one day and the grid reads alphabetically; newcomers lead from the next day on.
 - **States:** loading shows two rows of skeleton posters (slate surface, with a caption bar), no spinner. Empty reads « Aucun Programme dans ce Genre. » in Body Mist at 104 dp.

@@ -282,12 +282,13 @@ internal fun PosterCaptionCard(
     channel: String?,
     focusRequesters: List<FocusRequester>,
     onFocused: () -> Unit = {},
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     var focused by remember { mutableStateOf(false) }
     val scale = focusScale(focused)
     Column(
-        modifier = Modifier
+        modifier = modifier
             .then(focusRequesters.fold(Modifier as Modifier) { acc, requester -> acc.focusRequester(requester) })
             .onFocusChanged {
                 focused = it.isFocused
