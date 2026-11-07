@@ -114,11 +114,11 @@ Fondations :
 
 Accueil & navigation :
 
-- [ ] Rail de navigation latéral (Accueil, Genres, Recherche, Paramètres)
+- [x] Rail de navigation latéral (Accueil, Genres, Recherche, Paramètres)
 - [x] Billboard « à la une » avec action Reprendre
 - [ ] Rail « À suivre » en tête d'accueil (Épisodes en cours et nouveaux Épisodes des Programmes épinglés)
 - [x] Fond dynamique tiré du visuel focalisé
-- [ ] Grille « Tout voir » par Genre
+- [x] Grille « Tout voir » par Genre
 
 Catalogue (dettes M3) :
 
