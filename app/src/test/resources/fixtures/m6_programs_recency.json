@@ -1,0 +1,152 @@
+[
+ {
+  "id": 28540,
+  "title": "Wanted : attrape-moi si tu peux !",
+  "description": "Dans un lieu tenu secret, 16 célébrités seront « enfermées » dans une « prison »",
+  "service_display": {
+   "code": "m6replay"
+  },
+  "count": {
+   "vi": 6
+  },
+  "neustar": {
+   "category": "divertissement"
+  },
+  "program_type_wording": {
+   "code": null
+  },
+  "publication_date_vi": {
+   "date_end_max": "2030-12-31 23:07:18",
+   "date_start_min": "2026-10-29 22:09:44",
+   "date_start_max": "2026-11-05 23:13:51"
+  },
+  "last_clip_publication": {
+   "date": "2026-11-05 23:13:51"
+  },
+  "first_local_air_date": {
+   "date": "2026-10-22 00:00:00"
+  },
+  "update_date": "2026-11-02 17:02:55",
+  "images": []
+ },
+ {
+  "id": 829,
+  "title": "Scènes de ménages",
+  "description": "Votre couple vous désole ? Vous vous lamentez de vivre seul ? Scènes de Ménages ",
+  "service_display": {
+   "code": "m6replay"
+  },
+  "count": {
+   "vi": 868
+  },
+  "neustar": {
+   "category": "presentation"
+  },
+  "program_type_wording": {
+   "code": "episode"
+  },
+  "publication_date_vi": {
+   "date_end_max": "2030-12-31 23:59:59",
+   "date_start_min": "2025-11-07 21:00:21",
+   "date_start_max": "2026-11-06 21:02:16"
+  },
+  "last_clip_publication": {
+   "date": "2026-11-06 21:02:16"
+  },
+  "first_local_air_date": {
+   "date": "2021-01-27 00:00:00"
+  },
+  "update_date": "2026-10-26 00:18:16",
+  "images": []
+ },
+ {
+  "id": 945,
+  "title": "Pékin express",
+  "description": "Cette saison, les règles se durcissent avec une nouveauté majeure : la connexion",
+  "service_display": {
+   "code": "m6replay"
+  },
+  "count": {
+   "vi": 155
+  },
+  "neustar": {
+   "category": "divertissement"
+  },
+  "program_type_wording": {
+   "code": "emission"
+  },
+  "publication_date_vi": {
+   "date_end_max": "2030-12-31 23:59:59",
+   "date_start_min": "2024-05-14 00:00:00",
+   "date_start_max": "2026-05-29 23:33:04"
+  },
+  "last_clip_publication": {
+   "date": "2026-05-29 23:33:04"
+  },
+  "first_local_air_date": {
+   "date": "2012-02-26 00:00:00"
+  },
+  "update_date": "2026-08-24 16:52:52",
+  "images": []
+ },
+ {
+  "id": 21200,
+  "title": "Les sisters",
+  "description": "Marine et Wendy sont deux tornades toujours prêtes à exploser, capables de se fa",
+  "service_display": {
+   "code": "gulli"
+  },
+  "count": {
+   "vi": 126
+  },
+  "neustar": {
+   "category": "kids"
+  },
+  "program_type_wording": {
+   "code": "dessin-anime"
+  },
+  "publication_date_vi": {
+   "date_end_max": "2030-12-31 23:59:59",
+   "date_start_min": "2025-10-15 00:00:00",
+   "date_start_max": "2026-11-07 09:38:00"
+  },
+  "last_clip_publication": {
+   "date": "2026-11-07 09:38:00"
+  },
+  "first_local_air_date": {
+   "date": "2017-07-01 00:00:00"
+  },
+  "update_date": "2026-11-07 00:29:53",
+  "images": []
+ },
+ {
+  "id": 21184,
+  "title": "Noël sur la 5e avenue",
+  "description": "Eva, dont le métier est d’exaucer des vœux pour Noël, est engagée pour décorer l",
+  "service_display": {
+   "code": "m6replay"
+  },
+  "count": {
+   "vi": 1
+  },
+  "neustar": {
+   "category": "telefilm-romance"
+  },
+  "program_type_wording": {
+   "code": "telefilm"
+  },
+  "publication_date_vi": {
+   "date_end_max": "2030-12-05 00:00:00",
+   "date_start_min": "2024-12-30 19:41:00",
+   "date_start_max": "2024-12-30 19:41:00"
+  },
+  "last_clip_publication": {
+   "date": "2024-12-30 19:41:00"
+  },
+  "first_local_air_date": {
+   "date": "2021-12-28 00:00:00"
+  },
+  "update_date": "2026-11-06 09:36:16",
+  "images": []
+ }
+]

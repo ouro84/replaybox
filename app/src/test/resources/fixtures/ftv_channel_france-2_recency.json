@@ -1,0 +1,1501 @@
+{
+ "collections": [
+  {
+   "id": 24044920,
+   "type": "mise_en_avant",
+   "label": "Notre sélection",
+   "items": [
+    {
+     "id": 9028087,
+     "type": "integrale",
+     "title": "Au Nom du Père",
+     "begin_date": 1793854800,
+     "broadcast_begin_date": 1795464600,
+     "broadcast_channel": "france-2",
+     "end_date": 1859065199,
+     "label_edito": "Nouvel épisode",
+     "program": {
+      "label": "Disparition inquiétante",
+      "program_path": "france-2_disparition-inquietante"
+     },
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8980639,
+     "type": "integrale",
+     "title": "Mutuelles santé : pourquoi payons-nous toujours plus cher ?",
+     "begin_date": 1793918023,
+     "broadcast_begin_date": 1793909413,
+     "broadcast_channel": "france-2",
+     "end_date": 1901918023,
+     "label_edito": null,
+     "program": {
+      "label": "Cash Investigation",
+      "program_path": "france-2_cash-investigation"
+     },
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 101060,
+     "type": "program",
+     "label": "Les disparus des Argonnes",
+     "program_path": "series-et-fictions_series-drame_les-disparus-des-argonnes",
+     "label_edito": "Nouveau",
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "series-et-fictions/series-drame"
+      }
+     ]
+    },
+    {
+     "id": 45381,
+     "type": "program",
+     "label": "Simon Coleman",
+     "program_path": "france-2_simon-coleman",
+     "label_edito": "Nouvelle saison",
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "series-et-fictions/series-policieres"
+      }
+     ]
+    },
+    {
+     "id": 8997352,
+     "type": "integrale",
+     "title": "Catherine Frot",
+     "begin_date": 1793768400,
+     "broadcast_begin_date": 1794174900,
+     "broadcast_channel": "france-2",
+     "end_date": 1824587940,
+     "label_edito": null,
+     "program": {
+      "label": "Beau geste",
+      "program_path": "france-2_beau-geste"
+     },
+     "category": {
+      "url_complete": "spectacles-et-culture"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8970347,
+     "type": "unitaire",
+     "title": "The Apprentice",
+     "begin_date": 1793743651,
+     "broadcast_begin_date": 1793736672,
+     "broadcast_channel": "france-2",
+     "end_date": 1796335651,
+     "label_edito": null,
+     "category": {
+      "url_complete": "films"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 100587,
+     "type": "program",
+     "label": "La terre et le sang",
+     "program_path": "france-2_la-terre-et-le-sang",
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "series-et-fictions/series-drame"
+      }
+     ]
+    },
+    {
+     "id": 8968478,
+     "type": "unitaire",
+     "title": "Flo",
+     "begin_date": 1793571356,
+     "broadcast_begin_date": 1793563916,
+     "broadcast_channel": "france-2",
+     "end_date": 1794176156,
+     "label_edito": null,
+     "category": {
+      "url_complete": "films"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 9048544,
+     "type": "integrale",
+     "title": "Trump : Quitte ou double",
+     "begin_date": 1793696400,
+     "broadcast_begin_date": 1793696400,
+     "broadcast_channel": null,
+     "end_date": 1855864799,
+     "label_edito": null,
+     "program": {
+      "label": "13h15, le dimanche",
+      "program_path": "france-2_13h15-le-dimanche"
+     },
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8968472,
+     "type": "unitaire",
+     "title": "La foil histoire de la Route du Rhum",
+     "begin_date": 1793329500,
+     "broadcast_begin_date": 1793116537,
+     "broadcast_channel": null,
+     "end_date": 1871236799,
+     "label_edito": null,
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8968730,
+     "type": "integrale",
+     "title": "Mathieu Haulbert : l'enfant disparu du Verdon",
+     "begin_date": 1793465050,
+     "broadcast_begin_date": 1793462818,
+     "broadcast_channel": "france-2",
+     "end_date": 1809103740,
+     "label_edito": null,
+     "program": {
+      "label": "Affaires sensibles",
+      "program_path": "france-2_affaires-sensibles"
+     },
+     "category": {
+      "url_complete": "societe"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8915955,
+     "type": "unitaire",
+     "title": "Au sein des autres",
+     "begin_date": 1790827200,
+     "broadcast_begin_date": 1793218200,
+     "broadcast_channel": "france-2",
+     "end_date": 1899154740,
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 100320,
+     "type": "program",
+     "label": "Vendée Globe, Seuls autour du monde",
+     "program_path": "documentaires_documentaires-sport_vendee-globe-seuls-autour-du-monde",
+     "label_edito": null,
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "documentaires/documentaires-sport"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": null,
+   "type": "live",
+   "label": "En direct",
+   "items": [
+    {
+     "id": 8261622,
+     "type": "integrale",
+     "title": "L'héritage maudit des Schlumpf",
+     "begin_date": 1794070500,
+     "broadcast_begin_date": 1794067601,
+     "broadcast_channel": "france-2",
+     "end_date": 1794675300,
+     "label_edito": null,
+     "program": {
+      "label": "Affaires sensibles",
+      "program_path": "france-2_affaires-sensibles"
+     },
+     "category": {
+      "url_complete": "societe"
+     },
+     "sub_categories": []
+    }
+   ]
+  },
+  {
+   "id": 24044947,
+   "type": "playlist_mixed",
+   "label": "La série documentaire événement",
+   "items": [
+    {
+     "id": 100320,
+     "type": "program",
+     "label": "Vendée Globe, Seuls autour du monde",
+     "program_path": "documentaires_documentaires-sport_vendee-globe-seuls-autour-du-monde",
+     "label_edito": null,
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "documentaires/documentaires-sport"
+      }
+     ]
+    },
+    {
+     "id": 8975050,
+     "type": "integrale",
+     "title": "L'Everest des mers",
+     "begin_date": 1792728000,
+     "broadcast_begin_date": 1794341400,
+     "broadcast_channel": "france-2",
+     "end_date": 1871416740,
+     "label_edito": null,
+     "program": {
+      "label": "Vendée Globe, Seuls autour du monde",
+      "program_path": "documentaires_documentaires-sport_vendee-globe-seuls-autour-du-monde"
+     },
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8975071,
+     "type": "integrale",
+     "title": "A pleine vitesse",
+     "begin_date": 1792720800,
+     "broadcast_begin_date": 1794339780,
+     "broadcast_channel": "france-2",
+     "end_date": 1871582340,
+     "label_edito": null,
+     "program": {
+      "label": "Vendée Globe, Seuls autour du monde",
+      "program_path": "documentaires_documentaires-sport_vendee-globe-seuls-autour-du-monde"
+     },
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8975074,
+     "type": "integrale",
+     "title": "L'heure des choix",
+     "begin_date": 1792728000,
+     "broadcast_begin_date": 1794345300,
+     "broadcast_channel": "france-2",
+     "end_date": 1871589540,
+     "label_edito": null,
+     "program": {
+      "label": "Vendée Globe, Seuls autour du monde",
+      "program_path": "documentaires_documentaires-sport_vendee-globe-seuls-autour-du-monde"
+     },
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8975077,
+     "type": "integrale",
+     "title": "Du rêve au cauchemar",
+     "begin_date": 1792728000,
+     "broadcast_begin_date": 1794347100,
+     "broadcast_channel": "france-2",
+     "end_date": 1871589540,
+     "label_edito": null,
+     "program": {
+      "label": "Vendée Globe, Seuls autour du monde",
+      "program_path": "documentaires_documentaires-sport_vendee-globe-seuls-autour-du-monde"
+     },
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8975080,
+     "type": "integrale",
+     "title": "Affronter ses démons",
+     "begin_date": 1792728000,
+     "broadcast_begin_date": 1794349020,
+     "broadcast_channel": "france-2",
+     "end_date": 1871589540,
+     "label_edito": null,
+     "program": {
+      "label": "Vendée Globe, Seuls autour du monde",
+      "program_path": "documentaires_documentaires-sport_vendee-globe-seuls-autour-du-monde"
+     },
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8975086,
+     "type": "integrale",
+     "title": "Entrer dans la légende",
+     "begin_date": 1792728000,
+     "broadcast_begin_date": 1794350760,
+     "broadcast_channel": "france-2",
+     "end_date": 1871589540,
+     "label_edito": null,
+     "program": {
+      "label": "Vendée Globe, Seuls autour du monde",
+      "program_path": "documentaires_documentaires-sport_vendee-globe-seuls-autour-du-monde"
+     },
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    }
+   ]
+  },
+  {
+   "id": 24044902,
+   "type": "playlist_mixed",
+   "label": "Séries et fictions",
+   "items": [
+    {
+     "id": 101060,
+     "type": "program",
+     "label": "Les disparus des Argonnes",
+     "program_path": "series-et-fictions_series-drame_les-disparus-des-argonnes",
+     "label_edito": "Nouveau",
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "series-et-fictions/series-drame"
+      }
+     ]
+    },
+    {
+     "id": 8920062,
+     "type": "unitaire",
+     "title": "Harceleurs",
+     "begin_date": 1792036800,
+     "broadcast_begin_date": 1792609890,
+     "broadcast_channel": "france-2",
+     "end_date": 1900960778,
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8897007,
+     "type": "unitaire",
+     "title": "On aboie en silence",
+     "begin_date": 1791432000,
+     "broadcast_begin_date": 1792005042,
+     "broadcast_channel": "france-2",
+     "end_date": 1899751636,
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8915955,
+     "type": "unitaire",
+     "title": "Au sein des autres",
+     "begin_date": 1790827200,
+     "broadcast_begin_date": 1793218200,
+     "broadcast_channel": "france-2",
+     "end_date": 1899154740,
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 100038,
+     "type": "program",
+     "label": "Sœurs",
+     "program_path": "france-2_soeurs",
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "series-et-fictions/series-thriller"
+      }
+     ]
+    },
+    {
+     "id": 45381,
+     "type": "program",
+     "label": "Simon Coleman",
+     "program_path": "france-2_simon-coleman",
+     "label_edito": "Nouvelle saison",
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "series-et-fictions/series-policieres"
+      }
+     ]
+    },
+    {
+     "id": 97580,
+     "type": "program",
+     "label": "Le Rouge et le Noir",
+     "program_path": "france-2_le-rouge-et-le-noir",
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "series-et-fictions/series-drame"
+      }
+     ]
+    },
+    {
+     "id": 98463,
+     "type": "program",
+     "label": "La mère et l'assassin",
+     "program_path": "france-2_la-mere-et-l-assassin",
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "series-et-fictions/series-thriller"
+      }
+     ]
+    },
+    {
+     "id": 97995,
+     "type": "program",
+     "label": "Code Rouge",
+     "program_path": "france-2_code-rouge",
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "series-et-fictions/series-thriller"
+      }
+     ]
+    },
+    {
+     "id": 60854,
+     "type": "program",
+     "label": "À l'instinct",
+     "program_path": "france-2_a-l-instinct",
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "series-et-fictions/series-policieres"
+      }
+     ]
+    },
+    {
+     "id": 98115,
+     "type": "program",
+     "label": "Les aventurières",
+     "program_path": "france-2_les-aventurieres",
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "series-et-fictions/series-policieres"
+      },
+      {
+       "url_complete": "series-et-fictions/series-comedie"
+      }
+     ]
+    },
+    {
+     "id": 8198259,
+     "type": "unitaire",
+     "title": "Au coeur de nos terres",
+     "begin_date": 1772082000,
+     "broadcast_begin_date": 1772654838,
+     "broadcast_channel": "france-2",
+     "end_date": 1878845882,
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 91722,
+     "type": "program",
+     "label": "L'affaire Laura Stern",
+     "program_path": "france-2_l-affaire-laura-stern",
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "series-et-fictions/series-drame"
+      },
+      {
+       "url_complete": "series-et-fictions/series-thriller"
+      }
+     ]
+    },
+    {
+     "id": 22457,
+     "type": "program",
+     "label": "César Wagner",
+     "program_path": "france-2_cesar-wagner",
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "series-et-fictions/series-policieres"
+      }
+     ]
+    },
+    {
+     "id": 4685,
+     "type": "program",
+     "label": "Capitaine Marleau",
+     "program_path": "france-2_capitaine-marleau",
+     "label_edito": null,
+     "category": {
+      "url_complete": "series-et-fictions"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "series-et-fictions/series-policieres"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 24044896,
+   "type": "playlist_program",
+   "label": "Magazines",
+   "items": [
+    {
+     "id": 4333,
+     "type": "program",
+     "label": "Ça commence aujourd'hui",
+     "program_path": "france-2_ca-commence-aujourd-hui",
+     "label_edito": null,
+     "category": {
+      "url_complete": "societe"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "societe/magazine-d-actualites"
+      }
+     ]
+    },
+    {
+     "id": 1379,
+     "type": "program",
+     "label": "La maison des Maternelles",
+     "program_path": "societe_la-maison-des-maternelles",
+     "label_edito": null,
+     "category": {
+      "url_complete": "societe"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "societe/magazine-d-actualites"
+      }
+     ]
+    },
+    {
+     "id": 1257,
+     "type": "program",
+     "label": "Le Mag de la santé",
+     "program_path": "societe_le-mag-de-la-sante",
+     "label_edito": null,
+     "category": {
+      "url_complete": "societe"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "societe/sante-et-bien-etre"
+      }
+     ]
+    },
+    {
+     "id": 19711,
+     "type": "program",
+     "label": "Le pitch cinéma",
+     "program_path": "france-2_le-pitch-cinema",
+     "label_edito": null,
+     "category": {
+      "url_complete": "films"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 23213,
+     "type": "program",
+     "label": "Bel & bien",
+     "program_path": "france-2_bel-et-bien",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/lifestyle"
+      },
+      {
+       "url_complete": "societe/magazine-d-actualites"
+      },
+      {
+       "url_complete": "societe/sante-et-bien-etre"
+      }
+     ]
+    },
+    {
+     "id": 4267,
+     "type": "program",
+     "label": "Affaire conclue, tout le monde a quelque chose à vendre",
+     "program_path": "france-2_affaire-conclue-tout-le-monde-a-quelque-chose-a-vendre",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/lifestyle"
+      },
+      {
+       "url_complete": "jeux-et-divertissements/emissions-de-divertissement"
+      }
+     ]
+    },
+    {
+     "id": 7777,
+     "type": "program",
+     "label": "Affaire conclue : la vie des objets",
+     "program_path": "france-2_affaire-conclue-la-vie-des-objets",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/lifestyle"
+      }
+     ]
+    },
+    {
+     "id": 39409,
+     "type": "program",
+     "label": "Quelle époque !",
+     "program_path": "france-2_quelle-epoque",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/emissions-de-divertissement"
+      },
+      {
+       "url_complete": "societe/magazine-d-actualites"
+      }
+     ]
+    },
+    {
+     "id": 40159,
+     "type": "program",
+     "label": "Un dimanche à la campagne",
+     "program_path": "france-2_un-dimanche-a-la-campagne",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/emissions-de-divertissement"
+      }
+     ]
+    },
+    {
+     "id": 38287,
+     "type": "program",
+     "label": "Les rencontres du Papotin",
+     "program_path": "france-2_les-rencontres-du-papotin",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/emissions-de-divertissement"
+      }
+     ]
+    },
+    {
+     "id": 41599,
+     "type": "program",
+     "label": "Beau geste",
+     "program_path": "france-2_beau-geste",
+     "label_edito": null,
+     "category": {
+      "url_complete": "spectacles-et-culture"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "spectacles-et-culture/emissions-culturelles"
+      }
+     ]
+    },
+    {
+     "id": 26861,
+     "type": "program",
+     "label": "Affaires sensibles",
+     "program_path": "france-2_affaires-sensibles",
+     "label_edito": null,
+     "category": {
+      "url_complete": "societe"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "societe/faits-divers"
+      }
+     ]
+    },
+    {
+     "id": 23443,
+     "type": "program",
+     "label": "Au bout de l'enquête, la fin du crime parfait ?",
+     "program_path": "france-2_au-bout-de-l-enquete-la-fin-du-crime-parfait",
+     "label_edito": null,
+     "category": {
+      "url_complete": "societe"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "societe/faits-divers"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 24044935,
+   "type": "playlist_mixed",
+   "label": "Documentaires",
+   "items": [
+    {
+     "id": 8968472,
+     "type": "unitaire",
+     "title": "La foil histoire de la Route du Rhum",
+     "begin_date": 1793329500,
+     "broadcast_begin_date": 1793116537,
+     "broadcast_channel": null,
+     "end_date": 1871236799,
+     "label_edito": null,
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 100320,
+     "type": "program",
+     "label": "Vendée Globe, Seuls autour du monde",
+     "program_path": "documentaires_documentaires-sport_vendee-globe-seuls-autour-du-monde",
+     "label_edito": null,
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "documentaires/documentaires-sport"
+      }
+     ]
+    },
+    {
+     "id": 8949924,
+     "type": "integrale",
+     "title": "De plomb et de charbon",
+     "begin_date": 1793234339,
+     "broadcast_begin_date": 1793229530,
+     "broadcast_channel": "france-2",
+     "end_date": 1809471540,
+     "label_edito": null,
+     "program": {
+      "label": "25 nuances de doc",
+      "program_path": "france-2_25-nuances-de-doc"
+     },
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8945751,
+     "type": "integrale",
+     "title": "Replica",
+     "begin_date": 1792123200,
+     "broadcast_begin_date": 1793146010,
+     "broadcast_channel": "france-2",
+     "end_date": 1869865140,
+     "label_edito": null,
+     "program": {
+      "label": "25 nuances de doc",
+      "program_path": "france-2_25-nuances-de-doc"
+     },
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8945760,
+     "type": "unitaire",
+     "title": "Lâche ton tel",
+     "begin_date": 1792123200,
+     "broadcast_begin_date": 1793138072,
+     "broadcast_channel": "france-2",
+     "end_date": 1869951958,
+     "label_edito": null,
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8932455,
+     "type": "unitaire",
+     "title": "La grande Histoire de la Marine",
+     "begin_date": 1791924265,
+     "broadcast_begin_date": 1791918556,
+     "broadcast_channel": "france-2",
+     "end_date": 1893185065,
+     "label_edito": null,
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8897004,
+     "type": "unitaire",
+     "title": "Averroès & Rosa Parks",
+     "begin_date": 1792023790,
+     "broadcast_begin_date": 1792015363,
+     "broadcast_channel": "france-2",
+     "end_date": 1794615790,
+     "label_edito": null,
+     "category": {
+      "url_complete": "films"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 99756,
+     "type": "program",
+     "label": "Les cercles du silence : L'affaire Le Scouarnec, une histoire d'omerta",
+     "program_path": "france-2_les-cercles-du-silence-l-affaire-le-scouarnec-une-histoire-d-omerta",
+     "label_edito": null,
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "documentaires/documentaires-societe"
+      },
+      {
+       "url_complete": "societe/documentaires-societe"
+      }
+     ]
+    },
+    {
+     "id": 97385,
+     "type": "program",
+     "label": "Léon, au-delà de l'or",
+     "program_path": "france-2_leon-au-dela-de-l-or",
+     "label_edito": null,
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "documentaires/documentaires-sport"
+      }
+     ]
+    },
+    {
+     "id": 8667648,
+     "type": "unitaire",
+     "title": "Le match France-Italie : histoire d'une rivalité",
+     "begin_date": 1783483200,
+     "broadcast_begin_date": 1783483200,
+     "broadcast_channel": null,
+     "end_date": 1862434740,
+     "label_edito": null,
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 7645046,
+     "type": "integrale",
+     "title": "13 novembre, nos vies en éclats",
+     "begin_date": 1762146000,
+     "broadcast_begin_date": 1762208448,
+     "broadcast_channel": "france-2",
+     "end_date": 1839542313,
+     "label_edito": null,
+     "program": {
+      "label": "Infrarouge",
+      "program_path": "france-2_infrarouge"
+     },
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 96596,
+     "type": "program",
+     "label": "Colonna, une tragédie corse",
+     "program_path": "france-2_colonna-une-tragedie-corse",
+     "label_edito": null,
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "documentaires/documentaires-histoire"
+      }
+     ]
+    },
+    {
+     "id": 95769,
+     "type": "program",
+     "label": "Roland-Garros, entre les lignes",
+     "program_path": "france-2_roland-garros-entre-les-lignes",
+     "label_edito": "Nouveauté",
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "sport/tennis"
+      },
+      {
+       "url_complete": "documentaires/documentaires-sport"
+      }
+     ]
+    },
+    {
+     "id": 95277,
+     "type": "program",
+     "label": "Tchernobyl, une tragédie sans fin",
+     "program_path": "france-2_tchernobyl-une-tragedie-sans-fin",
+     "label_edito": "Nouveauté",
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "documentaires/documentaires-histoire"
+      }
+     ]
+    },
+    {
+     "id": 91221,
+     "type": "program",
+     "label": "Destination Lune, la nouvelle conquête spatiale",
+     "program_path": "documentaires_documentaires-science_destination-lune-la-nouvelle-conquete-spatiale",
+     "label_edito": null,
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "documentaires/documentaires-science"
+      }
+     ]
+    },
+    {
+     "id": 8314473,
+     "type": "integrale",
+     "title": "Crush, nos premières fois",
+     "begin_date": 1775188800,
+     "broadcast_begin_date": 1775681500,
+     "broadcast_channel": "france-2",
+     "end_date": 1853531516,
+     "label_edito": null,
+     "program": {
+      "label": "Infrarouge",
+      "program_path": "france-2_infrarouge"
+     },
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    },
+    {
+     "id": 8063898,
+     "type": "integrale",
+     "title": "À la hauteur",
+     "begin_date": 1768971600,
+     "broadcast_begin_date": 1769032760,
+     "broadcast_channel": "france-2",
+     "end_date": 1849388302,
+     "label_edito": null,
+     "program": {
+      "label": "Infrarouge",
+      "program_path": "france-2_infrarouge"
+     },
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": []
+    }
+   ]
+  },
+  {
+   "id": 24044911,
+   "type": "playlist_program",
+   "label": "Info et société",
+   "items": [
+    {
+     "id": 2461,
+     "type": "program",
+     "label": "Envoyé spécial",
+     "program_path": "france-2_envoye-special",
+     "label_edito": null,
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "info/decryptage-et-investigation"
+      }
+     ]
+    },
+    {
+     "id": 2407,
+     "type": "program",
+     "label": "Complément d'enquête",
+     "program_path": "france-2_complement-d-enquete",
+     "label_edito": null,
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "info/decryptage-et-investigation"
+      }
+     ]
+    },
+    {
+     "id": 98976,
+     "type": "program",
+     "label": "Franc-jeu",
+     "program_path": "france-2_franc-jeu",
+     "label_edito": null,
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "info/emission-politique"
+      }
+     ]
+    },
+    {
+     "id": 2383,
+     "type": "program",
+     "label": "Journal 20h00",
+     "program_path": "france-2_journal-20h00",
+     "label_edito": null,
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "info/jt"
+      }
+     ]
+    },
+    {
+     "id": 49809,
+     "type": "program",
+     "label": "Diplomatie",
+     "program_path": "france-2_diplomatie",
+     "label_edito": null,
+     "category": {
+      "url_complete": "documentaires"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "documentaires/documentaires-geopolitique"
+      }
+     ]
+    },
+    {
+     "id": 43114,
+     "type": "program",
+     "label": "Successions",
+     "program_path": "france-2_successions",
+     "label_edito": null,
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "documentaires/documentaires-geopolitique"
+      },
+      {
+       "url_complete": "documentaires/documentaires-societe"
+      },
+      {
+       "url_complete": "societe/magazine-d-actualites"
+      },
+      {
+       "url_complete": "info/decryptage-et-investigation"
+      },
+      {
+       "url_complete": "societe/documentaires-societe"
+      }
+     ]
+    },
+    {
+     "id": 42535,
+     "type": "program",
+     "label": "Journal Météo Climat",
+     "program_path": "france-2_journal-meteo-et-climat",
+     "label_edito": null,
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "info/meteo"
+      },
+      {
+       "url_complete": "info/jt"
+      }
+     ]
+    },
+    {
+     "id": 1283,
+     "type": "program",
+     "label": "Télématin",
+     "program_path": "france-2_telematin",
+     "label_edito": null,
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "info/jt"
+      },
+      {
+       "url_complete": "info/decryptage-et-investigation"
+      }
+     ]
+    },
+    {
+     "id": 2379,
+     "type": "program",
+     "label": "Journal 13h00",
+     "program_path": "france-2_journal-13h00",
+     "label_edito": null,
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "info/jt"
+      }
+     ]
+    },
+    {
+     "id": 13255,
+     "type": "program",
+     "label": "Nous, les Européens",
+     "program_path": "info_nous-les-europeens",
+     "label_edito": null,
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "societe/magazine-d-actualites"
+      }
+     ]
+    },
+    {
+     "id": 40672,
+     "type": "program",
+     "label": "20h30 le vendredi",
+     "program_path": "france-2_20h30-le-vendredi",
+     "label_edito": null,
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "societe/magazine-d-actualites"
+      }
+     ]
+    },
+    {
+     "id": 2413,
+     "type": "program",
+     "label": "13h15, le samedi",
+     "program_path": "france-2_13h15-le-samedi",
+     "label_edito": null,
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "societe/magazine-d-actualites"
+      },
+      {
+       "url_complete": "info/decryptage-et-investigation"
+      }
+     ]
+    },
+    {
+     "id": 2439,
+     "type": "program",
+     "label": "13h15, le dimanche",
+     "program_path": "france-2_13h15-le-dimanche",
+     "label_edito": null,
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "info/emission-politique"
+      },
+      {
+       "url_complete": "documentaires/documentaires-societe"
+      },
+      {
+       "url_complete": "societe/magazine-d-actualites"
+      },
+      {
+       "url_complete": "info/decryptage-et-investigation"
+      },
+      {
+       "url_complete": "societe/documentaires-societe"
+      }
+     ]
+    },
+    {
+     "id": 503,
+     "type": "program",
+     "label": "Cash Investigation",
+     "program_path": "france-2_cash-investigation",
+     "label_edito": null,
+     "category": {
+      "url_complete": "info"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "info/decryptage-et-investigation"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 24044887,
+   "type": "playlist_program",
+   "label": "Divertissements",
+   "items": [
+    {
+     "id": 46968,
+     "type": "program",
+     "label": "The Floor - À la conquête du sol",
+     "program_path": "france-2_the-floor-a-la-conquete-du-sol",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/jeux"
+      }
+     ]
+    },
+    {
+     "id": 35392,
+     "type": "program",
+     "label": "Drag Race France",
+     "program_path": "france-2_drag-race-france",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/emissions-de-divertissement"
+      }
+     ]
+    },
+    {
+     "id": 97692,
+     "type": "program",
+     "label": "Qui ment ?",
+     "program_path": "france-2_qui-ment",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/jeux"
+      }
+     ]
+    },
+    {
+     "id": 96069,
+     "type": "program",
+     "label": "Les Chaises Musicales Infernales",
+     "program_path": "france-2_les-chaises-musicales-infernales",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/jeux"
+      }
+     ]
+    },
+    {
+     "id": 39451,
+     "type": "program",
+     "label": "100 % logique : la réponse est sous vos yeux",
+     "program_path": "france-2_100-logique-la-reponse-est-sous-vos-yeux",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/jeux"
+      }
+     ]
+    },
+    {
+     "id": 1435,
+     "type": "program",
+     "label": "Tout le monde a son mot à dire",
+     "program_path": "france-2_tout-le-monde-a-son-mot-a-dire",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/jeux"
+      }
+     ]
+    },
+    {
+     "id": 25549,
+     "type": "program",
+     "label": "Chacun son Tour",
+     "program_path": "france-2_chacun-son-tour",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/jeux"
+      }
+     ]
+    },
+    {
+     "id": 1487,
+     "type": "program",
+     "label": "Tout le monde veut prendre sa place ",
+     "program_path": "france-2_tout-le-monde-veut-prendre-sa-place",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/jeux"
+      }
+     ]
+    },
+    {
+     "id": 1419,
+     "type": "program",
+     "label": "N'oubliez pas les paroles",
+     "program_path": "france-2_n-oubliez-pas-les-paroles",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/jeux"
+      }
+     ]
+    },
+    {
+     "id": 4415,
+     "type": "program",
+     "label": "Les enfants de la télé",
+     "program_path": "france-2_les-enfants-de-la-tele",
+     "label_edito": null,
+     "category": {
+      "url_complete": "jeux-et-divertissements"
+     },
+     "sub_categories": [
+      {
+       "url_complete": "jeux-et-divertissements/emissions-de-divertissement"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -35,7 +35,11 @@ class FakeCatalogDao : CatalogDao {
     override suspend fun putListing(channelId: String, shows: List<Show>, at: Long) {
         listings[channelId] = at
         shows.forEachIndexed { index, show -> firstSeen.putIfAbsent(show.id.value, at to index) }
-        this.shows[channelId] = shows.toMutableList()
+        // Recency survives a refresh only while the Programme stays listed, as in RoomCatalogDao.
+        val stored = this.shows[channelId].orEmpty().associate { it.id.value to it.recencyAt }
+        this.shows[channelId] = shows.map {
+            it.copy(recencyAt = GenreGrid.mergeRecency(stored[it.id.value], it.recencyAt))
+        }.toMutableList()
         genres[channelId] = shows.flatMap { it.genres }.toMutableSet()
     }
 

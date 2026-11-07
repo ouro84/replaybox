@@ -51,6 +51,7 @@ object Tf1Parsers {
         val programs = Tf1Json.obj(root, "data", "programs")
         val total = Tf1Json.int(programs, "total") ?: 0
         val items = Tf1Json.objects(Tf1Json.array(programs, "items"))
+        val answeredAt = serverInstant(root)?.toEpochMilli()
         val entries = items.mapNotNull { item ->
             val channelId = Tf1Json.str(item, "initialChannel", "slug")
             if (!Tf1Channels.isGroup(channelId)) return@mapNotNull null
@@ -58,17 +59,29 @@ object Tf1Parsers {
             val base = showFromProgram(item)
             val crime = SERIES_ROOT in categoryIds(item) && Genre.YOUTH !in base.genres &&
                 Tf1CrimeKeywords.matches(base.id.value, base.title, base.synopsis)
+            val recent = Tf1Json.int(item, "replayRecent", "total") ?: 0
             IndexEntry(
                 channelId!!,
                 base.copy(
                     genres = if (crime) base.genres + Genre.CRIME_THRILLER else base.genres,
-                    recentEpisodeCount = Tf1Json.int(item, "replayRecent", "total") ?: 0,
+                    recentEpisodeCount = recent,
+                    recencyAt = recencyAt(recent, answeredAt),
                 ),
             )
         }
         // An empty page ends the crawl even if the total promised more (catalogue shrinking mid-crawl).
         return CataloguePage(entries, hasMore = items.isNotEmpty() && (pageIndex + 1) * pageSize < total)
     }
+
+    /**
+     * Show.recencyAt from the Index (SPEC §Provider TF1+, measured 2026-11-07): the listing has
+     * no date, only `replayRecent.total`, the count of replay Épisodes TF1 flags `isRecent`
+     * (aired in the last 24 h when TF1 last refreshed the Programme, so it may lag by a day or
+     * two). A non-zero count dates the Programme to the instant the server answered
+     * (`extensions.report.execution.start`); no count or no server instant gives no date.
+     */
+    internal fun recencyAt(recentCount: Int, answeredAt: Long?): Long? =
+        answeredAt?.takeIf { recentCount > 0 }
 
     private const val SERIES_ROOT = "GT_SERIES_AND_FICTIONS"
 

@@ -125,6 +125,7 @@ class RoomCatalogDao(
                     firstSeenAt = known?.firstSeenAt ?: at,
                     firstSeenRank = known?.firstSeenRank ?: index,
                     recentEpisodeCount = show.recentEpisodeCount,
+                    recencyAt = GenreGrid.mergeRecency(known?.recencyAt, show.recencyAt),
                 )
             },
         )
@@ -151,6 +152,7 @@ class RoomCatalogDao(
                 backdropUrl = it.backdropUrl,
                 recentEpisodeCount = it.recentEpisodeCount,
                 firstSeenAt = it.firstSeenAt,
+                recencyAt = it.recencyAt,
                 genres = genres[it.id].orEmpty().mapNotNull { g -> runCatching { Genre.valueOf(g) }.getOrNull() }.toSet(),
             )
         }
