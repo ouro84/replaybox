@@ -124,7 +124,7 @@ Catalogue (dettes M3) :
 
 - [ ] Genres TF1 corrigés (Policier & Thriller sans faux positifs connus)
 - [ ] Jeunesse exclusif (plus de programmes enfants dans Séries)
-- [ ] Images M6 mesurées sur la box (rail affiché en moins de 1 s, cache chaud)
+- [x] Images M6 mesurées sur la box (rail affiché en moins de 1 s, cache chaud)
 
 Épisodes enrichis :
 

@@ -4,6 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.room.Room
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import com.replaybox.app.image.ImageTimingListener
 import com.replaybox.BuildConfig
 import com.replaybox.app.update.AppUpdater
 import com.replaybox.app.update.AppVersion
@@ -26,12 +29,17 @@ import com.replaybox.provider.m6.M6Auth
 import com.replaybox.provider.tf1.Tf1Auth
 import java.util.UUID
 
-class ReplayboxApplication : Application() {
+class ReplayboxApplication : Application(), ImageLoaderFactory {
 
     override fun onCreate() {
         super.onCreate()
         instance = this
     }
+
+    /** Coil defaults (memory + disk cache honouring HTTP headers); debug builds log image timings. */
+    override fun newImageLoader(): ImageLoader = ImageLoader.Builder(this)
+        .apply { if (BuildConfig.DEBUG) eventListenerFactory(ImageTimingListener.Factory) }
+        .build()
 
     companion object {
         private lateinit var instance: ReplayboxApplication

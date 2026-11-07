@@ -292,6 +292,13 @@ périmé : source « M6+ ».
 Images : fichiers bruts de 120 à 400 Ko. Coil (`AsyncImage` sans taille explicite) décode à la
 taille de la mise en page (contraintes) avec sous-échantillonnage : la mémoire suit la taille de la
 carte ou du fond, pas celle du fichier.
+Mesuré sur la box le 2026-11-07 (listener Coil des builds debug, `adb logcat -s ReplayboxImage`) :
+les fichiers bruts (jusqu'à 478 Ko) portent `Cache-Control: max-age=5184000, public`, donc le cache
+disque de Coil les garde 60 jours. App lancée, en descendant les rails de l'Accueil : M6 depuis le
+disque médiane 242 ms (max 548 ms, n = 14), réseau 393–630 ms (n = 3), au niveau de TF1 (disque
+médiane 289 ms) et de France TV (282 ms) ; un rail se remplit en moins de 1 s, aucun correctif.
+Au démarrage à froid, toutes les images (toutes Chaînes) mettent 1 à 2,2 s, pendant un GC soutenu
+(gros objets de 6 à 9 Mo) : sujet de démarrage, pas propre à M6.
 
 ## Cache et mode dégradé (ADR 0002)
 
