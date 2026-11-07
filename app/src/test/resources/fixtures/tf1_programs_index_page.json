@@ -1,0 +1,345 @@
+{
+  "data": {
+    "programs": {
+      "total": 4685,
+      "items": [
+        {
+          "slug": "star-academy",
+          "name": "Star Academy",
+          "initialChannel": {
+            "slug": "tf1"
+          },
+          "categories": [
+            {
+              "id": "GT_ENTERTAINMENT"
+            },
+            {
+              "id": "SGT_ENTERTAINMENT"
+            }
+          ],
+          "decoration": {
+            "description": "Le Château le plus célèbre de France s'apprête, pour la cinquième année consécutive, à ouvrir ses portes à une nouvelle promotion d'élèves. Nikos Aliagas accueille les candidats pour cette nouvelle aventure musicale.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-1-jpg-496775-e5b172-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-jpg-282937-35ef0d-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 737
+          },
+          "replayRecent": {
+            "total": 5
+          }
+        },
+        {
+          "slug": "meurtres-a-sandhamn",
+          "name": "Meurtres à Sandhamn",
+          "initialChannel": {
+            "slug": "arte"
+          },
+          "categories": [
+            {
+              "id": "GT_ENTERTAINMENT"
+            },
+            {
+              "id": "SGT_ENTERTAINMENT"
+            }
+          ],
+          "decoration": {
+            "description": "L’île de Sandhamn en Suède est un lieu de vacances paradisiaque qui cache des secrets et des crimes sordides. L’inspecteur Andreasson chargé d’enquêter y retrouve son amie d’enfance. Série policière au suspense haletant, adaptée des polars de Viveca Sten, “Meurtres à Sandhamn” pose un regard sans concession sur la société suédoise.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/meurtres-a-sandhamn-1787921330-c2cf07-29641f-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/meurtres-a-sandhamn-1760023287-2581de-1db5d1-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 35
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "les-dossiers-cold-case",
+          "name": "Les dossiers Cold Case",
+          "initialChannel": {
+            "slug": "tf1"
+          },
+          "categories": [
+            {
+              "id": "GT_ENTERTAINMENT"
+            },
+            {
+              "id": "SGT_ENTERTAINMENT"
+            }
+          ],
+          "decoration": {
+            "description": "De l'histoire d'un criminel évoquant le souvenir d'enfance de la mort de sa sœur à l'utilisation de tests ADN de masse, cette série explore la résolution d'affaires longtemps non élucidées. Elle suit des détectives et des proches de victimes dont l'engagement fait la différence entre justice et incertitude. La détermination des enquêteurs permet de résoudre ces cold cases.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/flux-program-card-portrait-1-coldcasefiles-8ae3f9-402c93-38b28d-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-coldcasefiles-431f40-f3d7aa-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 41
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "hercule-poirot",
+          "name": "Hercule Poirot",
+          "initialChannel": {
+            "slug": "tmc"
+          },
+          "categories": [
+            {
+              "id": "GT_SERIES_AND_FICTIONS"
+            },
+            {
+              "id": "SGT_SERIES"
+            }
+          ],
+          "decoration": {
+            "description": "Hercule Poirot, ancien policier belge devenu détective privé à Londres, résout des mystères criminels avec brio. Accompagné du capitaine Hastings et de l'Inspecteur Japp de Scotland Yard, il met son intelligence hors du commun au service d'enquêtes complexes. Les aventures du célèbre personnage d'Agatha Christie promettent suspense et déductions brillantes.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/flux-program-card-portrait-1-hercule-poirot_2025-dee2e8-36289a-567d95-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-hercule-poirot_2025-d4b991-b94326-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 72
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "burger-quiz",
+          "name": "Burger Quiz",
+          "initialChannel": {
+            "slug": "tmc"
+          },
+          "categories": [
+            {
+              "id": "GT_ENTERTAINMENT"
+            },
+            {
+              "id": "SGT_ENTERTAINMENT"
+            }
+          ],
+          "decoration": {
+            "description": "Alain Chabat anime le jeu télévisé Burger Quiz, où les candidats et invités s'affrontent dans des épreuves loufoques. Au programme : nuggets, sel et poivre, menus farfelus et Burger de la mort. Cette saison, de nouveaux animateurs rejoignent l'équipe, dont Gérard Darmon, Marina Foïs, Jérôme Commandeur, Alison Wheeler et Héléna Noguerra.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/flux-vignette-portrait_burger-quiz-chabat-1b5382-0fcc43-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/cover-showpage-95c7aa-5cbbf9-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 0
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "la-villa-des-coeurs-brises",
+          "name": "La Villa des Cœurs Brisés",
+          "initialChannel": {
+            "slug": "tfx"
+          },
+          "categories": [
+            {
+              "id": "GT_ENTERTAINMENT"
+            },
+            {
+              "id": "SGT_ENTERTAINMENT"
+            }
+          ],
+          "decoration": {
+            "description": "Les cœurs brisés s'envolent pour le Mexique, à Puerto Escondido, où ils devront faire face à leur vérité. Entre \" Le mur de la vérité \", \" Le miroir du mensonge \" et les coachings de Lucie Mariotti, ils affronteront leur passé pour mieux se reconstruire.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-1-jpg-989b2f-5a7c6d-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-jpg-e6f40c-559bc9-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 761
+          },
+          "replayRecent": {
+            "total": 6
+          }
+        },
+        {
+          "slug": "julie-lescaut",
+          "name": "Julie Lescaut",
+          "initialChannel": {
+            "slug": "tf1-series-films"
+          },
+          "categories": [
+            {
+              "id": "GT_SERIES_AND_FICTIONS"
+            },
+            {
+              "id": "SGT_SERIES"
+            }
+          ],
+          "decoration": {
+            "description": "Julie Lescaut, commissaire de police, dirige une équipe de trente personnes, dont N'Guma et Kaplan. En plus de ses responsabilités professionnelles, elle s'occupe de ses deux filles, Sarah et Babou, à la maison. Cette série mêle habilement la vie professionnelle intense de Julie et ses défis familiaux.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/flux-vignette-portrait-julie-lescaut-27d135-5b1aba-6c7ffb-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/merged-cover-showpage-julie-lescaut-01d285-f9fb64-a67059-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 101
+          },
+          "replayRecent": {
+            "total": 0
+          }
+        },
+        {
+          "slug": "meteo",
+          "name": "Météo",
+          "initialChannel": {
+            "slug": "lci"
+          },
+          "categories": [
+            {
+              "id": "GT_INFOS_MAG_AND_SPORT"
+            },
+            {
+              "id": "SGT_INFOS"
+            }
+          ],
+          "decoration": {
+            "description": "Tous les jours à 12h55 ou 13h55, 19H55 et 21h, Evelyne Dheliat, Ange Noiret ou Louis Bodin, vous présentent la météo en France métropolitaine et en Corse. Consultez les prévisions des villes de l'hexagone et de l'île de beauté afin de connaître les éventuelles précipitations liées à une dépression (cumuls de pluies, orages, rafales de vent ou tempêtes), perturbations (risques orageux ou ciel nuageux) ou prochaines éclaircies à venir.  Retrouvez également la météo des neiges et la météo des plages afin d'en savoir plus sur les conditions météorologiques.",
+            "image": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-1-0fb041-c83ced-0@1x.jpg",
+                  "width": "700",
+                  "type": "jpg"
+                }
+              ]
+            },
+            "background": {
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-532a99-cbb443-0@1x.jpg",
+                  "width": "1920",
+                  "type": "jpg"
+                }
+              ]
+            }
+          },
+          "replay": {
+            "total": 14
+          },
+          "replayRecent": {
+            "total": 2
+          }
+        }
+      ]
+    }
+  }
+}

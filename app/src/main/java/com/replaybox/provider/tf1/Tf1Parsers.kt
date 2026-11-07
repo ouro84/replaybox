@@ -1,6 +1,7 @@
 package com.replaybox.provider.tf1
 
 import com.replaybox.core.model.Episode
+import com.replaybox.core.model.Genre
 import com.replaybox.core.model.EpisodeId
 import com.replaybox.core.model.Season
 import com.replaybox.core.model.SeasonId
@@ -8,6 +9,8 @@ import com.replaybox.core.model.Show
 import com.replaybox.core.model.ShowId
 import com.replaybox.core.model.Stream
 import com.replaybox.core.model.StreamType
+import com.replaybox.provider.api.CataloguePage
+import com.replaybox.provider.api.IndexEntry
 import kotlinx.serialization.json.JsonObject
 
 /**
@@ -34,6 +37,39 @@ object Tf1Parsers {
             ?.mapNotNull { Tf1Json.str(it, "id") }
             ?.filter { it.startsWith("GT_") }
             .orEmpty()
+
+    // ---- Index page (unfiltered programs 483ce0f, SPEC §Provider TF1+) ----
+
+    /**
+     * One page of the TF1 Index: programmes of the 5 group Chaînes (initialChannel.slug) that
+     * have replay Épisodes. Police fiction gets « Policier & Thriller » from Tf1CrimeKeywords,
+     * fiction and films only. [pageIndex] is the page index sent in `offset`.
+     */
+    fun indexPage(root: JsonObject, pageIndex: Int, pageSize: Int): CataloguePage {
+        val programs = Tf1Json.obj(root, "data", "programs")
+        val total = Tf1Json.int(programs, "total") ?: 0
+        val entries = Tf1Json.objects(Tf1Json.array(programs, "items")).mapNotNull { item ->
+            val channelId = Tf1Json.str(item, "initialChannel", "slug")
+            if (!Tf1Channels.isGroup(channelId)) return@mapNotNull null
+            if ((Tf1Json.int(item, "replay", "total") ?: 0) <= 0) return@mapNotNull null
+            val base = showFromProgram(item)
+            val crime = categoryIds(item).any { it in FICTION_ROOTS } &&
+                Tf1CrimeKeywords.matches(base.id.value, base.title, base.synopsis)
+            IndexEntry(
+                channelId!!,
+                base.copy(
+                    genres = if (crime) base.genres + Genre.CRIME_THRILLER else base.genres,
+                    recentEpisodeCount = Tf1Json.int(item, "replayRecent", "total") ?: 0,
+                ),
+            )
+        }
+        return CataloguePage(entries, hasMore = (pageIndex + 1) * pageSize < total)
+    }
+
+    private val FICTION_ROOTS = setOf("GT_SERIES_AND_FICTIONS", "GT_MOVIES")
+
+    private fun categoryIds(item: JsonObject): List<String> =
+        Tf1Json.objects(Tf1Json.array(item, "categories")).mapNotNull { Tf1Json.str(it, "id") }
 
     private fun showFromProgram(item: JsonObject): Show {
         val categoryIds = Tf1Json.objects(Tf1Json.array(item, "categories")).mapNotNull { Tf1Json.str(it, "id") }
