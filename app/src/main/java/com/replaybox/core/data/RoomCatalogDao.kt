@@ -104,8 +104,10 @@ class RoomCatalogDao(
 
     override suspend fun putListing(channelId: String, shows: List<Show>, at: Long) = db.withTransaction {
         val seen = raw.shows(channelId).associateBy { it.id }
-        raw.clearShows(channelId)
+        // Genres first: clearGenres finds its rows through the shows table, so after
+        // clearShows it matched nothing and a Genre a Programme lost was never removed.
         raw.clearGenres(channelId)
+        raw.clearShows(channelId)
         raw.insertShows(
             shows.mapIndexed { index, show ->
                 val known = seen[show.id.value]

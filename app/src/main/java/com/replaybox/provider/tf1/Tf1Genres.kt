@@ -47,6 +47,21 @@ object Tf1Genres {
         "SGT_THREE_TO_SIX_YEARS" to Genre.YOUTH,
     )
 
+    /**
+     * Kids' cartoons TF1 files as plain fiction (GT_SERIES_AND_FICTIONS + SGT_SERIES, no youth
+     * signal anywhere in the programme), measured on the 2026-11-07 capture. They add Jeunesse,
+     * which is exclusive (Genres.canonical), so they leave the Séries rail. Extend only with a
+     * fixture case each (tf1_youth_cases.json). Teen anime (Naruto, Boruto, One Piece) stays
+     * fiction.
+     */
+    private val YOUTH_SLUGS = setOf("pokemon", "yu-gi-oh", "miraculous-chibi")
+
     fun map(categoryIds: List<String>): Set<Genre> =
         categoryIds.mapNotNullTo(linkedSetOf()) { root[it] ?: sub[it] }
+
+    /** [map] plus the per-programme corrections keyed by TF1 slug. */
+    fun forProgram(slug: String, categoryIds: List<String>): Set<Genre> {
+        val genres = map(categoryIds)
+        return if (slug in YOUTH_SLUGS) genres + Genre.YOUTH else genres
+    }
 }

@@ -161,6 +161,43 @@ class CatalogStoreTest {
     }
 
     @Test
+    fun youthIsExclusiveInCachedListings() {
+        blocking {
+            // An Index stored before Jeunesse became exclusive: the rule applies on read,
+            // without waiting for a crawl (the provider is never called).
+            val dao = FakeCatalogDao()
+            dao.putListing(
+                "tfx",
+                listOf(show("pokemon", "Pokémon", Genre.SERIES, Genre.YOUTH), show("hpi", "HPI", Genre.SERIES)),
+                now - 1 * hour,
+            )
+            val provider = FakeProvider(Channel("tfx", "TFX"))
+            val catalog = store(dao)
+
+            val rails = catalog.genreRails(listOf("tfx")).toMap()
+            assertThat(rails.getValue(Genre.SERIES).map { it.show.id.value }).containsExactly("hpi")
+            assertThat(rails.getValue(Genre.YOUTH).map { it.show.id.value }).containsExactly("pokemon")
+            assertThat(catalog.shows(provider, Genre.SERIES).map { it.id.value }).containsExactly("hpi")
+            assertThat(catalog.searchShows(listOf("tfx"), "poke").single().genres).containsExactly(Genre.YOUTH)
+            assertThat(provider.showsCalls).isEqualTo(0)
+        }
+    }
+
+    @Test
+    fun youthIsExclusiveInFreshListings() {
+        blocking {
+            val dao = FakeCatalogDao()
+            val provider = FakeProvider(
+                Channel("m6", "M6"),
+                showsResult = listOf(show("zig", "Zig et Sharko", Genre.SERIES, Genre.YOUTH)),
+            )
+            val catalog = store(dao)
+            assertThat(catalog.shows(provider, Genre.SERIES)).isEmpty()
+            assertThat(catalog.shows(provider, null).single().genres).containsExactly(Genre.YOUTH)
+        }
+    }
+
+    @Test
     fun listingMemoInvalidatedOnWrite() {
         blocking {
             val dao = FakeCatalogDao()
