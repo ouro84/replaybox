@@ -62,7 +62,7 @@ class HomeRailsTest {
             val dao = FakeCatalogDao()
             val catalog = CatalogStore(dao)
             catalog.saveProgress(EpisodeId("e1"), 600, 3600, context("koh", "e1"))
-            catalog.removeFromContinueWatching(EpisodeId("e1"))
+            catalog.removeFromUpNext(catalog.upNext(emptyList()).single())
             assertThat(catalog.continueWatching(emptyList())).isEmpty()
             assertThat(catalog.resumeAtFor(EpisodeId("e1"))).isNull()
         }

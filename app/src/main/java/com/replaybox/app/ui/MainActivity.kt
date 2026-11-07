@@ -26,8 +26,6 @@ sealed interface Screen {
         val progressContext: ProgressContext? = null,
         /** True when the user pressed « Reprendre »: no second prompt. */
         val autoResume: Boolean = false,
-        /** Displayed list of a numbered Saison, for Épisode suivant (empty otherwise). */
-        val queue: List<Episode> = emptyList(),
     ) : Screen
     object Settings : Screen
     data class ProviderDetail(val groupId: String) : Screen
@@ -90,8 +88,8 @@ class MainActivity : ComponentActivity() {
                         showId = current.showId,
                         title = current.title,
                         state = showStates.getOrPut(current.showId.value) { ShowUiState() },
-                        onOpenEpisode = { episode, progressContext, autoResume, queue ->
-                            backStack.add(Screen.Player(episode.id, episode.title, progressContext, autoResume, queue))
+                        onOpenEpisode = { episode, progressContext, autoResume ->
+                            backStack.add(Screen.Player(episode.id, episode.title, progressContext, autoResume))
                         },
                     )
                     // Keyed by Épisode: Épisode suivant swaps the entry in place, and the
@@ -101,8 +99,11 @@ class MainActivity : ComponentActivity() {
                         title = current.title,
                         progressContext = current.progressContext,
                         autoResume = current.autoResume,
-                        queue = current.queue,
                         onPlayNext = { next ->
+                            // Back from the player lands on the Épisode now playing, in its Saison.
+                            current.progressContext?.showId?.let { showId ->
+                                showStates[showId.value]?.focusEpisode(next)
+                            }
                             // Replaces the ended Épisode: Back returns to the Programme page.
                             backStack[backStack.lastIndex] = current.copy(
                                 episodeId = next.id,
@@ -113,6 +114,10 @@ class MainActivity : ComponentActivity() {
                                 ),
                                 autoResume = false,
                             )
+                        },
+                        onFinished = {
+                            // The Épisode ended with nothing to play next: back where it was opened.
+                            if (backStack.size > 1 && backStack.last() == current) backStack.removeAt(backStack.lastIndex)
                         },
                     ) }
                     Screen.Settings -> SettingsScreen(

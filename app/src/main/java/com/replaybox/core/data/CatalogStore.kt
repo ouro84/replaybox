@@ -14,6 +14,12 @@ import com.replaybox.core.model.Show
 import com.replaybox.core.model.ShowId
 import com.replaybox.core.model.SeasonId
 import com.replaybox.core.model.Titles
+import com.replaybox.core.model.UpNextItem
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import com.replaybox.provider.api.CachedProvider
 import com.replaybox.provider.api.Provider
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,7 +68,7 @@ class CatalogStore(
         val fresh = dao.programAt(show.value)?.let { clock() - it < TTL_MS } == true
         if (fresh) return dao.seasons(show.value)
         return try {
-            val fetched = provider.seasons(show)
+            val fetched = provider.network().seasons(show)
             dao.putSeasons(show.value, fetched, clock())
             tick()
             fetched
@@ -81,11 +87,11 @@ class CatalogStore(
         loadEpisodes(provider, season).withoutExpired()
 
     private suspend fun loadEpisodes(provider: Provider, season: SeasonId?): List<Episode> {
-        if (season == null) return provider.episodes(null)
+        if (season == null) return provider.network().episodes(null)
         val fresh = dao.programAt(season.value)?.let { clock() - it < TTL_MS } == true
         if (fresh) return dao.episodes(season.value)
         return try {
-            val fetched = provider.episodes(season)
+            val fetched = provider.network().episodes(season)
             dao.putEpisodes(season.value, fetched, clock())
             tick()
             fetched
@@ -95,6 +101,9 @@ class CatalogStore(
             cached
         }
     }
+
+    /** The network side of a cache-first Provider: this store is the cache. */
+    private fun Provider.network(): Provider = (this as? CachedProvider)?.origin ?: this
 
     private fun now(): Instant = Instant.ofEpochMilli(clock())
 
@@ -271,10 +280,163 @@ class CatalogStore(
             .toMap()
     }
 
-    /** "Retirer de Reprendre": forgets the playhead of this Épisode. */
-    suspend fun removeFromContinueWatching(episodeId: EpisodeId) {
-        dao.deleteProgress(episodeId.value)
+    /**
+     * « Retirer d'À suivre ». An Épisode in progress forgets its playhead; either way the
+     * Épisode is recorded as dismissed for its Programme, so a pinned Programme does not offer
+     * that same Épisode again (UpNextPolicy). A newer candidate Épisode shows again.
+     */
+    suspend fun removeFromUpNext(item: UpNextItem) {
+        if (item is UpNextItem.InProgress) dao.deleteProgress(item.episodeId.value)
+        dao.putDismissal(item.showId.value, item.episodeId.value)
         tick()
+    }
+
+    /**
+     * The Home « À suivre » rail (ROADMAP §M4): the Épisodes in progress ([continueWatching])
+     * plus, for each pinned Programme listed on [channelIds] without one, the new Épisode it
+     * offers (UpNextPolicy), from the cache only: [refreshPinned] keeps it current. Expired
+     * and dismissed Épisodes are left out; newest event first, one card per Programme.
+     */
+    suspend fun upNext(channelIds: List<String>, limit: Int = RESUME_LIMIT): List<UpNextItem> {
+        val inProgress = continueWatching(channelIds, limit).map { UpNextItem.InProgress(it) }
+        val claimed = inProgress.mapTo(HashSet()) { it.showId }
+        val now = now()
+        val fresh = favoriteChannelShows(channelIds).filter { it.show.id !in claimed }.mapNotNull { entry ->
+            val seasons = dao.seasons(entry.show.id.value)
+            if (seasons.isEmpty()) return@mapNotNull null
+            val episodesBySeason = seasons.associate { it.id to dao.episodes(it.id.value) }
+            val watched = watchedAmong(episodesBySeason.values.flatten())
+            val offered = UpNextPolicy.candidate(seasons, episodesBySeason, watched, now) ?: return@mapNotNull null
+            UpNextItem.NewEpisode(
+                showId = entry.show.id,
+                showTitle = entry.show.title,
+                episode = offered.episode,
+                seasonNumber = offered.season?.number,
+                backdropUrl = entry.show.backdropUrl ?: entry.show.posterUrl,
+                channelId = entry.channelId,
+                sortAtEpochMs = UpNextPolicy.eventAt(offered.episode)?.toEpochMilli() ?: 0L,
+            )
+        }
+        return UpNextPolicy.merge(inProgress, fresh, dao.dismissals(), limit)
+    }
+
+    /**
+     * Background refresh of the pinned Programmes listed on [channelIds] (ROADMAP §M4), when
+     * Home opens: each one whose Saisons cache is older than [TTL_MS] (or absent) refetches
+     * its Saisons and every Saison's Épisodes from the network side of [providerFor] (one
+     * crawl per Programme, ProgrammeMemo), [parallelism] Programmes at a time, one store tick
+     * per Programme. A failure keeps the cache silently. Returns how many were refreshed.
+     */
+    suspend fun refreshPinned(
+        channelIds: List<String>,
+        providerFor: (ShowId) -> Provider,
+        parallelism: Int = PINNED_PARALLELISM,
+    ): Int {
+        val stale = favoriteChannelShows(channelIds).map { it.show.id }
+            .filter { id -> dao.programAt(id.value)?.let { clock() - it < TTL_MS } != true }
+        if (stale.isEmpty()) return 0
+        val gate = Semaphore(parallelism)
+        return coroutineScope {
+            stale.map { id -> async { gate.withPermit { refreshProgramme(providerFor(id).network(), id) } } }
+                .awaitAll()
+                .count { it }
+        }
+    }
+
+    private suspend fun refreshProgramme(provider: Provider, showId: ShowId): Boolean = try {
+        val seasons = provider.seasons(showId)
+        val episodes = seasons.map { it to provider.episodes(it.id) }
+        val at = clock()
+        dao.putSeasons(showId.value, seasons, at)
+        for ((season, listed) in episodes) dao.putEpisodes(season.id.value, listed, at)
+        tick()
+        true
+    } catch (error: kotlinx.coroutines.CancellationException) {
+        throw error
+    } catch (_: Exception) {
+        false
+    }
+
+    /**
+     * Épisode suivant of [current] in Programme [showId] (NextEpisodePolicy): the next one in
+     * its numbered Saison, else the first of the following numbered Saison. Saisons and
+     * Épisodes are read cache-first, the following Saison only when needed, so the player
+     * calls this while the Épisode plays and the panel never waits on the network. Null for
+     * an unnumbered Saison, after the last Saison, or when nothing can be loaded.
+     */
+    suspend fun nextEpisode(provider: Provider, showId: ShowId, current: EpisodeId): SeasonEpisode? {
+        val seasons = loadOrNull { seasons(provider, showId) } ?: return null
+        val numbered = NextEpisodePolicy.numberedSeasons(seasons)
+        if (numbered.isEmpty()) return null
+        val cachedSeason = dao.episodesById(listOf(current.value)).firstOrNull()?.seasonId
+        if (cachedSeason != null && seasons.any { it.id == cachedSeason } && numbered.none { it.id == cachedSeason }) {
+            return null // An Épisode of an unnumbered Saison: no « next ».
+        }
+        var index = numbered.indexOfFirst { it.id == cachedSeason }
+        var queue: List<Episode> = emptyList()
+        if (index >= 0) {
+            queue = NextEpisodePolicy.playOrder(loadOrNull { episodes(provider, numbered[index].id) }.orEmpty())
+        } else {
+            // Not cached yet: look for it Saison by Saison.
+            for ((i, season) in numbered.withIndex()) {
+                val listed = loadOrNull { episodes(provider, season.id) }.orEmpty()
+                if (listed.any { it.id == current }) {
+                    index = i
+                    queue = NextEpisodePolicy.playOrder(listed)
+                    break
+                }
+            }
+        }
+        if (index < 0 || queue.none { it.id == current }) return null
+        NextEpisodePolicy.next(queue, current)?.let { return SeasonEpisode(it, numbered[index]) }
+        for (season in numbered.drop(index + 1)) {
+            val first = NextEpisodePolicy.playOrder(loadOrNull { episodes(provider, season.id) }.orEmpty()).firstOrNull()
+            if (first != null) return SeasonEpisode(first, season)
+        }
+        return null
+    }
+
+    /**
+     * What the Programme page needs beyond the selected Saison (ROADMAP §M4): the hero target
+     * (ProgrammeHeroPolicy) and the Saisons whose Épisodes are all watched. With a viewing
+     * history every numbered Saison is read (cache-first; one crawl per Programme), without
+     * one only the first numbered Saison, or the first unnumbered one of a magazine.
+     */
+    suspend fun programmeView(
+        provider: Provider,
+        showId: ShowId,
+        seasons: List<Season>,
+        channelIds: List<String>,
+    ): ProgrammeView {
+        val resume = resumeFor(showId, channelIds)
+        val history = dao.progressOfShow(showId.value).isNotEmpty()
+        val numbered = NextEpisodePolicy.numberedSeasons(seasons)
+        val toLoad = when {
+            numbered.isEmpty() -> seasons.take(1)
+            history -> numbered
+            else -> numbered.take(1)
+        }
+        val episodesBySeason = LinkedHashMap<SeasonId, List<Episode>>()
+        for (season in toLoad) loadOrNull { episodes(provider, season.id) }?.let { episodesBySeason[season.id] = it }
+        val watched = watchedAmong(episodesBySeason.values.flatten())
+        var target = ProgrammeHeroPolicy.target(resume, seasons, episodesBySeason, watched)
+        if (target is HeroTarget.Resume && target.season == null) {
+            // In a Saison not read here: the episodes cache still knows which one.
+            val seasonId = dao.episodesById(listOf(target.item.episodeId.value)).firstOrNull()?.seasonId
+            target = target.copy(season = seasons.firstOrNull { it.id == seasonId })
+        }
+        return ProgrammeView(target, ProgrammeHeroPolicy.watchedSeasons(seasons, episodesBySeason, watched))
+    }
+
+    private suspend fun watchedAmong(episodes: List<Episode>): Set<EpisodeId> =
+        episodeProgress(episodes.map { it.id }).filterValues { it.watched }.keys
+
+    private suspend fun <T> loadOrNull(load: suspend () -> T): T? = try {
+        load()
+    } catch (error: kotlinx.coroutines.CancellationException) {
+        throw error
+    } catch (_: Exception) {
+        null
     }
 
     /**
@@ -503,6 +665,9 @@ class CatalogStore(
         /** Progress rows scanned to fill the rail (several per Programme). */
         private const val RESUME_SCAN = 200
 
+        /** Pinned Programmes refreshed at once when Home opens. */
+        const val PINNED_PARALLELISM = 3
+
         /** Channels carrying France TV listings (SPEC §Provider France TV). */
         val FTV_CHANNEL_IDS = listOf("france-2", "france-3", "france-4", "france-5", "franceinfo")
     }
@@ -510,3 +675,6 @@ class CatalogStore(
 
 /** One Home Genre rail; [hasMore] when the cap left Programmes out (« Tout voir » card). */
 data class GenreRail(val genre: Genre, val shows: List<ChannelShow>, val hasMore: Boolean)
+
+/** The Programme page hero target and the Saisons to check (all their Épisodes watched). */
+data class ProgrammeView(val target: HeroTarget?, val watchedSeasons: Set<SeasonId>)
