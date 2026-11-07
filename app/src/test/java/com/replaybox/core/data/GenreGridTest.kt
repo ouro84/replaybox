@@ -98,14 +98,16 @@ class GenreGridTest {
     }
 
     @Test
-    fun aNewcomerRanksByItsFirstSeenDay() {
+    fun firstSeenNeverRanks() {
+        // Seen on the Bbox: a few Programmes listed the day before made the whole Index
+        // « new today »; undated Programmes now always follow the dated ones, by title.
         val installed = now - 10 * day
         val items = listOf(
-            entry("old", "Astrid", "france-2", firstSeenAt = installed),
-            entry("new", "Zorro", "france-2", firstSeenAt = now - 2 * day),
-            entry("dated", "Mortel", "m6", recencyAt = now - day, firstSeenAt = installed),
+            entry("philo", "#Philo", "tf1", firstSeenAt = now - hour),
+            entry("old", "Astrid", "tf1", firstSeenAt = installed),
+            entry("dated", "Un baiser pour Noël", "tf1", recencyAt = now - hour, firstSeenAt = now - hour),
         )
-        assertThat(ids(GenreGrid.sort(items, now))).containsExactly("dated", "new", "old").inOrder()
+        assertThat(ids(GenreGrid.sort(items, now))).containsExactly("dated", "philo", "old").inOrder()
     }
 
     @Test
@@ -141,19 +143,6 @@ class GenreGridTest {
         // France TV only: its own copy of the duplicate survives the filter.
         val ftv = GenreGrid.arrange(items, Genre.SERIES, channelIds = setOf("france-2", "france-3"), now = now)
         assertThat(ids(ftv)).containsExactly("x", "f").inOrder()
-    }
-
-    @Test
-    fun firstListingIsReadBeforeTheGenreFilter() {
-        // The Chaîne's first listing is a Documentaire: the only Série is still a newcomer.
-        val installed = now - 10 * day
-        val items = listOf(
-            entry("doc", "Docu", "france-5", firstSeenAt = installed, genres = arrayOf(Genre.DOCUMENTARY)),
-            entry("new", "Zorro", "france-5", firstSeenAt = now - day, genres = arrayOf(Genre.SERIES)),
-            entry("a", "Astrid", "france-2", firstSeenAt = installed, genres = arrayOf(Genre.SERIES)),
-        )
-        val grid = GenreGrid.arrange(items, Genre.SERIES, channelIds = null, now = now)
-        assertThat(ids(grid)).containsExactly("new", "a").inOrder()
     }
 
     @Test
@@ -201,7 +190,7 @@ class GenreGridTest {
     }
 
     @Test
-    fun aNewcomerSurvivesARefresh() {
+    fun undatedProgrammesKeepTitleOrderAcrossRefreshes() {
         blocking {
             val dao = FakeCatalogDao()
             val catalog = CatalogStore(dao, clock = { now })
@@ -209,7 +198,7 @@ class GenreGridTest {
             dao.putListing("france-2", listOf(show("new", "Zèbre", Genre.SERIES), show("old", "Abeille", Genre.SERIES)), now - day)
             dao.putListing("france-2", listOf(show("old", "Abeille", Genre.SERIES), show("new", "Zèbre", Genre.SERIES)), now)
             val grid = catalog.genreGrid(Genre.SERIES, listOf("france-2"))
-            assertThat(ids(grid)).containsExactly("new", "old").inOrder()
+            assertThat(ids(grid)).containsExactly("old", "new").inOrder()
         }
     }
 }
