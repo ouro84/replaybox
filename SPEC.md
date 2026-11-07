@@ -176,8 +176,8 @@ Middleware 6play, plateforme **`m6group_web`** partout (décision Q18) : host
 `x-customer-name: m6web` + l'UA navigateur de `Tf1Http.BROWSER_UA`. Tout ce qui suit est mesuré
 en **anonyme** le 2026-11-07 (200), sans compte. Code : `provider.m6` (`M6Http`, `M6Parsers`,
 `M6Genres`, `M6Channels`, `M6Provider`, `m6CatalogueIndex`, `M6Auth`, `M6AuthApi`). Branché dans
-`Providers` **seulement quand un compte M6+ est enregistré** (voir Licence) ; le spike DRM (compte
-d'Arnaud) décide si M6+ sort en M3 (ROADMAP §M3, Q22).
+`Providers` **seulement quand un compte M6+ est enregistré** (voir Licence). Spike DRM réussi sur la
+box le 2026-11-07 avec le compte d'Arnaud (voir Licence) : M6+ sort en M3.
 
 Listing — `GET {host}/services/6play/programs?limit=100&offset=N&csa=6&with=rights` → tableau JSON
 de Programmes. `limit` plafonné à 100 ; **`offset` est un index d'item** (pas de page) ; le total est
@@ -234,15 +234,20 @@ le MPD. Les assets figurent aussi dans la liste des vidéos, mais le Flux relit 
 fraîche). Fixtures : `m6_video_clip.json` (tokens remplacés par `trimmed`), `m6_video_hls_only.json`
 (la même sans DASH : erreur claire, pas un plantage).
 
-Licence — **SOURCÉE, pas encore mesurée** (catchup-tv-and-more
-`resources/lib/channels/fr/6play.py` @ fa49e5a0c4bfb5f501ac8d5486c5f6465cc16745, `get_login_token`
-et `get_video_url`) ; implémentée dans `M6Auth` / `M6AuthApi`, à confirmer par le spike sur la box :
+Licence — portée de catchup-tv-and-more (`resources/lib/channels/fr/6play.py` @
+fa49e5a0c4bfb5f501ac8d5486c5f6465cc16745, `get_login_token` et `get_video_url`), implémentée dans
+`M6Auth` / `M6AuthApi`, **mesurée de bout en bout sur la Bbox le 2026-11-07** (compte d'Arnaud saisi
+sur la box, logs `M6Auth` / `ReplayboxDrm`) : login Gigya 200, getJwt 200, upfront-token 200 pour
+`m6replay` (Pékin Express) **et `w9replay`** (Les Marseillais), licence drmtoday 200 dont le champ
+`license` se décode (911 et 1098 octets). Le CDM charge **Widevine L1** (OEMCrypto v16, « I will use
+level 1 ») malgré le profil `drm_software` des assets ; décodeur `OMX.Berlin.video_decoder.avc.secure`,
+1920×1080 ; lecture PLAYING, sous-titres TTML affichés, aucune pub (l'Épisode démarre à 0:00).
 1. `POST https://login-gigya.m6.fr/accounts.login`, form `loginID`, `password`, `apiKey` (clé Gigya
    publique du login web), `format=jsonp`, `callback=jsonp_3bbusffr388pem4`, en-tête
    `referer: https://www.6play.fr/connexion` → réponse JSONP dont on retire l'enveloppe : `UID`,
    `UIDSignature`, `signatureTimestamp` au premier niveau (repli sur `userInfo`). La source ne fait
-   **ni webSdkBootstrap ni cookies** (contrairement à TF1+) : si le spike voit `errorCode=400006`,
-   c'est l'étape à ajouter. `errorCode` 403042 → « E-mail ou mot de passe incorrect », 403120 →
+   **ni webSdkBootstrap ni cookies** (contrairement à TF1+), et le spike confirme qu'il n'en faut
+   pas. `errorCode` 403042 → « E-mail ou mot de passe incorrect », 403120 →
    compte bloqué, autre → refus avec son code.
 2. `GET https://front-auth.6cloud.fr/v2/platforms/m6group_web/getJwt` avec `x-auth-gigya-uid`,
    `x-auth-gigya-signature`, `x-auth-gigya-signature-timestamp`, `x-auth-device-id`,
@@ -255,8 +260,8 @@ et `get_video_url`) ; implémentée dans `M6Auth` / `M6AuthApi`, à confirmer pa
 3. `GET https://drm.6cloud.fr/v1/customers/m6web/platforms/m6group_web/services/{service}/users/{UID}/videos/{clipId}/upfront-token`
    avec `Authorization: Bearer <JWT>`, `x-customer-name`, `x-client-release` → `{token}`. `service`
    = le vrai code de la Chaîne (`m6replay`, `w9replay`, `6terreplay`, `gulli`, `6play`), comme le
-   bundle web (`services/${service}/users/${UID}`) ; **la source fige `m6replay`** : le spike dira
-   lequel le serveur veut. 401 ou 498 → JWT régénéré une fois, puis échec. JWT invalide enregistré :
+   bundle web (`services/${service}/users/${UID}`). La source fige `m6replay`, mais le serveur accepte
+   le vrai code de la Chaîne (mesuré : `w9replay` → 200). 401 ou 498 → JWT régénéré une fois, puis échec. JWT invalide enregistré :
    `{"code":"49804",…}` (`m6_auth_upfront_invalid_jwt.json`).
    `x-client-release` = release de l'app web m6.fr mesurée le 2026-11-07 (`6.54.2`, constante
    unique `M6AuthApi.CLIENT_RELEASE` ; la source envoie 5.103.3).
@@ -273,8 +278,9 @@ Les identifiants ne sont enregistrés (`CredentialStore(context, "m6")`) qu'apr�
 étapes 1–2 : un mauvais mot de passe ne fait pas apparaître les Chaînes M6. Les logs (`M6Auth`,
 `ReplayboxDrm`) ne portent que l'étape et le statut HTTP, jamais e-mail, mot de passe, UID,
 signature, device id ou token. Les fixtures de succès `m6_auth_*_shape.json` et
-`m6_drmtoday_license_shape.json` sont des **formes tirées de la source, pas des réponses
-enregistrées** : le PR du spike les remplace.
+`m6_drmtoday_license_shape.json` restent des **formes tirées de la source** : les réponses réelles
+portent des secrets (UID, signature, JWT, licence) et ne s'enregistrent pas telles quelles ; le spike
+a confirmé ces formes en lecture réelle (champs lus sans erreur, licence décodée).
 
 Règle d'affichage : Paramètres liste toujours M6+ (« Non connecté » sans compte) ; les 5 Chaînes M6
 n'entrent dans `Providers.all` que tant que `M6Auth.hasCredentials()`. `all` est relu à chaque
