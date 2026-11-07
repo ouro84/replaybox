@@ -10,15 +10,15 @@ class HealthTest {
 
     @Test
     fun combineTable() {
-        // KO if either side is KO; else OK if either side is OK; an unknown side is missing evidence.
+        // The worse of the two sides (ROADMAP §M3, Arnaud 2026-11-07): KO > UNKNOWN > OK.
         val expected = mapOf(
             (OK to OK) to OK,
             (OK to KO) to KO,
-            (OK to UNKNOWN) to OK,
+            (OK to UNKNOWN) to UNKNOWN,
             (KO to OK) to KO,
             (KO to KO) to KO,
             (KO to UNKNOWN) to KO,
-            (UNKNOWN to OK) to OK,
+            (UNKNOWN to OK) to UNKNOWN,
             (UNKNOWN to KO) to KO,
             (UNKNOWN to UNKNOWN) to UNKNOWN,
         )

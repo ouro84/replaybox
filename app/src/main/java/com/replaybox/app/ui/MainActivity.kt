@@ -6,7 +6,10 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.key
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.replaybox.app.ReplayboxApplication
 import com.replaybox.core.model.Episode
 import com.replaybox.core.model.EpisodeId
@@ -39,6 +42,8 @@ class MainActivity : ComponentActivity() {
             val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
             // Survives trips to a Programme or the player: scroll + focus restored.
             val homeState = remember { HomeUiState() }
+            // One state per visit of Search: kept while a Programme opened from it is on top.
+            var searchState by remember { mutableStateOf(SearchUiState()) }
             // One state per Programme: Back from the player lands on the Épisode just watched.
             val showStates = remember { HashMap<String, ShowUiState>() }
             // Back from a Provider page lands on its row.
@@ -55,7 +60,10 @@ class MainActivity : ComponentActivity() {
                         onNavigate = { destination ->
                             when (destination) {
                                 RailDestination.HOME -> Unit
-                                RailDestination.SEARCH -> backStack.add(Screen.Search)
+                                RailDestination.SEARCH -> {
+                                    searchState = SearchUiState()
+                                    backStack.add(Screen.Search)
+                                }
                                 RailDestination.SETTINGS -> backStack.add(Screen.Settings)
                             }
                         },
@@ -95,6 +103,7 @@ class MainActivity : ComponentActivity() {
                     )
                     is Screen.ProviderDetail -> key(current.groupId) { ProviderScreen(groupId = current.groupId) }
                     Screen.Search -> SearchScreen(
+                        state = searchState,
                         onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
                     )
                 }

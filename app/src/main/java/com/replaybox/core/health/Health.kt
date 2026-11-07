@@ -19,11 +19,14 @@ data class LocalHealth(val catalogue: Outcome?, val stream: Outcome?)
 
 object Health {
 
-    /** KO if either side is KO; else OK if either side is OK. An unknown side is missing evidence. */
+    /**
+     * The worse of the two sides (ROADMAP §M3, Arnaud 2026-11-07): KO > UNKNOWN > OK. The badge
+     * only reads « Fonctionne » when both last night's check and this box agree.
+     */
     fun combine(ci: HealthState, local: HealthState): HealthState = when {
         ci == HealthState.KO || local == HealthState.KO -> HealthState.KO
-        ci == HealthState.OK || local == HealthState.OK -> HealthState.OK
-        else -> HealthState.UNKNOWN
+        ci == HealthState.UNKNOWN || local == HealthState.UNKNOWN -> HealthState.UNKNOWN
+        else -> HealthState.OK
     }
 
     /** KO if the latest catalogue or Flux outcome failed, OK if any outcome exists, else UNKNOWN. */

@@ -468,8 +468,8 @@ quand il en faut un. Un groupe = un diffuseur : `id` = nom de la sonde du health
   échoué à la dernière passe ») ; la lecture est gardée par groupe. Un succès remplace l'échec
   précédent.
 - **Badge** : état local = KO si la dernière issue catalogue ou lecture est un échec, OK si une
-  issue existe, sinon inconnu. Combinaison CI × box : KO si l'un est KO, sinon OK si l'un est OK,
-  sinon inconnu (un côté inconnu est une preuve manquante, pas une panne). Affiché seulement dans
+  issue existe, sinon inconnu. Combinaison CI × box : la pire des deux (décision d'Arnaud du
+  2026-11-07), KO > inconnu > OK ; « Fonctionne » seulement si les deux côtés sont OK. Affiché seulement dans
   Paramètres (liste + page) : pas d'alerte Accueil, jamais de notification système.
 
 ## Tests
