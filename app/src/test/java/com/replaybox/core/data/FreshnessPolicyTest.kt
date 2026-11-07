@@ -232,4 +232,18 @@ class FreshnessPolicyTest {
         assertThat(FreshnessPolicy.badge(e, Clock.fixed(now, ZoneOffset.UTC))).isEqualTo(FreshnessBadge.LastDay)
         assertThat(FreshnessPolicy.isExpired(e, Clock.fixed(at("2026-11-07 21:00"), ZoneOffset.UTC))).isTrue()
     }
+
+    @Test
+    fun `expiry badge ignores broadcast and publication`() {
+        val now = at("2026-11-07 09:00")
+        assertThat(FreshnessPolicy.expiryBadge(at("2026-11-07 20:00"), now)).isEqualTo(FreshnessBadge.LastDay)
+        assertThat(FreshnessPolicy.expiryBadge(at("2026-11-09 20:00"), now)).isEqualTo(FreshnessBadge.DaysLeft(2))
+        assertThat(FreshnessPolicy.expiryBadge(at("2026-11-20 20:00"), now)).isNull()
+        assertThat(FreshnessPolicy.expiryBadge(null, now)).isNull()
+    }
+
+    @Test
+    fun `expired availability has no expiry badge`() {
+        assertThat(FreshnessPolicy.expiryBadge(at("2026-11-07 08:00"), at("2026-11-07 09:00"))).isNull()
+    }
 }

@@ -13,4 +13,10 @@ data class Show(
      * 0 when the Chaîne does not say.
      */
     val recentEpisodeCount: Int = 0,
+    /**
+     * When the device cache first listed this Programme (epoch ms, ShowEntity.firstSeenAt), set
+     * by the catalog cache on read; 0 from a Provider. The « Tout voir » recency key: no listing
+     * carries the date of its latest Épisode (GenreGrid).
+     */
+    val firstSeenAt: Long = 0,
 )

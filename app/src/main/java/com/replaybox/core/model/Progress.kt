@@ -1,5 +1,7 @@
 package com.replaybox.core.model
 
+import java.time.Instant
+
 data class Progress(
     val episodeId: EpisodeId,
     val positionSeconds: Long,
@@ -30,6 +32,8 @@ data class ResumeItem(
     val positionSeconds: Long,
     val durationSeconds: Int?,
     val updatedAtEpochMs: Long,
+    /** End of availability of the Épisode, from the episodes cache; null when unknown or not cached. */
+    val availableUntil: Instant? = null,
 ) {
     /** Seconds left to watch, or null when the duration is unknown. */
     val remainingSeconds: Long?

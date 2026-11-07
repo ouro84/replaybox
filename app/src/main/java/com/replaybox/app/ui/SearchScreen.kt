@@ -272,7 +272,7 @@ fun SearchScreen(state: SearchUiState, onOpenShow: (ShowId, String) -> Unit) {
             }
         } else {
             TvLazyVerticalGrid(
-                columns = TvGridCells.Fixed(GRID_COLUMNS),
+                columns = TvGridCells.Fixed(POSTER_GRID_COLUMNS),
                 // Top/side room for the 1.1 lift and the ring (DESIGN.md: rails).
                 contentPadding = PaddingValues(
                     start = Rb.contentStart,
@@ -284,7 +284,7 @@ fun SearchScreen(state: SearchUiState, onOpenShow: (ShowId, String) -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
                 itemsIndexed(results, key = { _, show -> show.id.value }) { index, show ->
-                    SearchResultCard(
+                    PosterCaptionCard(
                         show = show,
                         channel = channels[show.id]?.let { channelNames[it] },
                         focusRequesters = listOfNotNull(resultsFocus.takeIf { index == 0 }, state.requester(show.id.value)),
@@ -299,8 +299,6 @@ fun SearchScreen(state: SearchUiState, onOpenShow: (ShowId, String) -> Unit) {
     }
 }
 
-/** Six 3:4 posters of ~118 dp fill the 808 dp between the content start and the safe edge. */
-private const val GRID_COLUMNS = 6
 
 @Composable
 private fun SearchField(value: String, onValueChange: (String) -> Unit, modifier: Modifier) {
@@ -341,49 +339,3 @@ private fun SearchField(value: String, onValueChange: (String) -> Unit, modifier
 
 /** Matches Rb.buttonShape so the ring stays concentric with the field. */
 private val FIELD_RADIUS = 8.dp
-
-@Composable
-private fun SearchResultCard(
-    show: Show,
-    channel: String?,
-    focusRequesters: List<FocusRequester>,
-    onClick: () -> Unit,
-) {
-    var focused by remember { mutableStateOf(false) }
-    val scale = focusScale(focused)
-    Column(
-        modifier = Modifier
-            .then(focusRequesters.fold(Modifier as Modifier) { acc, requester -> acc.focusRequester(requester) })
-            .onFocusChanged { focused = it.isFocused }
-            .tvClickable(onClick),
-    ) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .scale(scale)
-                .aspectRatio(3f / 4f)
-                .cardFocus(focused)
-                .background(Rb.surface),
-        ) {
-            Artwork(url = show.posterUrl, fallback = show.title)
-        }
-        Text(
-            text = show.title,
-            style = RbType.cardTitle,
-            color = Rb.text,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(top = 14.dp),
-        )
-        val meta = listOfNotNull(channel, show.genres.firstOrNull()?.genreLabel()).joinToString(" · ")
-        if (meta.isNotEmpty()) {
-            Text(
-                text = meta,
-                style = RbType.meta,
-                color = Rb.textSecondary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
-}

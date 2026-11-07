@@ -68,6 +68,9 @@ interface RoomRawDao {
     @Query("SELECT * FROM episodes WHERE seasonId = :seasonId ORDER BY rowid")
     suspend fun episodes(seasonId: String): List<EpisodeEntity>
 
+    @Query("SELECT * FROM episodes WHERE id IN (:episodeIds)")
+    suspend fun episodesById(episodeIds: List<String>): List<EpisodeEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProgress(progress: ProgressEntity)
 
@@ -141,6 +144,7 @@ class RoomCatalogDao(
                 synopsis = it.synopsis,
                 backdropUrl = it.backdropUrl,
                 recentEpisodeCount = it.recentEpisodeCount,
+                firstSeenAt = it.firstSeenAt,
                 genres = genres[it.id].orEmpty().mapNotNull { g -> runCatching { Genre.valueOf(g) }.getOrNull() }.toSet(),
             )
         }
@@ -176,6 +180,10 @@ class RoomCatalogDao(
 
     override suspend fun episodes(seasonId: String): List<Episode> =
         raw.episodes(seasonId).map { it.toEpisode() }
+
+    override suspend fun episodesById(episodeIds: List<String>): List<Episode> =
+        // SQLite caps bound parameters (999 on old versions): query in chunks.
+        episodeIds.chunked(500).flatMap { ids -> raw.episodesById(ids).map { it.toEpisode() } }
 
     override suspend fun putProgress(progress: ProgressEntity) = raw.insertProgress(progress)
 
