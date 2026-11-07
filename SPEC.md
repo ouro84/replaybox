@@ -399,6 +399,33 @@ Health-check (`.github/workflows/healthcheck.yml`, seul workflow Actions) :
 - GitHub désactive les workflows `schedule` après 60 jours sans activité sur le repo : le commit
   nocturne de `status` entretient cette activité ; sinon, le réactiver depuis l'onglet Actions.
 
+## Paramètres et Santé
+
+Paramètres liste les Provider (`ProviderGroups.all`), une page chacun avec sa Santé puis son compte
+quand il en faut un. Un groupe = un diffuseur : `id` = nom de la sonde du health-check (`tf1`,
+`francetv` ; `m6` en V2), ses Chaînes, son `ProviderAccount` optionnel (TF1+ : `Tf1Auth`).
+- **Comptes** : `CredentialStore(context, providerId)`, EncryptedSharedPreferences avec clé
+  maîtresse Keystore, fichier `replaybox_<providerId>_credentials` (clés `email`, `password`). TF1+
+  garde ainsi `replaybox_tf1_credentials` : les connexions existantes survivent. Jamais en log.
+- **Santé CI** : `CiHealthSource` lit `healthcheck.json` de la branche `status` (§CI, Health-check)
+  sur `Dispatchers.IO`, timeout d'appel 5 s, cache mémoire du process rafraîchi à l'ouverture de
+  Paramètres s'il a plus de 10 min ; un échec garde le corps précédent. `CiHealthParser` : fichier
+  illisible, sans `generatedAt` ou `providers`, ou `generatedAt` de plus de **48 h** → état
+  `UNKNOWN` pour tous (jamais un OK périmé) ; entrée sans `provider` ou sans `ok` ignorée.
+- **Santé sur la box** : `HealthTrackingProvider` enveloppe chaque Provider réseau sous
+  `CachedProvider` (seuls les vrais appels réseau comptent) et enregistre dans `LocalHealthStore`
+  (SharedPreferences `replaybox_health`, rien ne quitte la box) l'issue de `shows` (catalogue) et
+  de `stream` (lecture) — date, erreur courte « Classe: message » coupée à 120 caractères ;
+  `seasons`/`episodes`/`search` ne sont pas suivis, une annulation n'est pas enregistrée. Le
+  catalogue est gardé **par Chaîne** et lu au niveau du groupe : KO tant qu'une de ses Chaînes a
+  échoué à sa dernière passe (chaque passe réécrit toutes les Chaînes, donc « KO si une Chaîne a
+  échoué à la dernière passe ») ; la lecture est gardée par groupe. Un succès remplace l'échec
+  précédent.
+- **Badge** : état local = KO si la dernière issue catalogue ou lecture est un échec, OK si une
+  issue existe, sinon inconnu. Combinaison CI × box : KO si l'un est KO, sinon OK si l'un est OK,
+  sinon inconnu (un côté inconnu est une preuve manquante, pas une panne). Affiché seulement dans
+  Paramètres (liste + page) : pas d'alerte Accueil, jamais de notification système.
+
 ## Tests
 
 La seam unique = `Provider` : les parsers sont testés sur **fixtures JSON enregistrées** des API
