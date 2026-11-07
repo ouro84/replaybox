@@ -1,6 +1,9 @@
 package com.replaybox.provider.tf1
 
+import com.replaybox.core.account.AccountException
+import com.replaybox.core.account.AccountFailure
 import com.replaybox.core.account.CredentialStore
+import com.replaybox.core.account.Jwt
 import com.replaybox.core.account.ProviderAccount
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -18,7 +21,6 @@ import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.util.Base64
 import java.util.concurrent.TimeUnit
 
 /**
@@ -178,13 +180,7 @@ class Tf1Auth(
             .build()
 
         /** exp claim of the JWT payload, in epoch ms; null when unparsable. */
-        fun jwtExpiry(token: String): Long? = runCatching {
-            val payload = token.split('.')[1]
-            val decoded = Base64.getUrlDecoder().decode(payload)
-            val claims = Tf1Json.parse(decoded.decodeToString())
-            (Tf1Json.str(claims, "exp") ?: return@runCatching null).toDoubleOrNull()
-                ?.let { (it * 1000).toLong() }
-        }.getOrNull()
+        fun jwtExpiry(token: String): Long? = Jwt.expiry(token)
     }
 }
 
@@ -202,4 +198,5 @@ private class MemoryCookieJar : CookieJar {
         cookies.values.filter { it.matches(url) }
 }
 
-class Tf1AuthException(message: String) : Exception(message)
+class Tf1AuthException(message: String, failure: AccountFailure = AccountFailure.SERVICE, code: String? = null) :
+    AccountException(failure, message, code)
