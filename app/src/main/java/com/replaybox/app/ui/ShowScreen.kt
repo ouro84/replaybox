@@ -63,6 +63,11 @@ import com.replaybox.core.model.SeasonId
 import com.replaybox.core.model.ShowId
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
+import android.view.KeyEvent as NativeKeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import java.time.Instant
 
 /**
  * Per-Programme UI state kept by MainActivity across trips to the player, so
@@ -123,6 +128,7 @@ fun ShowScreen(
     var pinned by remember { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
     var attempt by remember { mutableStateOf(0) }
+    var marking by remember { mutableStateOf<Episode?>(null) }
 
     LaunchedEffect(showId) {
         listed = catalog.listedShow(showId, channelIds)
@@ -297,6 +303,7 @@ fun ShowScreen(
                         requester = state.requester(episodeKey(episode)),
                         onFocused = { state.focusedKey = episodeKey(episode) },
                         onClick = { open(episode) },
+                        onOptions = { marking = episode },
                     )
                 }
             }
@@ -309,6 +316,40 @@ fun ShowScreen(
                 .height(TOP_FADE)
                 .graphicsLayer { alpha = fade }
                 .background(Brush.verticalGradient(0f to Rb.ground, 0.62f to Rb.ground, 1f to Rb.ground.copy(alpha = 0f))),
+        )
+    }
+
+    // Options key on an Épisode row: « Marquer comme vu » / « Marquer comme non vu ».
+    marking?.let { episode ->
+        val watched = progress[episode.id]?.watched == true
+        fun close() {
+            marking = null
+            // The row stays listed: give focus back to it once the dialog window is gone.
+            scope.launch {
+                withFrameNanos { }
+                runCatching { state.requester(episodeKey(episode)).requestFocus() }
+            }
+        }
+        ActionDialog(
+            title = episode.title,
+            hint = null,
+            actions = listOf(
+                DialogAction(stringResource(if (watched) R.string.mark_unwatched else R.string.mark_watched)) {
+                    close()
+                    scope.launch {
+                        if (watched) {
+                            catalog.markUnwatched(episode.id)
+                        } else {
+                            catalog.markWatched(
+                                episode.id,
+                                episode.durationSeconds,
+                                ProgressContext(showId, title, episode.title, episode.thumbnailUrl),
+                            )
+                        }
+                    }
+                },
+            ),
+            onDismiss = { close() },
         )
     }
 }
@@ -490,6 +531,7 @@ private fun EpisodeRow(
     requester: FocusRequester,
     onFocused: () -> Unit,
     onClick: () -> Unit,
+    onOptions: () -> Unit,
 ) {
     var focused by remember { mutableStateOf(false) }
     val scale = focusScale(focused)
@@ -501,6 +543,15 @@ private fun EpisodeRow(
             .onFocusChanged {
                 focused = it.isFocused
                 if (it.isFocused) onFocused()
+            }
+            // The remote's Options key, as on a Reprendre card (HomeScreen).
+            .onPreviewKeyEvent { event ->
+                if (event.type == KeyEventType.KeyDown && event.nativeKeyEvent.keyCode == NativeKeyEvent.KEYCODE_MENU) {
+                    onOptions()
+                    true
+                } else {
+                    false
+                }
             }
             .tvClickable(onClick)
             .then(if (focused) Modifier.background(Rb.surfaceRaised, ROW_SHAPE) else Modifier)
@@ -539,7 +590,7 @@ private fun EpisodeRow(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
-            EpisodeMeta(episode, progress)
+            EpisodeMeta(episode, progress, rowFocused = focused)
             episode.synopsis?.takeIf { it.isNotBlank() }?.let {
                 Text(
                     it,
@@ -554,23 +605,31 @@ private fun EpisodeRow(
     }
 }
 
-/** "02/11/2026 · 3 min", then the Progression in words: remaining time, or ✓ Vu. */
+/**
+ * "02/11/2026 · 3 min", then the Progression in words (remaining time, or ✓ Vu),
+ * then the freshness pill when the Épisode has one (never on a watched row).
+ */
 @Composable
-private fun EpisodeMeta(episode: Episode, progress: EpisodeProgress?) {
+private fun EpisodeMeta(episode: Episode, progress: EpisodeProgress?, rowFocused: Boolean) {
     val base = listOfNotNull(
         episode.broadcastDate,
         episode.durationSeconds?.let { stringResource(R.string.duration_minutes, (it + 59) / 60) },
     )
     val remaining = if (progress != null && !progress.watched) remainingText(progress.remainingSeconds) else null
     val line = (base + listOfNotNull(remaining)).joinToString(" · ")
-    if (line.isEmpty() && progress?.watched != true) return
+    val badge = rowBadge(episode, progress, Instant.now())
+    if (line.isEmpty() && progress?.watched != true && badge == null) return
     Row(Modifier.padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text(line, style = RbType.meta, color = Rb.textSecondary, maxLines = 1)
+        Text(line, style = RbType.meta, color = Rb.textSecondary, maxLines = 1, modifier = Modifier.weight(1f, fill = false))
         if (progress?.watched == true) {
             if (line.isNotEmpty()) Text(" · ", style = RbType.meta, color = Rb.textSecondary)
             Icon(Icons.Filled.Check, contentDescription = null, tint = Rb.textSecondary, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(4.dp))
             Text(stringResource(R.string.episode_watched), style = RbType.meta, color = Rb.textSecondary)
+        }
+        badge?.let {
+            // The focused row plate is Raised Slate: the pill steps down to Slate Surface there.
+            FreshnessPill(it, modifier = Modifier.padding(start = if (line.isEmpty()) 0.dp else 12.dp), onRaised = rowFocused)
         }
     }
 }
