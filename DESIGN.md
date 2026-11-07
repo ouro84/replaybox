@@ -133,6 +133,18 @@ components:
     typography: "{typography.meta}"
     rounded: "{rounded.pill}"
     padding: "6dp 16dp"
+  freshness-pill:
+    backgroundColor: "{colors.surface-raised}"
+    textColor: "{colors.text-secondary}"
+    typography: "{typography.meta}"
+    rounded: "{rounded.pill}"
+    padding: "2dp 10dp"
+  freshness-pill-on-focused-row:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text-secondary}"
+    typography: "{typography.meta}"
+    rounded: "{rounded.pill}"
+    padding: "2dp 10dp"
   dialog:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.text}"
@@ -178,11 +190,11 @@ A cool, low-chroma neutral ramp with one warm accent. The key art supplies all o
 
 ### Neutral
 - **Night Ground** (ground): The app background and the base color of every scrim. It is cool near-black, never pure black, which avoids OLED smear and harsh edges. It also serves as the 72 % dim behind the expanded nav rail and the 85 % backing of the stale-catalog pill.
-- **Slate Surface** (surface): Expanded nav rail panel, dialog body, skeleton placeholders.
-- **Raised Slate** (surface-raised): Resting button, update chip and selected-nav pill fill, and the card plate shown under loading or missing art.
+- **Slate Surface** (surface): Expanded nav rail panel, dialog body, skeleton placeholders, and the freshness pill on a focused Épisode row.
+- **Raised Slate** (surface-raised): Resting button, update chip, freshness pill and selected-nav pill fill, and the card plate shown under loading or missing art.
 - **Track Grey** (track): The unfilled part of every progress bar.
 - **Paper White** (text): Titles, rail titles, card titles, button labels, and remaining time in the detail panel. 17.3:1 on ground.
-- **Mist** (text-secondary): Metadata line, synopsis, card captions, stale notice, unselected nav labels and icons. 10.2:1 on ground (AAA).
+- **Mist** (text-secondary): Metadata line, synopsis, card captions, stale notice, freshness pill text, unselected nav labels and icons. 10.2:1 on ground (AAA), 7.6:1 on Raised Slate, 9:1 on Slate Surface.
 - **Ink on White** (on-focus): Text and icons on a white focus fill. Same value as ground.
 - **Soft Coral** (error): Error text. Supplied through the Material color scheme and used outside Home only.
 
@@ -272,14 +284,15 @@ Quiet at rest, unmistakable on focus.
 - **Shape:** gently rounded (8 dp), 44 dp tall, 20 dp horizontal padding.
 - **Rest:** raised slate fill, Paper White Body Strong label. Optional leading play icon (24 dp, 8 dp gap) on "Reprendre" only.
 - **Focus:** white fill, ink label and icon, scale 1.06 in 200 ms.
-- **Variants:** none. The remove dialog's confirm button ("Retirer de Reprendre") uses the same style as "Annuler". Initial focus goes to "Annuler".
+- **Variants:** none. Dialog actions ("Marquer comme vu", "Retirer de Reprendre") use the same style as "Annuler". Initial focus goes to "Annuler".
 
 ### Cards
 - **Poster card (Programme):** 3:4, 116 dp wide, 10 dp corners, no caption. The detail panel names the focused item.
 - **Reprendre card (Épisode):** 16:9 thumbnail, 176 dp wide, 10 dp corners, with a 4 dp progress bar along the bottom edge (amber over track). Below it, 14 dp down: the Programme title (Card Title, Paper White, 1 line) and the remaining time in words (Meta, Mist). It shows no Chaîne.
+- **Expiry on a Reprendre card:** when the Épisode ends within 7 days, a freshness pill (« Dernier jour », « Plus qu'un jour », « Plus que N jours ») replaces the remaining-time line, 2 dp below the title. It is never added next to it. The progress bar stays. « Hier soir » and « Nouveau » never appear on these cards.
 - **Focus:** scale 1.1 in 200 ms plus the concentric white ring (see Shapes).
 - **Missing art:** a flat raised-slate plate with the title in Card Title, bottom-left, 12 dp inset, max 3 lines.
-- **Options key** on a Reprendre card opens the remove dialog.
+- **Options key** on a Reprendre card opens its options dialog (see Options dialogs).
 
 ### Detail panel (billboard)
 The top of Home always describes something. On launch it shows the most recent Reprendre item with "Reprendre" (play icon) focused, plus "Épisodes", then the remaining time and a 120 x 4 dp progress bar. With no Reprendre item, it falls back to the most recently pinned favourite with a single "Épisodes" button. When a card has focus, the panel shows that card instead: the synopsis for a Programme, or the remaining time and progress for an Épisode. In that state the panel has no buttons. With nothing to show, the panel is empty and focus starts on the first card.
@@ -298,8 +311,23 @@ A 4 dp pill, amber fill over the track, always paired with the remaining time in
 - **Stale notice:** Meta in Mist on an 85 % ground pill, 12 dp x 4 dp padding, top right. Copy: "Catalogue du 05/11 · TF1 injoignable" (plural "injoignables"). It is not focusable.
 - **Update chip:** a focusable pill with 16 dp x 6 dp padding. It shows "Mise à jour %s prête" and then "Installer" in Medium, 12 dp apart. At rest it has a raised-slate fill. On focus it turns white with ink text and scales 1.06 over 200 ms, like panel buttons. It is never the initial focus.
 
-### Remove dialog
-A 440 dp slate-surface panel with 10 dp corners and 24 dp padding. Title in Rail Title ("Retirer « … » de Reprendre ?"), hint in Body Mist ("La position de lecture sera oubliée."), then two panel buttons 24 dp below, 12 dp apart.
+### Options dialogs
+The remote's Options key (MENU) opens a dialog on a Reprendre card or on an Épisode row of the Programme page.
+- **Panel:** 440 dp slate surface, 10 dp corners, 24 dp padding. Title in Rail Title (2 lines), an optional hint in Body Mist (2 lines), then the panel buttons 24 dp below, 12 dp apart.
+- **Order and focus:** « Annuler » comes first and takes the initial focus. One action sits in a row next to it. Two or more actions do not fit the 392 dp row, so all the buttons stack full width.
+- **Reprendre card:** title = the Programme, hint = the Épisode title. Buttons « Annuler », « Marquer comme vu », « Retirer de Reprendre ». Both actions take the card off the rail. Focus then goes back to the billboard, as after a removal.
+- **Épisode row:** title = the Épisode. Buttons « Annuler » and « Marquer comme vu », or « Marquer comme non vu » on a watched row. Focus returns to the row.
+- **Marquer comme vu** stores the Progression at 100 %. The Épisode leaves Reprendre and its row reads « ✓ Vu » with the full Mist bar. **Marquer comme non vu** forgets the Progression. There is no Saison-wide marking.
+
+### Freshness pill
+At most one per Épisode (`FreshnessPolicy`): « Dernier jour », « Plus qu'un jour » / « Plus que N jours » (7 days at most), « Hier soir » (broadcast yesterday from 18:00), « Nouveau » (online less than 48 h).
+- **Look:** Meta in Mist on a Raised Slate pill, 10 x 2 dp padding. Never amber, never an alert colour: the One Amber Rule holds.
+- **On a focused Épisode row:** the row plate is Raised Slate too, so the pill fill steps down to Slate Surface.
+- **Where:** at the end of the Épisode row's meta line, 12 dp after the text, and on Reprendre cards (expiry only, see Cards). Nowhere else: not on posters, the billboard or the detail panel.
+- **Watched rows:** no pill. « ✓ Vu » already says enough.
+
+### Expired Épisodes
+An Épisode whose known end of availability has passed leaves Reprendre and the billboard. Its Progression stays stored. It is not listed on the Programme page either, even while the 12 h cache still holds it. An Épisode with no known end (M6+, or missing from the cache) never counts as expired.
 
 ### Skeleton
 Shown only on a cold first launch with an empty cache. It uses the same geometry as real rails: a 16 dp pill title bar, then a row of slate-surface cards. The first rail holds 16:9 cards at 176 dp, the second 3:4 cards at 116 dp. There is no spinner and no shimmer.
@@ -329,8 +357,10 @@ The same world as Home, one level down. Verified on the Bbox (2026-11-06).
 
 **Épisode row.** A 208 dp 16:9 thumbnail at 104 dp, then 32 dp of space, then:
 - the title in Body Strong (2 lines);
-- the meta line in Meta Mist: « 02/11/2026 · 4 min », plus « · 3 min restantes » or « · ✓ Vu »;
+- the meta line in Meta Mist: « 02/11/2026 · 4 min », plus « · 3 min restantes » or « · ✓ Vu », then the freshness pill when there is one;
 - the synopsis in Body Mist (2 lines).
+
+The Options key on a row opens its options dialog (« Marquer comme vu » / « Marquer comme non vu »).
 
 Duration is rounded up, so 3 min 45 s reads « 4 min ».
 
@@ -400,7 +430,6 @@ The Home update chip stays; « À propos » is where to look when it is not show
 ### Not yet specified
 These are not built in this system yet. Do not infer them from Home:
 - The Genre page and "Tout voir".
-- Freshness or "new" badges.
 - Error states beyond the stale notice and the empty-catalog line.
 
 ## Do's and Don'ts
