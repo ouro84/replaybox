@@ -23,4 +23,13 @@ class EpisodeLabelsTest {
         assertThat(EpisodeLabels.shortNumbering(1, 7, "S1 E7 - À ciel ouvert")).isNull()
         assertThat(EpisodeLabels.shortNumbering(1, 17, "S1 E7 - À ciel ouvert")).isEqualTo(1 to 17)
     }
+
+    @Test
+    fun `season 0 or episode 0 is not a numbering`() {
+        assertThat(EpisodeLabels.shortNumbering(0, 0, "Super Mario Bros. le film")).isNull()
+        assertThat(EpisodeLabels.shortNumbering(0, 3, "Un titre")).isNull()
+        assertThat(EpisodeLabels.shortNumbering(2, 0, "Un titre")).isNull()
+        assertThat(EpisodeLabels.real(0)).isNull()
+        assertThat(EpisodeLabels.real(1)).isEqualTo(1)
+    }
 }

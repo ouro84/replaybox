@@ -442,7 +442,39 @@ The video owns the screen. Every overlay sits at the bottom over a ground scrim 
 - **Focus holder.** The idle focus target is a sibling of the overlays, never their parent: Compose maps Back to a focus exit, and a focusable parent swallows the first press.
 
 ### Failure states
-A failure is never shown as an empty result. Search with every Provider failing reads « Recherche indisponible. » with « Réessayer » (RIGHT from the keyboard reaches it); one Provider failing shows the other's results as they are. An empty Home after a refresh where every Chaîne failed reads « Catalogue indisponible. Vérifie la connexion. » with a focused « Réessayer »; with a cache, Home keeps its rails and the dated stale notice.
+A failure is never shown as an empty result, and every error screen has one focused way out. The complete list:
+- **Catalogue (Home).** With a cache, Home keeps its rails and shows the dated stale notice (« Catalogue du 05/11 · TF1 injoignable »). Empty after a refresh where every Chaîne failed: « Catalogue indisponible. Vérifie la connexion. » with a focused « Réessayer ».
+- **Search.** Every Provider failing: « Recherche indisponible. » with « Réessayer » (RIGHT from the keyboard reaches it). One Provider failing: the others' results as they are, no message.
+- **Programme page.** « Impossible de charger les Épisodes. » with a focused « Réessayer »; « Aucun Épisode disponible. » when the list is empty.
+- **Genres / Tout voir.** Read from the cache only, so no network error: an empty Genre or filter reads « Aucun Programme dans ce Genre. ».
+- **Player.** The Flux resolution error and the second playback error in a row use one panel: title « Flux indisponible » in Display Compact, one Body Mist line, a focused « Réessayer ». The line names the cause when it is known: « TF1 exige désormais un compte connecté… » / « M6+ exige un compte connecté… » (both point to Paramètres), « Ce contenu reste indisponible avec ce compte (droits TF1 ou zone). », « Ce contenu est bloqué dans ta zone. », « La lecture s'est interrompue. », else « Impossible de résoudre le Flux pour cet Épisode. ».
+- **Account form.** One Body Soft Coral line in French: wrong e-mail or password, account locked, connection refused (with the code), service not answering, no network.
+- **À propos.** « Impossible de vérifier les mises à jour. Vérifie la connexion. »; the button stays focused for another try.
+- **France TV size guard.** A response over its byte limit fails as a normal Provider error (the screens above), never as a crash.
+
+### Focus checklist
+Every screen's initial focus, Back target and focus on return, checked on the Bbox on 2026-11-07 unless marked « code » (read in the code, not triggered on the box: the player overlays below need a Flux error, a saved position to risk, or the last 10 s of an Épisode).
+
+| Screen | Initial focus | Back | Focus on return |
+|---|---|---|---|
+| Home | Billboard primary (« Reprendre » / « Lecture »), else the first card | Scrolled down: back to the top; at the top: leaves the app | The card or button that opened the next screen |
+| Nav rail | Current destination (entering it) | As Home | — |
+| Genres | First tile (Séries) | Home | The tile that opened the grid |
+| Tout voir | First poster (selected chip when empty) | Genres page (tile) or Home (« Tout voir » card) | The poster, filter and scroll |
+| Programme page | Primary button | From the list: the hero; from the hero: leaves | The Épisode just watched |
+| Épisode row dialog | « Annuler » | Closes, focus on the row | — |
+| À suivre card dialog | « Annuler » | Closes, focus on the card | Billboard after the card leaves |
+| Player controls | Pause / Lecture | Hides the controls | — |
+| Options panel | Selected choice of the first row | Back to the controls | — |
+| Resume prompt (code) | « Reprendre » | Leaves the player | — |
+| Épisode suivant (code) | « Lire maintenant » | Hides the panel, the Épisode plays on | — |
+| Player error (code) | « Réessayer » | Leaves the player | — |
+| Search | Key « A » | From the results: last key; from the keyboard: leaves | Query, filters, scroll and the focused key or poster |
+| Paramètres | First row (Sous-titres) | Home | The row that opened the page |
+| Sous-titres | Saved size | Paramètres | — |
+| Provider page | « Se connecter » | Paramètres | — |
+| À propos | The single button | Paramètres | — |
+
 
 ### Paramètres
 Verified on the Bbox (2026-11-07). One list, one level of pages; Back from a page lands on the row that opened it.
@@ -495,10 +527,6 @@ Chosen 2026-11-07 (piste A « Reprise »), verified in the Bbox launcher (« Mes
 - **Icon** (`android:icon`, adaptive): Night Ground background, the symbol alone centred in the 66 dp safe zone.
 - **Source:** `scripts/logo/make_logo.py` regenerates both vectors from the Manrope variable font (instanced at weight 800); the font itself is not in the repo.
 - **In the app:** only on « À propos », 240 x 90 dp (banner cropped top and bottom, pulled 30 dp left so the symbol sits on the 104 dp text column). No splash screen, no logo in the nav rail.
-
-### Not yet specified
-These are not built in this system yet. Do not infer them from Home:
-- Error states beyond the stale notice and the empty-catalog line.
 
 ## Do's and Don'ts
 
