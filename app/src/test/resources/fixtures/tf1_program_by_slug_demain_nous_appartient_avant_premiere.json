@@ -1,0 +1,92 @@
+{
+ "data": {
+  "programBySlug": {
+   "slug": "demain-nous-appartient",
+   "videos": {
+    "total": 2338,
+    "items": [
+     {
+      "id": "fbd154b6-3dbd-458f-9604-db94c3c732e2",
+      "slug": "avant-premiere-demain-nous-appartient-du-10-novembre-2026-episode-2332-60924649",
+      "emId": "2146461",
+      "type": "REPLAY",
+      "rating": "CSA_10",
+      "date": "2026-11-10T18:13:53Z",
+      "episode": 52,
+      "season": 10,
+      "authEnabled": true,
+      "isRecent": true,
+      "published": "2026-11-06T18:10:00Z",
+      "url": "https://www.tf1.fr/tf1/demain-nous-appartient/videos/avant-premiere-demain-nous-appartient-du-10-novembre-2026-episode-2332-60924649.html",
+      "broadcastChannel": {
+       "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+       "slug": "tf1",
+       "__typename": "Channel"
+      },
+      "playingInfos": {
+       "duration": 1681,
+       "remainingDays": 4,
+       "freeRemainingDays": 0,
+       "__typename": "PlayingInfos"
+      },
+      "rights": [
+       "MAX"
+      ],
+      "__typename": "Video",
+      "decoration": {
+       "label": "Avant-première - Demain nous appartient du 10 novembre 2026 - Episode 2332",
+       "description": "Goutte à goutte, les choix de Damien se retournent contre lui. Au mas, le couple Moreno ne prend pas une ride. Les ruminations de Nordine engendrent des répercussions physiques."
+      }
+     },
+     {
+      "id": "846b70ff-d517-4afd-9e14-aea76cc2cea6",
+      "slug": "demain-nous-appartient-du-vendredi-6-novembre-2026-episode-2330-23299422",
+      "emId": "2146459",
+      "type": "REPLAY",
+      "rating": "CSA_ALL",
+      "date": "2026-11-06T18:13:51Z",
+      "episode": 50,
+      "season": 10,
+      "authEnabled": true,
+      "isRecent": true,
+      "published": "2026-11-06T18:13:51Z",
+      "url": "https://www.tf1.fr/tf1/demain-nous-appartient/videos/demain-nous-appartient-du-vendredi-6-novembre-2026-episode-2330-23299422.html",
+      "broadcastChannel": {
+       "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+       "slug": "tf1",
+       "__typename": "Channel"
+      },
+      "playingInfos": {
+       "duration": 1679,
+       "remainingDays": 1389,
+       "freeRemainingDays": 1389,
+       "__typename": "PlayingInfos"
+      },
+      "rights": [
+       "BASIC",
+       "MAX"
+      ],
+      "__typename": "Video",
+      "decoration": {
+       "label": "Demain nous appartient du vendredi 6 novembre 2026 - Episode 2330",
+       "description": "Un surveillant surprend Charles en possession d'une arme. A l'hôpital, Chloé se retrouve contrainte de s'occuper de Sonia. Manon et Nordine s'écharpent sur la décoration de la maison."
+      }
+     }
+    ],
+    "__typename": "VideosConnector"
+   }
+  }
+ },
+ "extensions": {
+  "report": {
+   "stream": "web",
+   "catalogCode": "fr-fr",
+   "version": "v1.36.3",
+   "execution": {
+    "start": 1794068982308259095,
+    "end": 1794068982336030073,
+    "time": 27771145
+   }
+  }
+ }
+}

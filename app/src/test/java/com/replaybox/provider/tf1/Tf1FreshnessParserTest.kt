@@ -46,18 +46,15 @@ class Tf1FreshnessParserTest {
     }
 
     @Test
-    fun `avant-premiere is published before its broadcast`() {
+    fun `regular soap Episode is published at its broadcast`() {
         val page = Tf1Parsers.replayPage(
             TestFixtures.load("tf1_program_by_slug_feux_de_l_amour_freshness.json"),
             deviceClock,
         )
         val serverTime = Instant.ofEpochSecond(1794059418, 211514799) // 13:50:18Z
-        val avantPremiere = page.videos[0]
-        assertThat(avantPremiere.broadcastAt).isEqualTo(Instant.parse("2026-11-10T09:57:38Z"))
-        assertThat(avantPremiere.publishedAt).isEqualTo(Instant.parse("2026-11-06T09:55:00Z"))
-        assertThat(avantPremiere.availableUntil).isEqualTo(serverTime.plus(Duration.ofDays(3)))
+        // The avant-premiere of the capture (paid offer) is dropped: see Tf1AvantPremiereTest.
         // Regular Épisode: broadcast 6/11 10:57 Paris, available 30 days → 29 days left.
-        val regular = page.videos[1]
+        val regular = page.videos.single()
         assertThat(regular.broadcastAt).isEqualTo(Instant.parse("2026-11-06T09:57:36Z"))
         assertThat(regular.publishedAt).isEqualTo(regular.broadcastAt)
         assertThat(regular.availableUntil).isEqualTo(serverTime.plus(Duration.ofDays(29)))

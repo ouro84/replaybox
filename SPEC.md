@@ -74,6 +74,28 @@ chose, sauf sur les avant-premières (0 : offre payante). `remainingPlayingHours
 page web, pas dans le listing. Fixtures : `tf1_program_by_slug_jt_20h_freshness.json`,
 `tf1_program_by_slug_feux_de_l_amour_freshness.json`.
 
+Avant-premières (mesuré le 2026-11-07 sur `a6f9cf0e`, 5 846 Épisodes de 13 Programmes :
+les-feux-de-l-amour, demain-nous-appartient, ici-tout-commence, plus-belle-la-vie, hpi, jt-20h,
+koh-lanta, profilage, the-voice, sept-a-huit, camping-paradis, section-de-recherches, star-academy ;
+au plus les 1 200 plus récents par Programme) — les feuilletons quotidiens publient les deux
+prochains Épisodes en avant-première (« Avant-première - Les feux de l'amour du 10 novembre 2026 -
+Episode 9603 », `date` dans le futur). Le marqueur est le champ **`rights`** : `["BASIC","MAX"]` sur
+un Épisode ordinaire, `["MAX"]` seul sur une avant-première (`BASIC` = offre gratuite TF1+,
+`accessKey: "basic"`, `type: "FREE"` dans les offres de la page tf1.fr ; `MAX` = offre payante).
+`freeRemainingDays == 0` l'accompagne toujours. 9 vidéos sans `BASIC` : les 8 avant-premières des 4
+feuilletons (2 chacun) et HPI S04E04 « Cheval de Troie », ancienne avant-première renommée (slug
+`avant-premiere-hpi-s04-e04-…`, titre sans le préfixe) restée réservée à l'offre payante : le
+préfixe du titre n'est donc pas fiable. Les 5 837 autres portent toutes `["BASIC","MAX"]` et un
+`freeRemainingDays` égal à `remainingDays`. En anonyme, `mediainfocombo` répond 403
+`PERMISSION_DENIED` à l'avant-première comme à l'Épisode ordinaire (seule différence : la mesure
+Médiamétrie `estatS3` vaut `preview` contre `catch-up`) ; `duration` est la durée complète (2 105
+s), pas un extrait. La lecture avec le compte gratuit du foyer n'a pas pu être mesurée depuis ce
+poste. Le compte du foyer étant gratuit, le parser écarte des listes d'Épisodes toute vidéo dont
+`rights` ne contient pas `BASIC` (une vidéo sans champ `rights` est gardée) ; `total` et la
+pagination suivent toujours les comptes de TF1. Fixture :
+`tf1_program_by_slug_demain_nous_appartient_avant_premiere.json` (une avant-première, un Épisode
+ordinaire).
+
 Ne garder que `type: REPLAY` (les `EXTRACT`/`BONUS` sont hors périmètre). La taxonomie
 `GT_*`/`SGT_*` de `program.categories[]` mappe vers les Genres canoniques (table en code ;
 chaque programme porte exactement un `GT_` et un `SGT_`, ids `SGT_` en anglais : `SGT_COMEDY`,
