@@ -1,0 +1,820 @@
+{
+  "data": {
+    "programs": {
+      "total": 9,
+      "items": [
+        {
+          "id": "7534dfad-ccbd-4694-514b-754a4d27050e",
+          "slug": "les-visiteurs-522",
+          "name": "Les Visiteurs",
+          "mainChannel": {
+            "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+            "slug": "tf1",
+            "label": "TF1",
+            "__typename": "Channel"
+          },
+          "categories": [
+            {
+              "id": "GT_MOVIES",
+              "label": "Cinéma",
+              "main": true,
+              "slug": "cinema",
+              "type": "MAIN_MOVIES",
+              "__typename": "Category"
+            },
+            {
+              "id": "SGT_COMEDY",
+              "label": "Comédie",
+              "main": false,
+              "slug": "comedie",
+              "type": "SUB_COMEDY",
+              "__typename": "Category"
+            }
+          ],
+          "decoration": {
+            "image": {
+              "id": "program-card-portrait_les-visiteurs-8bdd3d",
+              "type": "PORTRAIT",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait_les-visiteurs-8bdd3d-f8c0d4-0@1x.jpg",
+                  "width": "700",
+                  "height": "933",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/350/466/program-card-portrait_les-visiteurs-8bdd3d-ad2390-0@1x.jpg",
+                  "width": "350",
+                  "height": "466",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/233/311/program-card-portrait_les-visiteurs-8bdd3d-bab4f4-0@1x.jpg",
+                  "width": "233",
+                  "height": "311",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "background": {
+              "id": "cover-showpage-les-visiteurs-20afed",
+              "type": "BACKGROUND",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/cover-showpage-les-visiteurs-20afed-e34214-0@1x.jpg",
+                  "width": "1920",
+                  "height": "1080",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/960/540/cover-showpage-les-visiteurs-20afed-6fa0b0-0@1x.jpg",
+                  "width": "960",
+                  "height": "540",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/640/360/cover-showpage-les-visiteurs-20afed-84d487-0@1x.jpg",
+                  "width": "640",
+                  "height": "360",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "__typename": "Decoration",
+            "description": "An de grâce 1123. Le preux chevalier Godefroy de Montmirail sauve la vie du roi Louis VI le Gros et devient comte. Promis à la châtelaine Frénégonde, il capture une sorcière qui lui donne un philtre diabolique. Victime d'hallucinations, Godefroy assassine son futur beau-père."
+          },
+          "__typename": "Program"
+        },
+        {
+          "id": "521dcce5-87dc-4a34-4bde-82a0d6d5c481",
+          "slug": "illusions-perdues",
+          "name": "Illusions perdues",
+          "mainChannel": {
+            "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+            "slug": "tf1",
+            "label": "TF1",
+            "__typename": "Channel"
+          },
+          "categories": [
+            {
+              "id": "GT_MOVIES",
+              "label": "Cinéma",
+              "main": true,
+              "slug": "cinema",
+              "type": "MAIN_MOVIES",
+              "__typename": "Category"
+            },
+            {
+              "id": "SGT_DRAMA",
+              "label": "Drame",
+              "main": false,
+              "slug": "drame",
+              "type": "SUB_DRAMA",
+              "__typename": "Category"
+            }
+          ],
+          "decoration": {
+            "image": {
+              "id": "program-card-portrait-1-3f778b",
+              "type": "PORTRAIT",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-1-3f778b-ae1ba3-0@1x.jpg",
+                  "width": "700",
+                  "height": "933",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/350/466/program-card-portrait-1-3f778b-de7ef6-0@1x.jpg",
+                  "width": "350",
+                  "height": "466",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/233/311/program-card-portrait-1-3f778b-f5a0a4-0@1x.jpg",
+                  "width": "233",
+                  "height": "311",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "background": {
+              "id": "background-ott-e450e6",
+              "type": "BACKGROUND",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-e450e6-48c667-0@1x.jpg",
+                  "width": "1920",
+                  "height": "1080",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/960/540/background-ott-e450e6-54670d-0@1x.jpg",
+                  "width": "960",
+                  "height": "540",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/640/360/background-ott-e450e6-e02328-0@1x.jpg",
+                  "width": "640",
+                  "height": "360",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "__typename": "Decoration",
+            "description": "Lucien est un jeune poète inconnu dans la France du XIXème siècle. Il a de grandes espérances et veut se forger un destin. Il quitte l’imprimerie familiale de sa province natale pour tenter sa chance à Paris, au bras de sa protectrice. Bientôt livré à lui-même dans la ville fabuleuse, le jeune homme va découvrir les coulisses d’un monde voué à la loi du profit et des faux-semblants. Une comédie humaine où tout s’achète et se vend, la littérature comme la presse, la politique comme les sentiments, les réputations comme les âmes. Il va aimer, il va souffrir, et survivre à ses illusions.\n\n"
+          },
+          "__typename": "Program"
+        },
+        {
+          "id": "eec6e087-d596-43c0-5946-8004c7d2475f",
+          "slug": "lillusion-verte",
+          "name": "L'illusion verte",
+          "mainChannel": {
+            "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+            "slug": "tf1",
+            "label": "TF1",
+            "__typename": "Channel"
+          },
+          "categories": [
+            {
+              "id": "GT_MOVIES",
+              "label": "Cinéma",
+              "main": true,
+              "slug": "cinema",
+              "type": "MAIN_MOVIES",
+              "__typename": "Category"
+            },
+            {
+              "id": "SGT_DOCUMENTARY",
+              "label": "Documentaire",
+              "main": false,
+              "slug": "documentaire",
+              "type": "SUB_DOCUMENTARY",
+              "__typename": "Category"
+            }
+          ],
+          "decoration": {
+            "image": {
+              "id": "program-card-portrait-2-lillusion-verte-d8e268",
+              "type": "PORTRAIT",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-2-lillusion-verte-d8e268-cc7566-0@1x.jpg",
+                  "width": "700",
+                  "height": "933",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/350/466/program-card-portrait-2-lillusion-verte-d8e268-547302-0@1x.jpg",
+                  "width": "350",
+                  "height": "466",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/233/311/program-card-portrait-2-lillusion-verte-d8e268-07f5e0-0@1x.jpg",
+                  "width": "233",
+                  "height": "311",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "background": {
+              "id": "background-ott-lillusion-verte-dc547a",
+              "type": "BACKGROUND",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-lillusion-verte-dc547a-c8eed1-0@1x.jpg",
+                  "width": "1920",
+                  "height": "1080",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/960/540/background-ott-lillusion-verte-dc547a-de8aa7-0@1x.jpg",
+                  "width": "960",
+                  "height": "540",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/640/360/background-ott-lillusion-verte-dc547a-6f2cfd-0@1x.jpg",
+                  "width": "640",
+                  "height": "360",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "__typename": "Decoration",
+            "description": "Werner Boote et Kathrin Hartmann enquêtent sur le greenwashing, une pratique marketing donnant une image écologique trompeuse aux entreprises. Ils explorent comment les industriels investissent dans des initiatives 'vertes' pour déculpabiliser les consommateurs, tout en enrichissant les multinationales. Leur voyage révèle les dessous de cette stratégie commerciale."
+          },
+          "__typename": "Program"
+        },
+        {
+          "id": "4c84ff3b-a365-4944-7c07-11896e6daf8d",
+          "slug": "oppenheimer",
+          "name": "Oppenheimer",
+          "mainChannel": {
+            "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+            "slug": "tf1",
+            "label": "TF1",
+            "__typename": "Channel"
+          },
+          "categories": [
+            {
+              "id": "GT_MOVIES",
+              "label": "Cinéma",
+              "main": true,
+              "slug": "cinema",
+              "type": "MAIN_MOVIES",
+              "__typename": "Category"
+            },
+            {
+              "id": "SGT_THRILLER",
+              "label": "Thriller",
+              "main": false,
+              "slug": "thriller",
+              "type": "SUB_THRILLER",
+              "__typename": "Category"
+            }
+          ],
+          "decoration": {
+            "image": {
+              "id": "program-card-portrait-1-a606fa",
+              "type": "PORTRAIT",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-1-a606fa-a8f46f-0@1x.jpg",
+                  "width": "700",
+                  "height": "933",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/350/466/program-card-portrait-1-a606fa-5c0c1e-0@1x.jpg",
+                  "width": "350",
+                  "height": "466",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/233/311/program-card-portrait-1-a606fa-29f5a7-0@1x.jpg",
+                  "width": "233",
+                  "height": "311",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "background": {
+              "id": "background-ott-7a6312",
+              "type": "BACKGROUND",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-7a6312-51904a-0@1x.jpg",
+                  "width": "1920",
+                  "height": "1080",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/960/540/background-ott-7a6312-046ed5-0@1x.jpg",
+                  "width": "960",
+                  "height": "540",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/640/360/background-ott-7a6312-11a1ff-0@1x.jpg",
+                  "width": "640",
+                  "height": "360",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "__typename": "Decoration",
+            "description": "Découvrez ou re-découvrez le film événement de l’année 2023 qui a su captiver le public du monde entier. Écrit et réalisé par Christopher Nolan, ce biopic d'Oppenheimer nous plonge au cœur de la vie du physicien J. Robert Oppenheimer (interprété par Cillian Murphy). Brillant physicien américain, né le 22 avril 1904 à New York, dont les travaux entrepris au sein du laboratoire de Los Alamos (également connu sous le nom de projet Y) durant le projet Manhattan ont abouti à la création de la bombe atomique."
+          },
+          "__typename": "Program"
+        },
+        {
+          "id": "3b55f699-bb1a-4489-62b4-076d7500fe36",
+          "slug": "police-flash-80",
+          "name": "Police Flash 80",
+          "mainChannel": {
+            "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+            "slug": "tf1",
+            "label": "TF1",
+            "__typename": "Channel"
+          },
+          "categories": [
+            {
+              "id": "GT_MOVIES",
+              "label": "Cinéma",
+              "main": true,
+              "slug": "cinema",
+              "type": "MAIN_MOVIES",
+              "__typename": "Category"
+            },
+            {
+              "id": "SGT_DETECTIVE",
+              "label": "Policier",
+              "main": false,
+              "slug": "policier",
+              "type": "SUB_DETECTIVE",
+              "__typename": "Category"
+            }
+          ],
+          "decoration": {
+            "image": {
+              "id": "program-card-portrait-1-police-flash-80-f01cf3",
+              "type": "PORTRAIT",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-1-police-flash-80-f01cf3-9e806c-0@1x.jpg",
+                  "width": "700",
+                  "height": "933",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/350/466/program-card-portrait-1-police-flash-80-f01cf3-282364-0@1x.jpg",
+                  "width": "350",
+                  "height": "466",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/233/311/program-card-portrait-1-police-flash-80-f01cf3-c17805-0@1x.jpg",
+                  "width": "233",
+                  "height": "311",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "background": {
+              "id": "background-ott-police-flash-80-771a8d",
+              "type": "BACKGROUND",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-police-flash-80-771a8d-6701c4-0@1x.jpg",
+                  "width": "1920",
+                  "height": "1080",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/960/540/background-ott-police-flash-80-771a8d-f0c86d-0@1x.jpg",
+                  "width": "960",
+                  "height": "540",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/640/360/background-ott-police-flash-80-771a8d-2cdcca-0@1x.jpg",
+                  "width": "640",
+                  "height": "360",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "__typename": "Decoration",
+            "description": "1984. Yvon Kastendeuch, flic à l’ancienne et fan de Michel Sardou est propulsé malgré lui à la tête d’une « unité d’élite » : la Police Flash 80. Il doit désormais faire équipe avec Guilaine, maman surmenée et cerveau du groupe, Marfoud, geek du Minitel et Roberto, l’infiltré à la coupe mulet. Ensemble, ils vont tenter de démanteler un trafic de drogue en devenant une brigade si improbable, que même les années 80 n’étaient pas prêtes."
+          },
+          "__typename": "Program"
+        },
+        {
+          "id": "e5c8e288-d33d-461d-40c7-269b5f5f8db9",
+          "slug": "super-mario-bros-le-film-905",
+          "name": "Super Mario Bros., le film",
+          "mainChannel": {
+            "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+            "slug": "tf1",
+            "label": "TF1",
+            "__typename": "Channel"
+          },
+          "categories": [
+            {
+              "id": "GT_MOVIES",
+              "label": "Cinéma",
+              "main": true,
+              "slug": "cinema",
+              "type": "MAIN_MOVIES",
+              "__typename": "Category"
+            },
+            {
+              "id": "SGT_ENTERTAINMENT",
+              "label": "Divertissements",
+              "main": false,
+              "slug": "divertissements",
+              "type": "SUB_ENTERTAINEMENT",
+              "__typename": "Category"
+            }
+          ],
+          "decoration": {
+            "image": {
+              "id": "program-card-portrait-1-18f693",
+              "type": "PORTRAIT",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-1-18f693-37f58b-0@1x.jpg",
+                  "width": "700",
+                  "height": "933",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/350/466/program-card-portrait-1-18f693-8bc6dc-0@1x.jpg",
+                  "width": "350",
+                  "height": "466",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/233/311/program-card-portrait-1-18f693-fc7389-0@1x.jpg",
+                  "width": "233",
+                  "height": "311",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "background": {
+              "id": "background-ott-b18454",
+              "type": "BACKGROUND",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-b18454-f94af1-0@1x.jpg",
+                  "width": "1920",
+                  "height": "1080",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/960/540/background-ott-b18454-0aef9c-0@1x.jpg",
+                  "width": "960",
+                  "height": "540",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/640/360/background-ott-b18454-445e45-0@1x.jpg",
+                  "width": "640",
+                  "height": "360",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "__typename": "Decoration",
+            "description": "Mario et Luigi sont deux frères plombiers sans histoires. Mais lorsqu'une inondation menace d'engloutir leur ville, ces derniers ne peuvent s'empêcher d'intervenir. Au cours de leur tentative, ils se retrouvent aspirés dans un mystérieux tunnel et finissent par être séparés. Alors que Luigi est fait prisonnier par le terrible Bowser, Mario atterrit au Royaume Champignon et s'allie à la princesse Peach."
+          },
+          "__typename": "Program"
+        },
+        {
+          "id": "3e5a76b8-4cbd-4e4c-5cd6-407ee391bf2e",
+          "slug": "cats-eyes",
+          "name": "Cat's Eyes",
+          "mainChannel": {
+            "id": "d005401e-a079-4e13-878f-b6576387fc50",
+            "slug": "tf1-plus",
+            "label": "TF1+",
+            "__typename": "Channel"
+          },
+          "categories": [
+            {
+              "id": "GT_SERIES_AND_FICTIONS",
+              "label": "Séries & Fictions",
+              "main": true,
+              "slug": "series-et-fictions",
+              "type": "MAIN_SERIES_AND_FICTIONS",
+              "__typename": "Category"
+            },
+            {
+              "id": "SGT_FRENCH_FICTION",
+              "label": "Fictions françaises",
+              "main": false,
+              "slug": "fictions-francaises",
+              "type": "SUB_FRENCH_FICTION",
+              "__typename": "Category"
+            }
+          ],
+          "decoration": {
+            "image": {
+              "id": "program-card-portrait-1-cats-eyes-s2-keyart-jpg-4d2260",
+              "type": "PORTRAIT",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-1-cats-eyes-s2-keyart-jpg-4d2260-0d3494-0@1x.jpg",
+                  "width": "700",
+                  "height": "933",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/350/466/program-card-portrait-1-cats-eyes-s2-keyart-jpg-4d2260-8f2516-0@1x.jpg",
+                  "width": "350",
+                  "height": "466",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/233/311/program-card-portrait-1-cats-eyes-s2-keyart-jpg-4d2260-f19951-0@1x.jpg",
+                  "width": "233",
+                  "height": "311",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "background": {
+              "id": "background-ott-cats-eyes-s2-keyart-jpg-09c032",
+              "type": "BACKGROUND",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-cats-eyes-s2-keyart-jpg-09c032-ee9633-0@1x.jpg",
+                  "width": "1920",
+                  "height": "1080",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/960/540/background-ott-cats-eyes-s2-keyart-jpg-09c032-44d160-0@1x.jpg",
+                  "width": "960",
+                  "height": "540",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/640/360/background-ott-cats-eyes-s2-keyart-jpg-09c032-b6d3e6-0@1x.jpg",
+                  "width": "640",
+                  "height": "360",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "__typename": "Decoration",
+            "description": "Tamara, Sylia et Alexia, trois sœurs séparées depuis longtemps, se réunissent à Paris en 2024. Elles décident de voler une œuvre de leur père disparu, exposée à la Tour Eiffel, pour élucider le mystère de sa mort. Poursuivies par le capitaine Quentin Chapuis, elles jonglent entre leur vie quotidienne et leurs activités clandestines, tout en affrontant des défis émotionnels et dangereux."
+          },
+          "__typename": "Program"
+        },
+        {
+          "id": "71df65fa-7b78-4de7-8c4d-5e84b72eb981",
+          "slug": "miraculous",
+          "name": "Miraculous : Les Aventures de Ladybug et Chat Noir",
+          "mainChannel": {
+            "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+            "slug": "tf1",
+            "label": "TF1",
+            "__typename": "Channel"
+          },
+          "categories": [
+            {
+              "id": "GT_YOUTH",
+              "label": "Jeunesse",
+              "main": true,
+              "slug": "jeunesse",
+              "type": "MAIN_YOUTH",
+              "__typename": "Category"
+            },
+            {
+              "id": "SGT_SIX_TO_TEN_YEARS",
+              "label": "6-10 ans",
+              "main": false,
+              "slug": "6-10-ans",
+              "type": "SUB_SIX_TO_TEN_YEARS",
+              "__typename": "Category"
+            }
+          ],
+          "decoration": {
+            "image": {
+              "id": "program-card-portrait-1-jpg-7deae5",
+              "type": "PORTRAIT",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-1-jpg-7deae5-6d32e8-0@1x.jpg",
+                  "width": "700",
+                  "height": "933",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/350/466/program-card-portrait-1-jpg-7deae5-3ad049-0@1x.jpg",
+                  "width": "350",
+                  "height": "466",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/233/311/program-card-portrait-1-jpg-7deae5-47f298-0@1x.jpg",
+                  "width": "233",
+                  "height": "311",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "background": {
+              "id": "background-ott-jpg-1b4c52",
+              "type": "BACKGROUND",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-jpg-1b4c52-825bc1-0@1x.jpg",
+                  "width": "1920",
+                  "height": "1080",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/960/540/background-ott-jpg-1b4c52-80975e-0@1x.jpg",
+                  "width": "960",
+                  "height": "540",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/640/360/background-ott-jpg-1b4c52-f2bda2-0@1x.jpg",
+                  "width": "640",
+                  "height": "360",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "__typename": "Decoration",
+            "description": "Ladybug et Chat Noir affrontent un nouvel ennemi mystérieux après la défaite de Papillon. Marinette et Adrien se rapprochent, ignorant leurs identités secrètes. Dans un Paris écologique et une école révolutionnaire, ils vivent une année pleine de surprises et d'émotions."
+          },
+          "__typename": "Program"
+        },
+        {
+          "id": "55493d49-f082-4638-9b3f-ab891fa7a4bb",
+          "slug": "pawpatrol",
+          "name": "Paw Patrol, la Pat'Patrouille",
+          "mainChannel": {
+            "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+            "slug": "tf1",
+            "label": "TF1",
+            "__typename": "Channel"
+          },
+          "categories": [
+            {
+              "id": "GT_YOUTH",
+              "label": "Jeunesse",
+              "main": true,
+              "slug": "jeunesse",
+              "type": "MAIN_YOUTH",
+              "__typename": "Category"
+            },
+            {
+              "id": "SGT_THREE_TO_SIX_YEARS",
+              "label": "3-6 ans",
+              "main": false,
+              "slug": "3-6-ans",
+              "type": "SUB_THREE_TO_SIX_YEARS",
+              "__typename": "Category"
+            }
+          ],
+          "decoration": {
+            "image": {
+              "id": "program-card-portrait-1-paw-patrol_10-06-2026-44b68e",
+              "type": "PORTRAIT",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/700/933/program-card-portrait-1-paw-patrol_10-06-2026-44b68e-af395f-0@1x.jpg",
+                  "width": "700",
+                  "height": "933",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/350/466/program-card-portrait-1-paw-patrol_10-06-2026-44b68e-4173f5-0@1x.jpg",
+                  "width": "350",
+                  "height": "466",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/233/311/program-card-portrait-1-paw-patrol_10-06-2026-44b68e-151ca9-0@1x.jpg",
+                  "width": "233",
+                  "height": "311",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "background": {
+              "id": "background-ott-paw-patrol_10-06-2026-d9e400",
+              "type": "BACKGROUND",
+              "sources": [
+                {
+                  "url": "https://photos.tf1.fr/1920/1080/background-ott-paw-patrol_10-06-2026-d9e400-4455b2-0@1x.jpg",
+                  "width": "1920",
+                  "height": "1080",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/960/540/background-ott-paw-patrol_10-06-2026-d9e400-a35067-0@1x.jpg",
+                  "width": "960",
+                  "height": "540",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                },
+                {
+                  "url": "https://photos.tf1.fr/640/360/background-ott-paw-patrol_10-06-2026-d9e400-f971ba-0@1x.jpg",
+                  "width": "640",
+                  "height": "360",
+                  "type": "jpg",
+                  "__typename": "SrcSet"
+                }
+              ],
+              "__typename": "Image"
+            },
+            "__typename": "Decoration",
+            "description": "Ryder, 10 ans, dirige la Pat'Patrouille : 6 chiots héroïques aux talents uniques. Marcus le pompier, Ruben le constructeur, Stella l'aviatrice, Chase le policier, Rocky le recycleur et Zuma le sauveteur en mer. Ensemble, ils accomplissent les missions de sauvetage dans la Grande Vallée."
+          },
+          "__typename": "Program"
+        }
+      ],
+      "__typename": "ProgramsConnector"
+    }
+  }
+}

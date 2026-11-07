@@ -33,6 +33,22 @@ class Tf1ProgramsParserTest {
     }
 
     @Test
+    fun `maps real sgt sub-genres to canonical genres`() {
+        // Real TF1 programmes excerpted from id=483ce0f (2026-11-07), one per measured SGT case.
+        val genresBySlug = Tf1Parsers.showsFromPrograms(TestFixtures.load("tf1_programs_sgt_genres.json"))
+            .associate { it.id.value to it.genres }
+        assertThat(genresBySlug["les-visiteurs-522"]).containsExactly(Genre.MOVIES, Genre.COMEDY)
+        assertThat(genresBySlug["illusions-perdues"]).containsExactly(Genre.MOVIES, Genre.DRAMA)
+        assertThat(genresBySlug["lillusion-verte"]).containsExactly(Genre.MOVIES, Genre.DOCUMENTARY)
+        assertThat(genresBySlug["oppenheimer"]).containsExactly(Genre.MOVIES, Genre.CRIME_THRILLER)
+        assertThat(genresBySlug["police-flash-80"]).containsExactly(Genre.MOVIES, Genre.CRIME_THRILLER)
+        assertThat(genresBySlug["super-mario-bros-le-film-905"]).containsExactly(Genre.MOVIES)
+        assertThat(genresBySlug["cats-eyes"]).containsExactly(Genre.SERIES)
+        assertThat(genresBySlug["miraculous"]).containsExactly(Genre.YOUTH)
+        assertThat(genresBySlug["pawpatrol"]).containsExactly(Genre.YOUTH)
+    }
+
+    @Test
     fun `parses root categories`() {
         val categoryIds = Tf1Parsers.showsFromCategories(TestFixtures.load("tf1_categories.json"))
         assertThat(categoryIds).containsAtLeast(

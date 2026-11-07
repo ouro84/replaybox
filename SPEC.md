@@ -55,7 +55,10 @@ envoie aussi la forme complète `id=sha256:<hex>` :
 
 Ne garder que `type: REPLAY` (les `EXTRACT`/`BONUS` sont hors périmètre). La taxonomie
 `GT_*`/`SGT_*` de `program.categories[]` mappe vers les Genres canoniques (table en code ;
-pas de policier/thriller natif TF1 → retombe sur Séries/Action).
+chaque programme porte exactement un `GT_` et un `SGT_`, ids `SGT_` en anglais : `SGT_COMEDY`,
+`SGT_DRAMA`, `SGT_DOCUMENTARY`… ; Genres = union des deux). Pas de policier/thriller natif TF1 pour
+les séries → retombe sur Séries ; `SGT_THRILLER`/`SGT_DETECTIVE` n'existent que sur les films
+(`GT_MOVIES`), mesuré 2026-11-07 sur le catalogue complet.
 
 Flux — résoudre l'id média interne (`videoBySlug.streamId`) puis suivre la chaîne de
 l'**extracteur `wat` de yt-dlp** : `GET https://mediainfo.tf1.fr/mediainfocombo/<streamId>?pver=5010000`
