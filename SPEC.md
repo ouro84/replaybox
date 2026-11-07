@@ -442,10 +442,11 @@ TF1 : pistes à valider une fois connecté (Q10).
 
 ## Recherche
 
-Cross-chaînes, debounce 300 ms, minimum 3 caractères, fusion des Provider.search() par titre
-normalisé (casse/accents). La recherche TF1 est locale, sur l'Index stocké de chaque Chaîne du
+Cross-chaînes, dès 1 caractère (recherche locale, pause de 150 ms entre deux touches), fusion des
+Provider.search() par titre normalisé (casse/accents) ; les filtres Chaîne et Genre de l'écran
+s'appliquent avant la fusion. La recherche TF1 est locale, sur l'Index stocké de chaque Chaîne du
 groupe ; tant que l'Index n'est pas stocké (premier lancement), la seule Chaîne `tf1` retombe sur
-searchPrograms distant (une fois, pas cinq). France TV : filtrage local du cache (pas de route de
+searchPrograms distant (une fois, pas cinq), à partir de 3 caractères seulement. France TV : filtrage local du cache (pas de route de
 recherche découverte). Classement (`SearchRanking`) : titre qui commence par la requête, puis titre
 qui la contient ; égalités départagées par `recentEpisodeCount` décroissant, puis ordre d'arrivée.
 Les rails Genre de la Home sont plafonnés à 40 cartes.
