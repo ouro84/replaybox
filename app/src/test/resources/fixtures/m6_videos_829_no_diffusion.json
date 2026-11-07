@@ -1,0 +1,32 @@
+[
+ {
+  "id": "clip_13193064",
+  "type": "vi",
+  "title": "Épisodes 1 à 7",
+  "duration": 1272,
+  "service_display": {
+   "code": "m6replay"
+  },
+  "program": {
+   "id": 829,
+   "code": "scenes-de-menages"
+  },
+  "publication_date": "2026-09-25 06:00:00",
+  "update_date": "2026-10-25 03:20:25",
+  "clips": [
+   {
+    "product": {
+     "season": 16,
+     "episode": 1,
+     "part_number": null,
+     "first_diffusion": null,
+     "last_diffusion": null,
+     "first_local_air_date": null,
+     "displayed_broadcast_date": null,
+     "season_title": "Scènes de ménages"
+    },
+    "type": "vi"
+   }
+  ]
+ }
+]

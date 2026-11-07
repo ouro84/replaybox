@@ -71,6 +71,7 @@ class ReplayboxApplication : Application(), ImageLoaderFactory {
                     ReplayboxDatabase.MIGRATION_1_2,
                     ReplayboxDatabase.MIGRATION_2_3,
                     ReplayboxDatabase.MIGRATION_3_4,
+                    ReplayboxDatabase.MIGRATION_4_5,
                 )
                 .fallbackToDestructiveMigration()
                 .build()

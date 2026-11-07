@@ -168,29 +168,12 @@ class RoomCatalogDao(
 
     override suspend fun putEpisodes(seasonId: String, episodes: List<Episode>, at: Long) = db.withTransaction {
         raw.clearEpisodes(seasonId)
-        raw.insertEpisodes(
-            episodes.map {
-                EpisodeEntity(
-                    it.id.value, it.seasonId?.value, it.title, it.synopsis,
-                    it.broadcastDate, it.durationSeconds, it.thumbnailUrl,
-                )
-            },
-        )
+        raw.insertEpisodes(episodes.map { it.toEntity() })
         raw.insertProgramMeta(ProgramMetaEntity(seasonId, at))
     }
 
     override suspend fun episodes(seasonId: String): List<Episode> =
-        raw.episodes(seasonId).map {
-            Episode(
-                id = com.replaybox.core.model.EpisodeId(it.id),
-                seasonId = it.seasonId?.let { s -> com.replaybox.core.model.SeasonId(s) },
-                title = it.title,
-                synopsis = it.synopsis,
-                broadcastDate = it.broadcastDate,
-                durationSeconds = it.durationSeconds,
-                thumbnailUrl = it.thumbnailUrl,
-            )
-        }
+        raw.episodes(seasonId).map { it.toEpisode() }
 
     override suspend fun putProgress(progress: ProgressEntity) = raw.insertProgress(progress)
 

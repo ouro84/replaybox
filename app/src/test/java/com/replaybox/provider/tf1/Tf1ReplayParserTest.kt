@@ -10,7 +10,7 @@ class Tf1ReplayParserTest {
 
     @Test
     fun `parses replay page of hpi`() {
-        val page = Tf1Parsers.replayPage(TestFixtures.load("tf1_program_by_slug_replay.json"))
+        val page = Tf1Parsers.replayPage(TestFixtures.load("tf1_program_by_slug_replay.json"), java.time.Instant.EPOCH)
         assertThat(page.total).isEqualTo(40)
         assertThat(page.videos).hasSize(20)
         val first = page.videos.first()
@@ -62,13 +62,13 @@ class Tf1ReplayParserTest {
                 },
             )
         }
-        val page = Tf1Parsers.replayPage(root)
+        val page = Tf1Parsers.replayPage(root, java.time.Instant.EPOCH)
         assertThat(page.videos.map { it.slug }).containsExactly("replay-ok")
     }
 
     @Test
     fun `derives seasons from videos sorted desc`() {
-        val videos = Tf1Parsers.replayPage(TestFixtures.load("tf1_program_by_slug_replay.json")).videos
+        val videos = Tf1Parsers.replayPage(TestFixtures.load("tf1_program_by_slug_replay.json"), java.time.Instant.EPOCH).videos
         val seasons = Tf1Parsers.seasonsFromVideos(ShowId("hpi"), videos)
         assertThat(seasons.map { it.number }).containsExactly(5, 4, 3).inOrder()
         assertThat(seasons.first().id.value).isEqualTo("hpi::5")
@@ -77,7 +77,7 @@ class Tf1ReplayParserTest {
 
     @Test
     fun `builds episodes for a season`() {
-        val videos = Tf1Parsers.replayPage(TestFixtures.load("tf1_program_by_slug_replay.json")).videos
+        val videos = Tf1Parsers.replayPage(TestFixtures.load("tf1_program_by_slug_replay.json"), java.time.Instant.EPOCH).videos
         val episodes = Tf1Parsers.episodesFromVideos(SeasonId("hpi::5"), ShowId("hpi"), videos)
         assertThat(episodes).hasSize(8)
         assertThat(episodes.first().id.value).isEqualTo("hpi::hpi-s05-e08-supernova-15207545")

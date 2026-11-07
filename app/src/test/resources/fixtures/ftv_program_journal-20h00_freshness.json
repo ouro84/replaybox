@@ -1,0 +1,59 @@
+{
+ "item": {
+  "program_path": "france-2_journal-20h00",
+  "label": "Journal 20h00"
+ },
+ "collections": [
+  {
+   "type": "playlist_video",
+   "label": "Les émissions",
+   "items": [
+    {
+     "id": 8982922,
+     "title": "Édition du vendredi 6 novembre 2026",
+     "type": "integrale",
+     "season": null,
+     "episode": null,
+     "broadcast_begin_date": 1793991467,
+     "broadcast_end_date": 1793993778,
+     "begin_date": 1793993911,
+     "end_date": 1796585911,
+     "duration": 2311,
+     "si_id": "e8adc1cf-026b-4dc8-a368-3fe84d21f08d",
+     "episode_title": "Édition du vendredi 6 novembre 2026",
+     "broadcast_channel": "france-2"
+    },
+    {
+     "id": 2479351,
+     "title": "Édition du dimanche 30 mai 2021",
+     "type": "integrale",
+     "season": null,
+     "episode": null,
+     "broadcast_begin_date": 1622397479,
+     "broadcast_end_date": 1622399387,
+     "begin_date": 1622399400,
+     "end_date": 2147483647,
+     "duration": 1908,
+     "si_id": "a34bb88f-3d7a-4d72-929f-bfce0d59e3c0",
+     "episode_title": "Édition du dimanche 30 mai 2021",
+     "broadcast_channel": "france-2"
+    },
+    {
+     "id": 7821606,
+     "title": "Boualem Sansal, invité exceptionnel du Journal de 20h",
+     "type": "integrale",
+     "season": null,
+     "episode": null,
+     "broadcast_begin_date": 1763929468,
+     "broadcast_end_date": 1763931015,
+     "begin_date": 1763930786,
+     "end_date": 1795466786,
+     "duration": 1547,
+     "si_id": "73376676-c912-11f0-ac0e-57a09c50f7ce",
+     "episode_title": "Boualem Sansal, invité exceptionnel du Journal de 20h",
+     "broadcast_channel": null
+    }
+   ]
+  }
+ ]
+}

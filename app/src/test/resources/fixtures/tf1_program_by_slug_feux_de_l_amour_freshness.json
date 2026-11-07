@@ -1,0 +1,90 @@
+{
+ "data": {
+  "programBySlug": {
+   "slug": "les-feux-de-l-amour",
+   "videos": {
+    "total": 404,
+    "items": [
+     {
+      "id": "aad510ee-e55f-4bc3-927f-ad8ec03de908",
+      "slug": "avant-premiere-les-feux-de-lamour-du-10-novembre-2026-episode-9603-23572693",
+      "emId": "2111837",
+      "type": "REPLAY",
+      "rating": "CSA_ALL",
+      "date": "2026-11-10T09:57:38Z",
+      "episode": 84,
+      "season": 38,
+      "authEnabled": true,
+      "isRecent": false,
+      "published": "2026-11-06T09:55:00Z",
+      "url": "https://www.tf1.fr/tf1/les-feux-de-l-amour/videos/avant-premiere-les-feux-de-lamour-du-10-novembre-2026-episode-9603-23572693.html",
+      "broadcastChannel": {
+       "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+       "slug": "tf1",
+       "__typename": "Channel"
+      },
+      "playingInfos": {
+       "duration": 2105,
+       "remainingDays": 3,
+       "freeRemainingDays": 0,
+       "__typename": "PlayingInfos"
+      },
+      "rights": [
+       "MAX"
+      ],
+      "__typename": "Video",
+      "decoration": {
+       "label": "Avant-première - Les feux de l'amour du 10 novembre 2026 - Episode 9603"
+      }
+     },
+     {
+      "id": "6bc3bf70-0333-40f2-acee-c12477404163",
+      "slug": "les-feux-de-lamour-episode-9601-du-6-novembre-2026-37189632",
+      "emId": "2111835",
+      "type": "REPLAY",
+      "rating": "CSA_ALL",
+      "date": "2026-11-06T09:57:36Z",
+      "episode": 82,
+      "season": 38,
+      "authEnabled": true,
+      "isRecent": false,
+      "published": "2026-11-06T09:57:36Z",
+      "url": "https://www.tf1.fr/tf1/les-feux-de-l-amour/videos/les-feux-de-lamour-episode-9601-du-6-novembre-2026-37189632.html",
+      "broadcastChannel": {
+       "id": "beaf7cc1-5527-4af9-ab9c-7876bfc88b94",
+       "slug": "tf1",
+       "__typename": "Channel"
+      },
+      "playingInfos": {
+       "duration": 2137,
+       "remainingDays": 29,
+       "freeRemainingDays": 29,
+       "__typename": "PlayingInfos"
+      },
+      "rights": [
+       "BASIC",
+       "MAX"
+      ],
+      "__typename": "Video",
+      "decoration": {
+       "label": "Les feux de l'amour - Episode 9601 du 6 novembre 2026"
+      }
+     }
+    ],
+    "__typename": "VideosConnector"
+   }
+  }
+ },
+ "extensions": {
+  "report": {
+   "stream": "web",
+   "catalogCode": "fr-fr",
+   "version": "v1.36.3",
+   "execution": {
+    "start": 1794059418211514799,
+    "end": 1794059418234725135,
+    "time": 23210483
+   }
+  }
+ }
+}
