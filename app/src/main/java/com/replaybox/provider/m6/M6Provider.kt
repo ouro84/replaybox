@@ -14,14 +14,13 @@ import com.replaybox.provider.api.CatalogueIndex
 import com.replaybox.provider.api.Provider
 import com.replaybox.provider.tf1.StreamResolutionException
 import com.replaybox.provider.tf1.Tf1Parsers
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import com.replaybox.provider.api.ProgrammeMemo
 
 /**
  * M6+ provider, one instance per M6 group Chaîne ([M6Channels.GROUP]). The listing is the
  * Chaîne's slice of the shared M6 Index ([index]); search is local only (decision Q17).
  * Saisons and Épisodes come from every `vi` page of the Programme, loaded once and kept in
- * memory.
+ * memory for a few minutes ([ProgrammeMemo]).
  *
  * Every M6 Flux is Widevine (drmtoday). Without [drmTokenProvider] (no account), [stream]
  * fails with the account-required error the player already maps to « compte requis ». With
@@ -37,8 +36,7 @@ class M6Provider(
     private val localSearch: (suspend (String) -> List<Show>)? = null,
 ) : Provider {
 
-    private val videoCache = HashMap<ShowId, List<M6Parsers.M6Video>>()
-    private val videoMutex = Mutex()
+    private val videoCache = ProgrammeMemo<ShowId, List<M6Parsers.M6Video>>()
 
     override suspend fun shows(genre: Genre?): List<Show> {
         val shows = index.shows(channel.id)
@@ -80,7 +78,7 @@ class M6Provider(
     }
 
     private suspend fun loadVideos(show: ShowId): List<M6Parsers.M6Video> {
-        videoMutex.withLock { videoCache[show]?.let { return it } }
+        videoCache.get(show)?.let { return it }
         val (serviceCode, programId) = M6Parsers.showParts(show)
         val collected = LinkedHashMap<String, M6Parsers.M6Video>()
         // `offset` is an item offset, `limit` capped at 100 (measured 2026-11-07, SPEC §Provider M6+).
@@ -97,7 +95,7 @@ class M6Provider(
             offset += M6Http.PAGE_SIZE
         }
         val videos = collected.values.toList()
-        videoMutex.withLock { videoCache[show] = videos }
+        videoCache.put(show, videos)
         return videos
     }
 

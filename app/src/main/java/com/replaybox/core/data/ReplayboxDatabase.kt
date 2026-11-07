@@ -15,8 +15,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ProgramMetaEntity::class,
         ProgressEntity::class,
         FavoriteEntity::class,
+        UpNextDismissalEntity::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = false,
 )
 abstract class ReplayboxDatabase : RoomDatabase() {
@@ -77,6 +78,22 @@ abstract class ReplayboxDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE episodes ADD COLUMN broadcastAt INTEGER")
                 db.execSQL("ALTER TABLE episodes ADD COLUMN publishedAt INTEGER")
                 db.execSQL("ALTER TABLE episodes ADD COLUMN availableUntil INTEGER")
+                db.execSQL("DELETE FROM programs")
+            }
+        }
+
+        /**
+         * v5 → v6: Épisode number (play order of a numbered Saison) and the « À suivre »
+         * dismissals. The Seasons/Épisodes freshness markers are cleared so cached Épisodes
+         * refetch with their number; the rows stay served meanwhile.
+         */
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE episodes ADD COLUMN number INTEGER")
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `up_next_dismissals` " +
+                        "(`showId` TEXT NOT NULL, `episodeId` TEXT NOT NULL, PRIMARY KEY(`showId`))",
+                )
                 db.execSQL("DELETE FROM programs")
             }
         }

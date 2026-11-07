@@ -162,6 +162,7 @@ object M6Parsers {
                     // Measured 2026-11-07: `publication_date` is rewritten a week after the
                     // broadcast and no end of availability is listed, so only this instant.
                     broadcastAt = v.broadcastAt,
+                    number = v.episode,
                 )
             }
     }

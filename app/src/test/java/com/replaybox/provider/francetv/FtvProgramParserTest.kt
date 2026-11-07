@@ -33,6 +33,8 @@ class FtvProgramParserTest {
         assertThat(first.durationSeconds).isEqualTo(5563)
         assertThat(first.broadcastDate).isEqualTo("07/09/2020")
         assertThat(first.thumbnailUrl).startsWith("https://medias.france.tv/")
+        // France TV does not list a Saison in play order: the number carries it.
+        assertThat(episodes.map { it.number }).containsExactly(7, 6, 5, 4).inOrder()
     }
 
     @Test

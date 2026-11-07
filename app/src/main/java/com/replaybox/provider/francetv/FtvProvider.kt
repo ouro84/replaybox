@@ -10,8 +10,7 @@ import com.replaybox.core.model.Show
 import com.replaybox.core.model.ShowId
 import com.replaybox.core.model.Stream
 import com.replaybox.provider.api.Provider
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import com.replaybox.provider.api.ProgrammeMemo
 import kotlinx.serialization.json.JsonObject
 
 /**
@@ -28,8 +27,7 @@ class FtvProvider(
     private val localSearch: (suspend (String) -> List<Show>)? = null,
 ) : Provider {
 
-    private val programCache = HashMap<String, JsonObject>()
-    private val programMutex = Mutex()
+    private val programCache = ProgrammeMemo<String, JsonObject>()
 
     override suspend fun shows(genre: Genre?): List<Show> {
         val shows = FtvParsers.showsFromChannel(http.channel(listingChannel))
@@ -70,9 +68,9 @@ class FtvProvider(
     }
 
     private suspend fun programDetail(path: String): JsonObject {
-        programMutex.withLock { programCache[path]?.let { return it } }
+        programCache.get(path)?.let { return it }
         val detail = http.program(path)
-        programMutex.withLock { programCache[path] = detail }
+        programCache.put(path, detail)
         return detail
     }
 }

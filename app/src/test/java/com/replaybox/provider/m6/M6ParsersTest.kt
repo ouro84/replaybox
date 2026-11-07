@@ -151,6 +151,7 @@ class M6ParsersTest {
         assertThat(part2.broadcastDate).isEqualTo("22/05/2026")
         assertThat(part2.durationSeconds).isEqualTo(4004)
         assertThat(part2.synopsis).startsWith("La capitale thaïlandaise")
+        assertThat(episodes.map { it.number }).containsExactly(12, 12).inOrder()
     }
 
     @Test

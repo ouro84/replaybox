@@ -11,8 +11,7 @@ import com.replaybox.core.model.ShowId
 import com.replaybox.core.model.Stream
 import com.replaybox.provider.api.CatalogueIndex
 import com.replaybox.provider.api.Provider
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import com.replaybox.provider.api.ProgrammeMemo
 
 /**
  * TF1+ provider, one instance per TF1 group Chaîne ([Tf1Channels.GROUP]). The listing is the
@@ -35,8 +34,7 @@ class Tf1Provider(
     private val clock: java.time.Clock = java.time.Clock.systemUTC(),
 ) : Provider {
 
-    private val replayCache = HashMap<ShowId, List<Tf1Parsers.ReplayVideo>>()
-    private val replayMutex = Mutex()
+    private val replayCache = ProgrammeMemo<ShowId, List<Tf1Parsers.ReplayVideo>>()
 
     override suspend fun shows(genre: Genre?): List<Show> {
         val shows = index.shows(channel.id)
@@ -114,9 +112,7 @@ class Tf1Provider(
     }
 
     private suspend fun loadReplayVideos(show: ShowId): List<Tf1Parsers.ReplayVideo> {
-        replayMutex.withLock {
-            replayCache[show]?.let { return it }
-        }
+        replayCache.get(show)?.let { return it }
         val collected = LinkedHashMap<String, Tf1Parsers.ReplayVideo>()
         // TF1 reads `offset` as a page index (items offset*limit until (offset+1)*limit),
         // not as an item index — measured 2026-11-06, see SPEC §TF1.
@@ -136,9 +132,7 @@ class Tf1Provider(
             pageIndex++
         }
         val videos = collected.values.toList()
-        replayMutex.withLock {
-            replayCache[show] = videos
-        }
+        replayCache.put(show, videos)
         return videos
     }
 

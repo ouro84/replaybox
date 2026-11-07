@@ -97,6 +97,12 @@ interface RoomRawDao {
 
     @Query("SELECT showId FROM favorites ORDER BY addedAt DESC")
     suspend fun favoriteIds(): List<String>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDismissal(dismissal: UpNextDismissalEntity)
+
+    @Query("SELECT * FROM up_next_dismissals")
+    suspend fun dismissals(): List<UpNextDismissalEntity>
 }
 
 /** Room implementation of the [CatalogDao] seam. */
@@ -206,4 +212,10 @@ class RoomCatalogDao(
     override suspend fun removeFavorite(showId: String) = raw.deleteFavorite(showId)
 
     override suspend fun favoriteIds(): List<String> = raw.favoriteIds()
+
+    override suspend fun putDismissal(showId: String, episodeId: String) =
+        raw.insertDismissal(UpNextDismissalEntity(showId, episodeId))
+
+    override suspend fun dismissals(): Map<String, String> =
+        raw.dismissals().associate { it.showId to it.episodeId }
 }

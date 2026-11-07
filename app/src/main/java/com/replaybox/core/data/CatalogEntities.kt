@@ -67,6 +67,8 @@ data class EpisodeEntity(
     val broadcastAt: Long? = null,
     val publishedAt: Long? = null,
     val availableUntil: Long? = null,
+    /** Episode.number (schema v6). */
+    val number: Int? = null,
 )
 
 fun Episode.toEntity(): EpisodeEntity = EpisodeEntity(
@@ -80,6 +82,7 @@ fun Episode.toEntity(): EpisodeEntity = EpisodeEntity(
     broadcastAt = broadcastAt?.toEpochMilli(),
     publishedAt = publishedAt?.toEpochMilli(),
     availableUntil = availableUntil?.toEpochMilli(),
+    number = number,
 )
 
 fun EpisodeEntity.toEpisode(): Episode = Episode(
@@ -93,6 +96,7 @@ fun EpisodeEntity.toEpisode(): Episode = Episode(
     broadcastAt = broadcastAt?.let(Instant::ofEpochMilli),
     publishedAt = publishedAt?.let(Instant::ofEpochMilli),
     availableUntil = availableUntil?.let(Instant::ofEpochMilli),
+    number = number,
 )
 
 /**
@@ -120,6 +124,16 @@ data class ProgressEntity(
     val showTitle: String? = null,
     val episodeTitle: String? = null,
     val thumbnailUrl: String? = null,
+)
+
+/**
+ * « Retirer d'À suivre » (schema v6): the Épisode the viewer took off the Home rail for this
+ * Programme. The Programme comes back once its candidate Épisode is another one (UpNextPolicy).
+ */
+@Entity(tableName = "up_next_dismissals")
+data class UpNextDismissalEntity(
+    @PrimaryKey val showId: String,
+    val episodeId: String,
 )
 
 @Entity(tableName = "favorites")

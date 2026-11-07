@@ -83,6 +83,8 @@ class Tf1ReplayParserTest {
         assertThat(episodes.first().id.value).isEqualTo("hpi::hpi-s05-e08-supernova-15207545")
         assertThat(episodes.first().title).isEqualTo("HPI - S05 E08 - Supernova")
         assertThat(episodes.first().durationSeconds).isEqualTo(4149)
+        // TF1 lists newest first: the Épisode number gives the play order (NextEpisodePolicy).
+        assertThat(episodes.map { it.number }).containsExactly(8, 7, 6, 5, 4, 3, 2, 1).inOrder()
     }
 
     @Test
