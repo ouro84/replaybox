@@ -25,6 +25,8 @@ data class ShowEntity(
      */
     @ColumnInfo(defaultValue = "0") val firstSeenAt: Long = 0,
     @ColumnInfo(defaultValue = "0") val firstSeenRank: Int = 0,
+    /** Show.recentEpisodeCount (schema v4), the search tie-breaker. */
+    @ColumnInfo(defaultValue = "0") val recentEpisodeCount: Int = 0,
 )
 
 @Entity(tableName = "genre_map", primaryKeys = ["showId", "genre"])

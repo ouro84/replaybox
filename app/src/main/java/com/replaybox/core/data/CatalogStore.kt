@@ -17,6 +17,8 @@ import com.replaybox.provider.api.CachedProvider
 import com.replaybox.provider.api.Provider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * Cache-first catalog (ADR 0002): listings and program pages are served from
@@ -42,15 +44,16 @@ class CatalogStore(
             try {
                 val fetched = provider.shows(null)
                 dao.putListing(channel, fetched, clock())
+                forget(channel)
                 tick()
                 return filter(fetched, genre)
             } catch (error: Exception) {
-                val cached = dao.shows(channel)
+                val cached = listing(channel)
                 if (cached.isEmpty()) throw error
                 return filter(cached, genre)
             }
         }
-        return filter(dao.shows(channel), genre)
+        return filter(listing(channel), genre)
     }
 
     suspend fun seasons(provider: Provider, show: ShowId): List<Season> {
@@ -99,6 +102,7 @@ class CatalogStore(
                 val source = (provider as? CachedProvider)?.origin ?: provider
                 val fetched = source.shows(null)
                 dao.putListing(provider.channel.id, fetched, clock())
+                forget(provider.channel.id)
                 tick()
             } catch (error: kotlinx.coroutines.CancellationException) {
                 throw error
@@ -124,17 +128,40 @@ class CatalogStore(
         if (wanted.isEmpty()) return emptyList()
         val matches = LinkedHashMap<String, Show>()
         for (channelId in channelIds) {
-            for (show in dao.shows(channelId)) {
+            for (show in listing(channelId)) {
                 if (Titles.normalize(show.title).contains(wanted)) {
                     matches.putIfAbsent(show.id.value, show)
                 }
             }
         }
-        return matches.values.toList()
+        return SearchRanking.rank(query, matches.values.toList())
     }
 
     private fun tick() {
         _updates.value = _updates.value + 1
+    }
+
+    /**
+     * Per-Chaîne memo of the cached listing: the TF1 Index holds ~2900
+     * Programmes and every Home / search read would otherwise reload them
+     * from Room. An entry is valid only for the listing date it was read
+     * at, and every write through this store drops it.
+     */
+    private val listingMemo = HashMap<String, Pair<Long, List<Show>>>()
+    private val listingMutex = Mutex()
+
+    private suspend fun listing(channelId: String): List<Show> {
+        val at = dao.listingAt(channelId)
+        listingMutex.withLock {
+            listingMemo[channelId]?.takeIf { at != null && it.first == at }?.let { return it.second }
+        }
+        val shows = dao.shows(channelId)
+        if (at != null) listingMutex.withLock { listingMemo[channelId] = at to shows }
+        return shows
+    }
+
+    private suspend fun forget(channelId: String) {
+        listingMutex.withLock { listingMemo.remove(channelId) }
     }
 
     // ---- Progress (device-local, never synchronized — glossary) ----
@@ -176,7 +203,7 @@ class CatalogStore(
     suspend fun continueWatching(channelIds: List<String>, limit: Int = RESUME_LIMIT): List<ResumeItem> {
         val listed = HashMap<String, ChannelShow>()
         for (channelId in channelIds) {
-            for (show in dao.shows(channelId)) listed.putIfAbsent(show.id.value, ChannelShow(show, channelId))
+            for (show in listing(channelId)) listed.putIfAbsent(show.id.value, ChannelShow(show, channelId))
         }
         val seenShows = HashSet<String>()
         val items = ArrayList<ResumeItem>()
@@ -216,10 +243,14 @@ class CatalogStore(
      * Home Genre rails, cache only: every Genre in glossary order with its
      * Programmes across [channelIds], interleaved Chaîne by Chaîne (the
      * listings carry no broadcast date to sort on) and de-duplicated on the
-     * normalized title. Empty Genres are dropped.
+     * normalized title. Empty Genres are dropped; each rail is capped at
+     * [perRail] cards (the TF1 Index alone lists ~2900 Programmes).
      */
-    suspend fun genreRails(channelIds: List<String>): List<Pair<Genre, List<ChannelShow>>> {
-        val listings = channelIds.map { channelId -> dao.shows(channelId).map { ChannelShow(it, channelId) } }
+    suspend fun genreRails(
+        channelIds: List<String>,
+        perRail: Int = GENRE_RAIL_LIMIT,
+    ): List<Pair<Genre, List<ChannelShow>>> {
+        val listings = channelIds.map { channelId -> listing(channelId).map { ChannelShow(it, channelId) } }
         return Genre.values().mapNotNull { genre ->
             val perChannel = listings.map { listing -> listing.filter { genre in it.show.genres } }
             val merged = ArrayList<ChannelShow>()
@@ -231,7 +262,7 @@ class CatalogStore(
                     if (seen.add(Titles.normalize(candidate.show.title))) merged += candidate
                 }
             }
-            if (merged.isEmpty()) null else genre to merged
+            if (merged.isEmpty()) null else genre to merged.take(perRail)
         }
     }
 
@@ -241,7 +272,7 @@ class CatalogStore(
         if (ids.isEmpty()) return emptyList()
         val byId = HashMap<String, ChannelShow>()
         for (channelId in channelIds) {
-            for (show in dao.shows(channelId)) byId.putIfAbsent(show.id.value, ChannelShow(show, channelId))
+            for (show in listing(channelId)) byId.putIfAbsent(show.id.value, ChannelShow(show, channelId))
         }
         return ids.mapNotNull { byId[it] }
     }
@@ -271,7 +302,7 @@ class CatalogStore(
         val found = LinkedHashMap<ShowId, String>()
         for (channelId in channelIds) {
             if (found.size == wanted.size) break
-            for (show in dao.shows(channelId)) {
+            for (show in listing(channelId)) {
                 if (show.id in wanted) found.putIfAbsent(show.id, channelId)
             }
         }
@@ -281,7 +312,7 @@ class CatalogStore(
     /** The Programme as cached in the listings of [channelIds], with its Chaîne; null when unlisted. */
     suspend fun listedShow(showId: ShowId, channelIds: List<String>): ChannelShow? {
         for (channelId in channelIds) {
-            dao.shows(channelId).firstOrNull { it.id == showId }?.let { return ChannelShow(it, channelId) }
+            listing(channelId).firstOrNull { it.id == showId }?.let { return ChannelShow(it, channelId) }
         }
         return null
     }
@@ -335,7 +366,7 @@ class CatalogStore(
         val wanted = ids.toSet()
         val byId = HashMap<String, Show>()
         for (channelId in channelIds) {
-            for (show in dao.shows(channelId)) {
+            for (show in listing(channelId)) {
                 if (show.id.value in wanted) byId[show.id.value] = show
             }
         }
@@ -361,6 +392,9 @@ class CatalogStore(
 
         /** Cap of the Home "Reprendre" rail. */
         const val RESUME_LIMIT = 20
+
+        /** Cap of each Home Genre rail. */
+        const val GENRE_RAIL_LIMIT = 40
 
         /** Progress rows scanned to fill the rail (several per Programme). */
         private const val RESUME_SCAN = 200

@@ -113,6 +113,7 @@ class RoomCatalogDao(
                     show.id.value, channelId, show.title, show.posterUrl, show.synopsis, show.backdropUrl,
                     firstSeenAt = known?.firstSeenAt ?: at,
                     firstSeenRank = known?.firstSeenRank ?: index,
+                    recentEpisodeCount = show.recentEpisodeCount,
                 )
             },
         )
@@ -137,6 +138,7 @@ class RoomCatalogDao(
                 posterUrl = it.posterUrl,
                 synopsis = it.synopsis,
                 backdropUrl = it.backdropUrl,
+                recentEpisodeCount = it.recentEpisodeCount,
                 genres = genres[it.id].orEmpty().mapNotNull { g -> runCatching { Genre.valueOf(g) }.getOrNull() }.toSet(),
             )
         }

@@ -97,4 +97,12 @@ class SearchFusionTest {
             )
         }
     }
+
+    @Test
+    fun fusedResultsAreRanked() {
+        val a = listOf(show("experts", "Les Experts"))
+        val b = listOf(show("expedition", "Expédition X"))
+        assertThat(SearchFusion.fuse("exp", listOf(a, b)).map { it.id.value })
+            .containsExactly("expedition", "experts").inOrder()
+    }
 }
