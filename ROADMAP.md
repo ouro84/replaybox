@@ -150,6 +150,20 @@ Recherche guidée :
 **Critère** : une soirée complète sur la Bbox (accueil → reprise → Épisode suivant → recherche)
 sans focus perdu, et sous-titres lus confortablement depuis le canapé.
 
+## Dettes M4
+
+Relevées pendant la livraison de M4 (2026-11-07), à traiter avant M5. Mêmes règles : une case se coche
+quand le correctif est vérifié sur la box.
+
+- [ ] Démarrage à froid : environ 10 s de skeleton avant l'Accueil, 138 frames sautées sur le thread
+  principal. Viser l'Accueil affiché en moins de 3 s depuis le cache.
+- [ ] Avant-premières TF1 (offre payante) listées parmi les Épisodes : les écarter tant que le compte
+  n'y donne pas accès.
+- [ ] Faux négatifs « Policier & Thriller » TF1 après la règle M4 (Sauveur Giordano, Intraçables, Le
+  Rebelle…) : relire les cas et compléter la liste d'inclusion.
+- [ ] Tri de « Tout voir » : la date de première apparition sur la box rend la grille alphabétique au
+  premier jour ; trouver un signal de récence mesuré chez les Providers.
+
 ## V2 (décisions prises, exécution repoussée)
 
 - Live TV (réévaluer la promesse zéro pub : le live des chaînes est SSAI)
