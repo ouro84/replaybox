@@ -18,6 +18,7 @@ core.data       Room: cache catalogue (TTL 12 h) + Progress + Favorites
 provider.api    interface Provider (la seam de test unique)
 provider.tf1    implémentation TF1+
 provider.francetv  implémentation France TV
+provider.m6     implémentation M6+ (listée seulement avec un compte M6+)
 ```
 
 ```kotlin
@@ -174,8 +175,9 @@ Middleware 6play, plateforme **`m6group_web`** partout (décision Q18) : host
 `https://pc.middleware.6play.fr/6play/v2/platforms/m6group_web`. Chaque appel porte
 `x-customer-name: m6web` + l'UA navigateur de `Tf1Http.BROWSER_UA`. Tout ce qui suit est mesuré
 en **anonyme** le 2026-11-07 (200), sans compte. Code : `provider.m6` (`M6Http`, `M6Parsers`,
-`M6Genres`, `M6Channels`, `M6Provider`, `m6CatalogueIndex`) — **pas encore branché** dans
-`Providers` ni l'UI : le spike DRM (compte d'Arnaud) décide si M6+ sort en M3 (ROADMAP §M3, Q22).
+`M6Genres`, `M6Channels`, `M6Provider`, `m6CatalogueIndex`, `M6Auth`, `M6AuthApi`). Branché dans
+`Providers` **seulement quand un compte M6+ est enregistré** (voir Licence) ; le spike DRM (compte
+d'Arnaud) décide si M6+ sort en M3 (ROADMAP §M3, Q22).
 
 Listing — `GET {host}/services/6play/programs?limit=100&offset=N&csa=6&with=rights` → tableau JSON
 de Programmes. `limit` plafonné à 100 ; **`offset` est un index d'item** (pas de page) ; le total est
@@ -233,21 +235,57 @@ fraîche). Fixtures : `m6_video_clip.json` (tokens remplacés par `trimmed`), `m
 (la même sans DASH : erreur claire, pas un plantage).
 
 Licence — **SOURCÉE, pas encore mesurée** (catchup-tv-and-more
-`resources/lib/channels/fr/6play.py` @ fa49e5a0c4bfb5f501ac8d5486c5f6465cc16745) ; c'est l'étape 4b
-(compte) :
-1. `POST https://login-gigya.m6.fr/accounts.login` (form Gigya : loginID, password, apiKey du
-   login web, format jsonp) → `UID`, `UIDSignature`, `signatureTimestamp`.
+`resources/lib/channels/fr/6play.py` @ fa49e5a0c4bfb5f501ac8d5486c5f6465cc16745, `get_login_token`
+et `get_video_url`) ; implémentée dans `M6Auth` / `M6AuthApi`, à confirmer par le spike sur la box :
+1. `POST https://login-gigya.m6.fr/accounts.login`, form `loginID`, `password`, `apiKey` (clé Gigya
+   publique du login web), `format=jsonp`, `callback=jsonp_3bbusffr388pem4`, en-tête
+   `referer: https://www.6play.fr/connexion` → réponse JSONP dont on retire l'enveloppe : `UID`,
+   `UIDSignature`, `signatureTimestamp` au premier niveau (repli sur `userInfo`). La source ne fait
+   **ni webSdkBootstrap ni cookies** (contrairement à TF1+) : si le spike voit `errorCode=400006`,
+   c'est l'étape à ajouter. `errorCode` 403042 → « E-mail ou mot de passe incorrect », 403120 →
+   compte bloqué, autre → refus avec son code.
 2. `GET https://front-auth.6cloud.fr/v2/platforms/m6group_web/getJwt` avec `x-auth-gigya-uid`,
    `x-auth-gigya-signature`, `x-auth-gigya-signature-timestamp`, `x-auth-device-id`,
-   `x-customer-name: m6web` → `{token}` (JWT).
-3. `GET https://drm.6cloud.fr/v1/customers/m6web/platforms/m6group_web/services/m6replay/users/{UID}/videos/{clipId}/upfront-token`
-   avec `Authorization: Bearer <JWT>` → `{token}`.
-4. Licence Widevine : `POST https://lic.drmtoday.com/license-proxy-widevine/cenc/` avec
-   `x-dt-auth-token: <token>` ; la réponse est un JSON dont le champ `license` porte la licence en
-   base64 (à déballer avant de la rendre à ExoPlayer).
-Sans compte, `M6Provider.stream()` lève l'erreur « compte requis » que le player connaît déjà ; avec
-un fournisseur de token, il rend le Flux DASH + l'URL drmtoday + l'en-tête `x-dt-auth-token` (le
-déballage de la réponse reste à faire en 4b).
+   `x-customer-name: m6web`, `x-client-release` → `{token}` (JWT), gardé en mémoire jusqu'à son
+   `exp` (re-connexion complète une minute avant : la signature Gigya est horodatée). Le device id
+   est un UUID aléatoire tiré une fois par installation (prefs `replaybox_m6_device`, pas un
+   secret). Erreurs enregistrées en anonyme le 2026-11-07 : sans device id → 400
+   « Missing homeid or deviceid » (`m6_auth_getjwt_no_device.json`), signature invalide → 498
+   (`m6_auth_getjwt_rejected.json`).
+3. `GET https://drm.6cloud.fr/v1/customers/m6web/platforms/m6group_web/services/{service}/users/{UID}/videos/{clipId}/upfront-token`
+   avec `Authorization: Bearer <JWT>`, `x-customer-name`, `x-client-release` → `{token}`. `service`
+   = le vrai code de la Chaîne (`m6replay`, `w9replay`, `6terreplay`, `gulli`, `6play`), comme le
+   bundle web (`services/${service}/users/${UID}`) ; **la source fige `m6replay`** : le spike dira
+   lequel le serveur veut. 401 ou 498 → JWT régénéré une fois, puis échec. JWT invalide enregistré :
+   `{"code":"49804",…}` (`m6_auth_upfront_invalid_jwt.json`).
+   `x-client-release` = release de l'app web m6.fr mesurée le 2026-11-07 (`6.54.2`, constante
+   unique `M6AuthApi.CLIENT_RELEASE` ; la source envoie 5.103.3).
+4. Licence Widevine : `POST https://lic.drmtoday.com/license-proxy-widevine/cenc/`, corps = challenge
+   brut, en-tête `x-dt-auth-token: <upfront token>`. La réponse est un JSON `{"license": "<base64>"}`
+   (clé inputstream de la source `…|R{SSM}|JBlicense`). `Stream.licenseResponseField = "license"`
+   (null = corps brut, cas TF1) : le player passe alors par son propre `DefaultDrmSessionManager`
+   dont le callback (`UnwrappingDrmCallback` sur `HttpMediaDrmCallback`, URL de licence forcée)
+   décode ce champ avant de rendre la licence au CDM. Le manifest 302 vers un autre host :
+   `DefaultHttpDataSource` suit les redirections inter-hosts, inter-protocoles autorisées en plus,
+   UA navigateur.
+
+Les identifiants ne sont enregistrés (`CredentialStore(context, "m6")`) qu'après le succès des
+étapes 1–2 : un mauvais mot de passe ne fait pas apparaître les Chaînes M6. Les logs (`M6Auth`,
+`ReplayboxDrm`) ne portent que l'étape et le statut HTTP, jamais e-mail, mot de passe, UID,
+signature, device id ou token. Les fixtures de succès `m6_auth_*_shape.json` et
+`m6_drmtoday_license_shape.json` sont des **formes tirées de la source, pas des réponses
+enregistrées** : le PR du spike les remplace.
+
+Règle d'affichage : Paramètres liste toujours M6+ (« Non connecté » sans compte) ; les 5 Chaînes M6
+n'entrent dans `Providers.all` que tant que `M6Auth.hasCredentials()`. `all` est relu à chaque
+accès : connexion ou déconnexion valent sans redémarrage ; au retour sur l'Accueil, seules les
+Chaînes pas encore rafraîchies par ce process sont rafraîchies. Sans compte, `M6Provider.stream()`
+lève l'erreur « compte requis » (le player affiche alors le message M6+). Bannière de cache
+périmé : source « M6+ ».
+
+Images : fichiers bruts de 120 à 400 Ko. Coil (`AsyncImage` sans taille explicite) décode à la
+taille de la mise en page (contraintes) avec sous-échantillonnage : la mémoire suit la taille de la
+carte ou du fond, pas celle du fichier.
 
 ## Cache et mode dégradé (ADR 0002)
 
@@ -403,7 +441,9 @@ Health-check (`.github/workflows/healthcheck.yml`, seul workflow Actions) :
 
 Paramètres liste les Provider (`ProviderGroups.all`), une page chacun avec sa Santé puis son compte
 quand il en faut un. Un groupe = un diffuseur : `id` = nom de la sonde du health-check (`tf1`,
-`francetv` ; `m6` en V2), ses Chaînes, son `ProviderAccount` optionnel (TF1+ : `Tf1Auth`).
+`francetv`, `m6`), ses Chaînes, son `ProviderAccount` optionnel (TF1+ : `Tf1Auth`, M6+ : `M6Auth`).
+  Les échecs de compte (`AccountException`, `AccountFailure`) s'affichent en français dans le
+  formulaire ; le message anglais de l'exception reste aux logs et à la Santé.
 - **Comptes** : `CredentialStore(context, providerId)`, EncryptedSharedPreferences avec clé
   maîtresse Keystore, fichier `replaybox_<providerId>_credentials` (clés `email`, `password`). TF1+
   garde ainsi `replaybox_tf1_credentials` : les connexions existantes survivent. Jamais en log.

@@ -102,4 +102,11 @@
     <string name="account_signed_in">Connecté : %1$s</string>
     <string name="account_signed_out">Non connecté</string>
     <string name="account_none">Sans compte</string>
+    <string name="account_error_invalid">E-mail ou mot de passe incorrect.</string>
+    <string name="account_error_locked">Compte %1$s bloqué un moment après trop d’essais. Réessaie plus tard.</string>
+    <string name="account_error_rejected">%1$s a refusé la connexion (code %2$s).</string>
+    <string name="account_error_not_signed_in">Aucun compte %1$s enregistré sur le boîtier.</string>
+    <string name="account_error_service">%1$s ne répond pas comme prévu. Réessaie plus tard.</string>
+    <string name="account_error_network">Connexion impossible : vérifie le réseau du boîtier.</string>
+    <string name="player_error_m6_account">M6+ exige un compte connecté. Ouvre « Paramètres » puis « M6+ » pour te connecter.</string>
 </resources>

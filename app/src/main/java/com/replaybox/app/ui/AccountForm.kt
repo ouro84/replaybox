@@ -1,5 +1,6 @@
 package com.replaybox.app.ui
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -39,8 +41,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.replaybox.R
+import com.replaybox.core.account.AccountException
+import com.replaybox.core.account.AccountFailure
 import com.replaybox.core.account.ProviderAccount
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 /**
  * Sign-in form of a Provider account, inside its Paramètres page. The
@@ -56,6 +61,7 @@ fun AccountForm(account: ProviderAccount, providerName: String, onDone: () -> Un
     var status by remember { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val emailFocus = remember { FocusRequester() }
     val passwordFocus = remember { FocusRequester() }
     val submitFocus = remember { FocusRequester() }
@@ -115,7 +121,7 @@ fun AccountForm(account: ProviderAccount, providerName: String, onDone: () -> Un
                         } catch (error: kotlinx.coroutines.CancellationException) {
                             throw error
                         } catch (error: Exception) {
-                            status = error.message ?: error::class.java.simpleName
+                            status = accountErrorText(context, providerName, error)
                         }
                         busy = false
                     }
@@ -134,6 +140,22 @@ fun AccountForm(account: ProviderAccount, providerName: String, onDone: () -> Un
             }
         }
     }
+}
+
+/**
+ * French text of an account failure (AGENTS.md: UI strings in French). The
+ * exception message stays English and out of the UI: it is for logs and Santé.
+ */
+internal fun accountErrorText(context: Context, providerName: String, error: Throwable): String = when (error) {
+    is AccountException -> when (error.failure) {
+        AccountFailure.INVALID_CREDENTIALS -> context.getString(R.string.account_error_invalid)
+        AccountFailure.ACCOUNT_LOCKED -> context.getString(R.string.account_error_locked, providerName)
+        AccountFailure.REJECTED -> context.getString(R.string.account_error_rejected, providerName, error.code ?: "?")
+        AccountFailure.NOT_SIGNED_IN -> context.getString(R.string.account_error_not_signed_in, providerName)
+        AccountFailure.SERVICE -> context.getString(R.string.account_error_service, providerName)
+    }
+    is IOException -> context.getString(R.string.account_error_network)
+    else -> context.getString(R.string.account_error_service, providerName)
 }
 
 /**

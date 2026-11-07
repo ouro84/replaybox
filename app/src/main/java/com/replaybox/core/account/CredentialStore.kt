@@ -12,7 +12,7 @@ import androidx.security.crypto.MasterKey
  * named by [fileName]; TF1+ keeps the file it always used, so existing
  * sign-ins survive the move.
  */
-class CredentialStore(context: Context, providerId: String) {
+class CredentialStore(context: Context, providerId: String) : StoredCredentials {
 
     private val prefs: SharedPreferences by lazy {
         val masterKey = MasterKey.Builder(context)
@@ -27,20 +27,20 @@ class CredentialStore(context: Context, providerId: String) {
         )
     }
 
-    fun read(): Pair<String, String>? {
+    override fun read(): Pair<String, String>? {
         val email = prefs.getString(KEY_EMAIL, null) ?: return null
         val password = prefs.getString(KEY_PASSWORD, null) ?: return null
         return email to password
     }
 
-    fun save(email: String, password: String) {
+    override fun save(email: String, password: String) {
         prefs.edit()
             .putString(KEY_EMAIL, email)
             .putString(KEY_PASSWORD, password)
             .apply()
     }
 
-    fun clear() {
+    override fun clear() {
         prefs.edit().clear().apply()
     }
 

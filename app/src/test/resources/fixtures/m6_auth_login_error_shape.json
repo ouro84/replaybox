@@ -1,0 +1,8 @@
+{
+  "_note": "SHAPE of a refused Gigya accounts.login (errorCode 403042, as measured on the TF1+ Gigya in tf1_login_invalid_credentials.json), NOT recorded on login-gigya.m6.fr.",
+  "callId": "shape",
+  "errorCode": 403042,
+  "errorDetails": "invalid loginID or password",
+  "errorMessage": "Invalid LoginID",
+  "statusCode": 403
+}

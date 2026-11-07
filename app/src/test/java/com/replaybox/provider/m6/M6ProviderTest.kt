@@ -114,6 +114,7 @@ class M6ProviderTest {
         assertThat(stream.manifestUrl).contains("_web_dash_upTo1080p_1080p_")
         assertThat(stream.licenseUrl).isEqualTo("https://lic.drmtoday.com/license-proxy-widevine/cenc/")
         assertThat(stream.licenseHeaders).containsExactly("x-dt-auth-token", "token-clip_13179913")
+        assertThat(stream.licenseResponseField).isEqualTo("license")
         assertThat(asked).containsExactly("m6replay" to "clip_13179913")
     }
 

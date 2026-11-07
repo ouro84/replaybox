@@ -1,5 +1,6 @@
 package com.replaybox.provider.tf1
 
+import com.replaybox.core.account.AccountFailure
 import com.replaybox.core.model.Episode
 import com.replaybox.core.model.Genre
 import com.replaybox.core.model.EpisodeId
@@ -286,8 +287,13 @@ object Tf1Parsers {
     data class GigyaIdentity(val uid: String, val signature: String, val timestamp: Long)
 
     fun gigyaIdentity(login: JsonObject): GigyaIdentity {
-        if (Tf1Json.int(login, "errorCode") != 0) {
-            throw Tf1AuthException("TF1 sign-in rejected: " + (Tf1Json.str(login, "errorMessage") ?: "invalid credentials"))
+        val errorCode = Tf1Json.int(login, "errorCode")
+        if (errorCode != 0) {
+            throw Tf1AuthException(
+                "TF1 sign-in rejected: " + (Tf1Json.str(login, "errorMessage") ?: "invalid credentials"),
+                gigyaFailure(errorCode),
+                errorCode?.toString(),
+            )
         }
         val user = Tf1Json.obj(login, "userInfo") ?: login
         val uid = Tf1Json.str(user, "UID") ?: throw Tf1AuthException("Missing TF1 user id")
@@ -295,6 +301,15 @@ object Tf1Parsers {
         val timestamp = (Tf1Json.str(user, "signatureTimestamp") ?: "").toDoubleOrNull()?.toLong()
             ?: throw Tf1AuthException("Missing TF1 signature timestamp")
         return GigyaIdentity(uid, signature, timestamp)
+    }
+
+    /** Gigya `errorCode` of a refused accounts.login, shared by the TF1+ and M6+ sign-ins. */
+    fun gigyaFailure(errorCode: Int?): AccountFailure = when (errorCode) {
+        // 403042 "invalid loginID or password" (measured, tf1_login_invalid_credentials.json).
+        403042 -> AccountFailure.INVALID_CREDENTIALS
+        // 403120 "Account temporarily locked out" (Gigya error reference).
+        403120 -> AccountFailure.ACCOUNT_LOCKED
+        else -> AccountFailure.REJECTED
     }
 
     fun streamFrom(delivery: Delivery): Stream = when (delivery) {

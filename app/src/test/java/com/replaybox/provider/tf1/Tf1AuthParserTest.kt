@@ -53,7 +53,10 @@ class Tf1AuthParserTest {
             put("errorCode", 403042)
             put("errorMessage", "invalid login identifier or password")
         }
-        assertThrows(Tf1AuthException::class.java) { Tf1Parsers.gigyaIdentity(login) }
+        val error = assertThrows(Tf1AuthException::class.java) { Tf1Parsers.gigyaIdentity(login) }
+        // AccountForm shows « E-mail ou mot de passe incorrect. » for this failure.
+        assertThat(error.failure).isEqualTo(com.replaybox.core.account.AccountFailure.INVALID_CREDENTIALS)
+        assertThat(error.code).isEqualTo("403042")
     }
 
     @Test
