@@ -25,7 +25,8 @@ sealed interface Screen {
         /** Displayed list of a numbered Saison, for Épisode suivant (empty otherwise). */
         val queue: List<Episode> = emptyList(),
     ) : Screen
-    object Login : Screen
+    object Settings : Screen
+    data class ProviderDetail(val groupId: String) : Screen
     object Search : Screen
 }
 
@@ -40,6 +41,8 @@ class MainActivity : ComponentActivity() {
             val homeState = remember { HomeUiState() }
             // One state per Programme: Back from the player lands on the Épisode just watched.
             val showStates = remember { HashMap<String, ShowUiState>() }
+            // Back from a Provider page lands on its row.
+            val settingsState = remember { SettingsUiState() }
             BackHandler(enabled = backStack.size > 1) { backStack.removeAt(backStack.lastIndex) }
             ReplayboxThemeSurface {
                 when (val current = backStack.last()) {
@@ -53,7 +56,7 @@ class MainActivity : ComponentActivity() {
                             when (destination) {
                                 RailDestination.HOME -> Unit
                                 RailDestination.SEARCH -> backStack.add(Screen.Search)
-                                RailDestination.SETTINGS -> backStack.add(Screen.Login)
+                                RailDestination.SETTINGS -> backStack.add(Screen.Settings)
                             }
                         },
                     )
@@ -86,7 +89,11 @@ class MainActivity : ComponentActivity() {
                             )
                         },
                     ) }
-                    Screen.Login -> LoginScreen(onDone = { backStack.removeAt(backStack.lastIndex) })
+                    Screen.Settings -> SettingsScreen(
+                        state = settingsState,
+                        onOpenProvider = { groupId -> backStack.add(Screen.ProviderDetail(groupId)) },
+                    )
+                    is Screen.ProviderDetail -> key(current.groupId) { ProviderScreen(groupId = current.groupId) }
                     Screen.Search -> SearchScreen(
                         onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
                     )
