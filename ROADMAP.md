@@ -40,7 +40,7 @@ Provider M6+ (sorti de V2) et Index local du catalogue, partagé par TF1 et M6+.
 du 2026-11-07. L'Index suit l'ADR 0002 : TTL 12 h, ancien Index servi si le refresh échoue. La
 nouvelle UI d'exploration (grille « Tout voir », filtres) reste en M4 et s'appuiera sur l'Index.
 
-- [ ] **Spike DRM M6+** sur la box, avec le compte d'Arnaud, plateforme `m6group_web` : un Épisode M6
+- [x] **Spike DRM M6+** sur la box, avec le compte d'Arnaud, plateforme `m6group_web` : un Épisode M6
   lu de bout en bout (Gigya → JWT → upfront-token → licence drmtoday) et niveau Widevine confirmé.
   Lecture plafonnée à 720p ou moins : on continue. Aucune licence ou connexion bloquée : M6+ repart
   en V2 (mesures consignées au SPEC) et M3 se réduit à l'Index TF1 et aux Paramètres par Provider.
@@ -56,7 +56,7 @@ nouvelle UI d'exploration (grille « Tout voir », filtres) reste en M4 et s'app
   (`healthcheck.json` sur la branche `status`, lu via `raw.githubusercontent.com`, « inconnue »
   au-delà de 48 h) + état observé sur la box ; le badge prend la pire des deux. Badge dans les
   Paramètres uniquement.
-- [ ] **Provider M6+ complet** : M6, W9, 6ter, Gulli et originaux M6+ (Paris Première, Téva,
+- [x] **Provider M6+ complet** : M6, W9, 6ter, Gulli et originaux M6+ (Paris Première, Téva,
   M6+ Max et podcasts exclus), branché sur l'Index, recherche locale uniquement, intégrales (`vi`)
   seulement, lecture Widevine drmtoday, sonde anonyme dans le health-check nightly.
 
