@@ -243,7 +243,8 @@ Health-check (`.github/workflows/healthcheck.yml`, seul workflow Actions) :
   une entrée), compilé et lancé **uniquement** avec `./gradlew testDebugUnitTest -PhealthCheck` ;
   sans ce flag la suite unitaire les exclut explicitement (zéro réseau en test). Chaque sonde
   appelle les vrais `Provider` étape par étape — étapes nommées comme les méthodes `Provider` —
-  et écrit `app/build/healthcheck/<provider>.json` {provider, label, ok, step, error, detail}.
+  et écrit `app/build/healthcheck/<provider>.json` {provider, label, ok, step, error, detail,
+  checkedAt}.
 - **TF1+** : anonyme sur « Le 20h » — `programSlug` **`jt-20h`** (mesuré le 06/11 via
   searchPrograms `e78b188` ; `le-20h` et `journal-20h` n'existent pas). Étapes `shows` → `seasons`
   → `episodes` (dernier replay, choisi dynamiquement) → `stream` → `manifest` (GET 200 + `<MPD`).
@@ -259,8 +260,33 @@ Health-check (`.github/workflows/healthcheck.yml`, seul workflow Actions) :
   avec les labels `ci` + `alerte` (créés au besoin). Au premier run entièrement OK, l'issue reçoit
   un commentaire « rétabli » et se ferme. Pas de résultat du tout (build cassé) → KO à l'étape
   `build`.
-- GitHub désactive les workflows `schedule` après 60 jours sans activité sur le repo : le
-  réactiver depuis l'onglet Actions si besoin.
+- **Statut public** (décision du 07/11, M3 Q20) : à chaque run (cron et `workflow_dispatch`), même
+  KO ou build cassé (`if: always()`), le workflow publie `healthcheck.json` sur la branche orpheline
+  **`status`**, force-pushée en un seul commit (auteur `github-actions[bot]`) :
+  `https://raw.githubusercontent.com/ouro84/replaybox/status/healthcheck.json`. Produit par
+  `.github/scripts/healthcheck-status.js` (Node, testé par
+  `node --test .github/scripts/healthcheck-status.test.js`) à partir des fichiers des sondes.
+  Format :
+  ```json
+  {
+    "generatedAt": "2026-11-07T02:14:03Z",
+    "runUrl": "https://github.com/ouro84/replaybox/actions/runs/<id>",
+    "providers": [
+      { "provider": "tf1", "label": "TF1+ — Le 20h (anonyme)", "ok": true,
+        "step": null, "error": null, "checkedAt": "2026-11-07T02:13:00Z" },
+      { "provider": "francetv", "label": "France TV — france-2 (anonyme)", "ok": false,
+        "step": "signature", "error": "…", "checkedAt": "2026-11-07T02:13:30Z" }
+    ]
+  }
+  ```
+  Dates ISO-8601 UTC à la seconde. `provider` = nom de la sonde (`tf1`, `francetv` ; `m6` en V2).
+  `step`/`error` valent `null` quand `ok`. `detail` n'est pas publié. Tout Provider connu
+  (`KNOWN_PROVIDERS` du script, à garder aligné sur `Probes.all`) sans résultat — build cassé ou
+  sonde absente — est publié `ok: false`, `step: "build"`, `checkedAt` = `generatedAt` ; une sonde
+  inconnue du script est publiée quand même. L'app affiche « inconnue » si `generatedAt` a plus
+  de 48 h.
+- GitHub désactive les workflows `schedule` après 60 jours sans activité sur le repo : le commit
+  nocturne de `status` entretient cette activité ; sinon, le réactiver depuis l'onglet Actions.
 
 ## Tests
 
