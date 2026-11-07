@@ -14,6 +14,9 @@ import kotlinx.coroutines.launch
 import java.io.File
 import com.replaybox.core.account.CredentialStore
 import com.replaybox.core.data.CatalogDao
+import com.replaybox.core.health.CiHealthSource
+import com.replaybox.core.health.LocalHealthStore
+import com.replaybox.core.health.SharedPrefsLocalHealthStore
 import com.replaybox.core.data.CatalogStore
 import com.replaybox.core.data.ProgressRecorder
 import com.replaybox.core.data.ReplayboxDatabase
@@ -43,6 +46,12 @@ class ReplayboxApplication : Application() {
                 .fallbackToDestructiveMigration()
                 .build()
         }
+
+        /** Santé observed on this box (catalogue refreshes and Flux resolutions per Provider group). */
+        val localHealth: LocalHealthStore by lazy { SharedPrefsLocalHealthStore(instance) }
+
+        /** Last night's CI check, from the public `status` branch (SPEC §Health-check). */
+        val ciHealth: CiHealthSource by lazy { CiHealthSource() }
 
         /** Room-backed catalog cache (ADR 0002): catalogue cache-first, Flux live. */
         val catalog: CatalogStore by lazy { CatalogStore(catalogDao()) }
