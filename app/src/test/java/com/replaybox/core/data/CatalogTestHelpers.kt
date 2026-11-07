@@ -102,6 +102,7 @@ class FakeProvider(
     private val episodesResult: List<Episode> = emptyList(),
     private val episodesError: Exception? = null,
     private val searchError: Exception? = null,
+    private val streamError: Exception? = null,
 ) : Provider {
 
     var showsCalls = 0
@@ -136,6 +137,7 @@ class FakeProvider(
 
     override suspend fun stream(episode: EpisodeId): Stream {
         streamCalls += 1
+        streamError?.let { throw it }
         return Stream("https://cdn/test.mpd", com.replaybox.core.model.StreamType.DASH)
     }
 }
