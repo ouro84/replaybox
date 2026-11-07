@@ -128,21 +128,57 @@ object SearchFusion {
     }
 }
 
+/**
+ * Search state hoisted above the back stack: opening a Programme and coming back keeps the query,
+ * the results and the focused card (MainActivity holds one instance per visit of Search).
+ */
+class SearchUiState {
+    var query by mutableStateOf("")
+    var results by mutableStateOf<List<Show>>(emptyList())
+    var channels by mutableStateOf<Map<ShowId, String>>(emptyMap())
+    var origins by mutableStateOf<Map<ShowId, String>>(emptyMap())
+    var failed by mutableStateOf(false)
+
+    /** The query whose results are on screen; null before the first search. */
+    var searchedQuery: String? = null
+
+    /** The result card opened last; focus returns to it. */
+    var focusedId: String? = null
+
+    private val requesters = HashMap<String, FocusRequester>()
+
+    fun requester(id: String): FocusRequester = requesters.getOrPut(id) { FocusRequester() }
+
+    /** Coming back with the same query reuses the results; a new query or Réessayer searches. */
+    fun needsSearch(fromRetry: Boolean): Boolean = fromRetry || query != searchedQuery
+
+    /** The card to focus on arrival, or null for the field (first visit: typing). */
+    fun initialFocus(): String? = focusedId?.takeIf { id -> results.any { it.id.value == id } }
+}
+
 @Composable
-fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
-    var query by remember { mutableStateOf("") }
-    var results by remember { mutableStateOf<List<Show>>(emptyList()) }
+fun SearchScreen(state: SearchUiState, onOpenShow: (ShowId, String) -> Unit) {
+    var query by state::query
+    var results by state::results
     var searching by remember { mutableStateOf(false) }
-    var channels by remember { mutableStateOf<Map<ShowId, String>>(emptyMap()) }
-    var origins by remember { mutableStateOf<Map<ShowId, String>>(emptyMap()) }
+    var channels by state::channels
+    var origins by state::origins
     val resultsFocus = remember { FocusRequester() }
     val fieldFocus = remember { FocusRequester() }
     val retryFocus = remember { FocusRequester() }
-    var failed by remember { mutableStateOf(false) }
+    var failed by state::failed
     var retry by remember { mutableStateOf(0) }
     var handledRetry by remember { mutableStateOf(0) }
-    // Arriving on Search means typing: the field takes focus at once.
-    LaunchedEffect(Unit) { runCatching { fieldFocus.requestFocus() } }
+    // First visit means typing: the field takes focus. Back from a Programme: its card does.
+    LaunchedEffect(Unit) {
+        val back = state.initialFocus()
+        if (back != null) {
+            withFrameNanos { }
+            runCatching { state.requester(back).requestFocus() }
+        } else {
+            runCatching { fieldFocus.requestFocus() }
+        }
+    }
     val channelIds = remember { Providers.all.map { it.channel.id } }
     val channelNames = remember { Providers.all.associate { it.channel.id to it.channel.name } }
 
@@ -154,9 +190,14 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
         if (value.trim().length >= SearchFusion.MIN_CHARS) searching = true
         val fromRetry = retry != handledRetry
         handledRetry = retry
+        if (!state.needsSearch(fromRetry)) {
+            searching = false
+            return@LaunchedEffect
+        }
         if (!fromRetry) delay(SearchFusion.DEBOUNCE_MS)
         if (value.trim().length < SearchFusion.MIN_CHARS) {
             results = emptyList()
+            state.searchedQuery = value
             searching = false
             return@LaunchedEffect
         }
@@ -165,6 +206,8 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
         origins = hits.origins
         results = hits.shows
         failed = hits.failed
+        state.searchedQuery = value
+        state.focusedId = null
         searching = false
         if (fromRetry) {
             // Réessayer left composition during loading: put focus back.
@@ -244,8 +287,11 @@ fun SearchScreen(onOpenShow: (ShowId, String) -> Unit) {
                     SearchResultCard(
                         show = show,
                         channel = channels[show.id]?.let { channelNames[it] },
-                        focusRequester = resultsFocus.takeIf { index == 0 },
-                        onClick = { onOpenShow(show.id, show.title) },
+                        focusRequesters = listOfNotNull(resultsFocus.takeIf { index == 0 }, state.requester(show.id.value)),
+                        onClick = {
+                            state.focusedId = show.id.value
+                            onOpenShow(show.id, show.title)
+                        },
                     )
                 }
             }
@@ -300,14 +346,14 @@ private val FIELD_RADIUS = 8.dp
 private fun SearchResultCard(
     show: Show,
     channel: String?,
-    focusRequester: FocusRequester?,
+    focusRequesters: List<FocusRequester>,
     onClick: () -> Unit,
 ) {
     var focused by remember { mutableStateOf(false) }
     val scale = focusScale(focused)
     Column(
         modifier = Modifier
-            .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
+            .then(focusRequesters.fold(Modifier as Modifier) { acc, requester -> acc.focusRequester(requester) })
             .onFocusChanged { focused = it.isFocused }
             .tvClickable(onClick),
     ) {
