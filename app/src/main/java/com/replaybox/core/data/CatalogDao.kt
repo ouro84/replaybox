@@ -32,6 +32,9 @@ interface CatalogDao {
 
     suspend fun episodes(seasonId: String): List<Episode>
 
+    /** Cached Épisodes with these ids, whatever their Saison; unknown ids are simply absent. */
+    suspend fun episodesById(episodeIds: List<String>): List<Episode>
+
     // ---- Progress + Favorites (device-local) ----
 
     /** Inserts or replaces the whole row, Programme context included. */

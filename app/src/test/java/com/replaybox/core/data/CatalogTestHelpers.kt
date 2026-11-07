@@ -62,6 +62,11 @@ class FakeCatalogDao : CatalogDao {
 
     override suspend fun episodes(seasonId: String): List<Episode> = episodes[seasonId].orEmpty()
 
+    override suspend fun episodesById(episodeIds: List<String>): List<Episode> {
+        val wanted = episodeIds.toSet()
+        return episodes.values.flatten().filter { it.id.value in wanted }
+    }
+
     override suspend fun putProgress(progress: ProgressEntity) {
         this.progress[progress.episodeId] = progress
     }
