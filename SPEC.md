@@ -151,7 +151,8 @@ Listing — `GET https://api-mobile.yatta.francetv.fr/apps/channels/<slug>?platf
 (france-2, france-3, france-4, france-5, franceinfo) → collections `playlist_program`/
 `playlist_mixed` → `items[]` **plats** (label, description, `program_path`, images) — pas de
 `items[].item` (corrigé après mesure 2026-11-05). Détail programme :
-`GET /apps/program/<program_path>?platform=apps&size=2000` → collections étiquetées « Saison N »
+`GET /apps/program/<program_path>?platform=apps&size=250&page=N` (N = 0, 1, … — voir « Plafond
+250 ») → collections étiquetées « Saison N »
 (type `playlist_video`) → `items[]` plats avec `si_id`, `season`, `episode`, `duration`,
 `type: integrale` ; `/apps/program/meta/<path>` donne `category` + `sub_categories` (→ Genres
 canoniques ; mapping natif riche : séries-policieres, thriller, comédie, drame, doc histoire…).
@@ -159,12 +160,36 @@ Jeunesse = catégorie `enfants`, exclusive (aucun autre Genre) : 46 Programmes s
 listings de Chaîne, aucun ne portait un autre Genre (mesuré le 2026-11-07).
 
 Détails mesurés le 2026-11-05 (lot 1 M1, fixtures `ftv_*.json`) :
-- **Plafond 250** (mesuré 2026-11-06) : sans `size`, chaque collection s'arrête à 250 items.
-  `page=N` pagine la collection principale par 250 (les thématiques ignorent `page` et se
-  répètent) ; `size=2000` rend tout en un appel — journal-20h00 249 → 443 intégrales,
-  ca-commence-aujourd-hui 274 → 495, 13h15-le-samedi 205 → 253. Séries numérotées : complètes
-  sans `size`. Fixture : `ftv_program_13h15-le-samedi_size2000.json` (items élagués des champs
-  `images`/`program`/`channel`/`category`/`marker*`).
+- **Plafond 250** (mesuré 2026-11-06, remesuré le 2026-11-07) : sans `size`, la collection
+  principale (« Les émissions » ; les « Saison N » suivent la même pagination : absentes de la
+  page 1 de capitaine-marleau) s'arrête à 250 items et `playlist_audio`
+  (podcasts) à 200. `size=S` fixe ce plafond **pour ces deux-là** ; les collections thématiques
+  (« Histoires de… », « Grand format »… : celles qui portent un `id`) gardent leur taille (≤ 43
+  items) quels que soient `size` et `page`. `page=N` est **0-based** (`page=0` = sans `page`) et
+  pagine par `S` : la page suivante reprend où la précédente s'arrête, les thématiques s'y
+  répètent à l'identique, et une collection épuisée **disparaît** de la page (ca-commence page 2 :
+  plus de « Les émissions »). Une même page peut contenir des doublons de `si_id`.
+  **`size=2000` est proscrit** : il gonfle aussi les podcasts — « Ça commence aujourd'hui »
+  pèse 28,5 Mo (dont 19,5 Mo pour 2000 podcasts, 7,7 Mo pour 498 émissions), soit une String de
+  57 Mo qui a fait un `OutOfMemoryError` sur la Bbox (heap 128 Mo). Mesures du 2026-11-07 (octets
+  décompressés ; en gzip sur le fil, ca-commence fait 0,6 Mo en page 0 et 1,6 Mo en `size=2000`) :
+
+  | Programme | sans `size` | `size=2000` | `size=250&page=0` / `1` / `2` | intégrales (`si_id` uniques) |
+  |---|---|---|---|---|
+  | ca-commence-aujourd-hui | 7,7 Mo, 274 | 28,5 Mo, 494 | 8,2 / 8,1 / 4,5 Mo — 250 / 248 / absente | 494 (498 items) |
+  | journal-20h00 | 3,0 Mo, 249 | 5,0 Mo, 443 | 3,0 / 2,3 / 0,3 Mo — 250 / 194 / absente | 443 (444 items) |
+  | 13h15-le-samedi | 3,3 Mo, 206 | 4,1 Mo, 254 | 3,3 / 0,9 / 0,2 Mo — 250 / 59 / absente | 254 (309 items) |
+  | capitaine-marleau | 0,9 Mo, 27 | 0,9 Mo, 27 | 0,9 Mo — Saisons 10/5/5/7, page 1 sans Saison | 27 |
+
+  L'union des pages `size=250` redonne exactement l'ensemble de `si_id` de `size=2000` sur les
+  quatre. Replaybox lit donc le détail **par pages de 250** (`page=0`, `1`, … tant qu'une
+  collection `playlist_video` revient pleine, 20 pages au plus), décode chaque page en flux
+  (jamais de String entière, corps plafonné à 32 Mo) et ne garde que les collections
+  `playlist_video` et leurs items `integrale`. Chiffres de 2026-11-06 (`size=2000`) pour mémoire :
+  journal-20h00 443, ca-commence-aujourd-hui 495, 13h15-le-samedi 253. Fixtures :
+  `ftv_program_ca-commence-aujourd-hui_page0.json` / `_page1.json` (vraies pages `size=250`,
+  toutes les collections et tous les items, élagués de `images`/`program`/`channel`/`category`/
+  `marker*`/`description`).
 - `program_path` peut être préfixé par un slug de **navigation** (`info_nous-les-europeens`,
   `series-et-fictions_series-drame_les-disparus-des-argonnes`) et pas seulement par la chaîne —
   ne jamais déduire la Chaîne du préfixe du path.
