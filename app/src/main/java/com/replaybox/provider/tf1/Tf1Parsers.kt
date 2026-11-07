@@ -43,8 +43,9 @@ object Tf1Parsers {
 
     /**
      * One page of the TF1 Index: programmes of the 5 group Chaînes (initialChannel.slug) that
-     * have replay Épisodes. Police fiction gets « Policier & Thriller » from Tf1CrimeKeywords,
-     * fiction and films only. [pageIndex] is the page index sent in `offset`.
+     * have replay Épisodes. Police series get « Policier & Thriller » from Tf1CrimeKeywords
+     * (GT_SERIES_AND_FICTIONS only: films keep their native SGT_THRILLER / SGT_DETECTIVE).
+     * [pageIndex] is the page index sent in `offset`.
      */
     fun indexPage(root: JsonObject, pageIndex: Int, pageSize: Int): CataloguePage {
         val programs = Tf1Json.obj(root, "data", "programs")
@@ -55,7 +56,7 @@ object Tf1Parsers {
             if (!Tf1Channels.isGroup(channelId)) return@mapNotNull null
             if ((Tf1Json.int(item, "replay", "total") ?: 0) <= 0) return@mapNotNull null
             val base = showFromProgram(item)
-            val crime = categoryIds(item).any { it in FICTION_ROOTS } &&
+            val crime = SERIES_ROOT in categoryIds(item) &&
                 Tf1CrimeKeywords.matches(base.id.value, base.title, base.synopsis)
             IndexEntry(
                 channelId!!,
@@ -69,7 +70,7 @@ object Tf1Parsers {
         return CataloguePage(entries, hasMore = items.isNotEmpty() && (pageIndex + 1) * pageSize < total)
     }
 
-    private val FICTION_ROOTS = setOf("GT_SERIES_AND_FICTIONS", "GT_MOVIES")
+    private const val SERIES_ROOT = "GT_SERIES_AND_FICTIONS"
 
     private fun categoryIds(item: JsonObject): List<String> =
         Tf1Json.objects(Tf1Json.array(item, "categories")).mapNotNull { Tf1Json.str(it, "id") }

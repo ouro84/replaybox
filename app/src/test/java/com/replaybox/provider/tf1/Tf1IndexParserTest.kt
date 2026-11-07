@@ -1,6 +1,7 @@
 package com.replaybox.provider.tf1
 
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import com.replaybox.core.model.Genre
 import org.junit.Test
 
@@ -56,12 +57,33 @@ class Tf1IndexParserTest {
 
     @Test
     fun entertainmentNeverGetsCrime() {
-        // « Les dossiers Cold Case » is GT_ENTERTAINMENT and its synopsis names a criminal:
-        // the keyword matcher fires, the parser still keeps it out (fiction and films only).
+        // « Les dossiers Cold Case » is GT_ENTERTAINMENT and its synopsis names a criminal and
+        // detectives: the keyword matcher fires, the parser still keeps it out (series only).
         val entry = Tf1Parsers.indexPage(page, 0, 500).entries.first { it.show.id.value == "les-dossiers-cold-case" }
         assertThat(Tf1CrimeKeywords.matches(entry.show.id.value, entry.show.title, entry.show.synopsis)).isTrue()
         assertThat(entry.show.genres).doesNotContain(Genre.CRIME_THRILLER)
         assertThat(entry.show.genres).contains(Genre.ENTERTAINMENT)
+    }
+
+    @Test
+    fun filmsGetCrimeOnlyFromNativeSgt() {
+        // Twilight (fantasy) and La Ligne verte (drama) name murders in their synopsis; films
+        // take « Policier & Thriller » from SGT_THRILLER / SGT_DETECTIVE only.
+        val shows = Tf1Parsers.indexPage(crime, 0, 500).entries.associate { it.show.id.value to it.show }
+        for (slug in listOf("twilight-chapitre-iii-hesitation", "la-ligne-verte", "la-ligne-verte-919")) {
+            assertWithMessage(slug).that(shows.getValue(slug).genres).contains(Genre.MOVIES)
+            assertWithMessage(slug).that(shows.getValue(slug).genres).doesNotContain(Genre.CRIME_THRILLER)
+        }
+        assertThat(shows.getValue("la-ligne-verte-919").genres).containsExactly(Genre.MOVIES, Genre.DRAMA)
+        assertThat(Tf1Genres.map(listOf("GT_MOVIES", "SGT_THRILLER"))).containsExactly(Genre.MOVIES, Genre.CRIME_THRILLER)
+    }
+
+    @Test
+    fun telenovelaWithOneKeywordIsNotCrime() {
+        val shows = Tf1Parsers.indexPage(crime, 0, 500).entries.associate { it.show.id.value to it.show }
+        assertThat(shows.getValue("la-desalmada").genres).containsExactly(Genre.SERIES)
+        assertThat(shows.getValue("alice-nevers").genres).containsExactly(Genre.SERIES, Genre.CRIME_THRILLER)
+        assertThat(shows.getValue("leo-mattei-brigade-des-mineurs").genres).contains(Genre.CRIME_THRILLER)
     }
 
     @Test
