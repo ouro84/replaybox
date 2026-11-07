@@ -135,6 +135,44 @@ class CatalogStoreTest {
         }
     }
 
+    @Test
+    fun `episodes of a season are listed by ascending number, fresh and cached`() {
+        blocking {
+            // TF1 lists a batch upload in no particular order (Profilage S2, 2026-11-07).
+            fun numbered(id: String, number: Int?) = episode(id, "show1::2").copy(number = number)
+            val shuffled = listOf(
+                numbered("bonus", null),
+                numbered("e3", 3),
+                numbered("e1", 1),
+                numbered("e2b", 2),
+                numbered("e10", 10),
+                numbered("e2a", 2),
+                numbered("making-of", null),
+            )
+            val expected = listOf("e1", "e2b", "e2a", "e3", "e10", "bonus", "making-of")
+
+            val provider = FakeProvider(Channel("ch", "Test"), episodesResult = shuffled)
+            val fresh = store(FakeCatalogDao()).episodes(provider, SeasonId("show1::2"))
+            assertThat(fresh.map { it.id.value }).containsExactlyElementsIn(expected).inOrder()
+
+            // A cache filled before the fix is reordered on read.
+            val dao = FakeCatalogDao()
+            dao.putEpisodes("show1::2", shuffled, now - 1 * hour)
+            val cached = store(dao).episodes(provider, SeasonId("show1::2"))
+            assertThat(cached.map { it.id.value }).containsExactlyElementsIn(expected).inOrder()
+        }
+    }
+
+    @Test
+    fun `a season without numbers keeps the broadcaster order`() {
+        blocking {
+            val recentFirst = listOf("jt-07-11", "jt-06-11", "jt-05-11").map { episode(it, "show1::") }
+            val provider = FakeProvider(Channel("ch", "Test"), episodesResult = recentFirst)
+            val listed = store(FakeCatalogDao()).episodes(provider, SeasonId("show1::"))
+            assertThat(listed.map { it.id.value }).containsExactly("jt-07-11", "jt-06-11", "jt-05-11").inOrder()
+        }
+    }
+
     private fun season(id: String) =
         Season(
             SeasonId(id),

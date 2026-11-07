@@ -82,9 +82,15 @@ class CatalogStore(
     /**
      * Épisodes of a Saison, cache-first. Épisodes whose known end of availability
      * is past are left out (ROADMAP §M4): a 12 h cache would otherwise list them.
+     * Listed by ascending Épisode number: TF1 returns a batch upload in no
+     * particular order. The sort is stable and unnumbered Épisodes go last, so
+     * a Saison without numbers (news, magazines) keeps the broadcaster's order.
+     * Without a Saison the list spans several, so it is left as the Provider gave it.
      */
-    suspend fun episodes(provider: Provider, season: SeasonId?): List<Episode> =
-        loadEpisodes(provider, season).withoutExpired()
+    suspend fun episodes(provider: Provider, season: SeasonId?): List<Episode> {
+        val episodes = loadEpisodes(provider, season).withoutExpired()
+        return if (season == null) episodes else episodes.sortedWith(compareBy(nullsLast()) { it.number })
+    }
 
     private suspend fun loadEpisodes(provider: Provider, season: SeasonId?): List<Episode> {
         if (season == null) return provider.network().episodes(null)
