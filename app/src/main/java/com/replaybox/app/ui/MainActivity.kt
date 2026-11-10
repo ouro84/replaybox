@@ -1,15 +1,20 @@
 package com.replaybox.app.ui
 
+import android.app.UiModeManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.key
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.replaybox.app.ReplayboxApplication
 import com.replaybox.core.model.Episode
 import com.replaybox.core.model.EpisodeId
@@ -38,10 +43,16 @@ sealed interface Screen {
 
 class MainActivity : ComponentActivity() {
 
+    /** Phone or tablet: anything the system does not report as a TV (never the box). */
+    private val mobile by lazy {
+        DeviceKind.isMobile(getSystemService(UiModeManager::class.java).currentModeType)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) ReplayboxApplication.checkForUpdate()
-        setContent {
+        if (mobile) WindowCompat.setDecorFitsSystemWindows(window, false)
+        setContent { CompositionLocalProvider(LocalMobile provides mobile) {
             val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
             // Survives trips to a Programme or the player: scroll + focus restored.
             val homeState = remember { HomeUiState() }
@@ -146,6 +157,25 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        } }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (mobile) hideSystemBars()
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        // The bars come back after the IME or a dialog: hide them again.
+        if (hasFocus && mobile) hideSystemBars()
+    }
+
+    /** Immersive on mobile: no status or navigation bar; a swipe from the edge shows them for a while. */
+    private fun hideSystemBars() {
+        WindowInsetsControllerCompat(window, window.decorView).apply {
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            hide(WindowInsetsCompat.Type.systemBars())
         }
     }
 }
