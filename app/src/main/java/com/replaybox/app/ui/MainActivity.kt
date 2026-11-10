@@ -156,6 +156,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
+                // Mobile safety net: the window is portrait anyway (split screen, override).
+                if (portraitBlocked()) RotatePrompt()
             }
         } }
     }

@@ -453,6 +453,10 @@ private fun PlayerSurface(
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
+    // Mobile: a portrait window covers the player with « Tourne l'appareil » and pauses it.
+    // Back in landscape it stays paused; the pause has already shown the controls (PauseReveal).
+    val blocked = portraitBlocked()
+    LaunchedEffect(blocked) { if (blocked) player.pause() }
 
     val playerViewRef = remember { mutableStateOf<PlayerView?>(null) }
 
