@@ -536,6 +536,27 @@ private fun PlayerSurface(
         controlsVisible = true
         interaction++
     }
+    // Any pause reveals the controls (PauseReveal). Listened on the player, not the key
+    // handler: Compose lets the media keys and HDMI-CEC through to the MediaSession, which
+    // pauses the player itself, and backgrounding pauses without a key at all. Declared
+    // after the MediaSession effect, so it is removed before the player is released.
+    val currentNextUp by rememberUpdatedState(nextUp)
+    DisposableEffect(player) {
+        val pauseListener = object : androidx.media3.common.Player.Listener {
+            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                val reveal = PauseReveal.shows(
+                    playWhenReady = playWhenReady,
+                    endOfMedia = reason == androidx.media3.common.Player.PLAY_WHEN_READY_CHANGE_REASON_END_OF_MEDIA_ITEM,
+                    resumePrompt = showResumeChoice,
+                    nextUp = currentNextUp,
+                    optionsOpen = optionsOpen,
+                )
+                if (reveal) showControls()
+            }
+        }
+        player.addListener(pauseListener)
+        onDispose { player.removeListener(pauseListener) }
+    }
     LaunchedEffect(controlsVisible) {
         while (controlsVisible) {
             positionMs = player.currentPosition
