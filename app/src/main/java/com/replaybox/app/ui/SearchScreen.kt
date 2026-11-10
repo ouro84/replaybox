@@ -3,6 +3,7 @@ package com.replaybox.app.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -289,12 +290,13 @@ fun SearchScreen(
             )
         }
         TvLazyVerticalGrid(
-            // Touch scroll on mobile only: the box keeps focus-driven scrolling.
-            userScrollEnabled = LocalMobile.current,
             state = state.grid,
             columns = TvGridCells.Fixed(if (mobile) POSTER_GRID_COLUMNS else SEARCH_GRID_COLUMNS),
             // The grid starts one gutter early so a focused poster's lift and ring are not clipped.
-            modifier = Modifier.fillMaxSize().padding(start = (if (mobile) Rb.contentStart else RESULTS_START) - GUTTER),
+            modifier = Modifier
+                .fillMaxSize()
+                .touchScroll(state.grid, Orientation.Vertical)
+                .padding(start = (if (mobile) Rb.contentStart else RESULTS_START) - GUTTER),
             contentPadding = PaddingValues(
                 start = GUTTER,
                 end = Rb.safeHorizontal,

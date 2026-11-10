@@ -1,6 +1,9 @@
 package com.replaybox.app.ui
 
 import android.content.res.Configuration
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -28,3 +31,12 @@ val LocalMobile: ProvidableCompositionLocal<Boolean> = staticCompositionLocalOf 
 @Composable
 fun Modifier.mobileVerticalScroll(): Modifier =
     if (LocalMobile.current) verticalScroll(rememberScrollState()) else this
+
+/**
+ * Drag and fling on mobile for a TV lazy list or grid ([state] is its TvLazyListState or
+ * TvLazyGridState). tv-foundation 1.0.0-alpha07 has no pointer input of its own: its
+ * `userScrollEnabled` (true by default) drives focus scrolling and must stay untouched on the box.
+ */
+@Composable
+fun Modifier.touchScroll(state: ScrollableState, orientation: Orientation): Modifier =
+    if (LocalMobile.current) scrollable(state, orientation, reverseDirection = true) else this

@@ -6,6 +6,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -327,10 +328,8 @@ fun HomeScreen(
                     }
                 }
                 else -> TvLazyColumn(
-                    // Touch scroll on mobile only: the box keeps focus-driven scrolling.
-                    userScrollEnabled = LocalMobile.current,
                     state = state.rails,
-                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    modifier = Modifier.fillMaxWidth().weight(1f).touchScroll(state.rails, Orientation.Vertical),
                     // Focused card sits ~45 dp below the top so its rail title stays visible.
                     pivotOffsets = PivotOffsets(parentFraction = 0.16f),
                     contentPadding = PaddingValues(bottom = Rb.safeVertical),
@@ -692,8 +691,8 @@ private fun Rail(
             modifier = Modifier.padding(start = GUTTER, top = 4.dp),
         )
         TvLazyRow(
-            userScrollEnabled = LocalMobile.current,
             state = rowState,
+            modifier = Modifier.touchScroll(rowState, Orientation.Horizontal),
             // The pivot places the *scaled* card (1.1, ~6 dp wider each side): 0.015 of
             // the ~876 dp row puts it at ~13 dp, so the card at rest sits at ~19 dp and
             // the previous card (gap 20 dp) ends under the clip edge, no sliver.

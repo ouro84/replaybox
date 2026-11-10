@@ -2,6 +2,7 @@ package com.replaybox.app.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -119,11 +120,9 @@ fun GenreGridScreen(state: GenreGridUiState, onOpenShow: (ShowId, String) -> Uni
     }
 
     TvLazyVerticalGrid(
-        // Touch scroll on mobile only: the box keeps focus-driven scrolling.
-        userScrollEnabled = LocalMobile.current,
         state = state.grid,
         columns = TvGridCells.Fixed(POSTER_GRID_COLUMNS),
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().touchScroll(state.grid, Orientation.Vertical),
         contentPadding = PaddingValues(
             start = Rb.contentStart,
             end = Rb.safeHorizontal,

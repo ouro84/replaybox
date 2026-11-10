@@ -3,6 +3,7 @@ package com.replaybox.app.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -50,6 +51,7 @@ import androidx.tv.foundation.PivotOffsets
 import androidx.tv.foundation.lazy.list.TvLazyColumn
 import androidx.tv.foundation.lazy.list.TvLazyListState
 import androidx.tv.foundation.lazy.list.TvLazyRow
+import androidx.tv.foundation.lazy.list.rememberTvLazyListState
 import androidx.tv.foundation.lazy.list.items
 import com.replaybox.R
 import com.replaybox.core.data.HeroTarget
@@ -277,10 +279,8 @@ fun ShowScreen(
                 .background(Rb.ground.copy(alpha = 0.92f)),
         )
         TvLazyColumn(
-            // Touch scroll on mobile only: the box keeps focus-driven scrolling.
-            userScrollEnabled = LocalMobile.current,
             state = state.list,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().touchScroll(state.list, Orientation.Vertical),
             // The play action sits ~220-245 dp down: aligning focus at 0.45 keeps
             // the whole hero on screen while it is focused (scroll clamps at 0).
             pivotOffsets = PivotOffsets(parentFraction = 0.45f),
@@ -519,8 +519,10 @@ private fun SeasonPills(
     watched: Set<SeasonId>,
     onSelect: (SeasonId) -> Unit,
 ) {
+    val pills = rememberTvLazyListState()
     TvLazyRow(
-        userScrollEnabled = LocalMobile.current,
+        state = pills,
+        modifier = Modifier.touchScroll(pills, Orientation.Horizontal),
         contentPadding = PaddingValues(start = Rb.contentStart, end = Rb.safeHorizontal, top = 8.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
