@@ -36,7 +36,7 @@ internal data class OptionRow(val title: String, val chips: List<OptionChip>)
  * Left/Right change choices, OK selects, Back or MENU close.
  */
 @Composable
-internal fun OptionsPanel(rows: List<OptionRow>, modifier: Modifier = Modifier) {
+internal fun OptionsPanel(rows: List<OptionRow>, modifier: Modifier = Modifier, rowsModifier: Modifier = Modifier) {
     val initial = remember { FocusRequester() }
     LaunchedEffect(Unit) {
         withFrameNanos { }
@@ -50,6 +50,8 @@ internal fun OptionsPanel(rows: List<OptionRow>, modifier: Modifier = Modifier) 
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Text(stringResource(R.string.options_title), style = RbType.railTitle, color = Rb.text)
+        // Same 14 dp rhythm as the outer column: the layout is unchanged by this wrapper.
+        Column(rowsModifier, verticalArrangement = Arrangement.spacedBy(14.dp)) {
         rows.forEachIndexed { rowIndex, row ->
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(row.title, style = RbType.bodyStrong, color = Rb.textSecondary, modifier = Modifier.width(180.dp))
@@ -67,6 +69,7 @@ internal fun OptionsPanel(rows: List<OptionRow>, modifier: Modifier = Modifier) 
                     }
                 }
             }
+        }
         }
     }
 }

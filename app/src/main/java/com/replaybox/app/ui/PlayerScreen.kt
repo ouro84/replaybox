@@ -257,6 +257,7 @@ private fun PlayerSurface(
     // Set when Épisode suivant takes over: the last save records this Épisode as finished.
     var movedOn by remember { mutableStateOf(false) }
 
+    val mobile = LocalMobile.current
     val player = remember(manifestUrl) {
         ExoPlayer.Builder(context)
             .apply {
@@ -268,9 +269,10 @@ private fun PlayerSurface(
             }
             .setSeekBackIncrementMs(10_000)
             .setSeekForwardIncrementMs(10_000)
-            // Audio focus (a call, another player) and unplugged headphones pause playback.
+            // Audio focus (a call, another player) pauses playback; unplugged headphones too,
+            // on mobile only (PlayerAudio.pausesWhenNoisy).
             .setAudioAttributes(PlayerAudio.attributes, /* handleAudioFocus = */ true)
-            .setHandleAudioBecomingNoisy(true)
+            .setHandleAudioBecomingNoisy(PlayerAudio.pausesWhenNoisy(mobile))
             .build()
             .apply {
                 val builder = MediaItem.Builder().setUri(manifestUrl).setMimeType(
@@ -518,6 +520,11 @@ private fun PlayerSurface(
     var positionMs by remember(manifestUrl) { mutableStateOf(0L) }
     var durationMs by remember(manifestUrl) { mutableStateOf(0L) }
     var buffering by remember(manifestUrl) { mutableStateOf(false) }
+    // Held silent by a call (transient audio focus loss); Media3 resumes when it ends.
+    var callSilenced by remember(manifestUrl) { mutableStateOf(false) }
+    fun togglePlayPause() {
+        if (PlayerAudio.playing(player.isPlaying, callSilenced)) player.pause() else player.play()
+    }
     DisposableEffect(player) {
         val playingListener = object : androidx.media3.common.Player.Listener {
             override fun onIsPlayingChanged(playing: Boolean) {
@@ -556,6 +563,18 @@ private fun PlayerSurface(
                 val reveal = PauseReveal.shows(
                     playWhenReady = playWhenReady,
                     endOfMedia = reason == androidx.media3.common.Player.PLAY_WHEN_READY_CHANGE_REASON_END_OF_MEDIA_ITEM,
+                    resumePrompt = showResumeChoice,
+                    nextUp = currentNextUp,
+                    optionsOpen = optionsOpen,
+                )
+                if (reveal) showControls()
+            }
+
+            // A ringing call holds playback silent without a pause: show the controls too.
+            override fun onPlaybackSuppressionReasonChanged(reason: Int) {
+                callSilenced = reason == androidx.media3.common.Player.PLAYBACK_SUPPRESSION_REASON_TRANSIENT_AUDIO_FOCUS_LOSS
+                val reveal = PlayerAudio.callReveals(
+                    transientFocusLoss = callSilenced,
                     resumePrompt = showResumeChoice,
                     nextUp = currentNextUp,
                     optionsOpen = optionsOpen,
@@ -647,7 +666,7 @@ private fun PlayerSurface(
                     PlayerKeys.Action.SEEK_BACK -> { player.seekBack(); showControls(); true }
                     PlayerKeys.Action.SEEK_FORWARD -> { player.seekForward(); showControls(); true }
                     PlayerKeys.Action.PLAY_PAUSE -> {
-                        if (player.isPlaying) player.pause() else player.play()
+                        togglePlayPause()
                         showControls()
                         true
                     }
@@ -762,6 +781,8 @@ private fun PlayerSurface(
                     onSpeed = { chooseSpeed(it) },
                 ),
                 modifier = Modifier.align(Alignment.BottomStart),
+                // Mobile: a tap between two chips stays in the panel; above the rows it closes it.
+                rowsModifier = if (mobile) Modifier.pointerInput(Unit) { detectTapGestures { } } else Modifier,
             )
         } else if (controlsVisible) {
             PlayerControls(
@@ -769,11 +790,11 @@ private fun PlayerSurface(
                 episodeTitle = progressContext?.episodeTitle ?: "",
                 positionMs = positionMs,
                 durationMs = durationMs,
-                isPlaying = isPlaying,
+                isPlaying = PlayerAudio.playing(isPlaying, callSilenced),
                 subtitlesOn = if (hasTextTracks) subtitlesOn else null,
                 playRequester = playFocus,
                 onInteract = { interaction++ },
-                onPlayPause = { if (player.isPlaying) player.pause() else player.play() },
+                onPlayPause = { togglePlayPause() },
                 onSeekBack = { player.seekBack(); positionMs = player.currentPosition },
                 onSeekForward = { player.seekForward(); positionMs = player.currentPosition },
                 onRestart = { player.seekTo(0); player.play(); positionMs = 0 },
