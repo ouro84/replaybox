@@ -172,7 +172,7 @@ PRD). Une seule APK ; un appareil est « mobile » quand le système ne le décl
 **Critère** : une soirée au doigt sur le Pixel (accueil → recherche → Programme → lecture), et la box
 inchangée.
 
-- [ ] (i) Entrée tactile et navigation : défilement au doigt, appui long = options, menu de gauche sur
+- [x] (i) Entrée tactile et navigation : défilement au doigt, appui long = options, menu de gauche sur
   les écrans principaux, recherche au clavier natif, plein écran immersif, paysage (`sensorLandscape`)
   avec l'écran « Tourne l'appareil » en filet.
 - [ ] (ii) Player tactile : un tap affiche ou masque les contrôles, double-tap à gauche ou à droite
