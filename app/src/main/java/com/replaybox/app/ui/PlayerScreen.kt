@@ -266,6 +266,9 @@ private fun PlayerSurface(
             }
             .setSeekBackIncrementMs(10_000)
             .setSeekForwardIncrementMs(10_000)
+            // Audio focus (a call, another player) and unplugged headphones pause playback.
+            .setAudioAttributes(PlayerAudio.attributes, /* handleAudioFocus = */ true)
+            .setHandleAudioBecomingNoisy(true)
             .build()
             .apply {
                 val builder = MediaItem.Builder().setUri(manifestUrl).setMimeType(
