@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Whenever playback is paused by the viewer, from any source (OK, the ⏯ media key through the `MediaSession`, HDMI-CEC from the TV remote, audio focus loss, the app going to the background), the player controls (`PlayerControls`: title, timeline, Pause/Lecture, −10 s, +10 s, Recommencer, Sous-titres, Options) appear on their own.
+**Goal:** Whenever playback is paused by the viewer, from any source (OK, the ⏯ media key through the `MediaSession`, HDMI-CEC from the TV remote, the app going to the background; the player takes no audio focus today, see Rulings), the player controls (`PlayerControls`: title, timeline, Pause/Lecture, −10 s, +10 s, Recommencer, Sous-titres, Options) appear on their own.
 
 **Architecture:** Today only the OK key reveals the controls (`PlayerKeys.Action.PLAY_PAUSE` calls `showControls()` in `PlayerScreen.kt`); media keys are consumed by the `MediaSession` and pause the player without touching the overlay. The fix listens to the player itself: `Player.Listener.onPlayWhenReadyChanged(playWhenReady, reason)` fires for every pause whatever its source. A pure decision, `PauseReveal.shows(...)`, says whether this pause reveals the controls; `PlayerSurface` calls `showControls()` when it does. Once shown while paused, the existing rules apply unchanged: they stay while paused, auto-hide 5 s after the last interaction once playing, focus lands on Pause/Lecture.
 

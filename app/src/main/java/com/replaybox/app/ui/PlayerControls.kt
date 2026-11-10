@@ -58,8 +58,8 @@ object PlayerKeys {
 
 /**
  * Whether a pause reveals the player controls (grilling 2026-11-10, Q1), whatever paused
- * the player: OK, the media keys or HDMI-CEC through the MediaSession, audio focus loss,
- * the app going to the background. It does not when:
+ * the player: OK, the media keys or HDMI-CEC through the MediaSession, the app going to
+ * the background. It does not when:
  * - [playWhenReady] is true: playback resumed, the 5 s auto-hide applies;
  * - [endOfMedia]: the Épisode ended, Épisode suivant or leaving the player takes over;
  * - [resumePrompt]: the « Reprendre / Débuter » choice keeps the screen;

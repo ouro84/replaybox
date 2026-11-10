@@ -537,8 +537,8 @@ private fun PlayerSurface(
         interaction++
     }
     // Any pause reveals the controls (PauseReveal). Listened on the player, not the key
-    // handler: the MediaSession consumes the media keys and HDMI-CEC before Compose sees
-    // them, and audio focus loss or backgrounding pause without a key at all. Declared
+    // handler: Compose lets the media keys and HDMI-CEC through to the MediaSession, which
+    // pauses the player itself, and backgrounding pauses without a key at all. Declared
     // after the MediaSession effect, so it is removed before the player is released.
     val currentNextUp by rememberUpdatedState(nextUp)
     DisposableEffect(player) {
