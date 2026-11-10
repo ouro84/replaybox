@@ -57,6 +57,29 @@ object PlayerKeys {
 }
 
 /**
+ * Touch on the video, mobile only (milestone grilling 2026-11-10): a tap shows or hides the
+ * controls, a double-tap on the left or right half seeks −10 s / +10 s. [prompt] is
+ * « Reprendre / Débuter » or Épisode suivant on screen: their buttons take the taps.
+ */
+object PlayerTouch {
+    enum class Tap { NONE, SHOW, HIDE, CLOSE_OPTIONS }
+    enum class Seek { NONE, BACK, FORWARD }
+
+    fun tap(controlsVisible: Boolean, optionsOpen: Boolean, prompt: Boolean): Tap = when {
+        prompt -> Tap.NONE
+        optionsOpen -> Tap.CLOSE_OPTIONS
+        controlsVisible -> Tap.HIDE
+        else -> Tap.SHOW
+    }
+
+    fun doubleTap(x: Float, width: Float, optionsOpen: Boolean, prompt: Boolean): Seek = when {
+        prompt || optionsOpen -> Seek.NONE
+        x < width / 2 -> Seek.BACK
+        else -> Seek.FORWARD
+    }
+}
+
+/**
  * Whether a pause reveals the player controls (grilling 2026-11-10, Q1), whatever paused
  * the player: OK, the media keys or HDMI-CEC through the MediaSession, the app going to
  * the background. It does not when:
