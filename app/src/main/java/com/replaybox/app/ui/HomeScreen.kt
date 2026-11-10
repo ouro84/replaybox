@@ -729,7 +729,7 @@ private fun UpNextCard(
                     false
                 }
             }
-            .tvClickable(onClick),
+            .tvClickable(onLongClick = onOptions.takeIf { LocalMobile.current }, onClick = onClick),
     ) {
         Box(
             Modifier

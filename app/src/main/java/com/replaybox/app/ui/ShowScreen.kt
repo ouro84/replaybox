@@ -608,7 +608,7 @@ private fun EpisodeRow(
                     false
                 }
             }
-            .tvClickable(onClick)
+            .tvClickable(onLongClick = onOptions.takeIf { LocalMobile.current }, onClick = onClick)
             .then(if (focused) Modifier.background(Rb.surfaceRaised, ROW_SHAPE) else Modifier)
             .padding(horizontal = ROW_INSET, vertical = 24.dp),
         horizontalArrangement = Arrangement.spacedBy(ROW_INSET),
