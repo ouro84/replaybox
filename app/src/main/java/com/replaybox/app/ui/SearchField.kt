@@ -24,6 +24,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -43,6 +44,7 @@ fun SearchField(
     modifier: Modifier = Modifier,
 ) {
     val hint = stringResource(R.string.search_hint)
+    val textPx = with(LocalDensity.current) { RbType.displayCompact.fontSize.toPx() }
     // The EditText is built once; its watcher calls the latest callback.
     val currentOnQuery by rememberUpdatedState(onQuery)
     val holder = remember { arrayOfNulls<EditText>(1) }
@@ -53,6 +55,7 @@ fun SearchField(
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
         AndroidView(
             modifier = Modifier.weight(1f),
+            update = { it.setTextSize(TypedValue.COMPLEX_UNIT_PX, textPx) },
             factory = { context ->
                 EditText(context).apply {
                     holder[0] = this
@@ -68,7 +71,8 @@ fun SearchField(
                     setTextColor(Rb.text.toArgb())
                     setHintTextColor(Rb.textSecondary.toArgb())
                     this.hint = hint
-                    setTextSize(TypedValue.COMPLEX_UNIT_SP, RbType.displayCompact.fontSize.value)
+                    // From the Compose density: on the compact canvas it is not the system's.
+                    setTextSize(TypedValue.COMPLEX_UNIT_PX, textPx)
                     typeface = Typeface.DEFAULT_BOLD
                     setText(query)
                     setSelection(text.length)

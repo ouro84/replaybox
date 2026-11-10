@@ -187,7 +187,7 @@ fun PlayerScreen(
                     },
                     style = RbType.body,
                     color = Rb.textSecondary,
-                    modifier = Modifier.padding(top = 12.dp).width(640.dp),
+                    modifier = Modifier.padding(top = 12.dp).textWidth(640.dp),
                 )
                 Box(Modifier.padding(top = 24.dp)) {
                     PanelButton(
@@ -891,7 +891,7 @@ private fun NextUp(next: SeasonEpisode, secondsLeft: Int, onPlay: () -> Unit, on
     Column(
         modifier = modifier
             .padding(end = Rb.safeHorizontal, bottom = Rb.safeVertical + 24.dp)
-            .width(420.dp)
+            .textWidth(420.dp)
             .background(Rb.surface, Rb.cardShape)
             .padding(24.dp),
     ) {

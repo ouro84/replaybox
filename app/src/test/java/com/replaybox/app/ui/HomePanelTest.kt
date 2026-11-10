@@ -31,4 +31,11 @@ class HomePanelTest {
         assertThat(homePanel(mobile = true, hasBillboard = false, hasNotice = true)).isEqualTo(HomePanel.NOTICES)
         assertThat(homePanel(mobile = true, hasBillboard = false, hasNotice = false)).isEqualTo(HomePanel.NONE)
     }
+
+    @Test
+    fun mobilePanelGrowsWithItsText() {
+        // Phone text is bigger in canvas dp than on TV: a fixed 252 dp panel squashed its buttons.
+        assertThat(panelHeightIsFixed(mobile = false)).isTrue()
+        assertThat(panelHeightIsFixed(mobile = true)).isFalse()
+    }
 }

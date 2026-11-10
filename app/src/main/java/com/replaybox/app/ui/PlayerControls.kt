@@ -136,7 +136,7 @@ internal fun PlayerControls(
         }
         Timeline(positionMs, durationMs, Modifier.padding(top = 14.dp))
         Row(
-            Modifier.padding(top = 16.dp),
+            Modifier.padding(top = 16.dp).mobileHorizontalScroll(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {

@@ -16,6 +16,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.runtime.Composable
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -62,7 +65,7 @@ class MainActivity : ComponentActivity() {
             @Suppress("DEPRECATION")
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
-        setContent { CompositionLocalProvider(LocalMobile provides mobile) {
+        setContent { CompositionLocalProvider(LocalMobile provides mobile, LocalInsets provides if (mobile) MobileInsets else TvInsets) {
             val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
             // Survives trips to a Programme or the player: scroll + focus restored.
             val homeState = remember { HomeUiState() }
@@ -94,7 +97,7 @@ class MainActivity : ComponentActivity() {
                 backStack.addAll(next)
             }
             BackHandler(enabled = backStack.size > 1) { backStack.removeAt(backStack.lastIndex) }
-            ReplayboxThemeSurface {
+            ReplayboxThemeSurface { CompactDensity(mobile) {
                 when (val current = backStack.last()) {
                     is Screen.Home -> HomeScreen(
                         state = homeState,
@@ -177,7 +180,7 @@ class MainActivity : ComponentActivity() {
                 }
                 // Mobile safety net: the window is portrait anyway (split screen, override).
                 if (portraitBlocked()) RotatePrompt()
-            }
+            } }
         } }
     }
 
@@ -199,4 +202,23 @@ class MainActivity : ComponentActivity() {
             hide(WindowInsetsCompat.Type.systemBars())
         }
     }
+}
+
+/**
+ * Landscape phones (LayoutClass.COMPACT): the screens see a 540 dp-tall window (CompactCanvas).
+ * The class is read from the real window; the box and tablets keep the system density.
+ */
+@Composable
+private fun CompactDensity(mobile: Boolean, content: @Composable () -> Unit) {
+    // The box never reads the configuration here: no root recomposition on its config changes.
+    val heightDp = if (mobile) LocalConfiguration.current.screenHeightDp else 0
+    // One provider for every class, no branch: switching between an `if` that calls content()
+    // and an `else` that provides the scaled density rebuilt every screen when the window crossed
+    // 480 dp (a foldable folded mid-playback restarted the player). Never `return content()`
+    // either: Compose compiler 1.4.3 closes the groups before the returned call (blank screens).
+    CompositionLocalProvider(
+        LocalDensity provides CompactCanvas.density(LocalDensity.current, mobile, heightDp),
+        LocalTextRatio provides CompactCanvas.textRatio(mobile, heightDp),
+        content = content,
+    )
 }

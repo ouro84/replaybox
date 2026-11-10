@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +51,7 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.tv.foundation.lazy.grid.TvGridCells
 import androidx.tv.foundation.lazy.grid.TvGridItemSpan
@@ -123,7 +125,9 @@ private val KEY_GAP = 8.dp
 /** Left edge of the results column: the keyboard, then 36 dp of air. */
 private val RESULTS_START = 104.dp + KEYBOARD_WIDTH + 36.dp
 private val BEST_ART_WIDTH = 208.dp
-private val TOP = 27.dp + 8.dp
+/** Below the top inset (TV overscan on the box: 35 dp as before; less on mobile). */
+private val TOP: Dp
+    @Composable @ReadOnlyComposable get() = Rb.safeVertical + 8.dp
 
 /**
  * Search (DESIGN.md « Search »): the D-pad keyboard on the left, on the right the typed query,

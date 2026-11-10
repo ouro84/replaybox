@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -38,10 +40,13 @@ internal fun ActionDialog(
     onDismiss: () -> Unit,
 ) {
     val cancel = remember { FocusRequester() }
-    Dialog(onDismissRequest = onDismiss) {
+    // A Dialog composes in its own window, which re-provides the system density: hand it the
+    // screens' density so the compact canvas applies here too (same value on the box).
+    val density = LocalDensity.current
+    Dialog(onDismissRequest = onDismiss) { CompositionLocalProvider(LocalDensity provides density) {
         Column(
             Modifier
-                .width(440.dp)
+                .textWidth(440.dp)
                 .background(Rb.surface, Rb.cardShape)
                 .padding(24.dp),
         ) {
@@ -84,7 +89,7 @@ internal fun ActionDialog(
                 Row(Modifier.padding(top = 24.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) { buttons() }
             }
         }
-    }
+    } }
     LaunchedEffect(Unit) {
         withFrameNanos { }
         runCatching { cancel.requestFocus() }

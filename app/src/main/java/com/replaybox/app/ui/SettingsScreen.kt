@@ -135,7 +135,7 @@ private fun SettingsRow(
     var focused by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
-            .width(ROW_WIDTH)
+            .textWidth(ROW_WIDTH)
             .focusRequester(requester)
             .onFocusChanged { focused = it.isFocused }
             .tvClickable(onClick)

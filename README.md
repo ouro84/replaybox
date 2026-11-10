@@ -6,13 +6,13 @@
   <a href="https://github.com/ouro84/replaybox/releases/latest"><img src="https://img.shields.io/github/v/release/ouro84/replaybox?label=version" alt="Dernière version"></a>
   <a href="https://github.com/ouro84/replaybox/actions/workflows/healthcheck.yml"><img src="https://img.shields.io/github/actions/workflow/status/ouro84/replaybox/healthcheck.yml?label=sant%C3%A9%20des%20API" alt="Santé des API"></a>
   <a href="LICENSE.md"><img src="https://img.shields.io/badge/licence-PolyForm%20Noncommercial-blue" alt="Licence PolyForm Noncommercial 1.0.0"></a>
-  <img src="https://img.shields.io/badge/Android%20TV-8.0%2B-3DDC84?logo=android&logoColor=white" alt="Android TV 8.0+">
+  <img src="https://img.shields.io/badge/Android%20TV%2C%20t%C3%A9l%C3%A9phone%2C%20tablette-8.0%2B-3DDC84?logo=android&logoColor=white" alt="Android TV, téléphone, tablette 8.0+">
   <img src="https://img.shields.io/badge/Kotlin-7F52FF?logo=kotlin&logoColor=white" alt="Kotlin">
 </p>
 
 # Replaybox
 
-Replaybox regroupe le replay de TF1+, France TV et M6+ dans une seule app Android TV, sans pub.
+Replaybox regroupe le replay de TF1+, France TV et M6+ dans une seule app Android, sans pub. La même app tourne sur une TV, un téléphone ou une tablette.
 
 Les diffuseurs n'intègrent pas leurs pubs dans les vidéos : c'est leur lecteur qui les ajoute pendant la lecture. Replaybox lit directement les flux vidéo, donc aucune pub n'apparaît. Rien n'est bloqué ni sauté, il n'y a simplement rien à bloquer (constat fait en novembre 2026 : pas de marqueur de pub dans les flux, et des durées identiques à la diffusion TV).
 
@@ -25,6 +25,8 @@ Les diffuseurs n'intègrent pas leurs pubs dans les vidéos : c'est leur lecteur
 - Des badges sur les Épisodes : « Hier soir », « Nouveau », « Plus que N jours » avant expiration.
 - Les sous-titres français activés par défaut, l'audiodescription quand le diffuseur la propose.
 - Un mode dégradé : si un diffuseur ne répond pas, l'app affiche le dernier catalogue connu, avec sa date.
+- La pause automatique quand une autre app prend le son (un appel, une vidéo lancée ailleurs).
+- Sur téléphone et tablette, tout se fait au doigt, en paysage et en plein écran. Dans le lecteur, un tap affiche ou masque les contrôles, un double-tap à gauche ou à droite recule ou avance de 10 s. La recherche passe par le clavier du téléphone, et débrancher le casque met la lecture en pause. Sur un téléphone, l'écran TV est mis à l'échelle pour tenir en entier ; une tablette garde la mise en page TV, sans les marges prévues pour les téléviseurs.
 
 ## Comptes
 
@@ -32,34 +34,35 @@ Les diffuseurs n'intègrent pas leurs pubs dans les vidéos : c'est leur lecteur
 - TF1+ : un compte TF1+ (gratuit). TF1 l'exige pour la plupart des Programmes depuis début 2026, quelques-uns se lisent encore sans.
 - M6+ : un compte M6+ (gratuit), obligatoire pour lire.
 
-Tu te connectes dans Paramètres, puis TF1+ ou M6+. Tes identifiants sont stockés chiffrés sur le boîtier (Keystore Android) et ne partent que vers le diffuseur concerné. Les contenus que le diffuseur réserve à ses offres payantes restent inaccessibles.
+Tu te connectes dans Paramètres, puis TF1+ ou M6+. Tes identifiants sont stockés chiffrés sur l'appareil (Keystore Android) et ne partent que vers le diffuseur concerné. Les contenus que le diffuseur réserve à ses offres payantes restent inaccessibles.
 
 ## Paramètres
 
 On y accède par le menu à gauche de l'accueil.
 
 - Sous-titres : taille du texte (Normal, Grand, Très grand) et fond (Contour, Semi-opaque, Opaque), avec un aperçu en direct. Le même réglage existe dans les options du lecteur.
-- TF1+, France TV et M6+ : le compte (connexion, déconnexion) et la Santé du diffuseur. La Santé croise la vérification automatique de la nuit (le badge « santé des API » en haut de cette page) et ce que ta box a constaté elle-même.
+- TF1+, France TV et M6+ : le compte (connexion, déconnexion) et la Santé du diffuseur. La Santé croise la vérification automatique de la nuit (le badge « santé des API » en haut de cette page) et ce que ton appareil a constaté lui-même.
 - À propos : la version installée et la recherche de mise à jour.
 
 ## Installation
 
-Il te faut un appareil Android TV 8.0 ou plus récent (l'app est testée sur une Bbox Android TV 11) et une connexion en France : les diffuseurs bloquent leurs flux depuis l'étranger.
+Il te faut un appareil Android 8.0 ou plus récent, TV, téléphone ou tablette (l'app est testée sur une Bbox Android TV 11 et un Pixel 7), et une connexion en France : les diffuseurs bloquent leurs flux depuis l'étranger.
 
 ### À la main
 
 1. Télécharge le fichier `replaybox-X.Y.Z-release.apk` de la [dernière version](https://github.com/ouro84/replaybox/releases/latest).
-2. Copie-le sur la TV, au choix :
+2. Sur un téléphone ou une tablette, fais l'étape 1 depuis son navigateur, puis ouvre le fichier téléchargé.
+3. Sur une TV, copie-le au choix avec :
    - une clé USB et un gestionnaire de fichiers sur la TV ;
    - l'app Downloader, avec le lien de l'APK ;
    - adb depuis un ordinateur : `adb install -r replaybox-X.Y.Z-release.apk`.
-3. Android te demande d'autoriser l'app qui installe (gestionnaire de fichiers, Downloader) à installer des applications inconnues : accepte.
+4. Android te demande d'autoriser l'app qui installe (navigateur, gestionnaire de fichiers, Downloader) à installer des applications inconnues : accepte.
 
 Ensuite l'app se met à jour toute seule. À chaque lancement, elle regarde s'il existe une version plus récente et la télécharge. Un bandeau « Mise à jour X.Y.Z prête » apparaît alors en haut de l'accueil, avec un bouton « Installer ». La première fois, Android te demande d'autoriser Replaybox à installer des applications : accepte, relance l'app (Android la ferme à ce moment-là) et appuie à nouveau sur « Installer ».
 
 ### Avec un agent IA
 
-Si tu as un agent de code sur ton ordinateur (Claude Code, Codex, Gemini CLI...), il peut faire l'installation à ta place avec adb. Il ne peut pas toucher la TV, donc cette partie-là est pour toi.
+Si tu as un agent de code sur ton ordinateur (Claude Code, Codex, Gemini CLI...), il peut faire l'installation sur ta TV à ta place avec adb. Il ne peut pas toucher la TV, donc cette partie-là est pour toi. Sur un téléphone, l'installation à la main va plus vite.
 
 Sur la TV :
 
