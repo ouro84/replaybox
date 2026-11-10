@@ -176,8 +176,9 @@ inchangée.
   les écrans principaux, recherche au clavier natif, plein écran immersif, paysage (`sensorLandscape`)
   avec l'écran « Tourne l'appareil » en filet (pas observé sur le Pixel : Android 17 y garde l'app en
   paysage, même en écran partagé ; à vérifier sur une tablette qui ignore l'orientation).
-- [ ] (ii) Player tactile : un tap affiche ou masque les contrôles, double-tap à gauche ou à droite
-  pour −10 s / +10 s.
+- [x] (ii) Player tactile : un tap affiche ou masque les contrôles, double-tap à gauche ou à droite
+  pour −10 s / +10 s. Focus audio, box comprise : un appel ou une autre app met en pause et affiche
+  les contrôles ; débrancher le casque met en pause sur mobile.
 - [ ] (iii) Layouts : une classe compacte sous 480 dp de haut ; la tablette garde le layout TV sans
   les marges d'overscan.
 

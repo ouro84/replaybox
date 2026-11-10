@@ -50,6 +50,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
@@ -255,6 +257,7 @@ private fun PlayerSurface(
     // Set when Épisode suivant takes over: the last save records this Épisode as finished.
     var movedOn by remember { mutableStateOf(false) }
 
+    val mobile = LocalMobile.current
     val player = remember(manifestUrl) {
         ExoPlayer.Builder(context)
             .apply {
@@ -266,6 +269,10 @@ private fun PlayerSurface(
             }
             .setSeekBackIncrementMs(10_000)
             .setSeekForwardIncrementMs(10_000)
+            // Audio focus (a call, another player) pauses playback; unplugged headphones too,
+            // on mobile only (PlayerAudio.pausesWhenNoisy).
+            .setAudioAttributes(PlayerAudio.attributes, /* handleAudioFocus = */ true)
+            .setHandleAudioBecomingNoisy(PlayerAudio.pausesWhenNoisy(mobile))
             .build()
             .apply {
                 val builder = MediaItem.Builder().setUri(manifestUrl).setMimeType(
@@ -513,6 +520,11 @@ private fun PlayerSurface(
     var positionMs by remember(manifestUrl) { mutableStateOf(0L) }
     var durationMs by remember(manifestUrl) { mutableStateOf(0L) }
     var buffering by remember(manifestUrl) { mutableStateOf(false) }
+    // Held silent by a call (transient audio focus loss); Media3 resumes when it ends.
+    var callSilenced by remember(manifestUrl) { mutableStateOf(false) }
+    fun togglePlayPause() {
+        if (PlayerAudio.playing(player.isPlaying, callSilenced)) player.pause() else player.play()
+    }
     DisposableEffect(player) {
         val playingListener = object : androidx.media3.common.Player.Listener {
             override fun onIsPlayingChanged(playing: Boolean) {
@@ -557,6 +569,18 @@ private fun PlayerSurface(
                 )
                 if (reveal) showControls()
             }
+
+            // A ringing call holds playback silent without a pause: show the controls too.
+            override fun onPlaybackSuppressionReasonChanged(reason: Int) {
+                callSilenced = reason == androidx.media3.common.Player.PLAYBACK_SUPPRESSION_REASON_TRANSIENT_AUDIO_FOCUS_LOSS
+                val reveal = PlayerAudio.callReveals(
+                    transientFocusLoss = callSilenced,
+                    resumePrompt = showResumeChoice,
+                    nextUp = currentNextUp,
+                    optionsOpen = optionsOpen,
+                )
+                if (reveal) showControls()
+            }
         }
         player.addListener(pauseListener)
         onDispose { player.removeListener(pauseListener) }
@@ -593,6 +617,15 @@ private fun PlayerSurface(
     fun openOptions() {
         controlsVisible = false
         optionsOpen = true
+    }
+
+    // The side a double-tap just sought, shown 600 ms; a new double-tap restarts it.
+    var flash by remember { mutableStateOf(PlayerTouch.Seek.NONE) }
+    var flashTick by remember { mutableStateOf(0) }
+    LaunchedEffect(flashTick) {
+        if (flashTick == 0) return@LaunchedEffect
+        delay(SEEK_FLASH_MS)
+        flash = PlayerTouch.Seek.NONE
     }
 
     fun closeOptions() {
@@ -633,7 +666,7 @@ private fun PlayerSurface(
                     PlayerKeys.Action.SEEK_BACK -> { player.seekBack(); showControls(); true }
                     PlayerKeys.Action.SEEK_FORWARD -> { player.seekForward(); showControls(); true }
                     PlayerKeys.Action.PLAY_PAUSE -> {
-                        if (player.isPlaying) player.pause() else player.play()
+                        togglePlayPause()
                         showControls()
                         true
                     }
@@ -670,6 +703,42 @@ private fun PlayerSurface(
             // Hold the screen on while an Episode plays; paused or ended, it may sleep.
             update = { view -> view.keepScreenOn = isPlaying },
         )
+        // Mobile: taps on the video (PlayerTouch). Under the overlays, so their buttons
+        // take their own taps. The box has no such layer: the remote keys above drive it.
+        if (LocalMobile.current) {
+            val touchState by rememberUpdatedState(
+                TouchState(controlsVisible, optionsOpen, showResumeChoice || nextUp),
+            )
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = {
+                                val now = touchState
+                                when (PlayerTouch.tap(now.controlsVisible, now.optionsOpen, now.prompt)) {
+                                    PlayerTouch.Tap.NONE -> Unit
+                                    PlayerTouch.Tap.SHOW -> showControls()
+                                    PlayerTouch.Tap.HIDE -> controlsVisible = false
+                                    PlayerTouch.Tap.CLOSE_OPTIONS -> closeOptions()
+                                }
+                            },
+                            onDoubleTap = { offset ->
+                                val now = touchState
+                                val seek = PlayerTouch.doubleTap(offset.x, size.width.toFloat(), now.optionsOpen, now.prompt)
+                                if (seek != PlayerTouch.Seek.NONE) {
+                                    if (seek == PlayerTouch.Seek.BACK) player.seekBack() else player.seekForward()
+                                    positionMs = player.currentPosition
+                                    interaction++
+                                    flash = seek
+                                    flashTick++
+                                }
+                            },
+                        )
+                    },
+            )
+            SeekFlash(flash, Modifier.fillMaxSize())
+        }
         // Same ring as the Flux resolution (Round 8 Q3), over the video.
         if (buffering && !showResumeChoice) LoadingRing(Modifier.align(Alignment.Center))
         val upcoming = next
@@ -712,6 +781,8 @@ private fun PlayerSurface(
                     onSpeed = { chooseSpeed(it) },
                 ),
                 modifier = Modifier.align(Alignment.BottomStart),
+                // Mobile: a tap between two chips stays in the panel; above the rows it closes it.
+                rowsModifier = if (mobile) Modifier.pointerInput(Unit) { detectTapGestures { } } else Modifier,
             )
         } else if (controlsVisible) {
             PlayerControls(
@@ -719,11 +790,11 @@ private fun PlayerSurface(
                 episodeTitle = progressContext?.episodeTitle ?: "",
                 positionMs = positionMs,
                 durationMs = durationMs,
-                isPlaying = isPlaying,
+                isPlaying = PlayerAudio.playing(isPlaying, callSilenced),
                 subtitlesOn = if (hasTextTracks) subtitlesOn else null,
                 playRequester = playFocus,
                 onInteract = { interaction++ },
-                onPlayPause = { if (player.isPlaying) player.pause() else player.play() },
+                onPlayPause = { togglePlayPause() },
                 onSeekBack = { player.seekBack(); positionMs = player.currentPosition },
                 onSeekForward = { player.seekForward(); positionMs = player.currentPosition },
                 onRestart = { player.seekTo(0); player.play(); positionMs = 0 },
@@ -732,6 +803,28 @@ private fun PlayerSurface(
                 modifier = Modifier.align(Alignment.BottomStart),
             )
         }
+    }
+}
+
+/** What a tap on the video needs to decide (read through rememberUpdatedState). */
+private data class TouchState(val controlsVisible: Boolean, val optionsOpen: Boolean, val prompt: Boolean)
+
+private const val SEEK_FLASH_MS = 600L
+
+/** « −10 s » on the left or « +10 s » on the right after a double-tap; nothing otherwise. */
+@Composable
+private fun SeekFlash(seek: PlayerTouch.Seek, modifier: Modifier) {
+    if (seek == PlayerTouch.Seek.NONE) return
+    Box(modifier.padding(horizontal = Rb.contentStart)) {
+        Text(
+            text = stringResource(if (seek == PlayerTouch.Seek.BACK) R.string.control_back10 else R.string.control_fwd10),
+            style = RbType.displayCompact,
+            color = Rb.text,
+            modifier = Modifier
+                .align(if (seek == PlayerTouch.Seek.BACK) Alignment.CenterStart else Alignment.CenterEnd)
+                .background(Rb.ground.copy(alpha = 0.6f), Rb.pillShape)
+                .padding(horizontal = 24.dp, vertical = 12.dp),
+        )
     }
 }
 
