@@ -31,8 +31,14 @@ avec une interface rapide et sans publicité — par architecture, pas par bloca
 
 ## Hors périmètre V1
 
-M6+ (V2, DRM+compte), live TV, extraits/bonus des chaînes, profils enfants, mobile/tablette,
+M6+ (V2, DRM+compte), live TV, extraits/bonus des chaînes, profils enfants,
 Chromecast, tout backend hébergé, tout compte utilisateur.
+
+## Après la V1 — mobile et tablette
+
+Décision d'Arnaud du 2026-11-10 : la V1/MVP est livrée. Mobile et tablette sortent du hors-périmètre :
+la même APK s'installe sur un téléphone ou une tablette Android 8+ et s'utilise au doigt, en paysage.
+Sur la box, rien ne change. Jalon livré en version 1.0.0.
 
 ## Definition of Done (V1)
 
