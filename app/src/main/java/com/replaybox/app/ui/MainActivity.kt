@@ -210,7 +210,8 @@ class MainActivity : ComponentActivity() {
  */
 @Composable
 private fun CompactDensity(mobile: Boolean, content: @Composable () -> Unit) {
-    val heightDp = LocalConfiguration.current.screenHeightDp
+    // The box never reads the configuration here: no root recomposition on its config changes.
+    val heightDp = if (mobile) LocalConfiguration.current.screenHeightDp else 0
     // One provider for every class, no branch: switching between an `if` that calls content()
     // and an `else` that provides the scaled density rebuilt every screen when the window crossed
     // 480 dp (a foldable folded mid-playback restarted the player). Never `return content()`

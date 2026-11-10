@@ -55,7 +55,7 @@ internal fun OptionsPanel(rows: List<OptionRow>, modifier: Modifier = Modifier, 
         rows.forEachIndexed { rowIndex, row ->
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(row.title, style = RbType.bodyStrong, color = Rb.textSecondary, modifier = Modifier.textWidth(180.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(Modifier.mobileHorizontalScroll(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     val focusIndex = if (rowIndex == 0) row.chips.indexOfFirst { it.selected }.coerceAtLeast(0) else -1
                     row.chips.forEachIndexed { index, chip ->
                         key(row.title, chip.label) {

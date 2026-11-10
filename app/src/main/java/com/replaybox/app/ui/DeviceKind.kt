@@ -8,6 +8,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
@@ -39,7 +40,8 @@ enum class LayoutClass {
 
         fun of(mobile: Boolean, heightDp: Int): LayoutClass = when {
             !mobile -> TV
-            heightDp < COMPACT_MAX_HEIGHT_DP -> COMPACT
+            // 0 is Configuration.SCREEN_HEIGHT_DP_UNDEFINED: never scale by it.
+            heightDp in 1 until COMPACT_MAX_HEIGHT_DP -> COMPACT
             else -> TABLET
         }
     }
@@ -92,6 +94,14 @@ val LocalMobile: ProvidableCompositionLocal<Boolean> = staticCompositionLocalOf 
 @Composable
 fun Modifier.mobileVerticalScroll(): Modifier =
     if (LocalMobile.current) verticalScroll(rememberScrollState()) else this
+
+/**
+ * A row of fixed-size buttons that may not fit a narrow mobile window (split screen narrower
+ * than 16:9) scrolls sideways there instead of squeezing its last buttons; unchanged on the box.
+ */
+@Composable
+fun Modifier.mobileHorizontalScroll(): Modifier =
+    if (LocalMobile.current) horizontalScroll(rememberScrollState()) else this
 
 /**
  * Drag and fling on mobile for a TV lazy list or grid ([state] is its TvLazyListState or

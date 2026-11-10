@@ -58,4 +58,12 @@ class LayoutClassTest {
         assertThat(CompactCanvas.textRatio(mobile = true, heightDp = 617)).isEqualTo(1f)
         assertThat(CompactCanvas.textRatio(mobile = true, heightDp = 411)).isWithin(1e-4f).of(CompactCanvas.textRatio(411))
     }
+
+    @Test
+    fun undefinedHeightIsNeverCompact() {
+        // Configuration.SCREEN_HEIGHT_DP_UNDEFINED is 0: scaling by it would give a zero density.
+        assertThat(LayoutClass.of(mobile = true, heightDp = 0)).isEqualTo(LayoutClass.TABLET)
+        val system = Density(density = 2.625f, fontScale = 1f)
+        assertThat(CompactCanvas.density(system, mobile = true, heightDp = 0)).isSameInstanceAs(system)
+    }
 }

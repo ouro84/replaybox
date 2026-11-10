@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Text
@@ -131,7 +130,7 @@ private fun <T> ChoiceRow(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.onFocusChanged { if (!it.hasFocus) onFocused(null) },
     ) {
-        Text(title, style = RbType.bodyStrong, color = Rb.textSecondary, modifier = Modifier.width(LABEL_WIDTH))
+        Text(title, style = RbType.bodyStrong, color = Rb.textSecondary, modifier = Modifier.textWidth(LABEL_WIDTH))
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             choices.forEach { choice ->
                 key(choice) {
