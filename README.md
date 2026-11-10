@@ -41,7 +41,7 @@ Tu te connectes dans Paramètres, puis TF1+ ou M6+. Tes identifiants sont stock�
 On y accède par le menu à gauche de l'accueil.
 
 - Sous-titres : taille du texte (Normal, Grand, Très grand) et fond (Contour, Semi-opaque, Opaque), avec un aperçu en direct. Le même réglage existe dans les options du lecteur.
-- TF1+, France TV et M6+ : le compte (connexion, déconnexion) et la Santé du diffuseur. La Santé croise la vérification automatique de la nuit (le badge « santé des API » en haut de cette page) et ce que ta box a constaté elle-même.
+- TF1+, France TV et M6+ : le compte (connexion, déconnexion) et la Santé du diffuseur. La Santé croise la vérification automatique de la nuit (le badge « santé des API » en haut de cette page) et ce que ton appareil a constaté lui-même.
 - À propos : la version installée et la recherche de mise à jour.
 
 ## Installation

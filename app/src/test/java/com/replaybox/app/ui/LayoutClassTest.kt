@@ -1,5 +1,6 @@
 package com.replaybox.app.ui
 
+import androidx.compose.ui.unit.Density
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -37,5 +38,24 @@ class LayoutClassTest {
         // Text is 0.9 of TV size on a 0.76 canvas: a fixed text box must grow by the same ratio.
         assertThat(CompactCanvas.textRatio(411)).isWithin(1e-4f).of(0.9f / (411f / 540f))
         assertThat(CompactCanvas.textRatio(600)).isWithin(1e-4f).of(0.9f)
+    }
+
+    @Test
+    fun onlyCompactChangesTheDensity() {
+        // Same instance outside compact: the box and tablets get the system density untouched,
+        // and the class can flip without swapping the composition tree (one provider for all).
+        val system = Density(density = 2.625f, fontScale = 1f)
+        assertThat(CompactCanvas.density(system, mobile = false, heightDp = 300)).isSameInstanceAs(system)
+        assertThat(CompactCanvas.density(system, mobile = true, heightDp = 617)).isSameInstanceAs(system)
+        val compact = CompactCanvas.density(system, mobile = true, heightDp = 411)
+        assertThat(compact.density).isWithin(1e-4f).of(2.625f * 411f / 540f)
+        assertThat(compact.fontScale).isWithin(1e-4f).of(CompactCanvas.fontScale(1f, 411))
+    }
+
+    @Test
+    fun textRatioIsOneOutsideCompact() {
+        assertThat(CompactCanvas.textRatio(mobile = false, heightDp = 300)).isEqualTo(1f)
+        assertThat(CompactCanvas.textRatio(mobile = true, heightDp = 617)).isEqualTo(1f)
+        assertThat(CompactCanvas.textRatio(mobile = true, heightDp = 411)).isWithin(1e-4f).of(CompactCanvas.textRatio(411))
     }
 }

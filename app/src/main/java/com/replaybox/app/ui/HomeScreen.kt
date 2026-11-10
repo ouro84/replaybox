@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -154,6 +155,12 @@ internal enum class HomePanel { FULL, NOTICES, NONE }
  * The box always draws the full panel. Mobile draws it for a billboard only; without one, the
  * stale-data notice and the update chip (PRD story 6) still show, in a slim row; else nothing.
  */
+/**
+ * The box keeps its 252 dp panel. On a phone the text is bigger in canvas dp than on the TV, so
+ * the panel grows with it instead of squashing the Reprendre / Épisodes buttons.
+ */
+internal fun panelHeightIsFixed(mobile: Boolean): Boolean = !mobile
+
 internal fun homePanel(mobile: Boolean, hasBillboard: Boolean, hasNotice: Boolean): HomePanel = when {
     !mobile || hasBillboard -> HomePanel.FULL
     hasNotice -> HomePanel.NOTICES
@@ -569,7 +576,7 @@ private fun DetailPanel(
     Box(
         Modifier
             .fillMaxWidth()
-            .height(PANEL_HEIGHT)
+            .then(if (panelHeightIsFixed(LocalMobile.current)) Modifier.height(PANEL_HEIGHT) else Modifier.heightIn(min = PANEL_HEIGHT))
             .padding(start = GUTTER, top = Rb.safeVertical, end = Rb.safeHorizontal),
     ) {
         Column(Modifier.textWidth(540.dp).align(Alignment.TopStart).padding(top = 8.dp)) {

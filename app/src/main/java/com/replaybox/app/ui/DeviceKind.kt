@@ -1,5 +1,6 @@
 package com.replaybox.app.ui
 
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.layout.width
 import android.content.res.Configuration
@@ -60,6 +61,18 @@ object CompactCanvas {
 
     /** How much bigger text is, in canvas dp, than on the TV: fixed-width text boxes grow by it. */
     fun textRatio(heightDp: Int): Float = TEXT_FACTOR / scale(heightDp)
+
+    /** The density the screens see: scaled on compact, [system] itself (same instance) elsewhere. */
+    fun density(system: Density, mobile: Boolean, heightDp: Int): Density =
+        if (LayoutClass.of(mobile, heightDp) != LayoutClass.COMPACT) {
+            system
+        } else {
+            Density(density = system.density * scale(heightDp), fontScale = fontScale(system.fontScale, heightDp))
+        }
+
+    /** [textRatio] on compact, 1 elsewhere (box and tablet: text boxes unchanged). */
+    fun textRatio(mobile: Boolean, heightDp: Int): Float =
+        if (LayoutClass.of(mobile, heightDp) != LayoutClass.COMPACT) 1f else textRatio(heightDp)
 }
 
 /** [CompactCanvas.textRatio] on the compact canvas, 1 elsewhere (box and tablet: unchanged). */

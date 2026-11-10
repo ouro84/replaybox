@@ -16,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.runtime.Composable
@@ -212,21 +211,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun CompactDensity(mobile: Boolean, content: @Composable () -> Unit) {
     val heightDp = LocalConfiguration.current.screenHeightDp
-    // No `return content()`: Compose compiler 1.4.3 closes this function's groups before
-    // evaluating the returned call, so the screens composed outside them and stopped
-    // recomposing (blank Programme page and Search on the box).
-    if (LayoutClass.of(mobile, heightDp) != LayoutClass.COMPACT) {
-        content()
-    } else {
-        val system = LocalDensity.current
-        val scaled = Density(
-            density = system.density * CompactCanvas.scale(heightDp),
-            fontScale = CompactCanvas.fontScale(system.fontScale, heightDp),
-        )
-        CompositionLocalProvider(
-            LocalDensity provides scaled,
-            LocalTextRatio provides CompactCanvas.textRatio(heightDp),
-            content = content,
-        )
-    }
+    // One provider for every class, no branch: switching between an `if` that calls content()
+    // and an `else` that provides the scaled density rebuilt every screen when the window crossed
+    // 480 dp (a foldable folded mid-playback restarted the player). Never `return content()`
+    // either: Compose compiler 1.4.3 closes the groups before the returned call (blank screens).
+    CompositionLocalProvider(
+        LocalDensity provides CompactCanvas.density(LocalDensity.current, mobile, heightDp),
+        LocalTextRatio provides CompactCanvas.textRatio(mobile, heightDp),
+        content = content,
+    )
 }
