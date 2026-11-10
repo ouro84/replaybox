@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
             @Suppress("DEPRECATION")
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
-        setContent { CompositionLocalProvider(LocalMobile provides mobile) {
+        setContent { CompositionLocalProvider(LocalMobile provides mobile, LocalInsets provides if (mobile) MobileInsets else TvInsets) {
             val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
             // Survives trips to a Programme or the player: scroll + focus restored.
             val homeState = remember { HomeUiState() }

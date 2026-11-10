@@ -10,10 +10,13 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -46,9 +49,12 @@ object Rb {
 
     val error = Color(0xFFFF9C8F)
 
-    // Geometry (dp). Overscan-safe insets are 5 % of 960x540.
-    val safeHorizontal = 48.dp
-    val safeVertical = 27.dp
+    // Geometry (dp). Overscan-safe insets are 5 % of 960x540 on a TV; phones and tablets
+    // have no overscan and take smaller margins (LocalInsets, mobile milestone PR iii).
+    val safeHorizontal: Dp
+        @Composable @ReadOnlyComposable get() = LocalInsets.current.horizontal
+    val safeVertical: Dp
+        @Composable @ReadOnlyComposable get() = LocalInsets.current.vertical
     val railCollapsed = 72.dp
     val railExpanded = 232.dp
     val contentStart = 104.dp
@@ -65,6 +71,13 @@ object Rb {
     const val FOCUS_MS = 200
     const val BACKDROP_MS = 300
 }
+
+/** Screen-edge margins: the TV overscan-safe ones, or the smaller mobile ones. */
+data class Insets(val horizontal: Dp, val vertical: Dp)
+
+val TvInsets = Insets(48.dp, 27.dp)
+val MobileInsets = Insets(24.dp, 16.dp)
+val LocalInsets = staticCompositionLocalOf { TvInsets }
 
 /** Type scale in sp; floor 14 sp, body 18 sp (PRODUCT.md, 3 m viewing). */
 object RbType {

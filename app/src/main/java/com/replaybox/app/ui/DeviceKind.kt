@@ -24,6 +24,24 @@ object DeviceKind {
     fun isPortraitWindow(widthDp: Int, heightDp: Int): Boolean = heightDp > widthDp
 }
 
+/**
+ * Layout of the window (mobile milestone PR iii): the box keeps the TV layout; a tablet keeps it
+ * without overscan margins; a landscape phone (height < 480 dp) gets the compact canvas.
+ */
+enum class LayoutClass {
+    TV, TABLET, COMPACT;
+
+    companion object {
+        const val COMPACT_MAX_HEIGHT_DP = 480
+
+        fun of(mobile: Boolean, heightDp: Int): LayoutClass = when {
+            !mobile -> TV
+            heightDp < COMPACT_MAX_HEIGHT_DP -> COMPACT
+            else -> TABLET
+        }
+    }
+}
+
 /** True on phones and tablets, false on the box. Provided once by MainActivity. */
 val LocalMobile: ProvidableCompositionLocal<Boolean> = staticCompositionLocalOf { false }
 
