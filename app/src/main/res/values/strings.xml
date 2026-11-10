@@ -11,6 +11,7 @@
     <string name="stale_data">Données du %1$s</string>
     <string name="search_button">Rechercher</string>
     <string name="search_hint">Titre du Programme…</string>
+    <string name="search_clear">Effacer la recherche</string>
     <string name="rotate_title">Tourne l\'appareil</string>
     <string name="rotate_body">Replaybox s\'utilise en paysage.</string>
     <string name="search_type_hint">Tape le titre d\'un Programme.</string>
