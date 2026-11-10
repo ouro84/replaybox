@@ -12,6 +12,7 @@ import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -48,6 +49,25 @@ import androidx.compose.ui.unit.dp
 import com.replaybox.R
 
 enum class RailDestination { HOME, GENRES, SEARCH, SETTINGS }
+
+/** Where a rail destination lands: always on top of Home, so Back from it returns to Home. */
+object RailNavigation {
+    fun stackFor(destination: RailDestination): List<Screen> = when (destination) {
+        RailDestination.HOME -> listOf(Screen.Home)
+        RailDestination.GENRES -> listOf(Screen.Home, Screen.Genres)
+        RailDestination.SEARCH -> listOf(Screen.Home, Screen.Search)
+        RailDestination.SETTINGS -> listOf(Screen.Home, Screen.Settings)
+    }
+}
+
+/**
+ * The rail on Recherche, Genres and Paramètres, on mobile only: there is no D-pad LEFT back to
+ * Home there. Collapsed for good (touch never focuses it). On the box these screens stay as they are.
+ */
+@Composable
+fun BoxScope.MobileRail(current: RailDestination, onNavigate: (RailDestination) -> Unit) {
+    if (LocalMobile.current) NavRail(current, onNavigate, Modifier.align(Alignment.CenterStart))
+}
 
 /**
  * Left navigation rail (Google TV / Netflix pattern): icons only while the

@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.key
@@ -12,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -70,6 +73,18 @@ class MainActivity : ComponentActivity() {
                 gridState = GenreGridUiState(genre)
                 backStack.add(Screen.GenreGrid(genre))
             }
+            // The rail (Home; on mobile also Recherche, Genres, Paramètres): a fresh visit on top of
+            // Home. From Home the stack is [Home], so this is the former add.
+            fun navigate(destination: RailDestination) {
+                when (destination) {
+                    RailDestination.GENRES -> genresState = GenresUiState()
+                    RailDestination.SEARCH -> searchState = SearchUiState()
+                    RailDestination.HOME, RailDestination.SETTINGS -> Unit
+                }
+                if (backStack.size == 1 && destination == RailDestination.HOME) return
+                backStack.clear()
+                backStack.addAll(RailNavigation.stackFor(destination))
+            }
             BackHandler(enabled = backStack.size > 1) { backStack.removeAt(backStack.lastIndex) }
             ReplayboxThemeSurface {
                 when (val current = backStack.last()) {
@@ -79,20 +94,7 @@ class MainActivity : ComponentActivity() {
                         onPlay = { id, title, progressContext ->
                             backStack.add(Screen.Player(id, title, progressContext, autoResume = true))
                         },
-                        onNavigate = { destination ->
-                            when (destination) {
-                                RailDestination.HOME -> Unit
-                                RailDestination.GENRES -> {
-                                    genresState = GenresUiState()
-                                    backStack.add(Screen.Genres)
-                                }
-                                RailDestination.SEARCH -> {
-                                    searchState = SearchUiState()
-                                    backStack.add(Screen.Search)
-                                }
-                                RailDestination.SETTINGS -> backStack.add(Screen.Settings)
-                            }
-                        },
+                        onNavigate = ::navigate,
                         onOpenGenre = ::openGrid,
                     )
                     is Screen.ShowDetail -> ShowScreen(
@@ -131,24 +133,33 @@ class MainActivity : ComponentActivity() {
                             if (backStack.size > 1 && backStack.last() == current) backStack.removeAt(backStack.lastIndex)
                         },
                     ) }
-                    Screen.Settings -> SettingsScreen(
-                        state = settingsState,
-                        onOpenSubtitles = { backStack.add(Screen.SubtitleSettings) },
-                        onOpenProvider = { groupId -> backStack.add(Screen.ProviderDetail(groupId)) },
-                        onOpenAbout = { backStack.add(Screen.About) },
-                    )
+                    Screen.Settings -> Box(Modifier.fillMaxSize()) {
+                        SettingsScreen(
+                            state = settingsState,
+                            onOpenSubtitles = { backStack.add(Screen.SubtitleSettings) },
+                            onOpenProvider = { groupId -> backStack.add(Screen.ProviderDetail(groupId)) },
+                            onOpenAbout = { backStack.add(Screen.About) },
+                        )
+                        MobileRail(RailDestination.SETTINGS, ::navigate)
+                    }
                     Screen.About -> AboutScreen()
                     Screen.SubtitleSettings -> SubtitleSettingsScreen()
                     is Screen.ProviderDetail -> key(current.groupId) { ProviderScreen(groupId = current.groupId) }
-                    Screen.Search -> SearchScreen(
-                        state = searchState,
-                        onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
-                        // « Reprendre » on the best result resumes at once, like Home.
-                        onPlay = { id, title, progressContext ->
-                            backStack.add(Screen.Player(id, title, progressContext, autoResume = true))
-                        },
-                    )
-                    Screen.Genres -> GenresScreen(state = genresState, onOpenGenre = ::openGrid)
+                    Screen.Search -> Box(Modifier.fillMaxSize()) {
+                        SearchScreen(
+                            state = searchState,
+                            onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
+                            // « Reprendre » on the best result resumes at once, like Home.
+                            onPlay = { id, title, progressContext ->
+                                backStack.add(Screen.Player(id, title, progressContext, autoResume = true))
+                            },
+                        )
+                        MobileRail(RailDestination.SEARCH, ::navigate)
+                    }
+                    Screen.Genres -> Box(Modifier.fillMaxSize()) {
+                        GenresScreen(state = genresState, onOpenGenre = ::openGrid)
+                        MobileRail(RailDestination.GENRES, ::navigate)
+                    }
                     is Screen.GenreGrid -> key(current.genre) {
                         GenreGridScreen(
                             state = remember { gridState?.takeIf { it.genre == current.genre } ?: GenreGridUiState(current.genre) },
