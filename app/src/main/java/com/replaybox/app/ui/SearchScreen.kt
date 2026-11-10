@@ -139,8 +139,9 @@ fun SearchScreen(
     val catalog = Providers.catalog
     // Mobile: the system keyboard in a field, results full width (grilling 2026-11-10).
     val mobile = LocalMobile.current
+    // Read on mobile only: on the box the insets listener is never installed.
     @OptIn(ExperimentalLayoutApi::class)
-    val imeVisible = WindowInsets.isImeVisible
+    val imeVisible = mobile && WindowInsets.isImeVisible
     // Read once per visit, like Home: Providers.all follows the M6+ account.
     val providers = remember { Providers.all }
     val channelIds = remember { providers.map { it.channel.id } }

@@ -12,4 +12,18 @@ class RailNavigationTest {
         assertThat(RailNavigation.stackFor(RailDestination.GENRES)).containsExactly(Screen.Home, Screen.Genres).inOrder()
         assertThat(RailNavigation.stackFor(RailDestination.SETTINGS)).containsExactly(Screen.Home, Screen.Settings).inOrder()
     }
+
+    @Test
+    fun theDestinationOnScreenIsNoMove() {
+        assertThat(RailNavigation.next(listOf(Screen.Home, Screen.Search), RailDestination.SEARCH)).isNull()
+        assertThat(RailNavigation.next(listOf(Screen.Home), RailDestination.HOME)).isNull()
+    }
+
+    @Test
+    fun anotherDestinationResetsTheStack() {
+        assertThat(RailNavigation.next(listOf(Screen.Home, Screen.Search), RailDestination.GENRES))
+            .containsExactly(Screen.Home, Screen.Genres).inOrder()
+        assertThat(RailNavigation.next(listOf(Screen.Home, Screen.Settings), RailDestination.HOME))
+            .containsExactly(Screen.Home)
+    }
 }

@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -45,6 +46,10 @@ fun SearchField(
     // The EditText is built once; its watcher calls the latest callback.
     val currentOnQuery by rememberUpdatedState(onQuery)
     val holder = remember { arrayOfNulls<EditText>(1) }
+    // Leaving Search (a result, the rail) removes the focused field: close its keyboard too.
+    DisposableEffect(Unit) {
+        onDispose { holder[0]?.let { hideKeyboard(it.context, it) } }
+    }
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
         AndroidView(
             modifier = Modifier.weight(1f),

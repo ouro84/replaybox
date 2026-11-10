@@ -147,6 +147,19 @@ internal data class Featured(
 internal fun panelFeatured(mobile: Boolean, focused: Featured?, billboard: Featured?): Featured? =
     if (mobile) billboard else focused ?: billboard
 
+/** What the top of Home draws. */
+internal enum class HomePanel { FULL, NOTICES, NONE }
+
+/**
+ * The box always draws the full panel. Mobile draws it for a billboard only; without one, the
+ * stale-data notice and the update chip (PRD story 6) still show, in a slim row; else nothing.
+ */
+internal fun homePanel(mobile: Boolean, hasBillboard: Boolean, hasNotice: Boolean): HomePanel = when {
+    !mobile || hasBillboard -> HomePanel.FULL
+    hasNotice -> HomePanel.NOTICES
+    else -> HomePanel.NONE
+}
+
 private sealed interface Billboard {
     /** The first « À suivre » item: « Reprendre » in progress, « Lecture » for a new Épisode. */
     data class UpNext(val item: UpNextItem) : Billboard
@@ -290,17 +303,27 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(start = Rb.contentStart - GUTTER),
         ) {
-            // Mobile without a billboard: no panel, the rails start at the top.
-            if (!mobile || billboard != null) DetailPanel(
-                featured = shown,
-                billboard = billboard.takeIf { mobile || focused == null },
-                state = state,
-                stale = current?.stale,
-                update = updateState as? UpdateState.Ready,
-                onFocusButton = { key -> track(key, null) },
-                onPlay = { item -> onPlay(item.episodeId, item.episodeTitle, item.toContext()) },
-                onOpenShow = onOpenShow,
-            )
+            val stale = current?.stale
+            val update = updateState as? UpdateState.Ready
+            // Mobile without a billboard: the rails start at the top, under the notices if any.
+            when (homePanel(mobile, billboard != null, stale != null || update != null)) {
+                HomePanel.NONE -> Unit
+                HomePanel.NOTICES -> Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = GUTTER, top = Rb.safeVertical, end = Rb.safeHorizontal),
+                ) { PanelNotices(stale, update, Modifier.align(Alignment.TopEnd)) }
+                HomePanel.FULL -> DetailPanel(
+                    featured = shown,
+                    billboard = billboard.takeIf { mobile || focused == null },
+                    state = state,
+                    stale = stale,
+                    update = update,
+                    onFocusButton = { key -> track(key, null) },
+                    onPlay = { item -> onPlay(item.episodeId, item.episodeTitle, item.toContext()) },
+                    onOpenShow = onOpenShow,
+                )
+            }
             when {
                 current == null || (current.genres.isEmpty() && refreshing) -> SkeletonRails()
                 current.genres.isEmpty() && current.upNext.isEmpty() && current.favorites.isEmpty() -> Column(
@@ -623,23 +646,29 @@ private fun DetailPanel(
                 }
             }
         }
-        Column(Modifier.align(Alignment.TopEnd), horizontalAlignment = Alignment.End) {
-            stale?.let {
-                Text(
-                    text = stringResource(
-                        if (it.sourceCount > 1) R.string.catalog_stale_many else R.string.catalog_stale_one,
-                        shortDate(it.asOf),
-                        it.sources,
-                    ),
-                    style = RbType.meta,
-                    color = Rb.textSecondary,
-                    modifier = Modifier
-                        .background(Rb.ground.copy(alpha = 0.85f), Rb.pillShape)
-                        .padding(horizontal = 12.dp, vertical = 4.dp),
-                )
-            }
-            update?.let { UpdateChip(it) }
+        PanelNotices(stale, update, Modifier.align(Alignment.TopEnd))
+    }
+}
+
+/** Top-right of Home: the stale-data notice (Données du …) and the update chip. */
+@Composable
+private fun PanelNotices(stale: StaleNotice?, update: UpdateState.Ready?, modifier: Modifier) {
+    Column(modifier, horizontalAlignment = Alignment.End) {
+        stale?.let {
+            Text(
+                text = stringResource(
+                    if (it.sourceCount > 1) R.string.catalog_stale_many else R.string.catalog_stale_one,
+                    shortDate(it.asOf),
+                    it.sources,
+                ),
+                style = RbType.meta,
+                color = Rb.textSecondary,
+                modifier = Modifier
+                    .background(Rb.ground.copy(alpha = 0.85f), Rb.pillShape)
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+            )
         }
+        update?.let { UpdateChip(it) }
     }
 }
 

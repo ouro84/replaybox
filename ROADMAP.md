@@ -174,7 +174,8 @@ inchangée.
 
 - [x] (i) Entrée tactile et navigation : défilement au doigt, appui long = options, menu de gauche sur
   les écrans principaux, recherche au clavier natif, plein écran immersif, paysage (`sensorLandscape`)
-  avec l'écran « Tourne l'appareil » en filet.
+  avec l'écran « Tourne l'appareil » en filet (pas observé sur le Pixel : Android 17 y garde l'app en
+  paysage, même en écran partagé ; à vérifier sur une tablette qui ignore l'orientation).
 - [ ] (ii) Player tactile : un tap affiche ou masque les contrôles, double-tap à gauche ou à droite
   pour −10 s / +10 s.
 - [ ] (iii) Layouts : une classe compacte sous 480 dp de haut ; la tablette garde le layout TV sans

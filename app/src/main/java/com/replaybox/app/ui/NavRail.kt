@@ -58,6 +58,13 @@ object RailNavigation {
         RailDestination.SEARCH -> listOf(Screen.Home, Screen.Search)
         RailDestination.SETTINGS -> listOf(Screen.Home, Screen.Settings)
     }
+
+    /**
+     * The stack after tapping [destination] on a rail shown over [stack]; null when that
+     * destination is already on screen (re-tapping Recherche must not swap its state under the field).
+     */
+    fun next(stack: List<Screen>, destination: RailDestination): List<Screen>? =
+        stackFor(destination).takeIf { it != stack }
 }
 
 /**

@@ -22,9 +22,10 @@ import com.replaybox.R
  */
 @Composable
 fun portraitBlocked(): Boolean {
+    // LocalMobile first: on the box the configuration is never read, so no recomposition on change.
+    if (!LocalMobile.current) return false
     val configuration = LocalConfiguration.current
-    return LocalMobile.current &&
-        DeviceKind.isPortraitWindow(configuration.screenWidthDp, configuration.screenHeightDp)
+    return DeviceKind.isPortraitWindow(configuration.screenWidthDp, configuration.screenHeightDp)
 }
 
 /**

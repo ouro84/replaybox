@@ -2,6 +2,7 @@ package com.replaybox.app.ui
 
 import android.app.UiModeManager
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -54,7 +55,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) ReplayboxApplication.checkForUpdate()
-        if (mobile) WindowCompat.setDecorFitsSystemWindows(window, false)
+        if (mobile) {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            // Android 8-10 only report the IME inset to Compose with adjustResize (Search hides
+            // its chips while the keyboard is up). The box keeps its window mode.
+            @Suppress("DEPRECATION")
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        }
         setContent { CompositionLocalProvider(LocalMobile provides mobile) {
             val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
             // Survives trips to a Programme or the player: scroll + focus restored.
@@ -76,14 +83,15 @@ class MainActivity : ComponentActivity() {
             // The rail (Home; on mobile also Recherche, Genres, Paramètres): a fresh visit on top of
             // Home. From Home the stack is [Home], so this is the former add.
             fun navigate(destination: RailDestination) {
+                // The destination already on screen: nothing moves, its state stays.
+                val next = RailNavigation.next(backStack.toList(), destination) ?: return
                 when (destination) {
                     RailDestination.GENRES -> genresState = GenresUiState()
                     RailDestination.SEARCH -> searchState = SearchUiState()
                     RailDestination.HOME, RailDestination.SETTINGS -> Unit
                 }
-                if (backStack.size == 1 && destination == RailDestination.HOME) return
                 backStack.clear()
-                backStack.addAll(RailNavigation.stackFor(destination))
+                backStack.addAll(next)
             }
             BackHandler(enabled = backStack.size > 1) { backStack.removeAt(backStack.lastIndex) }
             ReplayboxThemeSurface {

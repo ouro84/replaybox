@@ -256,8 +256,11 @@ class SearchUiState {
         return true
     }
 
-    /** Mobile: a fresh visit opens the keyboard; back from a Programme (query kept) does not. */
-    val opensKeyboardOnEntry: Boolean get() = query.isEmpty()
+    /**
+     * Mobile: a fresh visit opens the keyboard; coming back from a Programme does not, whether
+     * it was found by typing (query kept) or by browsing with the chips (a result was tapped).
+     */
+    val opensKeyboardOnEntry: Boolean get() = query.isEmpty() && focusKey == null
 
     /** Coming back with the same query reuses the results; a new query or « Réessayer » searches. */
     fun needsSearch(fromRetry: Boolean): Boolean {

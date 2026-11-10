@@ -178,4 +178,21 @@ class SearchStateTest {
 
         assertThat(state.opensKeyboardOnEntry).isFalse()
     }
+
+    @Test
+    fun backFromABrowsedPosterDoesNotReopenTheKeyboard() {
+        val state = SearchUiState()
+        state.focus(SearchFocus.result("p"))
+
+        assertThat(state.opensKeyboardOnEntry).isFalse()
+    }
+
+    @Test
+    fun setQueryForgetsTheRightColumnEntry() {
+        val state = SearchUiState()
+        state.focus(SearchFocus.result("p"))
+        state.setQuery("nar")
+
+        assertThat(state.rightEntry(gridOnly, resumeShown = false)).isEqualTo(SearchFocus.result("x"))
+    }
 }
