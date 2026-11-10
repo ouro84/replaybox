@@ -426,7 +426,7 @@ private fun Hero(
     Column(
         Modifier
             .padding(start = Rb.contentStart, top = Rb.safeVertical + 8.dp, end = Rb.safeHorizontal)
-            .width(540.dp),
+            .textWidth(540.dp),
     ) {
         var compact by remember(title) { mutableStateOf(false) }
         Text(

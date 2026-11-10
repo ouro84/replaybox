@@ -1,5 +1,7 @@
 package com.replaybox.app.ui
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.layout.width
 import android.content.res.Configuration
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.ScrollableState
@@ -40,6 +42,34 @@ enum class LayoutClass {
             else -> TABLET
         }
     }
+}
+
+/**
+ * Compact class: the TV composition drawn on a 540 dp-tall canvas (the Bbox's 960x540 dp design
+ * canvas), so nothing is redesigned per screen. Text lands at [TEXT_FACTOR] of its TV size.
+ */
+object CompactCanvas {
+    const val HEIGHT_DP = 540
+    const val TEXT_FACTOR = 0.9f
+
+    /** Density factor that maps the window height onto the canvas; never enlarges. */
+    fun scale(heightDp: Int): Float = minOf(1f, heightDp.toFloat() / HEIGHT_DP)
+
+    /** Font scale under the scaled density, keeping the viewer's own [systemFontScale]. */
+    fun fontScale(systemFontScale: Float, heightDp: Int): Float = systemFontScale * TEXT_FACTOR / scale(heightDp)
+
+    /** How much bigger text is, in canvas dp, than on the TV: fixed-width text boxes grow by it. */
+    fun textRatio(heightDp: Int): Float = TEXT_FACTOR / scale(heightDp)
+}
+
+/** [CompactCanvas.textRatio] on the compact canvas, 1 elsewhere (box and tablet: unchanged). */
+val LocalTextRatio = staticCompositionLocalOf { 1f }
+
+/** A fixed width sized for TV text, grown on the compact canvas so its text still fits. */
+@Composable
+fun Modifier.textWidth(width: Dp): Modifier {
+    val ratio = LocalTextRatio.current
+    return width(if (ratio == 1f) width else width * ratio)
 }
 
 /** True on phones and tablets, false on the box. Provided once by MainActivity. */

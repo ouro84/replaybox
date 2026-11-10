@@ -41,7 +41,7 @@ internal fun ActionDialog(
     Dialog(onDismissRequest = onDismiss) {
         Column(
             Modifier
-                .width(440.dp)
+                .textWidth(440.dp)
                 .background(Rb.surface, Rb.cardShape)
                 .padding(24.dp),
         ) {

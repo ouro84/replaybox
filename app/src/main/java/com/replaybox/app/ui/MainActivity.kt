@@ -16,6 +16,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.runtime.Composable
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -94,7 +98,7 @@ class MainActivity : ComponentActivity() {
                 backStack.addAll(next)
             }
             BackHandler(enabled = backStack.size > 1) { backStack.removeAt(backStack.lastIndex) }
-            ReplayboxThemeSurface {
+            ReplayboxThemeSurface { CompactDensity(mobile) {
                 when (val current = backStack.last()) {
                     is Screen.Home -> HomeScreen(
                         state = homeState,
@@ -177,7 +181,7 @@ class MainActivity : ComponentActivity() {
                 }
                 // Mobile safety net: the window is portrait anyway (split screen, override).
                 if (portraitBlocked()) RotatePrompt()
-            }
+            } }
         } }
     }
 
@@ -198,5 +202,31 @@ class MainActivity : ComponentActivity() {
             systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             hide(WindowInsetsCompat.Type.systemBars())
         }
+    }
+}
+
+/**
+ * Landscape phones (LayoutClass.COMPACT): the screens see a 540 dp-tall window (CompactCanvas).
+ * The class is read from the real window; the box and tablets keep the system density.
+ */
+@Composable
+private fun CompactDensity(mobile: Boolean, content: @Composable () -> Unit) {
+    val heightDp = LocalConfiguration.current.screenHeightDp
+    // No `return content()`: Compose compiler 1.4.3 closes this function's groups before
+    // evaluating the returned call, so the screens composed outside them and stopped
+    // recomposing (blank Programme page and Search on the box).
+    if (LayoutClass.of(mobile, heightDp) != LayoutClass.COMPACT) {
+        content()
+    } else {
+        val system = LocalDensity.current
+        val scaled = Density(
+            density = system.density * CompactCanvas.scale(heightDp),
+            fontScale = CompactCanvas.fontScale(system.fontScale, heightDp),
+        )
+        CompositionLocalProvider(
+            LocalDensity provides scaled,
+            LocalTextRatio provides CompactCanvas.textRatio(heightDp),
+            content = content,
+        )
     }
 }

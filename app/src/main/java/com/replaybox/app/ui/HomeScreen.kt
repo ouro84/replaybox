@@ -572,7 +572,7 @@ private fun DetailPanel(
             .height(PANEL_HEIGHT)
             .padding(start = GUTTER, top = Rb.safeVertical, end = Rb.safeHorizontal),
     ) {
-        Column(Modifier.width(540.dp).align(Alignment.TopStart).padding(top = 8.dp)) {
+        Column(Modifier.textWidth(540.dp).align(Alignment.TopStart).padding(top = 8.dp)) {
             if (featured != null) {
                 var compact by remember(featured.title) { mutableStateOf(false) }
                 Text(
