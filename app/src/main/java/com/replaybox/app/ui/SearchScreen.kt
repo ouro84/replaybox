@@ -9,6 +9,9 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -136,6 +139,8 @@ fun SearchScreen(
     val catalog = Providers.catalog
     // Mobile: the system keyboard in a field, results full width (grilling 2026-11-10).
     val mobile = LocalMobile.current
+    @OptIn(ExperimentalLayoutApi::class)
+    val imeVisible = WindowInsets.isImeVisible
     // Read once per visit, like Home: Providers.all follows the M6+ account.
     val providers = remember { Providers.all }
     val channelIds = remember { providers.map { it.channel.id } }
@@ -307,7 +312,8 @@ fun SearchScreen(
             verticalArrangement = Arrangement.spacedBy(28.dp),
         ) {
             item(key = "header", span = { TvGridItemSpan(maxLineSpan) }) {
-                Column {
+                // Mobile: while the keyboard is open the chips step aside, so results show above it.
+                if (!mobile || !imeVisible) Column {
                     if (!mobile) QueryLine(state.query)
                     Row(
                         // Room above and below for the 1.06 lift of a focused chip.

@@ -256,9 +256,10 @@ fun ShowScreen(
     }
 
     // Back: from the list, return to the hero; from the hero, leave the page.
+    // Mobile: Back leaves the page at once, as everywhere on Android.
     val atTop = (state.focusedKey == null || state.focusedKey == KEY_PLAY || state.focusedKey == KEY_PIN) &&
         state.list.firstVisibleItemIndex == 0
-    BackHandler(enabled = !atTop) {
+    BackHandler(enabled = !atTop && !LocalMobile.current) {
         scope.launch {
             state.list.scrollToItem(0)
             state.focusedKey = null
