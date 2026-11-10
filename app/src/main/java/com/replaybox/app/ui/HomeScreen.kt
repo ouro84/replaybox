@@ -318,6 +318,8 @@ fun HomeScreen(
                     }
                 }
                 else -> TvLazyColumn(
+                    // Touch scroll on mobile only: the box keeps focus-driven scrolling.
+                    userScrollEnabled = LocalMobile.current,
                     state = state.rails,
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     // Focused card sits ~45 dp below the top so its rail title stays visible.
@@ -681,6 +683,7 @@ private fun Rail(
             modifier = Modifier.padding(start = GUTTER, top = 4.dp),
         )
         TvLazyRow(
+            userScrollEnabled = LocalMobile.current,
             state = rowState,
             // The pivot places the *scaled* card (1.1, ~6 dp wider each side): 0.015 of
             // the ~876 dp row puts it at ~13 dp, so the card at rest sits at ~19 dp and

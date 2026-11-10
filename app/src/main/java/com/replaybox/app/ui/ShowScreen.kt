@@ -277,6 +277,8 @@ fun ShowScreen(
                 .background(Rb.ground.copy(alpha = 0.92f)),
         )
         TvLazyColumn(
+            // Touch scroll on mobile only: the box keeps focus-driven scrolling.
+            userScrollEnabled = LocalMobile.current,
             state = state.list,
             modifier = Modifier.fillMaxSize(),
             // The play action sits ~220-245 dp down: aligning focus at 0.45 keeps
@@ -518,6 +520,7 @@ private fun SeasonPills(
     onSelect: (SeasonId) -> Unit,
 ) {
     TvLazyRow(
+        userScrollEnabled = LocalMobile.current,
         contentPadding = PaddingValues(start = Rb.contentStart, end = Rb.safeHorizontal, top = 8.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {

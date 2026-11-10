@@ -74,6 +74,7 @@ fun SettingsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .mobileVerticalScroll()
             .padding(start = Rb.contentStart, top = Rb.safeVertical + 8.dp, end = Rb.safeHorizontal),
         verticalArrangement = Arrangement.spacedBy(ROW_GAP),
     ) {

@@ -119,6 +119,8 @@ fun GenreGridScreen(state: GenreGridUiState, onOpenShow: (ShowId, String) -> Uni
     }
 
     TvLazyVerticalGrid(
+        // Touch scroll on mobile only: the box keeps focus-driven scrolling.
+        userScrollEnabled = LocalMobile.current,
         state = state.grid,
         columns = TvGridCells.Fixed(POSTER_GRID_COLUMNS),
         modifier = Modifier.fillMaxSize(),

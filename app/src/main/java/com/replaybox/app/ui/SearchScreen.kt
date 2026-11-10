@@ -269,6 +269,8 @@ fun SearchScreen(
             onRight = { enterRight() },
         )
         TvLazyVerticalGrid(
+            // Touch scroll on mobile only: the box keeps focus-driven scrolling.
+            userScrollEnabled = LocalMobile.current,
             state = state.grid,
             columns = TvGridCells.Fixed(SEARCH_GRID_COLUMNS),
             // The grid starts one gutter early so a focused poster's lift and ring are not clipped.
