@@ -129,7 +129,7 @@ data class HomeData(
 data class StaleNotice(val asOf: Long, val sources: String, val sourceCount: Int)
 
 /** What the top detail panel shows: the billboard item, or the focused card. */
-private data class Featured(
+internal data class Featured(
     val title: String,
     /** One metadata line under the title: "France 2 · Émission du 25 octobre". */
     val meta: String?,
@@ -138,6 +138,13 @@ private data class Featured(
     /** Set for Épisodes in progress: remaining time and progress in the panel. */
     val resume: ResumeItem? = null,
 )
+
+/**
+ * The top panel's item: on the box the focused card, else the billboard. On mobile a tap opens
+ * the card at once, so only the billboard (« À suivre », else an épingle) shows, or nothing.
+ */
+internal fun panelFeatured(mobile: Boolean, focused: Featured?, billboard: Featured?): Featured? =
+    if (mobile) billboard else focused ?: billboard
 
 private sealed interface Billboard {
     /** The first « À suivre » item: « Reprendre » in progress, « Lecture » for a new Épisode. */
@@ -241,7 +248,8 @@ fun HomeScreen(
             ?: it.favorites.firstOrNull()?.let(Billboard::Favorite)
     }
     val billboardFeatured = billboard?.let { featuredOf(it, channelNames) }
-    val shown = focused ?: billboardFeatured
+    val mobile = LocalMobile.current
+    val shown = panelFeatured(mobile, focused, billboardFeatured)
 
     // Initial / restored focus once data is on screen: the remembered card,
     // else the billboard's primary action, else the first card. A key whose
@@ -281,9 +289,10 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(start = Rb.contentStart - GUTTER),
         ) {
-            DetailPanel(
+            // Mobile without a billboard: no panel, the rails start at the top.
+            if (!mobile || billboard != null) DetailPanel(
                 featured = shown,
-                billboard = billboard.takeIf { focused == null },
+                billboard = billboard.takeIf { mobile || focused == null },
                 state = state,
                 stale = current?.stale,
                 update = updateState as? UpdateState.Ready,
