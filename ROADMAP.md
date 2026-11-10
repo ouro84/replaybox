@@ -179,8 +179,8 @@ inchangée.
 - [x] (ii) Player tactile : un tap affiche ou masque les contrôles, double-tap à gauche ou à droite
   pour −10 s / +10 s. Focus audio, box comprise : un appel ou une autre app met en pause et affiche
   les contrôles ; débrancher le casque met en pause sur mobile.
-- [ ] (iii) Layouts : une classe compacte sous 480 dp de haut ; la tablette garde le layout TV sans
-  les marges d'overscan.
+- [x] (iii) Layouts : une classe compacte sous 480 dp de haut (l'écran TV mis à l'échelle sur 540 dp,
+  texte à 90 % de sa taille TV) ; la tablette garde le layout TV sans les marges d'overscan.
 
 ## V2 (décisions prises, exécution repoussée)
 
