@@ -54,6 +54,7 @@ fun AboutScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .mobileVerticalScroll()
             .padding(start = Rb.contentStart, top = Rb.safeVertical + 8.dp, end = Rb.safeHorizontal),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {

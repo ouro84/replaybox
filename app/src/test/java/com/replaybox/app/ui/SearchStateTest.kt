@@ -143,4 +143,56 @@ class SearchStateTest {
         assertThat(state.lastKey).isEqualTo("key:M")
         assertThat(state.focusKey).isEqualTo(SearchFocus.groupChip(null))
     }
+
+    @Test
+    fun setQueryKeepsWhatWasTyped() {
+        val state = SearchUiState()
+
+        assertThat(state.setQuery("Pékin Express")).isTrue()
+        assertThat(state.query).isEqualTo("Pékin Express")
+    }
+
+    @Test
+    fun setQueryCapsAtMaxLength() {
+        val state = SearchUiState()
+
+        state.setQuery("a".repeat(200))
+
+        assertThat(state.query).hasLength(SearchKeyboard.MAX_LENGTH)
+    }
+
+    @Test
+    fun setQuerySameTextIsNoChange() {
+        val state = SearchUiState()
+        state.setQuery("nar")
+
+        assertThat(state.setQuery("nar")).isFalse()
+    }
+
+    @Test
+    fun opensKeyboardOnEntryOnlyWhenEmpty() {
+        val state = SearchUiState()
+        assertThat(state.opensKeyboardOnEntry).isTrue()
+
+        state.setQuery("nar")
+
+        assertThat(state.opensKeyboardOnEntry).isFalse()
+    }
+
+    @Test
+    fun backFromABrowsedPosterDoesNotReopenTheKeyboard() {
+        val state = SearchUiState()
+        state.focus(SearchFocus.result("p"))
+
+        assertThat(state.opensKeyboardOnEntry).isFalse()
+    }
+
+    @Test
+    fun setQueryForgetsTheRightColumnEntry() {
+        val state = SearchUiState()
+        state.focus(SearchFocus.result("p"))
+        state.setQuery("nar")
+
+        assertThat(state.rightEntry(gridOnly, resumeShown = false)).isEqualTo(SearchFocus.result("x"))
+    }
 }

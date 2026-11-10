@@ -60,6 +60,7 @@ fun SubtitleSettingsScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .mobileVerticalScroll()
             .padding(start = Rb.contentStart, top = Rb.safeVertical + 8.dp, end = Rb.safeHorizontal),
     ) {
         Text(stringResource(R.string.settings_subtitles), style = RbType.displayCompact, color = Rb.text)

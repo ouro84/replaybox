@@ -244,6 +244,24 @@ class SearchUiState {
         return true
     }
 
+    /**
+     * The native keyboard's text (mobile): kept as typed, cut at [SearchKeyboard.MAX_LENGTH];
+     * true when the query changed, like [type].
+     */
+    fun setQuery(text: String): Boolean {
+        val next = text.take(SearchKeyboard.MAX_LENGTH)
+        if (next == query) return false
+        query = next
+        rightKey = null
+        return true
+    }
+
+    /**
+     * Mobile: a fresh visit opens the keyboard; coming back from a Programme does not, whether
+     * it was found by typing (query kept) or by browsing with the chips (a result was tapped).
+     */
+    val opensKeyboardOnEntry: Boolean get() = query.isEmpty() && focusKey == null
+
     /** Coming back with the same query reuses the results; a new query or « Réessayer » searches. */
     fun needsSearch(fromRetry: Boolean): Boolean {
         val wanted = query.trim()

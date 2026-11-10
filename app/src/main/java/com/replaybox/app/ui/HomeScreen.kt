@@ -6,6 +6,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -129,7 +130,7 @@ data class HomeData(
 data class StaleNotice(val asOf: Long, val sources: String, val sourceCount: Int)
 
 /** What the top detail panel shows: the billboard item, or the focused card. */
-private data class Featured(
+internal data class Featured(
     val title: String,
     /** One metadata line under the title: "France 2 · Émission du 25 octobre". */
     val meta: String?,
@@ -138,6 +139,26 @@ private data class Featured(
     /** Set for Épisodes in progress: remaining time and progress in the panel. */
     val resume: ResumeItem? = null,
 )
+
+/**
+ * The top panel's item: on the box the focused card, else the billboard. On mobile a tap opens
+ * the card at once, so only the billboard (« À suivre », else an épingle) shows, or nothing.
+ */
+internal fun panelFeatured(mobile: Boolean, focused: Featured?, billboard: Featured?): Featured? =
+    if (mobile) billboard else focused ?: billboard
+
+/** What the top of Home draws. */
+internal enum class HomePanel { FULL, NOTICES, NONE }
+
+/**
+ * The box always draws the full panel. Mobile draws it for a billboard only; without one, the
+ * stale-data notice and the update chip (PRD story 6) still show, in a slim row; else nothing.
+ */
+internal fun homePanel(mobile: Boolean, hasBillboard: Boolean, hasNotice: Boolean): HomePanel = when {
+    !mobile || hasBillboard -> HomePanel.FULL
+    hasNotice -> HomePanel.NOTICES
+    else -> HomePanel.NONE
+}
 
 private sealed interface Billboard {
     /** The first « À suivre » item: « Reprendre » in progress, « Lecture » for a new Épisode. */
@@ -241,7 +262,8 @@ fun HomeScreen(
             ?: it.favorites.firstOrNull()?.let(Billboard::Favorite)
     }
     val billboardFeatured = billboard?.let { featuredOf(it, channelNames) }
-    val shown = focused ?: billboardFeatured
+    val mobile = LocalMobile.current
+    val shown = panelFeatured(mobile, focused, billboardFeatured)
 
     // Initial / restored focus once data is on screen: the remembered card,
     // else the billboard's primary action, else the first card. A key whose
@@ -281,16 +303,27 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(start = Rb.contentStart - GUTTER),
         ) {
-            DetailPanel(
-                featured = shown,
-                billboard = billboard.takeIf { focused == null },
-                state = state,
-                stale = current?.stale,
-                update = updateState as? UpdateState.Ready,
-                onFocusButton = { key -> track(key, null) },
-                onPlay = { item -> onPlay(item.episodeId, item.episodeTitle, item.toContext()) },
-                onOpenShow = onOpenShow,
-            )
+            val stale = current?.stale
+            val update = updateState as? UpdateState.Ready
+            // Mobile without a billboard: the rails start at the top, under the notices if any.
+            when (homePanel(mobile, billboard != null, stale != null || update != null)) {
+                HomePanel.NONE -> Unit
+                HomePanel.NOTICES -> Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = GUTTER, top = Rb.safeVertical, end = Rb.safeHorizontal),
+                ) { PanelNotices(stale, update, Modifier.align(Alignment.TopEnd)) }
+                HomePanel.FULL -> DetailPanel(
+                    featured = shown,
+                    billboard = billboard.takeIf { mobile || focused == null },
+                    state = state,
+                    stale = stale,
+                    update = update,
+                    onFocusButton = { key -> track(key, null) },
+                    onPlay = { item -> onPlay(item.episodeId, item.episodeTitle, item.toContext()) },
+                    onOpenShow = onOpenShow,
+                )
+            }
             when {
                 current == null || (current.genres.isEmpty() && refreshing) -> SkeletonRails()
                 current.genres.isEmpty() && current.upNext.isEmpty() && current.favorites.isEmpty() -> Column(
@@ -319,7 +352,7 @@ fun HomeScreen(
                 }
                 else -> TvLazyColumn(
                     state = state.rails,
-                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    modifier = Modifier.fillMaxWidth().weight(1f).touchScroll(state.rails, Orientation.Vertical),
                     // Focused card sits ~45 dp below the top so its rail title stays visible.
                     pivotOffsets = PivotOffsets(parentFraction = 0.16f),
                     contentPadding = PaddingValues(bottom = Rb.safeVertical),
@@ -613,23 +646,29 @@ private fun DetailPanel(
                 }
             }
         }
-        Column(Modifier.align(Alignment.TopEnd), horizontalAlignment = Alignment.End) {
-            stale?.let {
-                Text(
-                    text = stringResource(
-                        if (it.sourceCount > 1) R.string.catalog_stale_many else R.string.catalog_stale_one,
-                        shortDate(it.asOf),
-                        it.sources,
-                    ),
-                    style = RbType.meta,
-                    color = Rb.textSecondary,
-                    modifier = Modifier
-                        .background(Rb.ground.copy(alpha = 0.85f), Rb.pillShape)
-                        .padding(horizontal = 12.dp, vertical = 4.dp),
-                )
-            }
-            update?.let { UpdateChip(it) }
+        PanelNotices(stale, update, Modifier.align(Alignment.TopEnd))
+    }
+}
+
+/** Top-right of Home: the stale-data notice (Données du …) and the update chip. */
+@Composable
+private fun PanelNotices(stale: StaleNotice?, update: UpdateState.Ready?, modifier: Modifier) {
+    Column(modifier, horizontalAlignment = Alignment.End) {
+        stale?.let {
+            Text(
+                text = stringResource(
+                    if (it.sourceCount > 1) R.string.catalog_stale_many else R.string.catalog_stale_one,
+                    shortDate(it.asOf),
+                    it.sources,
+                ),
+                style = RbType.meta,
+                color = Rb.textSecondary,
+                modifier = Modifier
+                    .background(Rb.ground.copy(alpha = 0.85f), Rb.pillShape)
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+            )
         }
+        update?.let { UpdateChip(it) }
     }
 }
 
@@ -682,6 +721,7 @@ private fun Rail(
         )
         TvLazyRow(
             state = rowState,
+            modifier = Modifier.touchScroll(rowState, Orientation.Horizontal),
             // The pivot places the *scaled* card (1.1, ~6 dp wider each side): 0.015 of
             // the ~876 dp row puts it at ~13 dp, so the card at rest sits at ~19 dp and
             // the previous card (gap 20 dp) ends under the clip edge, no sliver.
@@ -726,7 +766,7 @@ private fun UpNextCard(
                     false
                 }
             }
-            .tvClickable(onClick),
+            .tvClickable(onLongClick = onOptions.takeIf { LocalMobile.current }, onClick = onClick),
     ) {
         Box(
             Modifier

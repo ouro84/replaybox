@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -183,13 +184,25 @@ internal fun PanelButton(
  * `focusable()` + `clickable()` made two nodes: OK moved focus to the inner
  * one, which onFocusChanged above it never saw (white fill lost) and whose
  * ripple drew a grey rectangle. Focus visuals are ours (DESIGN.md).
+ * [onLongClick] is for touch: a long-press on mobile opens what MENU opens on the box.
  */
-internal fun Modifier.tvClickable(onClick: () -> Unit): Modifier = composed {
-    clickable(
-        interactionSource = remember { MutableInteractionSource() },
-        indication = null,
-        onClick = onClick,
-    )
+internal fun Modifier.tvClickable(onClick: () -> Unit): Modifier = tvClickable(onClick = onClick, onLongClick = null)
+
+/** [tvClickable] with a long-press; [onLongClick] null keeps the plain click (always on the box). */
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+internal fun Modifier.tvClickable(onClick: () -> Unit, onLongClick: (() -> Unit)?): Modifier = composed {
+    val interactionSource = remember { MutableInteractionSource() }
+    if (onLongClick == null) {
+        clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+    } else {
+        // Mobile only (callers pass null on the box): a long-press does what MENU does.
+        combinedClickable(
+            interactionSource = interactionSource,
+            indication = null,
+            onLongClick = onLongClick,
+            onClick = onClick,
+        )
+    }
 }
 
 /** Card lift: 1.1 while focused (The Lift Is Focus Rule). */

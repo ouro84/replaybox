@@ -3,6 +3,7 @@ package com.replaybox.app.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -50,6 +51,7 @@ import androidx.tv.foundation.PivotOffsets
 import androidx.tv.foundation.lazy.list.TvLazyColumn
 import androidx.tv.foundation.lazy.list.TvLazyListState
 import androidx.tv.foundation.lazy.list.TvLazyRow
+import androidx.tv.foundation.lazy.list.rememberTvLazyListState
 import androidx.tv.foundation.lazy.list.items
 import com.replaybox.R
 import com.replaybox.core.data.HeroTarget
@@ -254,9 +256,10 @@ fun ShowScreen(
     }
 
     // Back: from the list, return to the hero; from the hero, leave the page.
+    // Mobile: Back leaves the page at once, as everywhere on Android.
     val atTop = (state.focusedKey == null || state.focusedKey == KEY_PLAY || state.focusedKey == KEY_PIN) &&
         state.list.firstVisibleItemIndex == 0
-    BackHandler(enabled = !atTop) {
+    BackHandler(enabled = !atTop && !LocalMobile.current) {
         scope.launch {
             state.list.scrollToItem(0)
             state.focusedKey = null
@@ -278,7 +281,7 @@ fun ShowScreen(
         )
         TvLazyColumn(
             state = state.list,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().touchScroll(state.list, Orientation.Vertical),
             // The play action sits ~220-245 dp down: aligning focus at 0.45 keeps
             // the whole hero on screen while it is focused (scroll clamps at 0).
             pivotOffsets = PivotOffsets(parentFraction = 0.45f),
@@ -517,7 +520,10 @@ private fun SeasonPills(
     watched: Set<SeasonId>,
     onSelect: (SeasonId) -> Unit,
 ) {
+    val pills = rememberTvLazyListState()
     TvLazyRow(
+        state = pills,
+        modifier = Modifier.touchScroll(pills, Orientation.Horizontal),
         contentPadding = PaddingValues(start = Rb.contentStart, end = Rb.safeHorizontal, top = 8.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -605,7 +611,7 @@ private fun EpisodeRow(
                     false
                 }
             }
-            .tvClickable(onClick)
+            .tvClickable(onLongClick = onOptions.takeIf { LocalMobile.current }, onClick = onClick)
             .then(if (focused) Modifier.background(Rb.surfaceRaised, ROW_SHAPE) else Modifier)
             .padding(horizontal = ROW_INSET, vertical = 24.dp),
         horizontalArrangement = Arrangement.spacedBy(ROW_INSET),

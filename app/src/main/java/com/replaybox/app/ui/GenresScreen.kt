@@ -55,6 +55,7 @@ fun GenresScreen(state: GenresUiState, onOpenGenre: (Genre) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .mobileVerticalScroll()
             .padding(start = Rb.contentStart, top = Rb.safeVertical + 8.dp, end = Rb.safeHorizontal),
     ) {
         Text(stringResource(R.string.genres_title), style = RbType.displayCompact, color = Rb.text)

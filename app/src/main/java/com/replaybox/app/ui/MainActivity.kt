@@ -1,15 +1,24 @@
 package com.replaybox.app.ui
 
+import android.app.UiModeManager
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.key
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.replaybox.app.ReplayboxApplication
 import com.replaybox.core.model.Episode
 import com.replaybox.core.model.EpisodeId
@@ -38,10 +47,22 @@ sealed interface Screen {
 
 class MainActivity : ComponentActivity() {
 
+    /** Phone or tablet: anything the system does not report as a TV (never the box). */
+    private val mobile by lazy {
+        DeviceKind.isMobile(getSystemService(UiModeManager::class.java).currentModeType)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) ReplayboxApplication.checkForUpdate()
-        setContent {
+        if (mobile) {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            // Android 8-10 only report the IME inset to Compose with adjustResize (Search hides
+            // its chips while the keyboard is up). The box keeps its window mode.
+            @Suppress("DEPRECATION")
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        }
+        setContent { CompositionLocalProvider(LocalMobile provides mobile) {
             val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
             // Survives trips to a Programme or the player: scroll + focus restored.
             val homeState = remember { HomeUiState() }
@@ -59,6 +80,19 @@ class MainActivity : ComponentActivity() {
                 gridState = GenreGridUiState(genre)
                 backStack.add(Screen.GenreGrid(genre))
             }
+            // The rail (Home; on mobile also Recherche, Genres, Paramètres): a fresh visit on top of
+            // Home. From Home the stack is [Home], so this is the former add.
+            fun navigate(destination: RailDestination) {
+                // The destination already on screen: nothing moves, its state stays.
+                val next = RailNavigation.next(backStack.toList(), destination) ?: return
+                when (destination) {
+                    RailDestination.GENRES -> genresState = GenresUiState()
+                    RailDestination.SEARCH -> searchState = SearchUiState()
+                    RailDestination.HOME, RailDestination.SETTINGS -> Unit
+                }
+                backStack.clear()
+                backStack.addAll(next)
+            }
             BackHandler(enabled = backStack.size > 1) { backStack.removeAt(backStack.lastIndex) }
             ReplayboxThemeSurface {
                 when (val current = backStack.last()) {
@@ -68,20 +102,7 @@ class MainActivity : ComponentActivity() {
                         onPlay = { id, title, progressContext ->
                             backStack.add(Screen.Player(id, title, progressContext, autoResume = true))
                         },
-                        onNavigate = { destination ->
-                            when (destination) {
-                                RailDestination.HOME -> Unit
-                                RailDestination.GENRES -> {
-                                    genresState = GenresUiState()
-                                    backStack.add(Screen.Genres)
-                                }
-                                RailDestination.SEARCH -> {
-                                    searchState = SearchUiState()
-                                    backStack.add(Screen.Search)
-                                }
-                                RailDestination.SETTINGS -> backStack.add(Screen.Settings)
-                            }
-                        },
+                        onNavigate = ::navigate,
                         onOpenGenre = ::openGrid,
                     )
                     is Screen.ShowDetail -> ShowScreen(
@@ -120,24 +141,33 @@ class MainActivity : ComponentActivity() {
                             if (backStack.size > 1 && backStack.last() == current) backStack.removeAt(backStack.lastIndex)
                         },
                     ) }
-                    Screen.Settings -> SettingsScreen(
-                        state = settingsState,
-                        onOpenSubtitles = { backStack.add(Screen.SubtitleSettings) },
-                        onOpenProvider = { groupId -> backStack.add(Screen.ProviderDetail(groupId)) },
-                        onOpenAbout = { backStack.add(Screen.About) },
-                    )
+                    Screen.Settings -> Box(Modifier.fillMaxSize()) {
+                        SettingsScreen(
+                            state = settingsState,
+                            onOpenSubtitles = { backStack.add(Screen.SubtitleSettings) },
+                            onOpenProvider = { groupId -> backStack.add(Screen.ProviderDetail(groupId)) },
+                            onOpenAbout = { backStack.add(Screen.About) },
+                        )
+                        MobileRail(RailDestination.SETTINGS, ::navigate)
+                    }
                     Screen.About -> AboutScreen()
                     Screen.SubtitleSettings -> SubtitleSettingsScreen()
                     is Screen.ProviderDetail -> key(current.groupId) { ProviderScreen(groupId = current.groupId) }
-                    Screen.Search -> SearchScreen(
-                        state = searchState,
-                        onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
-                        // « Reprendre » on the best result resumes at once, like Home.
-                        onPlay = { id, title, progressContext ->
-                            backStack.add(Screen.Player(id, title, progressContext, autoResume = true))
-                        },
-                    )
-                    Screen.Genres -> GenresScreen(state = genresState, onOpenGenre = ::openGrid)
+                    Screen.Search -> Box(Modifier.fillMaxSize()) {
+                        SearchScreen(
+                            state = searchState,
+                            onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
+                            // « Reprendre » on the best result resumes at once, like Home.
+                            onPlay = { id, title, progressContext ->
+                                backStack.add(Screen.Player(id, title, progressContext, autoResume = true))
+                            },
+                        )
+                        MobileRail(RailDestination.SEARCH, ::navigate)
+                    }
+                    Screen.Genres -> Box(Modifier.fillMaxSize()) {
+                        GenresScreen(state = genresState, onOpenGenre = ::openGrid)
+                        MobileRail(RailDestination.GENRES, ::navigate)
+                    }
                     is Screen.GenreGrid -> key(current.genre) {
                         GenreGridScreen(
                             state = remember { gridState?.takeIf { it.genre == current.genre } ?: GenreGridUiState(current.genre) },
@@ -145,7 +175,28 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
+                // Mobile safety net: the window is portrait anyway (split screen, override).
+                if (portraitBlocked()) RotatePrompt()
             }
+        } }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (mobile) hideSystemBars()
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        // The bars come back after the IME or a dialog: hide them again.
+        if (hasFocus && mobile) hideSystemBars()
+    }
+
+    /** Immersive on mobile: no status or navigation bar; a swipe from the edge shows them for a while. */
+    private fun hideSystemBars() {
+        WindowInsetsControllerCompat(window, window.decorView).apply {
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            hide(WindowInsetsCompat.Type.systemBars())
         }
     }
 }

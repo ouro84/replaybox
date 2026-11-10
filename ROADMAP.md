@@ -164,7 +164,24 @@ quand le correctif est vérifié sur la box.
 - [x] Tri de « Tout voir » : la date de première apparition sur la box rend la grille alphabétique au
   premier jour ; trouver un signal de récence mesuré chez les Providers.
 
+## Mobile et tablette (1.0.0)
+
+Décision d'Arnaud du 2026-11-10 : la V1 est livrée, mobile et tablette entrent dans le périmètre (voir
+PRD). Une seule APK ; un appareil est « mobile » quand le système ne le déclare pas comme une TV.
+
+**Critère** : une soirée au doigt sur le Pixel (accueil → recherche → Programme → lecture), et la box
+inchangée.
+
+- [x] (i) Entrée tactile et navigation : défilement au doigt, appui long = options, menu de gauche sur
+  les écrans principaux, recherche au clavier natif, plein écran immersif, paysage (`sensorLandscape`)
+  avec l'écran « Tourne l'appareil » en filet (pas observé sur le Pixel : Android 17 y garde l'app en
+  paysage, même en écran partagé ; à vérifier sur une tablette qui ignore l'orientation).
+- [ ] (ii) Player tactile : un tap affiche ou masque les contrôles, double-tap à gauche ou à droite
+  pour −10 s / +10 s.
+- [ ] (iii) Layouts : une classe compacte sous 480 dp de haut ; la tablette garde le layout TV sans
+  les marges d'overscan.
+
 ## V2 (décisions prises, exécution repoussée)
 
 - Live TV (réévaluer la promesse zéro pub : le live des chaînes est SSAI)
-- Profils enfants, Fire TV, mobile
+- Profils enfants, Fire TV

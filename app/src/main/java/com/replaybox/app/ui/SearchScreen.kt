@@ -3,9 +3,15 @@ package com.replaybox.app.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -131,6 +137,11 @@ fun SearchScreen(
     onPlay: (EpisodeId, String, ProgressContext) -> Unit,
 ) {
     val catalog = Providers.catalog
+    // Mobile: the system keyboard in a field, results full width (grilling 2026-11-10).
+    val mobile = LocalMobile.current
+    // Read on mobile only: on the box the insets listener is never installed.
+    @OptIn(ExperimentalLayoutApi::class)
+    val imeVisible = mobile && WindowInsets.isImeVisible
     // Read once per visit, like Home: Providers.all follows the M6+ account.
     val providers = remember { Providers.all }
     val channelIds = remember { providers.map { it.channel.id } }
@@ -249,15 +260,17 @@ fun SearchScreen(
         if (state.focusKey == SearchFocus.BEST_RESUME && shownBest != null) {
             state.bestResume = catalog.resumeFor(shownBest.show.id, channelIds)
         }
+        if (mobile) return@LaunchedEffect // no D-pad focus to place on mobile
         withFrameNanos { }
         val shown = computeView()
         focusOn(state.initialFocus(shown, resumeShown(shown)))
     }
     // Back from the results column returns to the keyboard; from the keyboard it leaves Search.
-    BackHandler(enabled = state.inRightColumn) { focusOn(state.lastKey) }
+    // Mobile: Back closes the IME (system), then leaves Search.
+    BackHandler(enabled = !mobile && state.inRightColumn) { focusOn(state.lastKey) }
 
     Box(Modifier.fillMaxSize()) {
-        SearchKeys(
+        if (!mobile) SearchKeys(
             state = state,
             modifier = Modifier.padding(start = Rb.contentStart, top = TOP).width(KEYBOARD_WIDTH),
             onType = { key ->
@@ -268,18 +281,41 @@ fun SearchScreen(
             },
             onRight = { enterRight() },
         )
+        Column(Modifier.fillMaxSize()) {
+        if (mobile) {
+            SearchField(
+                query = state.query,
+                openKeyboard = state.opensKeyboardOnEntry,
+                onQuery = { text ->
+                    val grid = state.grid
+                    if (state.setQuery(text) && (grid.firstVisibleItemIndex > 0 || grid.firstVisibleItemScrollOffset > 0)) {
+                        scope.launch { grid.scrollToItem(0) }
+                    }
+                },
+                modifier = Modifier.padding(start = Rb.contentStart, top = TOP, end = Rb.safeHorizontal),
+            )
+        }
         TvLazyVerticalGrid(
             state = state.grid,
-            columns = TvGridCells.Fixed(SEARCH_GRID_COLUMNS),
+            columns = TvGridCells.Fixed(if (mobile) POSTER_GRID_COLUMNS else SEARCH_GRID_COLUMNS),
             // The grid starts one gutter early so a focused poster's lift and ring are not clipped.
-            modifier = Modifier.fillMaxSize().padding(start = RESULTS_START - GUTTER),
-            contentPadding = PaddingValues(start = GUTTER, end = Rb.safeHorizontal, top = TOP, bottom = Rb.safeVertical),
+            modifier = Modifier
+                .fillMaxSize()
+                .touchScroll(state.grid, Orientation.Vertical)
+                .padding(start = (if (mobile) Rb.contentStart else RESULTS_START) - GUTTER),
+            contentPadding = PaddingValues(
+                start = GUTTER,
+                end = Rb.safeHorizontal,
+                top = if (mobile) 4.dp else TOP,
+                bottom = Rb.safeVertical,
+            ),
             horizontalArrangement = Arrangement.spacedBy(Rb.cardGap),
             verticalArrangement = Arrangement.spacedBy(28.dp),
         ) {
             item(key = "header", span = { TvGridItemSpan(maxLineSpan) }) {
-                Column {
-                    QueryLine(state.query)
+                // Mobile: while the keyboard is open the chips step aside, so results show above it.
+                if (!mobile || !imeVisible) Column {
+                    if (!mobile) QueryLine(state.query)
                     Row(
                         // Room above and below for the 1.06 lift of a focused chip.
                         modifier = Modifier.padding(top = 16.dp, bottom = 4.dp),
@@ -374,6 +410,7 @@ fun SearchScreen(
                     },
                 )
             }
+        }
         }
     }
 }
@@ -505,7 +542,19 @@ private fun BestResultCard(
 ) {
     val show = entry.show
     Column {
-        Row {
+        // Mobile: the art and title open the Programme, like « Épisodes ». Not on the box,
+        // where it would add a focus stop before the buttons.
+        Row(
+            if (LocalMobile.current) {
+                Modifier.clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onEpisodes,
+                )
+            } else {
+                Modifier
+            },
+        ) {
             Box(
                 Modifier
                     .width(BEST_ART_WIDTH)
