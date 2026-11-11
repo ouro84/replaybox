@@ -1,6 +1,8 @@
 package com.replaybox.app.ui
 
 import android.content.Context
+import androidx.media3.common.C
+import androidx.media3.common.TrackSelectionParameters
 
 /**
  * What the player remembers between Épisodes: the audio kind (Q3), the quality
@@ -30,6 +32,18 @@ data class PlaybackPreferences(
         choice == SubtitleKind.OTHER -> copy(subtitlesOn = true)
         else -> copy(subtitlesOn = true, subtitleKind = choice)
     }
+
+    /**
+     * The track selection a Flux starts with: the quality cap as a ceiling (Q3, Q8), and the
+     * text tracks disabled when subtitles are stored off, so the Flux's default text track
+     * never flashes a cue before the stored choice applies. Choosing a subtitle re-enables
+     * them (the player's `select`).
+     */
+    fun startParameters(base: TrackSelectionParameters): TrackSelectionParameters =
+        base.buildUpon()
+            .apply { maxHeight?.let { setMaxVideoSize(Int.MAX_VALUE, it) } }
+            .apply { if (!subtitlesOn) setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true) }
+            .build()
 
     fun encodeAudio(): String? = audio?.name
 
