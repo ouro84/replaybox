@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,11 +27,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,6 +53,7 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.input.pointer.pointerInput
@@ -168,8 +169,10 @@ fun PlayerScreen(
     when (val current = state) {
         is PlayerState.Resolving -> Box(Modifier.fillMaxSize().background(Rb.ground)) {
             LoadingRing(Modifier.align(Alignment.Center))
+            // Mobile: a way out while the Flux resolves (no controls yet, no navigation bar).
+            if (LocalMobile.current) PlayerBackArrow(onBack, Modifier.align(Alignment.TopStart))
         }
-        is PlayerState.Error -> {
+        is PlayerState.Error -> Box(Modifier.fillMaxSize()) {
             val retry = remember { FocusRequester() }
             LaunchedEffect(current) { runCatching { retry.requestFocus() } }
             Column(
@@ -208,6 +211,8 @@ fun PlayerScreen(
                     )
                 }
             }
+            // Mobile: « Retour » next to « Réessayer », where the controls' arrow would be.
+            if (LocalMobile.current) PlayerBackArrow(onBack, Modifier.align(Alignment.TopStart))
         }
         is PlayerState.Ready -> PlayerSurface(
             episodeId = episodeId,
@@ -818,8 +823,9 @@ private fun PlayerSurface(
 }
 
 /**
- * Mobile « Retour » over the video: the rail's back arrow at the same size, on a ground 60 %
- * circle like the seek flash so it reads over any frame. One tap leaves the player.
+ * Mobile « Retour » with the controls, while the Flux resolves and on the error page: the rail's
+ * back arrow at the same size, on a ground 60 % circle like the seek flash so it reads over any
+ * frame. One tap leaves the player; no pressed state.
  */
 @Composable
 private fun PlayerBackArrow(onBack: () -> Unit, modifier: Modifier) {
@@ -828,8 +834,14 @@ private fun PlayerBackArrow(onBack: () -> Unit, modifier: Modifier) {
         modifier
             .padding(start = Rb.safeHorizontal, top = Rb.safeVertical)
             .size(rail.item)
-            .background(Rb.ground.copy(alpha = 0.6f), CircleShape)
-            .clickable(role = Role.Button, onClick = onBack),
+            .background(VideoScrim, CircleShape)
+            // No pressed state (DESIGN.md): no square ripple around the circle.
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                role = Role.Button,
+                onClick = onBack,
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -840,6 +852,9 @@ private fun PlayerBackArrow(onBack: () -> Unit, modifier: Modifier) {
         )
     }
 }
+
+/** Ground at 60 %: the seek flash and the back arrow read over any frame. */
+private val VideoScrim = Rb.ground.copy(alpha = 0.6f)
 
 /** What a tap on the video needs to decide (read through rememberUpdatedState). */
 private data class TouchState(val controlsVisible: Boolean, val optionsOpen: Boolean, val prompt: Boolean)
@@ -857,7 +872,7 @@ private fun SeekFlash(seek: PlayerTouch.Seek, modifier: Modifier) {
             color = Rb.text,
             modifier = Modifier
                 .align(if (seek == PlayerTouch.Seek.BACK) Alignment.CenterStart else Alignment.CenterEnd)
-                .background(Rb.ground.copy(alpha = 0.6f), Rb.pillShape)
+                .background(VideoScrim, Rb.pillShape)
                 .padding(horizontal = 24.dp, vertical = 12.dp),
         )
     }

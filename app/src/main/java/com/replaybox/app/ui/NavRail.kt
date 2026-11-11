@@ -11,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -46,6 +47,7 @@ import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.replaybox.R
@@ -147,6 +149,9 @@ fun NavRail(
             }
             .focusProperties { enter = { currentRequester } }
             .focusGroup()
+            // Mobile: the opaque rail takes the taps between and below its items; content scrolled
+            // under it (a Programme's Saison pills) stays out of reach. Items still take their own.
+            .then(if (LocalMobile.current) Modifier.pointerInput(Unit) { detectTapGestures { } } else Modifier)
             // The back slot comes out of the top padding: the destinations never move.
             .padding(
                 top = Rb.safeVertical + LocalRail.current.topPadding(showBack),
