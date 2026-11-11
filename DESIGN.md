@@ -430,8 +430,8 @@ The keyboard on the left, the results on the right. No system IME, no voice.
 
 ### Player
 The video owns the screen. Every overlay sits at the bottom over a ground scrim (transparent to 92–94 % ground), inside the 48 dp safe frame, and one Back closes it.
-- **Keys with nothing shown.** Left/Right seek 10 s and show the controls, OK plays or pauses, Up/Down show the controls, CC toggles subtitles, MENU opens Options.
-- **Controls.** Programme title in Rail Title, Épisode title in Meta Mist, then the timeline: tabular clocks either side of a 6 dp track with the amber Progression fill (One Amber Rule). Below, panel buttons: Pause/Lecture (initial focus), −10 s, +10 s, Recommencer, Sous-titres (check or cross: state by shape), Options. They hide 5 s after the last key while playing and stay while paused.
+- **Keys with no row button focused (controls hidden or shown).** Left/Right seek 10 s and show the controls, OK plays or pauses, Up/Down show the controls, CC toggles subtitles, MENU opens Options. Once they show, Down enters the control row and Up leaves it.
+- **Controls.** Programme title in Rail Title, Épisode title in Meta Mist, then the timeline: tabular clocks either side of a 6 dp track with the amber Progression fill (One Amber Rule). Below, panel buttons: −10 s, +10 s, Recommencer, Sous-titres (check or cross: state by shape), Options, starting on the safe edge under the title and timeline, 12 dp apart. No button has focus when they appear: all rest in raised slate, no lift, and OK plays or pauses; Down focuses « −10 s ». They hide 5 s after the last key while playing and stay while paused.
 - **Back arrow (mobile).** With the controls, while the Flux resolves (over the loading ring) and on the error panel, top left inside the safe frame: the rail's back arrow at the rail item size, Paper White on a ground 60 % circle (the seek flash backing), one tap leaves, no pressed state. Never over Options, the resume prompt or Épisode suivant; absent on the box.
 - **Options panel.** Takes the controls' place. Title « Options », then one row per setting (Audio, Sous-titres, Taille du texte and Fond du texte when the Flux has subtitles, Qualité, Vitesse): label in Body Strong Mist on a 180 dp column, choices as panel buttons with a check on the selected one. Rows come only from the tracks the player has; a row with nothing to choose is left out. Initial focus is the selected choice of the first row.
 - **Captions.** While controls or Options are shown, the caption layer lifts (34 % and 62 % of its height) so no cue sits under an overlay.
@@ -469,7 +469,7 @@ Every screen's initial focus, Back target and focus on return, checked on the Bb
 | Épisode row dialog | « Annuler » | Closes, focus on the row | — |
 | À suivre card dialog | « Annuler » | Closes, focus on the card | Billboard after the card leaves |
 | Exit dialog | « Annuler » | Closes, focus back where it was | — |
-| Player controls | Pause / Lecture | Hides the controls | — |
+| Player controls (code) | No button (OK plays or pauses; Down: « −10 s ») | Hides the controls | — |
 | Options panel | Selected choice of the first row | Back to the controls | — |
 | Resume prompt (code) | « Reprendre » | Leaves the player | — |
 | Épisode suivant (code) | « Lire maintenant » | Hides the panel, the Épisode plays on | — |

@@ -91,7 +91,6 @@
     <string name="badge_last_night">Hier soir</string>
     <string name="badge_new">Nouveau</string>
     <string name="duration_minutes">%1$d min</string>
-    <string name="control_pause">Pause</string>
     <string name="control_back10">−10 s</string>
     <string name="control_fwd10">+10 s</string>
     <string name="control_restart">Recommencer</string>

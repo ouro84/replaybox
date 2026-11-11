@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Text
@@ -22,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -33,25 +33,45 @@ import androidx.compose.ui.unit.dp
 import com.replaybox.R
 
 /**
- * Remote keys over the player (decisions Q1, Q28). While the controls are
- * hidden the arrows seek, OK plays or pauses and other D-pad keys reveal the
- * controls; once shown, the D-pad belongs to the buttons. CC toggles the
- * subtitles and MENU opens Options (Q2) either way. Media keys stay with the
- * MediaSession.
+ * Remote keys over the player (decisions Q1, Q28; UX grilling 2026-11-11, B3). Four
+ * focus states:
+ * - [Focus.HIDDEN]: nothing shown;
+ * - [Focus.CONTROLS]: controls shown, no row button focused;
+ * - [Focus.ROW]: a button of the control row has focus;
+ * - [Focus.PANEL]: Options is open.
+ *
+ * No row button has focus when the controls appear (B3): with nothing focused, the
+ * arrows seek, OK plays or pauses, Up shows the controls and Down shows them, then
+ * enters the row. In the row the D-pad belongs to the buttons, and Up leaves it. In
+ * Options the D-pad belongs to the panel. CC toggles the subtitles and MENU opens
+ * Options (Q2) whatever has focus. Media keys stay with the MediaSession.
  */
 object PlayerKeys {
-    enum class Action { NONE, SHOW, SEEK_BACK, SEEK_FORWARD, PLAY_PAUSE, TOGGLE_SUBTITLES, OPTIONS }
+    enum class Focus { HIDDEN, CONTROLS, ROW, PANEL }
+    enum class Action { NONE, SHOW, SEEK_BACK, SEEK_FORWARD, PLAY_PAUSE, ENTER_ROW, LEAVE_ROW, TOGGLE_SUBTITLES, OPTIONS }
 
-    fun action(keyCode: Int, controlsVisible: Boolean): Action {
+    /** [focusInRow] is ignored once the controls are hidden: a stale value never counts. */
+    fun focus(controlsVisible: Boolean, optionsOpen: Boolean, focusInRow: Boolean): Focus = when {
+        optionsOpen -> Focus.PANEL
+        !controlsVisible -> Focus.HIDDEN
+        focusInRow -> Focus.ROW
+        else -> Focus.CONTROLS
+    }
+
+    fun action(keyCode: Int, focus: Focus): Action {
         if (keyCode == KeyEvent.KEYCODE_CAPTIONS) return Action.TOGGLE_SUBTITLES
         if (keyCode == KeyEvent.KEYCODE_MENU) return Action.OPTIONS
-        if (controlsVisible) return Action.NONE
-        return when (keyCode) {
-            KeyEvent.KEYCODE_DPAD_LEFT -> Action.SEEK_BACK
-            KeyEvent.KEYCODE_DPAD_RIGHT -> Action.SEEK_FORWARD
-            KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> Action.PLAY_PAUSE
-            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> Action.SHOW
-            else -> Action.NONE
+        return when (focus) {
+            Focus.PANEL -> Action.NONE
+            Focus.ROW -> if (keyCode == KeyEvent.KEYCODE_DPAD_UP) Action.LEAVE_ROW else Action.NONE
+            Focus.HIDDEN, Focus.CONTROLS -> when (keyCode) {
+                KeyEvent.KEYCODE_DPAD_LEFT -> Action.SEEK_BACK
+                KeyEvent.KEYCODE_DPAD_RIGHT -> Action.SEEK_FORWARD
+                KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> Action.PLAY_PAUSE
+                KeyEvent.KEYCODE_DPAD_UP -> Action.SHOW
+                KeyEvent.KEYCODE_DPAD_DOWN -> if (focus == Focus.HIDDEN) Action.SHOW else Action.ENTER_ROW
+                else -> Action.NONE
+            }
         }
     }
 }
@@ -95,9 +115,10 @@ object PauseReveal {
 }
 
 /**
- * Player controls on the design system (Q26–Q30): title, timeline, then
- * Pause/Lecture (initial focus), −10 s, +10 s, Recommencer, Sous-titres,
- * Options (Q2).
+ * Player controls on the design system (Q26–Q30): title, timeline, then −10 s, +10 s,
+ * Recommencer, Sous-titres, Options (Q2). No button has focus when they appear: OK plays
+ * or pauses (B3). Down enters the row on « −10 s » ([rowRequester]); Up leaves it.
+ * [onRowFocusChanged] reports whether a row button holds focus.
  */
 @Composable
 internal fun PlayerControls(
@@ -105,11 +126,10 @@ internal fun PlayerControls(
     episodeTitle: String,
     positionMs: Long,
     durationMs: Long,
-    isPlaying: Boolean,
     subtitlesOn: Boolean?,
-    playRequester: FocusRequester,
+    rowRequester: FocusRequester,
+    onRowFocusChanged: (Boolean) -> Unit,
     onInteract: () -> Unit,
-    onPlayPause: () -> Unit,
     onSeekBack: () -> Unit,
     onSeekForward: () -> Unit,
     onRestart: () -> Unit,
@@ -136,21 +156,17 @@ internal fun PlayerControls(
         }
         Timeline(positionMs, durationMs, Modifier.padding(top = 14.dp))
         Row(
-            Modifier.padding(top = 16.dp).mobileHorizontalScroll(),
+            Modifier
+                .padding(top = 16.dp)
+                .onFocusChanged { onRowFocusChanged(it.hasFocus) }
+                .mobileHorizontalScroll(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             PanelButton(
-                label = stringResource(if (isPlaying) R.string.control_pause else R.string.action_play),
-                icon = if (isPlaying) PauseIcon else Icons.Filled.PlayArrow,
-                requester = playRequester,
-                onFocused = onInteract,
-                onClick = { onInteract(); onPlayPause() },
-            )
-            PanelButton(
                 label = stringResource(R.string.control_back10),
                 icon = null,
-                requester = remember { FocusRequester() },
+                requester = rowRequester,
                 onFocused = onInteract,
                 onClick = { onInteract(); onSeekBack() },
             )

@@ -527,8 +527,11 @@ private fun PlayerSurface(
     // Controls (decisions Q26–Q30): a Compose overlay replaces the Media3 touch
     // controller. Hidden, the root holds focus and reads the remote keys.
     val rootFocus = remember { FocusRequester() }
-    val playFocus = remember { FocusRequester() }
+    val rowFocus = remember { FocusRequester() }
     var controlsVisible by remember(manifestUrl) { mutableStateOf(false) }
+    // A control row button holds focus (PlayerKeys.Focus.ROW); never true once hidden.
+    var focusInRow by remember(manifestUrl) { mutableStateOf(false) }
+    LaunchedEffect(controlsVisible) { if (!controlsVisible) focusInRow = false }
     var interaction by remember { mutableStateOf(0) }
     var isPlaying by remember(manifestUrl) { mutableStateOf(false) }
     var positionMs by remember(manifestUrl) { mutableStateOf(0L) }
@@ -624,7 +627,8 @@ private fun PlayerSurface(
         withFrameNanos { }
         // The Options panel focuses its own selected chip.
         if (nextUp || showResumeChoice || optionsOpen) return@LaunchedEffect
-        runCatching { if (controlsVisible) playFocus.requestFocus() else rootFocus.requestFocus() }
+        // No row button has focus when the controls appear (B3): the root reads OK.
+        runCatching { rootFocus.requestFocus() }
     }
     BackHandler(enabled = controlsVisible && !nextUp) { controlsVisible = false }
 
@@ -674,7 +678,8 @@ private fun PlayerSurface(
             .onPreviewKeyEvent { event ->
                 if (event.type != KeyEventType.KeyDown || showResumeChoice || nextUp) return@onPreviewKeyEvent false
                 interaction++
-                when (PlayerKeys.action(event.nativeKeyEvent.keyCode, controlsVisible || optionsOpen)) {
+                val focus = PlayerKeys.focus(controlsVisible, optionsOpen, focusInRow)
+                when (PlayerKeys.action(event.nativeKeyEvent.keyCode, focus)) {
                     PlayerKeys.Action.NONE -> false
                     PlayerKeys.Action.SHOW -> { showControls(); true }
                     PlayerKeys.Action.SEEK_BACK -> { player.seekBack(); showControls(); true }
@@ -684,6 +689,8 @@ private fun PlayerSurface(
                         showControls()
                         true
                     }
+                    PlayerKeys.Action.ENTER_ROW -> { runCatching { rowFocus.requestFocus() }; true }
+                    PlayerKeys.Action.LEAVE_ROW -> { runCatching { rootFocus.requestFocus() }; true }
                     PlayerKeys.Action.TOGGLE_SUBTITLES -> hasTextTracks.also { if (it) toggleSubtitles() }
                     PlayerKeys.Action.OPTIONS -> { if (optionsOpen) closeOptions() else openOptions(); true }
                 }
@@ -803,11 +810,10 @@ private fun PlayerSurface(
                 episodeTitle = progressContext?.episodeTitle ?: "",
                 positionMs = positionMs,
                 durationMs = durationMs,
-                isPlaying = PlayerAudio.playing(isPlaying, callSilenced),
                 subtitlesOn = if (hasTextTracks) subtitlesOn else null,
-                playRequester = playFocus,
+                rowRequester = rowFocus,
+                onRowFocusChanged = { focusInRow = it },
                 onInteract = { interaction++ },
-                onPlayPause = { togglePlayPause() },
                 onSeekBack = { player.seekBack(); positionMs = player.currentPosition },
                 onSeekForward = { player.seekForward(); positionMs = player.currentPosition },
                 onRestart = { player.seekTo(0); player.play(); positionMs = 0 },
