@@ -39,7 +39,25 @@ import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.offset
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import com.replaybox.R
+import kotlin.math.ceil
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 /**
  * Remote keys over the player (decisions Q1, Q28; UX grilling 2026-11-11, B3). Four
@@ -163,10 +181,37 @@ object CentreGlyph {
 }
 
 /**
+ * The mobile timeline (UX grilling 2026-11-11, B4): a touch at x on a bar [width] px wide
+ * names a position, and the thumb sits at the x of a position. Clamped to the bar at both
+ * ends. The box timeline takes no touch and has no thumb.
+ */
+object TimelineScrub {
+    /** Position under [x] on a bar [width] px wide; null when the duration or width is unknown. */
+    fun positionAt(x: Float, width: Float, durationMs: Long): Long? {
+        if (durationMs <= 0 || width <= 0f) return null
+        return (x.coerceIn(0f, width).toDouble() / width * durationMs).roundToLong()
+    }
+
+    /** Thumb offset in px for [positionMs]; 0 when the duration is unknown. */
+    fun xOf(positionMs: Long, durationMs: Long, width: Float): Float {
+        if (durationMs <= 0) return 0f
+        return (positionMs.coerceIn(0L, durationMs).toDouble() / durationMs * width).toFloat()
+    }
+
+    /**
+     * What is left of a box [gap] (dp) next to the timeline once its [touch] area (dp) stands
+     * centred around a [content] line (dp): the touch area covers part of the gap, never more.
+     */
+    fun gapOutside(gap: Float, touch: Float, content: Float): Float = maxOf(0f, gap - (touch - content) / 2)
+}
+
+/**
  * Player controls on the design system (Q26–Q30): title, timeline, then −10 s, +10 s,
  * Recommencer, Sous-titres, Options (Q2). No button has focus when they appear: OK plays
  * or pauses (B3). Down enters the row on « −10 s » ([rowRequester]); Up leaves it.
  * [onRowFocusChanged] reports whether a row button holds focus.
+ * Mobile: the timeline takes a tap and a drag ([ScrubTimeline], B4); [onSeekTo] seeks there and
+ * [onScrubbing] reports a drag in progress. Both are ignored on the box.
  */
 @Composable
 internal fun PlayerControls(
@@ -183,8 +228,17 @@ internal fun PlayerControls(
     onRestart: () -> Unit,
     onToggleSubtitles: () -> Unit,
     onOptions: () -> Unit,
+    onSeekTo: (Long) -> Unit,
+    onScrubbing: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val mobile = LocalMobile.current
+    // Mobile: a touch area of 48 real dp around the timeline (B4). It covers part of the box's
+    // 14 dp gap above the timeline and 16 dp gap above the row; whatever it leaves stays, so the
+    // timeline never sits closer to the title or the buttons than on the box.
+    val touch = ceil(CompactCanvas.canvasDp(RailMetrics.MIN_TOUCH_DP, mobile, LocalConfiguration.current.screenHeightDp)).dp
+    val clockLine = with(LocalDensity.current) { RbType.meta.lineHeight.toDp() }
+    val rowGap = if (mobile) TimelineScrub.gapOutside(16f, touch.value, clockLine.value).dp else 16.dp
     Column(
         modifier
             .fillMaxWidth()
@@ -202,10 +256,21 @@ internal fun PlayerControls(
         if (showTitle != null && episodeTitle.isNotBlank() && episodeTitle != showTitle) {
             Text(episodeTitle, style = RbType.meta, color = Rb.textSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
-        Timeline(positionMs, durationMs, Modifier.padding(top = 14.dp))
+        if (mobile) {
+            ScrubTimeline(
+                positionMs = positionMs,
+                durationMs = durationMs,
+                touch = touch,
+                onSeekTo = onSeekTo,
+                onScrubbing = onScrubbing,
+                modifier = Modifier.padding(top = TimelineScrub.gapOutside(14f, touch.value, clockLine.value).dp),
+            )
+        } else {
+            Timeline(positionMs, durationMs, Modifier.padding(top = 14.dp))
+        }
         Row(
             Modifier
-                .padding(top = 16.dp)
+                .padding(top = rowGap)
                 .onFocusChanged { onRowFocusChanged(it.hasFocus) }
                 .mobileHorizontalScroll(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -272,6 +337,134 @@ private fun Timeline(positionMs: Long, durationMs: Long, modifier: Modifier) {
         Text(if (durationMs > 0) Playhead.format(durationMs) else "", style = clock, color = Rb.textSecondary)
     }
 }
+
+/**
+ * The mobile timeline (B4): the box's position · bar · duration, plus a thumb, a tap that seeks
+ * where it lands and a drag that seeks once, on release. While a drag holds, the fill, the thumb
+ * and the left clock follow the finger and a time bubble names the position above the thumb.
+ * [touch] is the height of the touch area, 48 real dp; the 16 dp either side of the bar take
+ * touches too (they clamp to its ends).
+ *
+ * Design (impeccable, DESIGN.md « Player » → « Controls », 2026-11-11):
+ * - thumb: a 16 dp amber disc, no ring. It is the head of the Progression fill, so the One
+ *   Amber Rule holds; a ring would read as focus, and it never grows (only focus lifts);
+ * - bubble: the position in Meta tnum, Paper White on a Raised Slate pill (12 x 4 dp), like
+ *   the freshness pill; its bottom 8 dp above the thumb, centred on it but held inside the
+ *   bar's span, hence inside the safe frame at both ends. Shown only while a drag holds.
+ */
+@Composable
+private fun ScrubTimeline(
+    positionMs: Long,
+    durationMs: Long,
+    touch: Dp,
+    onSeekTo: (Long) -> Unit,
+    onScrubbing: (Boolean) -> Unit,
+    modifier: Modifier,
+) {
+    var scrubMs by remember { mutableStateOf<Long?>(null) }
+    var barPx by remember { mutableStateOf(0f) }
+    val duration by rememberUpdatedState(durationMs)
+    val seekTo by rememberUpdatedState(onSeekTo)
+    val scrubbing by rememberUpdatedState(onScrubbing)
+    // Controls taken off mid-drag (Épisode suivant, a new Épisode): the drag ends with them,
+    // or the auto-hide would stay held.
+    DisposableEffect(Unit) {
+        onDispose { if (scrubMs != null) scrubbing(false) }
+    }
+    val shown = scrubMs ?: positionMs
+    val ratio = if (durationMs > 0) (shown.toFloat() / durationMs).coerceIn(0f, 1f) else 0f
+    val clock = RbType.meta.copy(fontFeatureSettings = "tnum")
+    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(Playhead.format(shown), style = clock, color = Rb.text)
+        Box(
+            Modifier
+                .weight(1f)
+                .height(touch)
+                // Keyed on Unit, reading the duration live: a key change would cancel a drag
+                // without onDragCancel and leave the controls held.
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = { offset ->
+                            val inset = SCRUB_INSET.toPx()
+                            TimelineScrub.positionAt(offset.x - inset, size.width - 2 * inset, duration)?.let(seekTo)
+                        },
+                    )
+                }
+                .pointerInput(Unit) {
+                    fun at(x: Float): Long? {
+                        val inset = SCRUB_INSET.toPx()
+                        return TimelineScrub.positionAt(x - inset, size.width - 2 * inset, duration)
+                    }
+                    detectHorizontalDragGestures(
+                        onDragStart = { offset ->
+                            scrubMs = at(offset.x)
+                            scrubbing(true)
+                        },
+                        onDragEnd = {
+                            scrubMs?.let(seekTo)
+                            scrubMs = null
+                            scrubbing(false)
+                        },
+                        onDragCancel = {
+                            scrubMs = null
+                            scrubbing(false)
+                        },
+                        onHorizontalDrag = { change, _ ->
+                            change.consume()
+                            at(change.position.x)?.let { scrubMs = it }
+                        },
+                    )
+                }
+                .padding(horizontal = SCRUB_INSET)
+                .onSizeChanged { barPx = it.width.toFloat() },
+            contentAlignment = Alignment.CenterStart,
+        ) {
+            Box(Modifier.fillMaxWidth().height(6.dp).background(Rb.track, Rb.pillShape)) {
+                Box(Modifier.fillMaxHeight().fillMaxWidth(ratio).background(Rb.accent, Rb.pillShape))
+            }
+            if (durationMs > 0) {
+                Box(
+                    Modifier
+                        .offset { IntOffset((TimelineScrub.xOf(shown, durationMs, barPx) - SCRUB_THUMB.toPx() / 2).roundToInt(), 0) }
+                        .size(SCRUB_THUMB)
+                        .background(Rb.accent, CircleShape),
+                )
+            }
+            val held = scrubMs
+            if (held != null) {
+                Text(
+                    Playhead.format(held),
+                    style = clock,
+                    color = Rb.text,
+                    maxLines = 1,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .layout { measurable, constraints ->
+                            val bubble = measurable.measure(constraints.copy(minWidth = 0, minHeight = 0))
+                            val centre = TimelineScrub.xOf(held, duration, barPx)
+                            val maxX = maxOf(0, constraints.maxWidth - bubble.width)
+                            val x = (centre - bubble.width / 2f).roundToInt().coerceIn(0, maxX)
+                            // Bar centre is the box centre; the bubble ends 8 dp over the thumb.
+                            val y = constraints.maxHeight / 2 - (SCRUB_THUMB / 2 + SCRUB_BUBBLE_GAP).roundToPx() - bubble.height
+                            layout(bubble.width, bubble.height) { bubble.place(x, y) }
+                        }
+                        .background(Rb.surfaceRaised, Rb.pillShape)
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                )
+            }
+        }
+        Text(if (durationMs > 0) Playhead.format(durationMs) else "", style = clock, color = Rb.textSecondary)
+    }
+}
+
+/** The 16 dp between a clock and the bar, part of the touch area. */
+private val SCRUB_INSET = 16.dp
+
+/** Thumb diameter on the 6 dp bar. */
+private val SCRUB_THUMB = 16.dp
+
+/** Space between the thumb and the time bubble above it. */
+private val SCRUB_BUBBLE_GAP = 8.dp
 
 /** Pause glyph (two bars, 24 dp grid): material-icons-core ships no Pause. */
 internal val PauseIcon: ImageVector by lazy {

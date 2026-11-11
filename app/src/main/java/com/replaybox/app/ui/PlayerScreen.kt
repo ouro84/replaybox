@@ -615,9 +615,11 @@ private fun PlayerSurface(
             delay(500)
         }
     }
+    // A drag on the mobile timeline holds the controls (B4); its release restarts the 5 s.
+    var scrubbing by remember(manifestUrl) { mutableStateOf(false) }
     // Auto-hide 5 s after the last key while playing; paused, they stay.
-    LaunchedEffect(controlsVisible, interaction, isPlaying) {
-        if (controlsVisible && isPlaying) {
+    LaunchedEffect(controlsVisible, interaction, isPlaying, scrubbing) {
+        if (controlsVisible && isPlaying && !scrubbing) {
             delay(5_000)
             controlsVisible = false
         }
@@ -835,6 +837,8 @@ private fun PlayerSurface(
                 onRestart = { player.seekTo(0); player.play(); positionMs = 0 },
                 onToggleSubtitles = { toggleSubtitles() },
                 onOptions = { openOptions() },
+                onSeekTo = { player.seekTo(it); positionMs = it; interaction++ },
+                onScrubbing = { scrubbing = it; interaction++ },
                 modifier = Modifier.align(Alignment.BottomStart),
             )
             // Mobile only, with the controls: not over Options, the resume prompt or Épisode suivant.
