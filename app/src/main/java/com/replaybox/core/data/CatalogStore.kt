@@ -552,7 +552,10 @@ class CatalogStore(
      * recency ranks by. A repeat visit of the Genres page (or Back from a grid) then costs one
      * `listingAt` per Chaîne instead of 9 arrangements of the whole Index; every write through
      * this store drops the memo too ([forget]), so a refresh written within the same millisecond
-     * still shows.
+     * still shows. A write behind this store's back with the same `listingAt` would not be seen;
+     * none exists (every listing write goes through [CatalogStore]). A run still in flight when
+     * [forget] fires may store its result after the reset; its key holds the old `listingAt`,
+     * so the next call misses and recomputes.
      */
     private data class CoversKey(val channelIds: List<String>, val listingAts: List<Long?>, val day: Long)
 
