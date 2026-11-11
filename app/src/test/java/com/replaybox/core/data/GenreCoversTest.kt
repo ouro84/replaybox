@@ -1,6 +1,7 @@
 package com.replaybox.core.data
 
 import com.google.common.truth.Truth.assertThat
+import com.replaybox.core.model.Channel
 import com.replaybox.core.model.ChannelShow
 import com.replaybox.core.model.Genre
 import org.junit.Test
@@ -79,16 +80,18 @@ class GenreCoversTest {
 
     @Test
     fun programmeWithoutImageIsSkipped() {
-        val none = entry("none", backdrop = null, poster = null)
+        // « Foo » has no image in Séries; another copy of « Foo » (other id) has one in Policier.
+        val bare = entry("foo-bare", title = "Foo", backdrop = null, poster = null)
+        val imaged = entry("foo-imaged", title = "Foo")
 
         val covers = GenreCovers.pick(
             listOf(Genre.SERIES, Genre.CRIME_THRILLER),
-            mapOf(Genre.SERIES to listOf(none, y), Genre.CRIME_THRILLER to listOf(none)),
+            mapOf(Genre.SERIES to listOf(bare, y), Genre.CRIME_THRILLER to listOf(imaged)),
         )
 
         assertThat(covers[Genre.SERIES]).isEqualTo("y-bd")
-        // none was never chosen, so it is not used: it has no image anyway, the tile stays text.
-        assertThat(covers).doesNotContainKey(Genre.CRIME_THRILLER)
+        // The skipped « Foo » was never chosen, so it is not used: Policier can still show it.
+        assertThat(covers[Genre.CRIME_THRILLER]).isEqualTo("foo-imaged-bd")
     }
 
     @Test
@@ -98,6 +101,45 @@ class GenreCoversTest {
         val covers = GenreCovers.pick(listOf(Genre.SERIES), mapOf(Genre.SERIES to listOf(blank, y)))
 
         assertThat(covers[Genre.SERIES]).isEqualTo("y-bd")
+    }
+
+    @Test
+    fun blankBackdropFallsBackToThePoster() {
+        val covers = GenreCovers.pick(
+            listOf(Genre.SERIES),
+            mapOf(Genre.SERIES to listOf(entry("x", backdrop = "", poster = "x-po"))),
+        )
+
+        assertThat(covers[Genre.SERIES]).isEqualTo("x-po")
+    }
+
+    @Test
+    fun accentAndCaseVariantsAreOneProgramme() {
+        val accented = entry("a", title = "Zèbre", channel = "tf1")
+        val shouted = entry("b", title = "ZEBRE", channel = "m6")
+
+        val covers = GenreCovers.pick(
+            listOf(Genre.SERIES, Genre.CRIME_THRILLER),
+            mapOf(Genre.SERIES to listOf(accented), Genre.CRIME_THRILLER to listOf(shouted, y)),
+        )
+
+        assertThat(covers[Genre.SERIES]).isEqualTo("a-bd")
+        assertThat(covers[Genre.CRIME_THRILLER]).isEqualTo("y-bd")
+    }
+
+    @Test
+    fun anImageAlreadyShownIsSkipped() {
+        // Two different Programmes sharing one picture (a Provider placeholder, a spin-off).
+        val first = entry("first", backdrop = "shared.jpg")
+        val twin = entry("twin", backdrop = "shared.jpg")
+
+        val covers = GenreCovers.pick(
+            listOf(Genre.SERIES, Genre.CRIME_THRILLER),
+            mapOf(Genre.SERIES to listOf(first), Genre.CRIME_THRILLER to listOf(twin, y)),
+        )
+
+        assertThat(covers[Genre.SERIES]).isEqualTo("shared.jpg")
+        assertThat(covers[Genre.CRIME_THRILLER]).isEqualTo("y-bd")
     }
 
     @Test
@@ -164,6 +206,94 @@ class GenreCoversTest {
             val catalog = CatalogStore(FakeCatalogDao(), clock = { now })
 
             assertThat(catalog.genreCovers(listOf("tf1"))).isEmpty()
+        }
+    }
+
+    @Test
+    fun theGridsCopyDecidesNotAnotherChannelsImage() {
+        blocking {
+            val dao = FakeCatalogDao()
+            // tf1 comes first, so the grid keeps its image-less « Alpha »; france-2's imaged copy is merged away.
+            dao.putListing("tf1", listOf(show("alpha-tf1", "Alpha", Genre.SERIES)), now)
+            dao.putListing(
+                "france-2",
+                listOf(
+                    show("alpha-f2", "Alpha", Genre.SERIES).copy(backdropUrl = "alpha-f2-bd"),
+                    show("beta", "Beta", Genre.SERIES).copy(backdropUrl = "beta-bd"),
+                ),
+                now,
+            )
+            val catalog = CatalogStore(dao, clock = { now })
+
+            val covers = catalog.genreCovers(listOf("tf1", "france-2"))
+
+            assertThat(covers[Genre.SERIES]).isEqualTo("beta-bd")
+        }
+    }
+
+    @Test
+    fun aRefreshChangesTheCover() {
+        blocking {
+            val dao = FakeCatalogDao()
+            val tf1 = Channel("tf1", "TF1+")
+            dao.putListing("tf1", listOf(show("abeille", "Abeille", Genre.SERIES).copy(backdropUrl = "old-bd")), now)
+            // Same clock reading: only the store's own write can tell the covers to recompute.
+            val catalog = CatalogStore(dao, clock = { now })
+            assertThat(catalog.genreCovers(listOf("tf1"))[Genre.SERIES]).isEqualTo("old-bd")
+
+            val fresh = show("abeille", "Abeille", Genre.SERIES).copy(backdropUrl = "new-bd")
+            catalog.refreshListings(listOf(FakeProvider(channel = tf1, showsResult = listOf(fresh))))
+
+            assertThat(catalog.genreCovers(listOf("tf1"))[Genre.SERIES]).isEqualTo("new-bd")
+        }
+    }
+
+    @Test
+    fun aRepeatVisitReusesTheCovers() {
+        blocking {
+            val dao = FakeCatalogDao()
+            dao.putListing("tf1", listOf(show("abeille", "Abeille", Genre.SERIES).copy(backdropUrl = "abeille-bd")), now)
+            var clock = now
+            val catalog = CatalogStore(dao, clock = { clock })
+
+            val first = catalog.genreCovers(listOf("tf1"))
+            clock = now + 60_000L // a minute later, same Paris day
+
+            assertThat(catalog.genreCovers(listOf("tf1"))).isSameInstanceAs(first)
+        }
+    }
+
+    @Test
+    fun aNewListingDateRecomputesTheCovers() {
+        blocking {
+            val dao = FakeCatalogDao()
+            dao.putListing("tf1", listOf(show("abeille", "Abeille", Genre.SERIES).copy(backdropUrl = "abeille-bd")), now)
+            val catalog = CatalogStore(dao, clock = { now })
+            val first = catalog.genreCovers(listOf("tf1"))
+
+            // Written behind the store's back (another process): only the listing date changes.
+            dao.putListing("tf1", listOf(show("zebre", "Zèbre", Genre.SERIES).copy(backdropUrl = "zebre-bd")), now + 1)
+
+            val second = catalog.genreCovers(listOf("tf1"))
+            assertThat(second).isNotSameInstanceAs(first)
+            assertThat(second[Genre.SERIES]).isEqualTo("zebre-bd")
+        }
+    }
+
+    @Test
+    fun aNewParisDayOrOtherChannelsRecomputeTheCovers() {
+        blocking {
+            val dao = FakeCatalogDao()
+            dao.putListing("tf1", listOf(show("abeille", "Abeille", Genre.SERIES).copy(backdropUrl = "abeille-bd")), now)
+            var clock = now
+            val catalog = CatalogStore(dao, clock = { clock })
+            val first = catalog.genreCovers(listOf("tf1"))
+
+            clock = now + 86_400_000L // recency ranks by Paris day: a new day can reorder a grid
+            val nextDay = catalog.genreCovers(listOf("tf1"))
+            assertThat(nextDay).isNotSameInstanceAs(first)
+
+            assertThat(catalog.genreCovers(listOf("tf1", "france-2"))).isNotSameInstanceAs(nextDay)
         }
     }
 }

@@ -198,6 +198,7 @@ class CatalogStore(
 
     private suspend fun forget(channelId: String) {
         listingMutex.withLock { listingMemo.remove(channelId) }
+        coversMemo = null
     }
 
     // ---- Progress (device-local, never synchronized — glossary) ----
@@ -536,11 +537,27 @@ class CatalogStore(
      * with no cover is absent.
      */
     suspend fun genreCovers(channelIds: List<String>): Map<Genre, String> {
-        val all = channelShows(channelIds)
         val now = clock()
+        val key = CoversKey(channelIds.toList(), channelIds.map { dao.listingAt(it) }, GenreGrid.parisDay(now))
+        coversMemo?.takeIf { it.first == key }?.let { return it.second }
+        val all = channelShows(channelIds)
         val grids = Genre.values().associateWith { GenreGrid.arrange(all, it, channelIds = null, now = now) }
-        return GenreCovers.pick(Genre.values().toList(), grids)
+        val covers = GenreCovers.pick(Genre.values().toList(), grids)
+        coversMemo = key to covers
+        return covers
     }
+
+    /**
+     * What the covers depend on: the Chaînes asked for, each listing's date, and the Paris day
+     * recency ranks by. A repeat visit of the Genres page (or Back from a grid) then costs one
+     * `listingAt` per Chaîne instead of 9 arrangements of the whole Index; every write through
+     * this store drops the memo too ([forget]), so a refresh written within the same millisecond
+     * still shows.
+     */
+    private data class CoversKey(val channelIds: List<String>, val listingAts: List<Long?>, val day: Long)
+
+    @Volatile
+    private var coversMemo: Pair<CoversKey, Map<Genre, String>>? = null
 
     /** Every cached Programme of [channelIds] with its Chaîne, in listing order (the memo makes a repeat free). */
     private suspend fun channelShows(channelIds: List<String>): List<ChannelShow> =

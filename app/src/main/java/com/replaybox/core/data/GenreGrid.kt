@@ -46,7 +46,8 @@ object GenreGrid {
         return day.takeIf { it >= today - RECENT_DAYS }
     }
 
-    private fun parisDay(epochMs: Long): Long =
+    /** The Paris calendar day (epoch day) of [epochMs]: the unit recency ranks by. */
+    fun parisDay(epochMs: Long): Long =
         Instant.ofEpochMilli(epochMs).atZone(PARIS).toLocalDate().toEpochDay()
 
     /** [items] most recent first, then by title. */
