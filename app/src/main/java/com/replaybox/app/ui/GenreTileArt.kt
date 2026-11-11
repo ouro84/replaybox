@@ -20,6 +20,18 @@ object GenreTileArt {
         if (width > 0f && height > width) POSTER_BIAS else 0f
 
     /**
+     * Alpha of the cover scrim, or null for no scrim: none until the cover has [loaded] (a pending
+     * or failed cover leaves the plain text tile); full at once on a memory-cache hit, which Coil
+     * shows without a crossfade; else [fade], the scrim fading in with the art's crossfade. The
+     * art is therefore never shown unscrimmed under the name.
+     */
+    fun scrimAlpha(loaded: Boolean, fromMemory: Boolean, fade: Float): Float? = when {
+        !loaded -> null
+        fromMemory -> 1f
+        else -> fade
+    }
+
+    /**
      * Ground scrim stops, top to bottom, as (fraction of the tile height, ground alpha): transparent
      * at the top, [SOFT] at [ramp] + [lead] above the name, [NAME_FLOOR] at [lead] above it, opaque
      * at the bottom. [nameTop] is the top of the name's box; all lengths in the same unit (px).

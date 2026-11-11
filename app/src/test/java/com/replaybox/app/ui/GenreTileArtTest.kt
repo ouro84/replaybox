@@ -57,4 +57,22 @@ class GenreTileArtTest {
         assertThat(stops).containsExactly(0f to GenreTileArt.NAME_FLOOR, 1f to 1f).inOrder()
         assertThat(GenreTileArt.scrimStops(0f, 0f, lead, ramp).first().second).isEqualTo(GenreTileArt.NAME_FLOOR)
     }
+
+    @Test
+    fun noScrimUntilTheCoverHasLoaded() {
+        // A pending or failed cover leaves the plain text tile, whatever the fade reads.
+        assertThat(GenreTileArt.scrimAlpha(loaded = false, fromMemory = false, fade = 0.5f)).isNull()
+        assertThat(GenreTileArt.scrimAlpha(loaded = false, fromMemory = true, fade = 1f)).isNull()
+    }
+
+    @Test
+    fun aMemoryHitShowsTheFullScrimAtOnce() {
+        // Coil does not crossfade a memory hit, so the scrim must not fade in under visible art.
+        assertThat(GenreTileArt.scrimAlpha(loaded = true, fromMemory = true, fade = 0f)).isEqualTo(1f)
+    }
+
+    @Test
+    fun aDiskOrNetworkLoadFadesTheScrimInWithTheArt() {
+        assertThat(GenreTileArt.scrimAlpha(loaded = true, fromMemory = false, fade = 0.4f)).isEqualTo(0.4f)
+    }
 }

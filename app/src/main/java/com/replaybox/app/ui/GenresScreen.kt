@@ -1,11 +1,13 @@
 package com.replaybox.app.ui
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,18 +45,20 @@ import coil.decode.DataSource
 import coil.request.ImageRequest
 import com.replaybox.R
 import com.replaybox.core.model.Genre
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
  * Survives the trip to a « Tout voir » grid: Back lands on the tile that opened it.
- * MainActivity starts a new one at each entry from the nav rail (focus on the first tile).
+ * MainActivity starts a new one at each entry from the nav rail (focus on the first tile),
+ * seeded with the previous visit's [covers] so the tiles do not flash back to text first.
  */
-class GenresUiState {
+class GenresUiState(covers: Map<Genre, String> = emptyMap()) {
     var openedGenre: Genre? = null
 
     /** Each Genre's cover URL from the cached listings; a Genre without one keeps its text tile. */
-    var covers: Map<Genre, String> by mutableStateOf(emptyMap())
+    var covers: Map<Genre, String> by mutableStateOf(covers)
 
     /** The tile to focus on arrival: the one opened last, else the first Genre. */
     fun initialFocus(): Genre = openedGenre ?: Genre.values().first()
@@ -73,12 +77,18 @@ fun GenresScreen(state: GenresUiState, onOpenGenre: (Genre) -> Unit) {
         withFrameNanos { }
         runCatching { requesters.getValue(state.initialFocus()).requestFocus() }
     }
-    // Covers follow the grid's « Tout » chip (every listed Chaîne) and each catalogue refresh.
+    // Covers follow the grid's « Tout » chip (every listed Chaîne) and each catalogue refresh
+    // written while the page is on screen. They are decorative: a cache read that fails keeps
+    // the covers shown so far (text tiles at worst), never crashes the page.
     val catalog = Providers.catalog
     val updates by catalog.updates.collectAsState()
     val channelIds = remember { Providers.all.map { it.channel.id } }
     LaunchedEffect(updates) {
-        state.covers = withContext(Dispatchers.IO) { catalog.genreCovers(channelIds) }
+        val covers = runCatching { withContext(Dispatchers.IO) { catalog.genreCovers(channelIds) } }
+            .onFailure { if (it is CancellationException) throw it }
+            .onFailure { Log.w(TAG, "Genre covers unavailable, keeping the tiles as they are", it) }
+            .getOrNull()
+        if (covers != null) state.covers = covers
     }
     Column(
         modifier = Modifier
@@ -108,6 +118,8 @@ fun GenresScreen(state: GenresUiState, onOpenGenre: (Genre) -> Unit) {
         }
     }
 }
+
+private const val TAG = "GenresScreen"
 
 /** 3 × 3: three 256 dp tiles fill the 808 dp between the content start and the safe edge. */
 private const val TILES_PER_ROW = 3
@@ -160,18 +172,29 @@ private fun GenreTile(label: String, cover: String?, requester: FocusRequester, 
 
 /**
  * The cover and its ground scrim (DESIGN.md, Genres). Both read the painter state in the same
- * frame: the scrim fades in with Coil's crossfade, or shows at once on a memory-cache hit (which
- * Coil does not crossfade), so the art never shows unscrimmed under the name.
+ * frame, and [GenreTileArt.scrimAlpha] decides the scrim, so the art never shows unscrimmed
+ * under the name. The request carries the tile size, resolved in composition: a cover already
+ * in memory is then a success before the first draw, not one frame of text tile later.
  */
 @Composable
-private fun GenreCover(url: String, nameHeight: () -> Int) {
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current).data(url).crossfade(Rb.FOCUS_MS).build(),
-        contentScale = ContentScale.Crop,
-    )
+private fun GenreCover(url: String, nameHeight: () -> Int) = BoxWithConstraints(Modifier.fillMaxSize()) {
+    val context = LocalContext.current
+    val width = constraints.maxWidth
+    val height = constraints.maxHeight
+    val sized = constraints.hasBoundedWidth && constraints.hasBoundedHeight && width > 0 && height > 0
+    val request = remember(url, width, height, sized) {
+        ImageRequest.Builder(context).data(url).crossfade(Rb.FOCUS_MS)
+            .apply { if (sized) size(width, height) }
+            .build()
+    }
+    val painter = rememberAsyncImagePainter(model = request, contentScale = ContentScale.Crop)
     val loaded = painter.state as? AsyncImagePainter.State.Success
-    val instant = loaded?.result?.dataSource == DataSource.MEMORY_CACHE
     val fade by animateFloatAsState(if (loaded != null) 1f else 0f, tween(Rb.FOCUS_MS), label = "coverScrim")
+    val scrim = GenreTileArt.scrimAlpha(
+        loaded = loaded != null,
+        fromMemory = loaded?.result?.dataSource == DataSource.MEMORY_CACHE,
+        fade = fade,
+    )
     val art = loaded?.painter?.intrinsicSize
     val bias = if (art == null) 0f else GenreTileArt.verticalBias(art.width, art.height)
     Image(
@@ -181,7 +204,7 @@ private fun GenreCover(url: String, nameHeight: () -> Int) {
         alignment = BiasAlignment(0f, bias),
         modifier = Modifier.fillMaxSize(),
     )
-    if (loaded == null) return
+    if (scrim == null) return@BoxWithConstraints
     Box(
         Modifier
             .fillMaxSize()
@@ -194,7 +217,7 @@ private fun GenreCover(url: String, nameHeight: () -> Int) {
                         startY = 0f,
                         endY = size.height,
                     ),
-                    alpha = if (instant) 1f else fade,
+                    alpha = scrim,
                 )
             },
     )
