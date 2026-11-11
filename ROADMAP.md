@@ -182,6 +182,19 @@ inchangée.
 - [x] (iii) Layouts : une classe compacte sous 480 dp de haut (l'écran TV mis à l'échelle sur 540 dp,
   texte à 90 % de sa taille TV) ; la tablette garde le layout TV sans les marges d'overscan.
 
+## Optimisations UX (1.0.1)
+
+Issue #69 (2026-11-10), grilling du 2026-11-11. Des optimisations, pas de nouvelle fonction : livrées
+en 1.0.1. Une case se coche quand l'item est vérifié sur la box (et sur le Pixel pour le mobile).
+
+- [x] Mobile : menu de gauche visible sur tous les écrans sauf le player, icônes agrandies (48 dp réels).
+- [x] Mobile : flèche retour en haut du menu, et dans les contrôles du player.
+- [x] Box et mobile : confirmation « Quitter Replaybox ? » avant de quitter avec Retour.
+- [ ] Mobile : un tap met en pause ; icône pause/lecture au centre (box aussi) ; bouton Pause/Lecture retiré de la barre (box aussi).
+- [ ] Mobile : barre de lecture glissable.
+- [ ] Box et mobile : les sous-titres suivent le dernier choix (activés ou non, et leur type).
+- [ ] Box et mobile : une image de Programme sur chaque tuile Genre.
+
 ## V2 (décisions prises, exécution repoussée)
 
 - Live TV (réévaluer la promesse zéro pub : le live des chaînes est SSAI)
