@@ -80,6 +80,33 @@ class PlaybackChoicesTest {
         assertThat(PlaybackChoices.defaultSubtitle(emptyList())).isNull()
     }
 
+    private fun subtitles(vararg languages: String) =
+        PlaybackChoices.subtitles(languages.mapIndexed { i, language -> text(i, language) })
+
+    @Test
+    fun `subtitles off apply nothing`() {
+        assertThat(PlaybackChoices.subtitleToApply(subtitles("fr", "qsm"), on = false, SubtitleKind.FRENCH)).isNull()
+    }
+
+    @Test
+    fun `the stored kind applies when the Flux has it`() {
+        assertThat(PlaybackChoices.subtitleToApply(subtitles("fr", "qsm"), on = true, SubtitleKind.HEARING_IMPAIRED)?.kind)
+            .isEqualTo(SubtitleKind.HEARING_IMPAIRED)
+    }
+
+    @Test
+    fun `stored kind missing falls back without losing it`() {
+        assertThat(PlaybackChoices.subtitleToApply(subtitles("fr"), on = true, SubtitleKind.HEARING_IMPAIRED)?.kind)
+            .isEqualTo(SubtitleKind.FRENCH)
+        val de = subtitles("de")
+        assertThat(PlaybackChoices.subtitleToApply(de, on = true, SubtitleKind.FRENCH)).isEqualTo(PlaybackChoices.defaultSubtitle(de))
+    }
+
+    @Test
+    fun `no track, no choice`() {
+        assertThat(PlaybackChoices.subtitleToApply(emptyList(), on = true, SubtitleKind.FRENCH)).isNull()
+    }
+
     @Test
     fun `qualities are the distinct heights from 576 up, highest first`() {
         val ladder = listOf(1080, 1080, 900, 720, 576, 432).mapIndexed { i, h -> video(0, i, h) }

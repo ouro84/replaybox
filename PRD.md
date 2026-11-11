@@ -21,7 +21,7 @@ avec une interface rapide et sans publicité — par architecture, pas par bloca
 ## Histoires utilisateurs (V1)
 
 1. En tant que spectateur, je veux parcourir les programmes d'une chaîne par Programme → Saison → Épisode, pour trouver ce que je veux sans friction.
-2. En tant que spectateur, je veux que les sous-titres français soient activés par défaut, pour ne jamais y penser.
+2. En tant que spectateur, je veux que les sous-titres français soient activés par défaut, puis que l'app retienne mon dernier choix (activés ou non, et leur type), pour ne jamais y penser.
 3. En tant que spectateur, je veux reprendre un épisode là où je l'ai laissé, pour enchaîner les soirs.
 4. En tant que spectateur, je veux une recherche cross-chaînes, pour ne pas savoir dans quelle app est le programme.
 5. En tant que spectateur, je veux filtrer par Genre (Séries, Films, Policier & Thriller, Comédie, Drame, Documentaire, Jeunesse, Divertissement, Sport & Info), pour explorer sans connaître les titres.

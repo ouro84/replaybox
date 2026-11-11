@@ -333,13 +333,14 @@ private fun PlayerSurface(
     }
 
     // Tracks and Options (decisions Q3-Q10): every choice comes from the
-    // tracks the player has. Subtitles start on (PRD), French first (Q7);
-    // audio and quality follow the remembered preferences.
+    // tracks the player has. Audio, quality and subtitles (on/off and kind,
+    // PRD story 2) follow the remembered preferences; subtitles start on,
+    // French first (Q7), until the viewer chooses otherwise.
     var preferences by remember { mutableStateOf(ReplayboxApplication.playbackPreferences.load()) }
     var trackRefs by remember(manifestUrl) { mutableStateOf(emptyList<TrackRef>()) }
     var audioKind by remember(manifestUrl) { mutableStateOf<AudioKind?>(null) }
     var subtitleKind by remember(manifestUrl) { mutableStateOf<SubtitleKind?>(null) }
-    var subtitlesOn by remember(manifestUrl) { mutableStateOf(true) }
+    var subtitlesOn by remember(manifestUrl) { mutableStateOf(preferences.subtitlesOn) }
     val subtitleStyle by ReplayboxApplication.subtitleStyle.style.collectAsState()
     var speed by remember(manifestUrl) { mutableStateOf(1f) }
     var audioDefaulted by remember(manifestUrl) { mutableStateOf(false) }
@@ -372,7 +373,11 @@ private fun PlayerSurface(
         }
     }
 
-    fun chooseSubtitle(choice: SubtitleChoice?) {
+    fun chooseSubtitle(choice: SubtitleChoice?, remember: Boolean) {
+        if (remember) {
+            preferences = preferences.withSubtitle(choice?.kind, hasTextTracks)
+            ReplayboxApplication.playbackPreferences.save(preferences)
+        }
         if (choice == null) {
             subtitlesOn = false
             player.trackSelectionParameters = player.trackSelectionParameters
@@ -390,7 +395,9 @@ private fun PlayerSurface(
         val choices = PlaybackChoices.subtitles(trackRefs)
         chooseSubtitle(
             if (subtitlesOn) null
-            else choices.firstOrNull { it.kind == subtitleKind } ?: PlaybackChoices.defaultSubtitle(choices),
+            else choices.firstOrNull { it.kind == subtitleKind }
+                ?: PlaybackChoices.subtitleToApply(choices, true, preferences.subtitleKind),
+            remember = true,
         )
     }
 
@@ -423,7 +430,10 @@ private fun PlayerSurface(
                 val text = PlaybackChoices.subtitles(refs)
                 if (!textDefaulted && text.isNotEmpty()) {
                     textDefaulted = true
-                    chooseSubtitle(PlaybackChoices.defaultSubtitle(text))
+                    chooseSubtitle(
+                        PlaybackChoices.subtitleToApply(text, preferences.subtitlesOn, preferences.subtitleKind),
+                        remember = false,
+                    )
                 }
             }
         }
@@ -813,7 +823,7 @@ private fun PlayerSurface(
                     speed = speed,
                     style = subtitleStyle,
                     onAudio = { chooseAudio(it, remember = true) },
-                    onSubtitle = { chooseSubtitle(it) },
+                    onSubtitle = { chooseSubtitle(it, remember = true) },
                     onStyle = { ReplayboxApplication.subtitleStyle.set(it) },
                     onQuality = { chooseQuality(it) },
                     onSpeed = { chooseSpeed(it) },
