@@ -1,10 +1,12 @@
 package com.replaybox.app.ui
 
+/** What Back does on Home, the only screen where the stack is `[Home]`. */
+enum class HomeBack { SCROLL_TO_TOP, ASK }
+
 /**
  * When Back asks « Quitter Replaybox ? » instead of leaving: only from the top of Home.
- * Anywhere else Back goes back, and from deeper in Home it first scrolls to the top.
+ * From deeper in Home it first scrolls to the top; anywhere else Back goes back (root handler).
  */
 object ExitConfirm {
-    fun shows(stack: List<Screen>, homeAtTop: Boolean): Boolean =
-        stack == listOf(Screen.Home) && homeAtTop
+    fun onHomeBack(atTop: Boolean): HomeBack = if (atTop) HomeBack.ASK else HomeBack.SCROLL_TO_TOP
 }
