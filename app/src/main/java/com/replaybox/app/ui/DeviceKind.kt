@@ -72,6 +72,14 @@ object CompactCanvas {
             Density(density = system.density * scale(heightDp), fontScale = fontScale(system.fontScale, heightDp))
         }
 
+    /**
+     * Canvas dp that land on [realDp] physical dp: [realDp] / [scale] on compact, [realDp]
+     * itself elsewhere (box and tablet draw at the system density). A touch target sized with
+     * it, rounded up, keeps its real size on the scaled canvas.
+     */
+    fun canvasDp(realDp: Float, mobile: Boolean, heightDp: Int): Float =
+        if (LayoutClass.of(mobile, heightDp) != LayoutClass.COMPACT) realDp else realDp / scale(heightDp)
+
     /** [textRatio] on compact, 1 elsewhere (box and tablet: text boxes unchanged). */
     fun textRatio(mobile: Boolean, heightDp: Int): Float =
         if (LayoutClass.of(mobile, heightDp) != LayoutClass.COMPACT) 1f else textRatio(heightDp)

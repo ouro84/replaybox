@@ -23,10 +23,10 @@ Les diffuseurs n'intègrent pas leurs pubs dans les vidéos : c'est leur lecteur
 - Une recherche sur toutes les Chaînes à la fois, et une grille « Tout voir » par Genre.
 - La reprise de lecture là où tu t'es arrêté, « Marquer comme vu » et l'enchaînement automatique sur l'Épisode suivant.
 - Des badges sur les Épisodes : « Hier soir », « Nouveau », « Plus que N jours » avant expiration.
-- Les sous-titres français activés par défaut, l'audiodescription quand le diffuseur la propose.
+- Les sous-titres français activés par défaut, l'audiodescription quand le diffuseur la propose. L'app retient ensuite le dernier choix (activés ou non, et leur type).
 - Un mode dégradé : si un diffuseur ne répond pas, l'app affiche le dernier catalogue connu, avec sa date.
 - La pause automatique quand une autre app prend le son (un appel, une vidéo lancée ailleurs).
-- Sur téléphone et tablette, tout se fait au doigt, en paysage et en plein écran. Dans le lecteur, un tap affiche ou masque les contrôles, un double-tap à gauche ou à droite recule ou avance de 10 s. La recherche passe par le clavier du téléphone, et débrancher le casque met la lecture en pause. Sur un téléphone, l'écran TV est mis à l'échelle pour tenir en entier ; une tablette garde la mise en page TV, sans les marges prévues pour les téléviseurs.
+- Sur téléphone et tablette, tout se fait au doigt, en paysage et en plein écran. Dans le lecteur, un tap met en pause ou relance la lecture (les contrôles s'affichent à la pause), un double-tap à gauche ou à droite recule ou avance de 10 s, et la barre de lecture se fait glisser. La recherche passe par le clavier du téléphone, et débrancher le casque met la lecture en pause. Sur un téléphone, l'écran TV est mis à l'échelle pour tenir en entier ; une tablette garde la mise en page TV, sans les marges prévues pour les téléviseurs.
 
 ## Comptes
 

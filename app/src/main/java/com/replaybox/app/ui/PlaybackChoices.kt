@@ -105,6 +105,14 @@ object PlaybackChoices {
     /** Q7: French whenever available, then hearing impaired, then the first track. */
     fun defaultSubtitle(choices: List<SubtitleChoice>): SubtitleChoice? = choices.minByOrNull { it.kind.ordinal }
 
+    /**
+     * The choice to select when a Flux starts: nothing when the viewer left
+     * subtitles off, else the remembered kind when this Flux has it, else
+     * [defaultSubtitle] (the remembered kind itself is kept).
+     */
+    fun subtitleToApply(choices: List<SubtitleChoice>, on: Boolean, preferred: SubtitleKind): SubtitleChoice? =
+        if (!on) null else choices.firstOrNull { it.kind == preferred } ?: defaultSubtitle(choices)
+
     /** Manual caps: distinct heights from [MIN_HEIGHT] up, highest first. */
     fun qualities(tracks: List<TrackRef>): List<Int> =
         tracks.filter { it.type == TrackKind.VIDEO && it.height >= MIN_HEIGHT }

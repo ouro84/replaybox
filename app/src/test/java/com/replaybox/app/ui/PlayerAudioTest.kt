@@ -14,10 +14,16 @@ class PlayerAudioTest {
 
     @Test
     fun aCallCountsAsPlayingForTheToggle() {
-        // Ringing call: Media3 keeps playWhenReady, suppresses playback; Pause must pause.
-        assertThat(PlayerAudio.playing(isPlaying = false, transientFocusLoss = true)).isTrue()
-        assertThat(PlayerAudio.playing(isPlaying = true, transientFocusLoss = false)).isTrue()
-        assertThat(PlayerAudio.playing(isPlaying = false, transientFocusLoss = false)).isFalse()
+        // Ringing call: Media3 keeps playWhenReady, suppresses playback; OK or a tap must pause.
+        assertThat(PlayerAudio.playing(playWhenReady = false, transientFocusLoss = true)).isTrue()
+        assertThat(PlayerAudio.playing(playWhenReady = false, transientFocusLoss = false)).isFalse()
+    }
+
+    @Test
+    fun bufferingWithTheIntentToPlayCountsAsPlaying() {
+        // Initial load, a stall or a seek while playing: isPlaying is false, playWhenReady true.
+        // The toggle decides on the intent, so OK or a tap pauses instead of a no-op play().
+        assertThat(PlayerAudio.playing(playWhenReady = true, transientFocusLoss = false)).isTrue()
     }
 
     @Test

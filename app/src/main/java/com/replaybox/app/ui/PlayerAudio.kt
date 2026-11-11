@@ -8,7 +8,7 @@ import androidx.media3.common.C
  * too): a movie on the media stream, so it takes the audio focus. Another app playing sound
  * pauses it (PauseReveal shows the controls). A ringing call only suppresses playback (Media3
  * keeps playWhenReady and resumes after the call): [callReveals] shows the controls then, and
- * [playing] lets Pause pause it for good.
+ * [playing] lets OK or the mobile tap pause it for good.
  */
 object PlayerAudio {
     val attributes: AudioAttributes = AudioAttributes.Builder()
@@ -16,8 +16,11 @@ object PlayerAudio {
         .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
         .build()
 
-    /** What Pause/Lecture treats as playing: really playing, or held silent by a call. */
-    fun playing(isPlaying: Boolean, transientFocusLoss: Boolean): Boolean = isPlaying || transientFocusLoss
+    /**
+     * What OK and the mobile tap treat as playing: the intent to play ([playWhenReady], so a
+     * stall, the initial load or a seek while playing pauses too), or held silent by a call.
+     */
+    fun playing(playWhenReady: Boolean, transientFocusLoss: Boolean): Boolean = playWhenReady || transientFocusLoss
 
     /** A call starts (transient focus loss): the controls show, under the same rules as a pause. */
     fun callReveals(transientFocusLoss: Boolean, resumePrompt: Boolean, nextUp: Boolean, optionsOpen: Boolean): Boolean =

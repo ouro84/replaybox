@@ -1,21 +1,13 @@
 package com.replaybox.app.ui
 
-import androidx.compose.runtime.withFrameNanos
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.foundation.background
-import com.replaybox.core.model.Episode
-import com.replaybox.core.data.NextUpWindow
-import com.replaybox.core.data.SeasonEpisode
-import androidx.compose.runtime.rememberUpdatedState
-import kotlinx.coroutines.withContext
-import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.Icons
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,38 +18,50 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
@@ -65,18 +69,22 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.PlayerView
 import com.replaybox.R
-import com.replaybox.core.account.AccountException
-import com.replaybox.provider.m6.M6Parsers
 import com.replaybox.app.ReplayboxApplication
+import com.replaybox.core.account.AccountException
+import com.replaybox.core.data.NextUpWindow
+import com.replaybox.core.data.SeasonEpisode
+import com.replaybox.core.model.Episode
 import com.replaybox.core.model.EpisodeId
 import com.replaybox.core.model.ProgressContext
 import com.replaybox.core.model.StreamType
+import com.replaybox.provider.m6.M6Parsers
 import com.replaybox.provider.tf1.StreamResolutionException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private sealed interface PlayerState {
     object Resolving : PlayerState
@@ -317,12 +325,11 @@ private fun PlayerSurface(
                     )
                 }
                 setMediaItem(builder.build())
-                // Remembered quality cap (Q3, Q8): a ceiling, Auto below it.
-                ReplayboxApplication.playbackPreferences.load().maxHeight?.let { cap ->
-                    trackSelectionParameters = trackSelectionParameters.buildUpon()
-                        .setMaxVideoSize(Int.MAX_VALUE, cap)
-                        .build()
-                }
+                // Remembered quality cap (Q3, Q8): a ceiling, Auto below it. Subtitles stored
+                // off start disabled, so no default text track flashes a cue before the stored
+                // choice applies (PlaybackPreferences.startParameters).
+                trackSelectionParameters = ReplayboxApplication.playbackPreferences.load()
+                    .startParameters(trackSelectionParameters)
                 if (autoResume && resumeAtMs != null) seekTo(resumeAtMs)
                 prepare()
                 // With a saved Progression the Reprendre / Débuter choice gates
@@ -333,13 +340,14 @@ private fun PlayerSurface(
     }
 
     // Tracks and Options (decisions Q3-Q10): every choice comes from the
-    // tracks the player has. Subtitles start on (PRD), French first (Q7);
-    // audio and quality follow the remembered preferences.
+    // tracks the player has. Audio, quality and subtitles (on/off and kind,
+    // PRD story 2) follow the remembered preferences; subtitles start on,
+    // French first (Q7), until the viewer chooses otherwise.
     var preferences by remember { mutableStateOf(ReplayboxApplication.playbackPreferences.load()) }
     var trackRefs by remember(manifestUrl) { mutableStateOf(emptyList<TrackRef>()) }
     var audioKind by remember(manifestUrl) { mutableStateOf<AudioKind?>(null) }
     var subtitleKind by remember(manifestUrl) { mutableStateOf<SubtitleKind?>(null) }
-    var subtitlesOn by remember(manifestUrl) { mutableStateOf(true) }
+    var subtitlesOn by remember(manifestUrl) { mutableStateOf(preferences.subtitlesOn) }
     val subtitleStyle by ReplayboxApplication.subtitleStyle.style.collectAsState()
     var speed by remember(manifestUrl) { mutableStateOf(1f) }
     var audioDefaulted by remember(manifestUrl) { mutableStateOf(false) }
@@ -372,7 +380,11 @@ private fun PlayerSurface(
         }
     }
 
-    fun chooseSubtitle(choice: SubtitleChoice?) {
+    fun chooseSubtitle(choice: SubtitleChoice?, remember: Boolean) {
+        if (remember) {
+            preferences = preferences.withSubtitle(choice?.kind, hasTextTracks)
+            ReplayboxApplication.playbackPreferences.save(preferences)
+        }
         if (choice == null) {
             subtitlesOn = false
             player.trackSelectionParameters = player.trackSelectionParameters
@@ -390,7 +402,9 @@ private fun PlayerSurface(
         val choices = PlaybackChoices.subtitles(trackRefs)
         chooseSubtitle(
             if (subtitlesOn) null
-            else choices.firstOrNull { it.kind == subtitleKind } ?: PlaybackChoices.defaultSubtitle(choices),
+            else choices.firstOrNull { it.kind == subtitleKind }
+                ?: PlaybackChoices.subtitleToApply(choices, true, preferences.subtitleKind),
+            remember = true,
         )
     }
 
@@ -423,7 +437,10 @@ private fun PlayerSurface(
                 val text = PlaybackChoices.subtitles(refs)
                 if (!textDefaulted && text.isNotEmpty()) {
                     textDefaulted = true
-                    chooseSubtitle(PlaybackChoices.defaultSubtitle(text))
+                    chooseSubtitle(
+                        PlaybackChoices.subtitleToApply(text, preferences.subtitlesOn, preferences.subtitleKind),
+                        remember = false,
+                    )
                 }
             }
         }
@@ -527,17 +544,26 @@ private fun PlayerSurface(
     // Controls (decisions Q26–Q30): a Compose overlay replaces the Media3 touch
     // controller. Hidden, the root holds focus and reads the remote keys.
     val rootFocus = remember { FocusRequester() }
-    val playFocus = remember { FocusRequester() }
+    val rowFocus = remember { FocusRequester() }
     var controlsVisible by remember(manifestUrl) { mutableStateOf(false) }
+    // A control row button holds focus (PlayerKeys.Focus.ROW); never true once hidden.
+    var focusInRow by remember(manifestUrl) { mutableStateOf(false) }
+    LaunchedEffect(controlsVisible) { if (!controlsVisible) focusInRow = false }
     var interaction by remember { mutableStateOf(0) }
     var isPlaying by remember(manifestUrl) { mutableStateOf(false) }
     var positionMs by remember(manifestUrl) { mutableStateOf(0L) }
     var durationMs by remember(manifestUrl) { mutableStateOf(0L) }
     var buffering by remember(manifestUrl) { mutableStateOf(false) }
+    // The centre glyph's inputs (CentreGlyph): the play intent (player.playWhenReady, named
+    // apart from the listener parameter it mirrors), not isPlaying, and the end.
+    var playIntent by remember(manifestUrl) { mutableStateOf(player.playWhenReady) }
+    var ended by remember(manifestUrl) { mutableStateOf(false) }
     // Held silent by a call (transient audio focus loss); Media3 resumes when it ends.
     var callSilenced by remember(manifestUrl) { mutableStateOf(false) }
+    // Decides on the intent to play, not isPlaying: while the Flux buffers to play (initial
+    // load, a stall, a seek while playing), OK or a tap pauses instead of a no-op play().
     fun togglePlayPause() {
-        if (PlayerAudio.playing(player.isPlaying, callSilenced)) player.pause() else player.play()
+        if (PlayerAudio.playing(player.playWhenReady, callSilenced)) player.pause() else player.play()
     }
     DisposableEffect(player) {
         val playingListener = object : androidx.media3.common.Player.Listener {
@@ -548,6 +574,7 @@ private fun PlayerSurface(
 
             override fun onPlaybackStateChanged(playbackState: Int) {
                 buffering = playbackState == androidx.media3.common.Player.STATE_BUFFERING
+                ended = playbackState == androidx.media3.common.Player.STATE_ENDED
             }
 
             // Network cut, expired signed URL, decoder failure: hand over to
@@ -574,6 +601,7 @@ private fun PlayerSurface(
     DisposableEffect(player) {
         val pauseListener = object : androidx.media3.common.Player.Listener {
             override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                playIntent = playWhenReady
                 val reveal = PauseReveal.shows(
                     playWhenReady = playWhenReady,
                     endOfMedia = reason == androidx.media3.common.Player.PLAY_WHEN_READY_CHANGE_REASON_END_OF_MEDIA_ITEM,
@@ -606,9 +634,11 @@ private fun PlayerSurface(
             delay(500)
         }
     }
+    // A drag on the mobile timeline holds the controls (B4); its release restarts the 5 s.
+    var scrubbing by remember(manifestUrl) { mutableStateOf(false) }
     // Auto-hide 5 s after the last key while playing; paused, they stay.
-    LaunchedEffect(controlsVisible, interaction, isPlaying) {
-        if (controlsVisible && isPlaying) {
+    LaunchedEffect(controlsVisible, interaction, isPlaying, scrubbing) {
+        if (controlsVisible && isPlaying && !scrubbing) {
             delay(5_000)
             controlsVisible = false
         }
@@ -620,11 +650,21 @@ private fun PlayerSurface(
             controlsVisible = false
         }
     }
+    // Centre glyph (CentreGlyph, B2): a play glyph fades once when a pause ends in a resume.
+    val glyph = CentreGlyph.of(playIntent, callSilenced, buffering, ended, showResumeChoice, nextUp, optionsOpen)
+    var lastGlyph by remember(manifestUrl) { mutableStateOf(CentreGlyph.Kind.NONE) }
+    // Keyed like lastGlyph: a new Épisode resets the tick to 0, which clears a flash in flight.
+    var playFlash by remember(manifestUrl) { mutableStateOf(0) }
+    LaunchedEffect(glyph) {
+        if (CentreGlyph.flashesPlay(lastGlyph, glyph, playIntent)) playFlash++
+        lastGlyph = glyph
+    }
     LaunchedEffect(controlsVisible, nextUp, showResumeChoice, optionsOpen) {
         withFrameNanos { }
         // The Options panel focuses its own selected chip.
         if (nextUp || showResumeChoice || optionsOpen) return@LaunchedEffect
-        runCatching { if (controlsVisible) playFocus.requestFocus() else rootFocus.requestFocus() }
+        // No row button has focus when the controls appear (B3): the root reads OK.
+        runCatching { rootFocus.requestFocus() }
     }
     BackHandler(enabled = controlsVisible && !nextUp) { controlsVisible = false }
 
@@ -638,7 +678,7 @@ private fun PlayerSurface(
     var flashTick by remember { mutableStateOf(0) }
     LaunchedEffect(flashTick) {
         if (flashTick == 0) return@LaunchedEffect
-        delay(SEEK_FLASH_MS)
+        delay(PLAYER_FLASH_MS.toLong())
         flash = PlayerTouch.Seek.NONE
     }
 
@@ -674,8 +714,10 @@ private fun PlayerSurface(
             .onPreviewKeyEvent { event ->
                 if (event.type != KeyEventType.KeyDown || showResumeChoice || nextUp) return@onPreviewKeyEvent false
                 interaction++
-                when (PlayerKeys.action(event.nativeKeyEvent.keyCode, controlsVisible || optionsOpen)) {
+                val focus = PlayerKeys.focus(controlsVisible, optionsOpen, focusInRow)
+                when (PlayerKeys.action(event.nativeKeyEvent.keyCode, focus, event.nativeKeyEvent.repeatCount)) {
                     PlayerKeys.Action.NONE -> false
+                    PlayerKeys.Action.SWALLOW -> true
                     PlayerKeys.Action.SHOW -> { showControls(); true }
                     PlayerKeys.Action.SEEK_BACK -> { player.seekBack(); showControls(); true }
                     PlayerKeys.Action.SEEK_FORWARD -> { player.seekForward(); showControls(); true }
@@ -684,6 +726,8 @@ private fun PlayerSurface(
                         showControls()
                         true
                     }
+                    PlayerKeys.Action.ENTER_ROW -> { runCatching { rowFocus.requestFocus() }; true }
+                    PlayerKeys.Action.LEAVE_ROW -> { runCatching { rootFocus.requestFocus() }; true }
                     PlayerKeys.Action.TOGGLE_SUBTITLES -> hasTextTracks.also { if (it) toggleSubtitles() }
                     PlayerKeys.Action.OPTIONS -> { if (optionsOpen) closeOptions() else openOptions(); true }
                 }
@@ -721,25 +765,69 @@ private fun PlayerSurface(
         // take their own taps. The box has no such layer: the remote keys above drive it.
         if (LocalMobile.current) {
             val touchState by rememberUpdatedState(
-                TouchState(controlsVisible, optionsOpen, showResumeChoice || nextUp),
+                TouchState(optionsOpen, showResumeChoice || nextUp),
             )
+            // The last press on the video: how far it moved from where it went down and how
+            // long it was held. detectTapGestures alone turns a swipe or a hold into a tap.
+            val press = remember { PressTrack() }
+            // TalkBack: the tap layer is the play/pause control (the centre glyph is decorative).
+            // Only while a tap plays or pauses: not under Options, the prompt or Épisode suivant.
+            val playPauseLabel = stringResource(
+                if (PlayerAudio.playing(playIntent, callSilenced)) R.string.player_pause else R.string.action_play,
+            )
+            val tapPlays = !optionsOpen && !showResumeChoice && !nextUp
             Box(
                 Modifier
                     .fillMaxSize()
+                    .then(
+                        if (tapPlays) {
+                            Modifier.semantics {
+                                role = Role.Button
+                                contentDescription = playPauseLabel
+                                onClick(label = playPauseLabel) { togglePlayPause(); true }
+                            }
+                        } else {
+                            Modifier
+                        },
+                    )
+                    // Observes only (consumes nothing), on the Initial pass: the release is recorded
+                    // before detectTapGestures below reads it in onDoubleTap.
                     .pointerInput(Unit) {
+                        awaitEachGesture {
+                            val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                            press.down(down.position, down.uptimeMillis)
+                            do {
+                                val event = awaitPointerEvent(PointerEventPass.Initial)
+                                event.changes.firstOrNull { it.id == down.id }?.let { press.move(it.position, it.uptimeMillis) }
+                            } while (event.changes.any { it.pressed })
+                        }
+                    }
+                    .pointerInput(Unit) {
+                        val slop = viewConfiguration.touchSlop
+                        val longPress = viewConfiguration.longPressTimeoutMillis
                         detectTapGestures(
                             onTap = {
                                 val now = touchState
-                                when (PlayerTouch.tap(now.controlsVisible, now.optionsOpen, now.prompt)) {
+                                when (PlayerTouch.tap(now.optionsOpen, now.prompt, press.movedPx, press.heldMs, slop, longPress)) {
                                     PlayerTouch.Tap.NONE -> Unit
-                                    PlayerTouch.Tap.SHOW -> showControls()
-                                    PlayerTouch.Tap.HIDE -> controlsVisible = false
+                                    PlayerTouch.Tap.TOGGLE_PLAY -> togglePlayPause()
                                     PlayerTouch.Tap.CLOSE_OPTIONS -> closeOptions()
                                 }
                             },
                             onDoubleTap = { offset ->
                                 val now = touchState
-                                val seek = PlayerTouch.doubleTap(offset.x, size.width.toFloat(), now.optionsOpen, now.prompt)
+                                val seek = PlayerTouch.doubleTap(
+                                    offset.x,
+                                    size.width.toFloat(),
+                                    now.optionsOpen,
+                                    now.prompt,
+                                    press.movedPx,
+                                    press.heldMs,
+                                    press.firstMovedPx,
+                                    press.firstHeldMs,
+                                    slop,
+                                    longPress,
+                                )
                                 if (seek != PlayerTouch.Seek.NONE) {
                                     if (seek == PlayerTouch.Seek.BACK) player.seekBack() else player.seekForward()
                                     positionMs = player.currentPosition
@@ -753,8 +841,10 @@ private fun PlayerSurface(
             )
             SeekFlash(flash, Modifier.fillMaxSize())
         }
-        // Same ring as the Flux resolution (Round 8 Q3), over the video.
-        if (buffering && !showResumeChoice) LoadingRing(Modifier.align(Alignment.Center))
+        // One centre slot (CentreGlyph): the pause glyph while paused, else the Flux resolution's
+        // ring while buffering (Round 8 Q3). Under the overlays and the back arrow, over the tap
+        // layer; it takes no pointer input, so taps reach the video.
+        PlayerCentre(glyph, playFlash, Modifier.align(Alignment.Center))
         val upcoming = next
         val secondsLeft = nextUpSeconds
         if (upcoming != null && secondsLeft != null) {
@@ -789,7 +879,7 @@ private fun PlayerSurface(
                     speed = speed,
                     style = subtitleStyle,
                     onAudio = { chooseAudio(it, remember = true) },
-                    onSubtitle = { chooseSubtitle(it) },
+                    onSubtitle = { chooseSubtitle(it, remember = true) },
                     onStyle = { ReplayboxApplication.subtitleStyle.set(it) },
                     onQuality = { chooseQuality(it) },
                     onSpeed = { chooseSpeed(it) },
@@ -804,16 +894,17 @@ private fun PlayerSurface(
                 episodeTitle = progressContext?.episodeTitle ?: "",
                 positionMs = positionMs,
                 durationMs = durationMs,
-                isPlaying = PlayerAudio.playing(isPlaying, callSilenced),
                 subtitlesOn = if (hasTextTracks) subtitlesOn else null,
-                playRequester = playFocus,
+                rowRequester = rowFocus,
+                onRowFocusChanged = { focusInRow = it },
                 onInteract = { interaction++ },
-                onPlayPause = { togglePlayPause() },
                 onSeekBack = { player.seekBack(); positionMs = player.currentPosition },
                 onSeekForward = { player.seekForward(); positionMs = player.currentPosition },
                 onRestart = { player.seekTo(0); player.play(); positionMs = 0 },
                 onToggleSubtitles = { toggleSubtitles() },
                 onOptions = { openOptions() },
+                onSeekTo = { player.seekTo(it); positionMs = it; interaction++ },
+                onScrubbing = { scrubbing = it; interaction++ },
                 modifier = Modifier.align(Alignment.BottomStart),
             )
             // Mobile only, with the controls: not over Options, the resume prompt or Épisode suivant.
@@ -853,13 +944,44 @@ private fun PlayerBackArrow(onBack: () -> Unit, modifier: Modifier) {
     }
 }
 
-/** Ground at 60 %: the seek flash and the back arrow read over any frame. */
-private val VideoScrim = Rb.ground.copy(alpha = 0.6f)
+/** Ground at 60 %: the seek flash, the back arrow and the centre glyph read over any frame. */
+internal val VideoScrim = Rb.ground.copy(alpha = 0.6f)
 
 /** What a tap on the video needs to decide (read through rememberUpdatedState). */
-private data class TouchState(val controlsVisible: Boolean, val optionsOpen: Boolean, val prompt: Boolean)
+private data class TouchState(val optionsOpen: Boolean, val prompt: Boolean)
 
-private const val SEEK_FLASH_MS = 600L
+/**
+ * The last press on the video, recorded as it happens: the farthest it moved from where it went
+ * down, and how long it has been held. Plain fields, not state: read only in the tap callbacks.
+ */
+private class PressTrack {
+    private var start = Offset.Zero
+    private var downAt = 0L
+    var movedPx = 0f
+        private set
+    var heldMs = 0L
+        private set
+
+    /** The press before this one: the first of a double-tap, read while the second is the last press. */
+    var firstMovedPx = 0f
+        private set
+    var firstHeldMs = 0L
+        private set
+
+    fun down(position: Offset, uptimeMs: Long) {
+        firstMovedPx = movedPx
+        firstHeldMs = heldMs
+        start = position
+        downAt = uptimeMs
+        movedPx = 0f
+        heldMs = 0L
+    }
+
+    fun move(position: Offset, uptimeMs: Long) {
+        movedPx = maxOf(movedPx, (position - start).getDistance())
+        heldMs = uptimeMs - downAt
+    }
+}
 
 /** « −10 s » on the left or « +10 s » on the right after a double-tap; nothing otherwise. */
 @Composable

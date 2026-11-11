@@ -3,6 +3,7 @@ package com.replaybox.app.ui
 import androidx.compose.ui.unit.Density
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import kotlin.math.ceil
 
 class LayoutClassTest {
 
@@ -57,6 +58,22 @@ class LayoutClassTest {
         assertThat(CompactCanvas.textRatio(mobile = false, heightDp = 300)).isEqualTo(1f)
         assertThat(CompactCanvas.textRatio(mobile = true, heightDp = 617)).isEqualTo(1f)
         assertThat(CompactCanvas.textRatio(mobile = true, heightDp = 411)).isWithin(1e-4f).of(CompactCanvas.textRatio(411))
+    }
+
+    @Test
+    fun `a 48 dp real target on the Pixel 7 canvas`() {
+        val canvas = CompactCanvas.canvasDp(48f, mobile = true, heightDp = 411)
+        assertThat(canvas).isWithin(0.01f).of(63.07f)
+        // Rounded up to whole canvas dp, it still lands on at least 48 real dp (64 x 0.7611 = 48.7).
+        assertThat(ceil(canvas) * CompactCanvas.scale(411)).isAtLeast(48f)
+        // The Pixel 7 actually reports 383 dp in landscape (the hidden status bar is still subtracted).
+        assertThat(ceil(CompactCanvas.canvasDp(48f, mobile = true, heightDp = 383)) * CompactCanvas.scale(383)).isAtLeast(48f)
+    }
+
+    @Test
+    fun `no scaling off the compact canvas`() {
+        assertThat(CompactCanvas.canvasDp(48f, mobile = false, heightDp = 540)).isEqualTo(48f)
+        assertThat(CompactCanvas.canvasDp(48f, mobile = true, heightDp = 800)).isEqualTo(48f)
     }
 
     @Test
