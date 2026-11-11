@@ -8,23 +8,19 @@ import org.junit.Test
 class PlayerTouchTest {
 
     @Test
-    fun tapShowsHiddenControls() {
-        assertThat(PlayerTouch.tap(controlsVisible = false, optionsOpen = false, prompt = false)).isEqualTo(Tap.SHOW)
-    }
-
-    @Test
-    fun tapHidesShownControls() {
-        assertThat(PlayerTouch.tap(controlsVisible = true, optionsOpen = false, prompt = false)).isEqualTo(Tap.HIDE)
+    fun tapTogglesPlayback() {
+        assertThat(PlayerTouch.tap(optionsOpen = false, prompt = false)).isEqualTo(Tap.TOGGLE_PLAY)
     }
 
     @Test
     fun tapClosesOptions() {
-        assertThat(PlayerTouch.tap(controlsVisible = false, optionsOpen = true, prompt = false)).isEqualTo(Tap.CLOSE_OPTIONS)
+        assertThat(PlayerTouch.tap(optionsOpen = true, prompt = false)).isEqualTo(Tap.CLOSE_OPTIONS)
     }
 
     @Test
     fun promptOrNextUpIgnoresTaps() {
-        assertThat(PlayerTouch.tap(controlsVisible = false, optionsOpen = false, prompt = true)).isEqualTo(Tap.NONE)
+        assertThat(PlayerTouch.tap(optionsOpen = false, prompt = true)).isEqualTo(Tap.NONE)
+        assertThat(PlayerTouch.tap(optionsOpen = true, prompt = true)).isEqualTo(Tap.NONE)
         assertThat(PlayerTouch.doubleTap(x = 10f, width = 100f, optionsOpen = false, prompt = true)).isEqualTo(Seek.NONE)
     }
 

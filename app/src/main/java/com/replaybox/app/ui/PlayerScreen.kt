@@ -721,7 +721,7 @@ private fun PlayerSurface(
         // take their own taps. The box has no such layer: the remote keys above drive it.
         if (LocalMobile.current) {
             val touchState by rememberUpdatedState(
-                TouchState(controlsVisible, optionsOpen, showResumeChoice || nextUp),
+                TouchState(optionsOpen, showResumeChoice || nextUp),
             )
             Box(
                 Modifier
@@ -730,10 +730,9 @@ private fun PlayerSurface(
                         detectTapGestures(
                             onTap = {
                                 val now = touchState
-                                when (PlayerTouch.tap(now.controlsVisible, now.optionsOpen, now.prompt)) {
+                                when (PlayerTouch.tap(now.optionsOpen, now.prompt)) {
                                     PlayerTouch.Tap.NONE -> Unit
-                                    PlayerTouch.Tap.SHOW -> showControls()
-                                    PlayerTouch.Tap.HIDE -> controlsVisible = false
+                                    PlayerTouch.Tap.TOGGLE_PLAY -> togglePlayPause()
                                     PlayerTouch.Tap.CLOSE_OPTIONS -> closeOptions()
                                 }
                             },
@@ -857,7 +856,7 @@ private fun PlayerBackArrow(onBack: () -> Unit, modifier: Modifier) {
 private val VideoScrim = Rb.ground.copy(alpha = 0.6f)
 
 /** What a tap on the video needs to decide (read through rememberUpdatedState). */
-private data class TouchState(val controlsVisible: Boolean, val optionsOpen: Boolean, val prompt: Boolean)
+private data class TouchState(val optionsOpen: Boolean, val prompt: Boolean)
 
 private const val SEEK_FLASH_MS = 600L
 

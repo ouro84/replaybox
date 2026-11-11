@@ -57,19 +57,19 @@ object PlayerKeys {
 }
 
 /**
- * Touch on the video, mobile only (milestone grilling 2026-11-10): a tap shows or hides the
- * controls, a double-tap on the left or right half seeks −10 s / +10 s. [prompt] is
- * « Reprendre / Débuter » or Épisode suivant on screen: their buttons take the taps.
+ * Touch on the video, mobile only: a tap plays or pauses (UX grilling 2026-11-11, B1); no
+ * gesture shows the controls without pausing. A double-tap on the left or right half seeks
+ * −10 s / +10 s (milestone grilling 2026-11-10). [prompt] is « Reprendre / Débuter » or
+ * Épisode suivant on screen: their buttons take the taps.
  */
 object PlayerTouch {
-    enum class Tap { NONE, SHOW, HIDE, CLOSE_OPTIONS }
+    enum class Tap { NONE, TOGGLE_PLAY, CLOSE_OPTIONS }
     enum class Seek { NONE, BACK, FORWARD }
 
-    fun tap(controlsVisible: Boolean, optionsOpen: Boolean, prompt: Boolean): Tap = when {
+    fun tap(optionsOpen: Boolean, prompt: Boolean): Tap = when {
         prompt -> Tap.NONE
         optionsOpen -> Tap.CLOSE_OPTIONS
-        controlsVisible -> Tap.HIDE
-        else -> Tap.SHOW
+        else -> Tap.TOGGLE_PLAY
     }
 
     fun doubleTap(x: Float, width: Float, optionsOpen: Boolean, prompt: Boolean): Seek = when {
