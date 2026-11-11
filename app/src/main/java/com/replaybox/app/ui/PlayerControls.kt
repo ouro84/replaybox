@@ -1,6 +1,9 @@
 package com.replaybox.app.ui
 
 import android.view.KeyEvent
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,13 +13,18 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +33,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.res.stringResource
@@ -112,6 +121,45 @@ object PlayerTouch {
 object PauseReveal {
     fun shows(playWhenReady: Boolean, endOfMedia: Boolean, resumePrompt: Boolean, nextUp: Boolean, optionsOpen: Boolean): Boolean =
         !playWhenReady && !endOfMedia && !resumePrompt && !nextUp && !optionsOpen
+}
+
+/**
+ * What the centre of the video shows (UX grilling 2026-11-11, B2), on the box and on mobile.
+ * One centre slot:
+ * - [Kind.NONE] under the resume prompt (« Reprendre / Débuter » keeps the screen, as before);
+ * - [Kind.PAUSED] when paused: `!playWhenReady`, or held silent by a call (callSilenced,
+ *   the meaning of paused in [PlayerAudio.playing]). `playWhenReady`, not `isPlaying`, so
+ *   buffering after a resume never shows a pause glyph. Not at the end, nor under Épisode
+ *   suivant or Options: those panels own the screen. A paused viewer is not waiting, so the
+ *   pause glyph wins over the buffering ring;
+ * - [Kind.LOADING] while buffering with the intent to play: the loading ring, as before,
+ *   also under Options or Épisode suivant;
+ * - [Kind.NONE] otherwise.
+ *
+ * [flashesPlay]: a play glyph fades once only when the pause glyph goes straight to nothing
+ * with `playWhenReady` true (a resume). Not when Options opens while paused, and not into
+ * the ring.
+ */
+object CentreGlyph {
+    enum class Kind { NONE, PAUSED, LOADING }
+
+    fun of(
+        playWhenReady: Boolean,
+        callSilenced: Boolean,
+        buffering: Boolean,
+        ended: Boolean,
+        resumePrompt: Boolean,
+        nextUp: Boolean,
+        optionsOpen: Boolean,
+    ): Kind = when {
+        resumePrompt -> Kind.NONE
+        (!playWhenReady || callSilenced) && !ended && !nextUp && !optionsOpen -> Kind.PAUSED
+        buffering -> Kind.LOADING
+        else -> Kind.NONE
+    }
+
+    fun flashesPlay(before: Kind, after: Kind, playWhenReady: Boolean): Boolean =
+        before == Kind.PAUSED && after == Kind.NONE && playWhenReady
 }
 
 /**
@@ -234,3 +282,52 @@ internal val PauseIcon: ImageVector by lazy {
         }
         .build()
 }
+
+/**
+ * The centre of the video ([CentreGlyph], B2): [CentreGlyph.Kind.PAUSED] holds the pause glyph,
+ * [CentreGlyph.Kind.LOADING] is the loading ring, and each [playFlash] increment fades a play
+ * glyph out once. Decorative: the controls and the state of the video say it already, so no
+ * content description, and no pointer input (taps reach the video underneath).
+ *
+ * Design (DESIGN.md, Player « Centre glyph »): a Paper White glyph at the ring's 48 dp on an
+ * 80 dp ground 60 % disc, the backing of the seek flash and the back arrow, so it reads over a
+ * white frame (Contrast Floor, ≥ 3:1) without a shadow. The pause glyph appears at once, like
+ * the pause itself; the play glyph starts opaque and fades in [PLAY_FLASH_MS] on the standard
+ * curve (slow start, so the resume registers, then a soft tail; no scale, no bounce). A Compose
+ * tween, so « Supprimer les animations » makes it instant.
+ */
+@Composable
+internal fun PlayerCentre(kind: CentreGlyph.Kind, playFlash: Int, modifier: Modifier = Modifier) {
+    val flash = remember { Animatable(0f) }
+    LaunchedEffect(playFlash) {
+        // A tick of 0 is no flash: also clears one cut short by a new Épisode.
+        if (playFlash == 0) {
+            flash.snapTo(0f)
+            return@LaunchedEffect
+        }
+        flash.snapTo(1f)
+        flash.animateTo(0f, tween(PLAY_FLASH_MS, easing = FastOutSlowInEasing))
+    }
+    when (kind) {
+        CentreGlyph.Kind.PAUSED -> CentreDisc(PauseIcon, modifier)
+        CentreGlyph.Kind.LOADING -> LoadingRing(modifier)
+        // Alpha read in the layer: the fade redraws without recomposing.
+        CentreGlyph.Kind.NONE -> CentreDisc(Icons.Filled.PlayArrow, modifier.graphicsLayer { alpha = flash.value })
+    }
+}
+
+@Composable
+private fun CentreDisc(glyph: ImageVector, modifier: Modifier) {
+    Box(modifier.size(CENTRE_DISC).background(VideoScrim, CircleShape), contentAlignment = Alignment.Center) {
+        Icon(glyph, contentDescription = null, tint = Rb.text, modifier = Modifier.size(CENTRE_GLYPH))
+    }
+}
+
+/** The loading ring's footprint: one size for whatever holds the centre. */
+private val CENTRE_GLYPH = 48.dp
+
+/** Ground disc around the glyph: 16 dp of backing on each side. */
+private val CENTRE_DISC = 80.dp
+
+/** The play fade, as long as the seek flash. */
+private const val PLAY_FLASH_MS = 600

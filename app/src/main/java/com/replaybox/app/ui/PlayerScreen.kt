@@ -537,6 +537,10 @@ private fun PlayerSurface(
     var positionMs by remember(manifestUrl) { mutableStateOf(0L) }
     var durationMs by remember(manifestUrl) { mutableStateOf(0L) }
     var buffering by remember(manifestUrl) { mutableStateOf(false) }
+    // The centre glyph's inputs (CentreGlyph): the play intent (player.playWhenReady, named
+    // apart from the listener parameter it mirrors), not isPlaying, and the end.
+    var playIntent by remember(manifestUrl) { mutableStateOf(player.playWhenReady) }
+    var ended by remember(manifestUrl) { mutableStateOf(false) }
     // Held silent by a call (transient audio focus loss); Media3 resumes when it ends.
     var callSilenced by remember(manifestUrl) { mutableStateOf(false) }
     fun togglePlayPause() {
@@ -551,6 +555,7 @@ private fun PlayerSurface(
 
             override fun onPlaybackStateChanged(playbackState: Int) {
                 buffering = playbackState == androidx.media3.common.Player.STATE_BUFFERING
+                ended = playbackState == androidx.media3.common.Player.STATE_ENDED
             }
 
             // Network cut, expired signed URL, decoder failure: hand over to
@@ -577,6 +582,7 @@ private fun PlayerSurface(
     DisposableEffect(player) {
         val pauseListener = object : androidx.media3.common.Player.Listener {
             override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                playIntent = playWhenReady
                 val reveal = PauseReveal.shows(
                     playWhenReady = playWhenReady,
                     endOfMedia = reason == androidx.media3.common.Player.PLAY_WHEN_READY_CHANGE_REASON_END_OF_MEDIA_ITEM,
@@ -622,6 +628,14 @@ private fun PlayerSurface(
             optionsOpen = false
             controlsVisible = false
         }
+    }
+    // Centre glyph (CentreGlyph, B2): a play glyph fades once when a pause ends in a resume.
+    val glyph = CentreGlyph.of(playIntent, callSilenced, buffering, ended, showResumeChoice, nextUp, optionsOpen)
+    var lastGlyph by remember(manifestUrl) { mutableStateOf(CentreGlyph.Kind.NONE) }
+    var playFlash by remember { mutableStateOf(0) }
+    LaunchedEffect(glyph) {
+        if (CentreGlyph.flashesPlay(lastGlyph, glyph, playIntent)) playFlash++
+        lastGlyph = glyph
     }
     LaunchedEffect(controlsVisible, nextUp, showResumeChoice, optionsOpen) {
         withFrameNanos { }
@@ -759,8 +773,10 @@ private fun PlayerSurface(
             )
             SeekFlash(flash, Modifier.fillMaxSize())
         }
-        // Same ring as the Flux resolution (Round 8 Q3), over the video.
-        if (buffering && !showResumeChoice) LoadingRing(Modifier.align(Alignment.Center))
+        // One centre slot (CentreGlyph): the pause glyph while paused, else the Flux resolution's
+        // ring while buffering (Round 8 Q3). Under the overlays and the back arrow, over the tap
+        // layer; it takes no pointer input, so taps reach the video.
+        PlayerCentre(glyph, playFlash, Modifier.align(Alignment.Center))
         val upcoming = next
         val secondsLeft = nextUpSeconds
         if (upcoming != null && secondsLeft != null) {
@@ -858,8 +874,8 @@ private fun PlayerBackArrow(onBack: () -> Unit, modifier: Modifier) {
     }
 }
 
-/** Ground at 60 %: the seek flash and the back arrow read over any frame. */
-private val VideoScrim = Rb.ground.copy(alpha = 0.6f)
+/** Ground at 60 %: the seek flash, the back arrow and the centre glyph read over any frame. */
+internal val VideoScrim = Rb.ground.copy(alpha = 0.6f)
 
 /** What a tap on the video needs to decide (read through rememberUpdatedState). */
 private data class TouchState(val optionsOpen: Boolean, val prompt: Boolean)
