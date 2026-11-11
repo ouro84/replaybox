@@ -138,7 +138,7 @@ fun NavRail(
             }
             .focusProperties { enter = { currentRequester } }
             .focusGroup()
-            .padding(top = Rb.safeVertical + 72.dp, start = 12.dp, end = 12.dp),
+            .padding(top = Rb.safeVertical + LocalRail.current.itemsTop, start = 12.dp, end = 12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         val items = listOf(
@@ -185,7 +185,7 @@ private fun RailItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(48.dp)
+            .height(LocalRail.current.item)
             .scale(scale)
             .onFocusChanged { focused = it.isFocused }
             .tvClickable(onClick)
@@ -193,8 +193,14 @@ private fun RailItem(
             .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(Modifier.size(24.dp), contentAlignment = Alignment.Center) {
-            Icon(imageVector = icon, contentDescription = if (expanded) null else label, tint = tint)
+        val iconSize = LocalRail.current.icon
+        Box(Modifier.size(iconSize), contentAlignment = Alignment.Center) {
+            Icon(
+                imageVector = icon,
+                contentDescription = if (expanded) null else label,
+                tint = tint,
+                modifier = Modifier.size(iconSize),
+            )
         }
         AnimatedVisibility(visible = expanded, enter = fadeIn(tween(Rb.FOCUS_MS)), exit = fadeOut(tween(100))) {
             Row {

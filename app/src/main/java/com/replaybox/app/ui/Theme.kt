@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.ceil
 
 /**
  * Replaybox design tokens: the streaming standard, tuned for a 55" TV at
@@ -55,9 +56,13 @@ object Rb {
         @Composable @ReadOnlyComposable get() = LocalInsets.current.horizontal
     val safeVertical: Dp
         @Composable @ReadOnlyComposable get() = LocalInsets.current.vertical
-    val railCollapsed = 72.dp
+    /** Collapsed rail width: 72 dp on the box, wider on mobile so items reach 48 real dp ([LocalRail]). */
+    val railCollapsed: Dp
+        @Composable @ReadOnlyComposable get() = LocalRail.current.width
     val railExpanded = 232.dp
-    val contentStart = 104.dp
+    /** Text column start: 104 dp on the box, pushed right of the wider mobile rail ([LocalRail]). */
+    val contentStart: Dp
+        @Composable @ReadOnlyComposable get() = LocalRail.current.contentStart
     val cardGap = 20.dp // equals the rail gutter: the card before the focused one scrolls fully off
     val focusOutline = 3.dp
     const val FOCUS_SCALE = 1.1f
@@ -78,6 +83,66 @@ data class Insets(val horizontal: Dp, val vertical: Dp)
 val TvInsets = Insets(48.dp, 27.dp)
 val MobileInsets = Insets(24.dp, 16.dp)
 val LocalInsets = staticCompositionLocalOf { TvInsets }
+
+/**
+ * Collapsed nav rail geometry: [item] is the pill height (and the back-arrow slot), [icon] the
+ * glyph inside it, [width] the collapsed rail (items keep a 12 dp inset on both sides), [itemsTop]
+ * the offset of the first destination below [Rb.safeVertical], [contentStart] the text column.
+ */
+data class RailMetrics(val item: Dp, val icon: Dp, val width: Dp, val itemsTop: Dp, val contentStart: Dp) {
+    companion object {
+        /** Material minimum touch target, in real (unscaled) dp. */
+        const val MIN_TOUCH_DP = 48f
+
+        /** The box: DESIGN.md « Navigation (nav rail) », unchanged. */
+        val Tv = RailMetrics(item = 48.dp, icon = 24.dp, width = 72.dp, itemsTop = 72.dp, contentStart = 104.dp)
+
+        private const val GRID_DP = 8
+        private const val ITEM_INSET_DP = 12
+        private const val RAIL_STACK_DP = 8
+        private const val CONTENT_GAP_DP = 32
+
+        /**
+         * Mobile rail on a canvas drawn at [scale] (CompactCanvas.scale on a landscape phone, 1 on
+         * a tablet). Decided with impeccable against DESIGN.md « Navigation » (2026-11-11):
+         * - item: the canvas dp that land on [MIN_TOUCH_DP] real dp (48 / scale), rounded up to the
+         *   8 dp grid, never below the TV pill (48 dp);
+         * - icon: half the item, the TV ratio (24 in 48), so the glyph stays near the Material
+         *   24 dp icon in real dp (24-26) while the pill clears the touch minimum;
+         * - width: item + 2 × 12 dp inset, as on the TV;
+         * - itemsTop: item + 8 dp (rail-stack), so the back arrow above Accueil is one more slot of
+         *   the same stack;
+         * - contentStart: width + 32 dp, the TV gap (104 = 72 + 32), so the column clip at
+         *   contentStart − gutter stays 12 dp clear of the rail.
+         * Pixel 7 landscape reports screenHeightDp 383 (scale 0.709, the hidden status bar is still
+         * subtracted): item 72 (51 real dp, 134 px), icon 36, width 96, itemsTop 80, contentStart 128.
+         * At the full 411 dp (scale 0.761): 64 / 32 / 88 / 72 / 120. Smallest compact window
+         * (320 dp, scale 0.593): 88 / 44 / 112 / 96 / 144.
+         * Tablet (scale 1): 48 / 24 / 72 / 56 / 104.
+         */
+        fun mobile(scale: Float): RailMetrics {
+            val needed = ceil(MIN_TOUCH_DP / scale / GRID_DP).toInt() * GRID_DP
+            val item = maxOf(Tv.item.value.toInt(), needed)
+            val width = item + 2 * ITEM_INSET_DP
+            return RailMetrics(
+                item = item.dp,
+                icon = (item / 2).dp,
+                width = width.dp,
+                itemsTop = (item + RAIL_STACK_DP).dp,
+                contentStart = (width + CONTENT_GAP_DP).dp,
+            )
+        }
+
+        /** [Tv] on the box, [mobile] at the compact canvas scale on a phone, at 1 on a tablet. */
+        fun of(mobile: Boolean, heightDp: Int): RailMetrics = when (LayoutClass.of(mobile, heightDp)) {
+            LayoutClass.TV -> Tv
+            LayoutClass.COMPACT -> RailMetrics.mobile(CompactCanvas.scale(heightDp))
+            LayoutClass.TABLET -> RailMetrics.mobile(1f)
+        }
+    }
+}
+
+val LocalRail = staticCompositionLocalOf { RailMetrics.Tv }
 
 /** Type scale in sp; floor 14 sp, body 18 sp (PRODUCT.md, 3 m viewing). */
 object RbType {

@@ -168,7 +168,7 @@ fun PlayerScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = Rb.contentStart, end = Rb.safeHorizontal, top = Rb.safeVertical + 72.dp),
+                    .padding(start = RailMetrics.Tv.contentStart, end = Rb.safeHorizontal, top = Rb.safeVertical + 72.dp),
             ) {
                 Text(title, style = RbType.bodyStrong, color = Rb.textSecondary, maxLines = 1)
                 Text(
@@ -815,7 +815,7 @@ private const val SEEK_FLASH_MS = 600L
 @Composable
 private fun SeekFlash(seek: PlayerTouch.Seek, modifier: Modifier) {
     if (seek == PlayerTouch.Seek.NONE) return
-    Box(modifier.padding(horizontal = Rb.contentStart)) {
+    Box(modifier.padding(horizontal = RailMetrics.Tv.contentStart)) {
         Text(
             text = stringResource(if (seek == PlayerTouch.Seek.BACK) R.string.control_back10 else R.string.control_fwd10),
             style = RbType.displayCompact,

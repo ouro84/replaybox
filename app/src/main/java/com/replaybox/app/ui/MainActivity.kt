@@ -221,6 +221,7 @@ private fun CompactDensity(mobile: Boolean, content: @Composable () -> Unit) {
     CompositionLocalProvider(
         LocalDensity provides CompactCanvas.density(LocalDensity.current, mobile, heightDp),
         LocalTextRatio provides CompactCanvas.textRatio(mobile, heightDp),
+        LocalRail provides RailMetrics.of(mobile, heightDp),
         content = content,
     )
 }

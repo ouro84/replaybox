@@ -316,6 +316,7 @@ A 4 dp pill, amber fill over the track, always paired with the remaining time in
 - **Selected:** raised-slate pill, amber icon, Paper White label.
 - **Focused:** white pill, ink icon and label, scaled 1.06 over 200 ms (same lift as panel buttons), so focus never relies on color alone.
 - **Entry:** focus entering the rail always lands on the current destination.
+- **Mobile (`RailMetrics.mobile`):** items reach at least 48 real dp: 48 / canvas scale rounded up to 8 dp, icon half the item, rail = item + 2 × 12 dp, first item one item + 8 dp below the top (room for the back arrow), content-start = rail + 32 dp. Pixel 7 landscape (383 dp window, scale 0.709): 72 dp items (51 real dp), 36 dp icons, 96 dp rail, content at 128 dp.
 
 ### Status line and chips
 - **Stale notice:** Meta in Mist on an 85 % ground pill, 12 dp x 4 dp padding, top right. Copy: "Catalogue du 05/11 · TF1 injoignable" (plural "injoignables"). It is not focusable.
