@@ -54,6 +54,15 @@ class CentreGlyphTest {
     }
 
     @Test
+    fun `paused under Options or Episode suivant while buffering shows nothing`() {
+        // A quality or audio change in Options while paused rebuffers: a paused viewer is not waiting.
+        assertThat(of(playWhenReady = false, buffering = true, optionsOpen = true)).isEqualTo(Kind.NONE)
+        assertThat(of(playWhenReady = false, buffering = true, nextUp = true)).isEqualTo(Kind.NONE)
+        assertThat(of(playWhenReady = true, callSilenced = true, buffering = true, optionsOpen = true)).isEqualTo(Kind.NONE)
+        assertThat(of(playWhenReady = false, buffering = true, ended = true)).isEqualTo(Kind.NONE)
+    }
+
+    @Test
     fun `resuming flashes play`() {
         assertThat(CentreGlyph.flashesPlay(Kind.PAUSED, Kind.NONE, playWhenReady = true)).isTrue()
         // Options opened while paused: the glyph goes, playback does not resume.

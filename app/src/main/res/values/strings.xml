@@ -94,6 +94,8 @@
     <string name="control_back10">−10 s</string>
     <string name="control_fwd10">+10 s</string>
     <string name="control_restart">Recommencer</string>
+    <!-- TalkBack label of the mobile video tap layer while playing; paused, it reads action_play. -->
+    <string name="player_pause">Pause</string>
     <string name="options_title">Options</string>
     <string name="options_audio">Audio</string>
     <string name="options_subtitles">Sous-titres</string>

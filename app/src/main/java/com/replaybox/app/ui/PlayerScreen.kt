@@ -57,6 +57,14 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -317,12 +325,11 @@ private fun PlayerSurface(
                     )
                 }
                 setMediaItem(builder.build())
-                // Remembered quality cap (Q3, Q8): a ceiling, Auto below it.
-                ReplayboxApplication.playbackPreferences.load().maxHeight?.let { cap ->
-                    trackSelectionParameters = trackSelectionParameters.buildUpon()
-                        .setMaxVideoSize(Int.MAX_VALUE, cap)
-                        .build()
-                }
+                // Remembered quality cap (Q3, Q8): a ceiling, Auto below it. Subtitles stored
+                // off start disabled, so no default text track flashes a cue before the stored
+                // choice applies (PlaybackPreferences.startParameters).
+                trackSelectionParameters = ReplayboxApplication.playbackPreferences.load()
+                    .startParameters(trackSelectionParameters)
                 if (autoResume && resumeAtMs != null) seekTo(resumeAtMs)
                 prepare()
                 // With a saved Progression the Reprendre / Débuter choice gates
@@ -553,8 +560,10 @@ private fun PlayerSurface(
     var ended by remember(manifestUrl) { mutableStateOf(false) }
     // Held silent by a call (transient audio focus loss); Media3 resumes when it ends.
     var callSilenced by remember(manifestUrl) { mutableStateOf(false) }
+    // Decides on the intent to play, not isPlaying: while the Flux buffers to play (initial
+    // load, a stall, a seek while playing), OK or a tap pauses instead of a no-op play().
     fun togglePlayPause() {
-        if (PlayerAudio.playing(player.isPlaying, callSilenced)) player.pause() else player.play()
+        if (PlayerAudio.playing(player.playWhenReady, callSilenced)) player.pause() else player.play()
     }
     DisposableEffect(player) {
         val playingListener = object : androidx.media3.common.Player.Listener {
@@ -644,7 +653,8 @@ private fun PlayerSurface(
     // Centre glyph (CentreGlyph, B2): a play glyph fades once when a pause ends in a resume.
     val glyph = CentreGlyph.of(playIntent, callSilenced, buffering, ended, showResumeChoice, nextUp, optionsOpen)
     var lastGlyph by remember(manifestUrl) { mutableStateOf(CentreGlyph.Kind.NONE) }
-    var playFlash by remember { mutableStateOf(0) }
+    // Keyed like lastGlyph: a new Épisode resets the tick to 0, which clears a flash in flight.
+    var playFlash by remember(manifestUrl) { mutableStateOf(0) }
     LaunchedEffect(glyph) {
         if (CentreGlyph.flashesPlay(lastGlyph, glyph, playIntent)) playFlash++
         lastGlyph = glyph
@@ -668,7 +678,7 @@ private fun PlayerSurface(
     var flashTick by remember { mutableStateOf(0) }
     LaunchedEffect(flashTick) {
         if (flashTick == 0) return@LaunchedEffect
-        delay(SEEK_FLASH_MS)
+        delay(PLAYER_FLASH_MS.toLong())
         flash = PlayerTouch.Seek.NONE
     }
 
@@ -705,8 +715,9 @@ private fun PlayerSurface(
                 if (event.type != KeyEventType.KeyDown || showResumeChoice || nextUp) return@onPreviewKeyEvent false
                 interaction++
                 val focus = PlayerKeys.focus(controlsVisible, optionsOpen, focusInRow)
-                when (PlayerKeys.action(event.nativeKeyEvent.keyCode, focus)) {
+                when (PlayerKeys.action(event.nativeKeyEvent.keyCode, focus, event.nativeKeyEvent.repeatCount)) {
                     PlayerKeys.Action.NONE -> false
+                    PlayerKeys.Action.SWALLOW -> true
                     PlayerKeys.Action.SHOW -> { showControls(); true }
                     PlayerKeys.Action.SEEK_BACK -> { player.seekBack(); showControls(); true }
                     PlayerKeys.Action.SEEK_FORWARD -> { player.seekForward(); showControls(); true }
@@ -756,14 +767,48 @@ private fun PlayerSurface(
             val touchState by rememberUpdatedState(
                 TouchState(optionsOpen, showResumeChoice || nextUp),
             )
+            // The last press on the video: how far it moved from where it went down and how
+            // long it was held. detectTapGestures alone turns a swipe or a hold into a tap.
+            val press = remember { PressTrack() }
+            // TalkBack: the tap layer is the play/pause control (the centre glyph is decorative).
+            // Only while a tap plays or pauses: not under Options, the prompt or Épisode suivant.
+            val playPauseLabel = stringResource(
+                if (PlayerAudio.playing(playIntent, callSilenced)) R.string.player_pause else R.string.action_play,
+            )
+            val tapPlays = !optionsOpen && !showResumeChoice && !nextUp
             Box(
                 Modifier
                     .fillMaxSize()
+                    .then(
+                        if (tapPlays) {
+                            Modifier.semantics {
+                                role = Role.Button
+                                contentDescription = playPauseLabel
+                                onClick(label = playPauseLabel) { togglePlayPause(); true }
+                            }
+                        } else {
+                            Modifier
+                        },
+                    )
+                    // Observes only (consumes nothing), on the Initial pass: the release is recorded
+                    // before detectTapGestures below reads it in onDoubleTap.
                     .pointerInput(Unit) {
+                        awaitEachGesture {
+                            val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                            press.down(down.position, down.uptimeMillis)
+                            do {
+                                val event = awaitPointerEvent(PointerEventPass.Initial)
+                                event.changes.firstOrNull { it.id == down.id }?.let { press.move(it.position, it.uptimeMillis) }
+                            } while (event.changes.any { it.pressed })
+                        }
+                    }
+                    .pointerInput(Unit) {
+                        val slop = viewConfiguration.touchSlop
+                        val longPress = viewConfiguration.longPressTimeoutMillis
                         detectTapGestures(
                             onTap = {
                                 val now = touchState
-                                when (PlayerTouch.tap(now.optionsOpen, now.prompt)) {
+                                when (PlayerTouch.tap(now.optionsOpen, now.prompt, press.movedPx, press.heldMs, slop, longPress)) {
                                     PlayerTouch.Tap.NONE -> Unit
                                     PlayerTouch.Tap.TOGGLE_PLAY -> togglePlayPause()
                                     PlayerTouch.Tap.CLOSE_OPTIONS -> closeOptions()
@@ -771,7 +816,16 @@ private fun PlayerSurface(
                             },
                             onDoubleTap = { offset ->
                                 val now = touchState
-                                val seek = PlayerTouch.doubleTap(offset.x, size.width.toFloat(), now.optionsOpen, now.prompt)
+                                val seek = PlayerTouch.doubleTap(
+                                    offset.x,
+                                    size.width.toFloat(),
+                                    now.optionsOpen,
+                                    now.prompt,
+                                    press.movedPx,
+                                    press.heldMs,
+                                    slop,
+                                    longPress,
+                                )
                                 if (seek != PlayerTouch.Seek.NONE) {
                                     if (seek == PlayerTouch.Seek.BACK) player.seekBack() else player.seekForward()
                                     positionMs = player.currentPosition
@@ -894,7 +948,30 @@ internal val VideoScrim = Rb.ground.copy(alpha = 0.6f)
 /** What a tap on the video needs to decide (read through rememberUpdatedState). */
 private data class TouchState(val optionsOpen: Boolean, val prompt: Boolean)
 
-private const val SEEK_FLASH_MS = 600L
+/**
+ * The last press on the video, recorded as it happens: the farthest it moved from where it went
+ * down, and how long it has been held. Plain fields, not state: read only in the tap callbacks.
+ */
+private class PressTrack {
+    private var start = Offset.Zero
+    private var downAt = 0L
+    var movedPx = 0f
+        private set
+    var heldMs = 0L
+        private set
+
+    fun down(position: Offset, uptimeMs: Long) {
+        start = position
+        downAt = uptimeMs
+        movedPx = 0f
+        heldMs = 0L
+    }
+
+    fun move(position: Offset, uptimeMs: Long) {
+        movedPx = maxOf(movedPx, (position - start).getDistance())
+        heldMs = uptimeMs - downAt
+    }
+}
 
 /** « −10 s » on the left or « +10 s » on the right after a double-tap; nothing otherwise. */
 @Composable

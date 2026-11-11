@@ -32,6 +32,18 @@ class PlayerKeysTest {
     }
 
     @Test
+    fun `holding OK toggles once, its repeats are swallowed`() {
+        for (key in listOf(KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER)) {
+            assertThat(PlayerKeys.action(key, Focus.HIDDEN, repeatCount = 0)).isEqualTo(Action.PLAY_PAUSE)
+            assertThat(PlayerKeys.action(key, Focus.HIDDEN, repeatCount = 1)).isEqualTo(Action.SWALLOW)
+            assertThat(PlayerKeys.action(key, Focus.CONTROLS, repeatCount = 3)).isEqualTo(Action.SWALLOW)
+        }
+        // In the row OK belongs to the button; held arrows keep seeking.
+        assertThat(PlayerKeys.action(KeyEvent.KEYCODE_DPAD_CENTER, Focus.ROW, repeatCount = 1)).isEqualTo(Action.NONE)
+        assertThat(PlayerKeys.action(KeyEvent.KEYCODE_DPAD_LEFT, Focus.HIDDEN, repeatCount = 2)).isEqualTo(Action.SEEK_BACK)
+    }
+
+    @Test
     fun `Down shows the controls, then enters the row`() {
         assertThat(actions(KeyEvent.KEYCODE_DPAD_DOWN))
             .containsExactly(Action.SHOW, Action.ENTER_ROW, Action.NONE, Action.NONE).inOrder()

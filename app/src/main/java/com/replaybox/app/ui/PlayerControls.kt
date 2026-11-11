@@ -5,6 +5,8 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -24,8 +27,14 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -36,24 +45,16 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.offset
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import com.replaybox.R
 import kotlin.math.ceil
 import kotlin.math.roundToInt
@@ -71,11 +72,13 @@ import kotlin.math.roundToLong
  * arrows seek, OK plays or pauses, Up shows the controls and Down shows them, then
  * enters the row. In the row the D-pad belongs to the buttons, and Up leaves it. In
  * Options the D-pad belongs to the panel. CC toggles the subtitles and MENU opens
- * Options (Q2) whatever has focus. Media keys stay with the MediaSession.
+ * Options (Q2) whatever has focus. Media keys stay with the MediaSession. Holding OK
+ * plays or pauses once: its repeats are swallowed ([Action.SWALLOW]).
  */
 object PlayerKeys {
     enum class Focus { HIDDEN, CONTROLS, ROW, PANEL }
-    enum class Action { NONE, SHOW, SEEK_BACK, SEEK_FORWARD, PLAY_PAUSE, ENTER_ROW, LEAVE_ROW, TOGGLE_SUBTITLES, OPTIONS }
+    /** [NONE] lets the key through; [SWALLOW] consumes it and does nothing. */
+    enum class Action { NONE, SWALLOW, SHOW, SEEK_BACK, SEEK_FORWARD, PLAY_PAUSE, ENTER_ROW, LEAVE_ROW, TOGGLE_SUBTITLES, OPTIONS }
 
     /** [focusInRow] is ignored once the controls are hidden: a stale value never counts. */
     fun focus(controlsVisible: Boolean, optionsOpen: Boolean, focusInRow: Boolean): Focus = when {
@@ -85,7 +88,8 @@ object PlayerKeys {
         else -> Focus.CONTROLS
     }
 
-    fun action(keyCode: Int, focus: Focus): Action {
+    /** [repeatCount] is the KeyDown repeat count: above 0 the key is held. */
+    fun action(keyCode: Int, focus: Focus, repeatCount: Int = 0): Action {
         if (keyCode == KeyEvent.KEYCODE_CAPTIONS) return Action.TOGGLE_SUBTITLES
         if (keyCode == KeyEvent.KEYCODE_MENU) return Action.OPTIONS
         return when (focus) {
@@ -94,7 +98,7 @@ object PlayerKeys {
             Focus.HIDDEN, Focus.CONTROLS -> when (keyCode) {
                 KeyEvent.KEYCODE_DPAD_LEFT -> Action.SEEK_BACK
                 KeyEvent.KEYCODE_DPAD_RIGHT -> Action.SEEK_FORWARD
-                KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> Action.PLAY_PAUSE
+                KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> if (repeatCount > 0) Action.SWALLOW else Action.PLAY_PAUSE
                 KeyEvent.KEYCODE_DPAD_UP -> Action.SHOW
                 KeyEvent.KEYCODE_DPAD_DOWN -> if (focus == Focus.HIDDEN) Action.SHOW else Action.ENTER_ROW
                 else -> Action.NONE
@@ -108,22 +112,40 @@ object PlayerKeys {
  * gesture shows the controls without pausing. A double-tap on the left or right half seeks
  * −10 s / +10 s (milestone grilling 2026-11-10). [prompt] is « Reprendre / Débuter » or
  * Épisode suivant on screen: their buttons take the taps.
+ *
+ * A press is a tap only when still: it moved no more than [slopPx] (the touch slop) from
+ * where it went down, [movedPx], and was held no longer than [longPressMs], [heldMs]. A
+ * stray swipe, a thumb resting on the glass or the status bar pulled in immersive mode
+ * never plays, pauses or seeks.
  */
 object PlayerTouch {
     enum class Tap { NONE, TOGGLE_PLAY, CLOSE_OPTIONS }
     enum class Seek { NONE, BACK, FORWARD }
 
-    fun tap(optionsOpen: Boolean, prompt: Boolean): Tap = when {
-        prompt -> Tap.NONE
+    fun tap(optionsOpen: Boolean, prompt: Boolean, movedPx: Float, heldMs: Long, slopPx: Float, longPressMs: Long): Tap = when {
+        prompt || !still(movedPx, heldMs, slopPx, longPressMs) -> Tap.NONE
         optionsOpen -> Tap.CLOSE_OPTIONS
         else -> Tap.TOGGLE_PLAY
     }
 
-    fun doubleTap(x: Float, width: Float, optionsOpen: Boolean, prompt: Boolean): Seek = when {
-        prompt || optionsOpen -> Seek.NONE
+    /** [movedPx] and [heldMs] are those of the second press. */
+    fun doubleTap(
+        x: Float,
+        width: Float,
+        optionsOpen: Boolean,
+        prompt: Boolean,
+        movedPx: Float,
+        heldMs: Long,
+        slopPx: Float,
+        longPressMs: Long,
+    ): Seek = when {
+        prompt || optionsOpen || !still(movedPx, heldMs, slopPx, longPressMs) -> Seek.NONE
         x < width / 2 -> Seek.BACK
         else -> Seek.FORWARD
     }
+
+    private fun still(movedPx: Float, heldMs: Long, slopPx: Float, longPressMs: Long): Boolean =
+        movedPx <= slopPx && heldMs <= longPressMs
 }
 
 /**
@@ -148,8 +170,9 @@ object PauseReveal {
  * - [Kind.PAUSED] when paused: `!playWhenReady`, or held silent by a call (callSilenced,
  *   the meaning of paused in [PlayerAudio.playing]). `playWhenReady`, not `isPlaying`, so
  *   buffering after a resume never shows a pause glyph. Not at the end, nor under Épisode
- *   suivant or Options: those panels own the screen. A paused viewer is not waiting, so the
- *   pause glyph wins over the buffering ring;
+ *   suivant or Options: those panels own the screen, and the centre stays empty;
+ * - a paused viewer is not waiting, so never the ring while paused, under a panel or not
+ *   (a quality or audio change in Options while paused rebuffers without it);
  * - [Kind.LOADING] while buffering with the intent to play: the loading ring, as before,
  *   also under Options or Épisode suivant;
  * - [Kind.NONE] otherwise.
@@ -171,7 +194,7 @@ object CentreGlyph {
         optionsOpen: Boolean,
     ): Kind = when {
         resumePrompt -> Kind.NONE
-        (!playWhenReady || callSilenced) && !ended && !nextUp && !optionsOpen -> Kind.PAUSED
+        !playWhenReady || callSilenced -> if (ended || nextUp || optionsOpen) Kind.NONE else Kind.PAUSED
         buffering -> Kind.LOADING
         else -> Kind.NONE
     }
@@ -211,7 +234,9 @@ object TimelineScrub {
  * or pauses (B3). Down enters the row on « −10 s » ([rowRequester]); Up leaves it.
  * [onRowFocusChanged] reports whether a row button holds focus.
  * Mobile: the timeline takes a tap and a drag ([ScrubTimeline], B4); [onSeekTo] seeks there and
- * [onScrubbing] reports a drag in progress. Both are ignored on the box.
+ * [onScrubbing] reports a drag in progress. Both are ignored on the box. Below the transparent
+ * top of the scrim, the panel takes every tap on mobile: a near miss on the titles, the clocks
+ * or the space beside the buttons never reaches the video (which would play or pause).
  */
 @Composable
 internal fun PlayerControls(
@@ -233,18 +258,17 @@ internal fun PlayerControls(
     modifier: Modifier = Modifier,
 ) {
     val mobile = LocalMobile.current
-    // Mobile: a touch area of 48 real dp around the timeline (B4). It covers part of the box's
-    // 14 dp gap above the timeline and 16 dp gap above the row; whatever it leaves stays, so the
-    // timeline never sits closer to the title or the buttons than on the box.
-    val touch = ceil(CompactCanvas.canvasDp(RailMetrics.MIN_TOUCH_DP, mobile, LocalConfiguration.current.screenHeightDp)).dp
-    val clockLine = with(LocalDensity.current) { RbType.meta.lineHeight.toDp() }
-    val rowGap = if (mobile) TimelineScrub.gapOutside(16f, touch.value, clockLine.value).dp else 16.dp
+    val scrub = if (mobile) scrubSpacing() else null
     Column(
         modifier
             .fillMaxWidth()
             // Scrim, not shadow: the video fades into the ground under the controls.
             .background(Brush.verticalGradient(0f to Color.Transparent, 0.35f to Rb.ground.copy(alpha = 0.7f), 1f to Rb.ground.copy(alpha = 0.92f)))
-            .padding(start = Rb.safeHorizontal, end = Rb.safeHorizontal, top = 72.dp, bottom = Rb.safeVertical),
+            .padding(top = 72.dp)
+            // Mobile: stray taps stay in the panel, like the Options rows; the buttons and the
+            // timeline take theirs first. The transparent top above stays video.
+            .then(if (mobile) Modifier.pointerInput(Unit) { detectTapGestures { } } else Modifier)
+            .padding(start = Rb.safeHorizontal, end = Rb.safeHorizontal, bottom = Rb.safeVertical),
     ) {
         Text(
             showTitle ?: episodeTitle,
@@ -256,21 +280,21 @@ internal fun PlayerControls(
         if (showTitle != null && episodeTitle.isNotBlank() && episodeTitle != showTitle) {
             Text(episodeTitle, style = RbType.meta, color = Rb.textSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
-        if (mobile) {
+        if (scrub != null) {
             ScrubTimeline(
                 positionMs = positionMs,
                 durationMs = durationMs,
-                touch = touch,
+                touch = scrub.touch,
                 onSeekTo = onSeekTo,
                 onScrubbing = onScrubbing,
-                modifier = Modifier.padding(top = TimelineScrub.gapOutside(14f, touch.value, clockLine.value).dp),
+                modifier = Modifier.padding(top = scrub.timelineGap),
             )
         } else {
             Timeline(positionMs, durationMs, Modifier.padding(top = 14.dp))
         }
         Row(
             Modifier
-                .padding(top = rowGap)
+                .padding(top = scrub?.rowGap ?: 16.dp)
                 .onFocusChanged { onRowFocusChanged(it.hasFocus) }
                 .mobileHorizontalScroll(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -318,6 +342,25 @@ internal fun PlayerControls(
     }
 }
 
+/** Where the mobile timeline sits: its touch area, and the gaps above it and above the row. */
+private class ScrubSpacing(val touch: Dp, val timelineGap: Dp, val rowGap: Dp)
+
+/**
+ * Mobile only: a touch area of 48 real dp around the timeline (B4). It covers part of the box's
+ * 14 dp gap above the timeline and 16 dp gap above the row; whatever it leaves stays, so the
+ * timeline never sits closer to the title or the buttons than on the box.
+ */
+@Composable
+private fun scrubSpacing(): ScrubSpacing {
+    val touch = ceil(CompactCanvas.canvasDp(RailMetrics.MIN_TOUCH_DP, true, LocalConfiguration.current.screenHeightDp)).dp
+    val clockLine = with(LocalDensity.current) { RbType.meta.lineHeight.toDp() }
+    return ScrubSpacing(
+        touch = touch,
+        timelineGap = TimelineScrub.gapOutside(14f, touch.value, clockLine.value).dp,
+        rowGap = TimelineScrub.gapOutside(16f, touch.value, clockLine.value).dp,
+    )
+}
+
 /** Position · bar · duration. The bar is the Progression, hence amber (One Amber Rule). */
 @Composable
 private fun Timeline(positionMs: Long, durationMs: Long, modifier: Modifier) {
@@ -348,9 +391,9 @@ private fun Timeline(positionMs: Long, durationMs: Long, modifier: Modifier) {
  * Design (impeccable, DESIGN.md « Player » → « Controls », 2026-11-11):
  * - thumb: a 16 dp amber disc, no ring. It is the head of the Progression fill, so the One
  *   Amber Rule holds; a ring would read as focus, and it never grows (only focus lifts);
- * - bubble: the position in Meta tnum, Paper White on a Raised Slate pill (12 x 4 dp), like
- *   the freshness pill; its bottom 8 dp above the thumb, centred on it but held inside the
- *   bar's span, hence inside the safe frame at both ends. Shown only while a drag holds.
+ * - bubble: the position in Meta tnum, Paper White on a Raised Slate pill (12 x 4 dp); its
+ *   bottom 8 dp above the thumb, centred on it but held inside the bar's span, hence inside
+ *   the safe frame at both ends. Shown only while a drag holds.
  */
 @Composable
 private fun ScrubTimeline(
@@ -362,6 +405,8 @@ private fun ScrubTimeline(
     modifier: Modifier,
 ) {
     var scrubMs by remember { mutableStateOf<Long?>(null) }
+    // A drag holds the controls whether or not it names a position (unknown duration).
+    var dragging by remember { mutableStateOf(false) }
     var barPx by remember { mutableStateOf(0f) }
     val duration by rememberUpdatedState(durationMs)
     val seekTo by rememberUpdatedState(onSeekTo)
@@ -369,7 +414,7 @@ private fun ScrubTimeline(
     // Controls taken off mid-drag (Épisode suivant, a new Épisode): the drag ends with them,
     // or the auto-hide would stay held.
     DisposableEffect(Unit) {
-        onDispose { if (scrubMs != null) scrubbing(false) }
+        onDispose { if (dragging) scrubbing(false) }
     }
     val shown = scrubMs ?: positionMs
     val ratio = if (durationMs > 0) (shown.toFloat() / durationMs).coerceIn(0f, 1f) else 0f
@@ -398,15 +443,18 @@ private fun ScrubTimeline(
                     detectHorizontalDragGestures(
                         onDragStart = { offset ->
                             scrubMs = at(offset.x)
+                            dragging = true
                             scrubbing(true)
                         },
                         onDragEnd = {
                             scrubMs?.let(seekTo)
                             scrubMs = null
+                            dragging = false
                             scrubbing(false)
                         },
                         onDragCancel = {
                             scrubMs = null
+                            dragging = false
                             scrubbing(false)
                         },
                         onHorizontalDrag = { change, _ ->
@@ -485,9 +533,10 @@ internal val PauseIcon: ImageVector by lazy {
  * Design (DESIGN.md, Player « Centre glyph »): a Paper White glyph at the ring's 48 dp on an
  * 80 dp ground 60 % disc, the backing of the seek flash and the back arrow, so it reads over a
  * white frame (Contrast Floor, ≥ 3:1) without a shadow. The pause glyph appears at once, like
- * the pause itself; the play glyph starts opaque and fades in [PLAY_FLASH_MS] on the standard
- * curve (slow start, so the resume registers, then a soft tail; no scale, no bounce). A Compose
- * tween, so « Supprimer les animations » makes it instant.
+ * the pause itself; the play glyph starts opaque and fades in [PLAYER_FLASH_MS] on FastOutSlowIn
+ * (slow start, so the resume registers, then a soft tail; no scale, no bounce). A Compose
+ * tween, so « Supprimer les animations » makes it instant. Anything else taking the centre ends
+ * the fade at once, so a half-faded play glyph never returns after the ring.
  */
 @Composable
 internal fun PlayerCentre(kind: CentreGlyph.Kind, playFlash: Int, modifier: Modifier = Modifier) {
@@ -499,13 +548,18 @@ internal fun PlayerCentre(kind: CentreGlyph.Kind, playFlash: Int, modifier: Modi
             return@LaunchedEffect
         }
         flash.snapTo(1f)
-        flash.animateTo(0f, tween(PLAY_FLASH_MS, easing = FastOutSlowInEasing))
+        flash.animateTo(0f, tween(PLAYER_FLASH_MS, easing = FastOutSlowInEasing))
     }
+    // The pause glyph or the ring takes the centre: a fade in flight stops there (snapTo
+    // cancels the running animation).
+    LaunchedEffect(kind) { if (kind != CentreGlyph.Kind.NONE) flash.snapTo(0f) }
+    // Recomposes only when the flash starts or ends, not on every frame of the fade.
+    val flashing by remember { derivedStateOf { flash.value > 0f } }
     when (kind) {
         CentreGlyph.Kind.PAUSED -> CentreDisc(PauseIcon, modifier)
         CentreGlyph.Kind.LOADING -> LoadingRing(modifier)
-        // Alpha read in the layer: the fade redraws without recomposing.
-        CentreGlyph.Kind.NONE -> CentreDisc(Icons.Filled.PlayArrow, modifier.graphicsLayer { alpha = flash.value })
+        // Alpha read in the layer: the fade redraws without recomposing. No flash, no disc.
+        CentreGlyph.Kind.NONE -> if (flashing) CentreDisc(Icons.Filled.PlayArrow, modifier.graphicsLayer { alpha = flash.value })
     }
 }
 
@@ -522,5 +576,5 @@ private val CENTRE_GLYPH = 48.dp
 /** Ground disc around the glyph: 16 dp of backing on each side. */
 private val CENTRE_DISC = 80.dp
 
-/** The play fade, as long as the seek flash. */
-private const val PLAY_FLASH_MS = 600
+/** How long the player's flashes last: the seek flash shows, the play glyph fades. */
+internal const val PLAYER_FLASH_MS = 600
