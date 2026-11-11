@@ -96,6 +96,12 @@ data class RailMetrics(val item: Dp, val icon: Dp, val width: Dp, val itemsTop: 
      */
     val iconStart: Dp get() = (item - icon) / 2
 
+    /**
+     * Top padding of the rail below [Rb.safeVertical]: the back slot (one item + [GAP]) comes out
+     * of [itemsTop], so the destinations sit at the same height with or without it.
+     */
+    fun topPadding(showBack: Boolean): Dp = itemsTop - if (showBack) item + GAP else 0.dp
+
     companion object {
         /** Material minimum touch target, in real (unscaled) dp. */
         const val MIN_TOUCH_DP = 48f
@@ -103,9 +109,13 @@ data class RailMetrics(val item: Dp, val icon: Dp, val width: Dp, val itemsTop: 
         /** The box: DESIGN.md « Navigation (nav rail) », unchanged. */
         val Tv = RailMetrics(item = 48.dp, icon = 24.dp, width = 72.dp, itemsTop = 72.dp, contentStart = 104.dp)
 
+        /** Space between rail items (DESIGN.md spacing rail-stack). */
+        val GAP = 8.dp
+
+        /** Inset of the items on both sides of the collapsed rail. */
+        val INSET = 12.dp
+
         private const val GRID_DP = 8
-        private const val ITEM_INSET_DP = 12
-        private const val RAIL_STACK_DP = 8
         private const val CONTENT_GAP_DP = 32
 
         /**
@@ -129,13 +139,13 @@ data class RailMetrics(val item: Dp, val icon: Dp, val width: Dp, val itemsTop: 
         fun mobile(scale: Float): RailMetrics {
             val needed = ceil(MIN_TOUCH_DP / scale / GRID_DP).toInt() * GRID_DP
             val item = maxOf(Tv.item.value.toInt(), needed)
-            val width = item + 2 * ITEM_INSET_DP
+            val width = item.dp + INSET * 2
             return RailMetrics(
                 item = item.dp,
                 icon = (item / 2).dp,
-                width = width.dp,
-                itemsTop = (item + RAIL_STACK_DP).dp,
-                contentStart = (width + CONTENT_GAP_DP).dp,
+                width = width,
+                itemsTop = item.dp + GAP,
+                contentStart = width + CONTENT_GAP_DP.dp,
             )
         }
 

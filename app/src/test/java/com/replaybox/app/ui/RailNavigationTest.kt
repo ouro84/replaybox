@@ -1,6 +1,7 @@
 package com.replaybox.app.ui
 
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import com.replaybox.core.model.EpisodeId
 import com.replaybox.core.model.Genre
 import com.replaybox.core.model.ShowId
@@ -43,13 +44,15 @@ class RailNavigationTest {
             listOf(Screen.Home, Screen.Genres, grid),
             listOf(Screen.Home, grid),
             listOf(Screen.Home, Screen.Genres, grid, show),
-        )) assertThat(RailNavigation.destinationFor(stack)).isEqualTo(RailDestination.GENRES)
+        )) assertWithMessage("$stack").that(RailNavigation.destinationFor(stack)).isEqualTo(RailDestination.GENRES)
+        assertThat(RailNavigation.destinationFor(listOf(Screen.Home, Screen.Search))).isEqualTo(RailDestination.SEARCH)
         assertThat(RailNavigation.destinationFor(listOf(Screen.Home, Screen.Search, show))).isEqualTo(RailDestination.SEARCH)
+        assertThat(RailNavigation.destinationFor(listOf(Screen.Home, Screen.Settings))).isEqualTo(RailDestination.SETTINGS)
         for (stack in listOf(
             listOf(Screen.Home, Screen.Settings, Screen.SubtitleSettings),
             listOf(Screen.Home, Screen.Settings, Screen.ProviderDetail("tf1")),
             listOf(Screen.Home, Screen.Settings, Screen.About),
-        )) assertThat(RailNavigation.destinationFor(stack)).isEqualTo(RailDestination.SETTINGS)
+        )) assertWithMessage("$stack").that(RailNavigation.destinationFor(stack)).isEqualTo(RailDestination.SETTINGS)
     }
 
     @Test
@@ -86,5 +89,7 @@ class RailNavigationTest {
         assertThat(RailNavigation.keepsState(listOf(Screen.Home, grid), RailDestination.GENRES)).isFalse()
         assertThat(RailNavigation.keepsState(listOf(Screen.Home, Screen.Search), RailDestination.GENRES)).isFalse()
         assertThat(RailNavigation.keepsState(listOf(Screen.Home, Screen.Search), RailDestination.SEARCH)).isFalse()
+        assertThat(RailNavigation.keepsState(listOf(Screen.Home, show), RailDestination.HOME)).isTrue()
+        assertThat(RailNavigation.keepsState(listOf(Screen.Home), RailDestination.HOME)).isFalse()
     }
 }

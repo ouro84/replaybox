@@ -147,15 +147,13 @@ fun NavRail(
             }
             .focusProperties { enter = { currentRequester } }
             .focusGroup()
-            // The back slot (one item + the 8 dp gap) comes out of the top space, so the
-            // destinations sit at the same height with or without it.
+            // The back slot comes out of the top padding: the destinations never move.
             .padding(
-                top = Rb.safeVertical + LocalRail.current.itemsTop -
-                    if (showBack) LocalRail.current.item + RAIL_GAP else 0.dp,
-                start = 12.dp,
-                end = 12.dp,
+                top = Rb.safeVertical + LocalRail.current.topPadding(showBack),
+                start = RailMetrics.INSET,
+                end = RailMetrics.INSET,
             ),
-        verticalArrangement = Arrangement.spacedBy(RAIL_GAP),
+        verticalArrangement = Arrangement.spacedBy(RailMetrics.GAP),
     ) {
         if (showBack) {
             val dispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
@@ -188,9 +186,6 @@ fun NavRail(
     }
 }
 
-/** Space between rail items (DESIGN.md spacing rail-stack). */
-private val RAIL_GAP = 8.dp
-
 @Composable
 private fun RailItem(
     icon: ImageVector,
@@ -221,7 +216,7 @@ private fun RailItem(
             .onFocusChanged { focused = it.isFocused }
             .tvClickable(onClick)
             .then(if (background != null) Modifier.background(background, Rb.pillShape) else Modifier)
-            .padding(start = LocalRail.current.iconStart, end = 12.dp),
+            .padding(start = LocalRail.current.iconStart, end = RailMetrics.INSET),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val iconSize = LocalRail.current.icon

@@ -24,15 +24,15 @@ class RailMetricsTest {
             val m = RailMetrics.of(mobile = true, heightDp = h)
             val s = CompactCanvas.scale(h)
             assertThat(m.item.value * s).isAtLeast(RailMetrics.MIN_TOUCH_DP)
-            assertThat((m.width - 24.dp).value * s).isAtLeast(RailMetrics.MIN_TOUCH_DP)
+            assertThat((m.width - RailMetrics.INSET * 2).value * s).isAtLeast(RailMetrics.MIN_TOUCH_DP)
         }
     }
 
     @Test
     fun tabletItemIsAtLeast48Dp() {
         val m = RailMetrics.of(mobile = true, heightDp = 800)
-        assertThat(m.item.value).isAtLeast(48f)
-        assertThat((m.width - 24.dp).value).isAtLeast(48f)
+        assertThat(m.item.value).isAtLeast(RailMetrics.MIN_TOUCH_DP)
+        assertThat((m.width - RailMetrics.INSET * 2).value).isAtLeast(RailMetrics.MIN_TOUCH_DP)
     }
 
     @Test
@@ -48,15 +48,38 @@ class RailMetricsTest {
 
     @Test
     fun backSlotFitsAboveTheItems() {
-        for (m in mobileCases) assertThat(m.itemsTop.value).isAtLeast((m.item + 8.dp).value)
+        for (m in mobileCases) assertThat(m.itemsTop.value).isAtLeast((m.item + RailMetrics.GAP).value)
+    }
+
+    @Test
+    fun destinationsNeverMove() {
+        // The back slot (one item + the gap) comes out of the top padding: Accueil stays put.
+        for (m in mobileCases) {
+            assertThat(m.topPadding(showBack = true) + m.item + RailMetrics.GAP).isEqualTo(m.topPadding(showBack = false))
+            assertThat(m.topPadding(showBack = true)).isAtLeast(0.dp)
+        }
+        assertThat(RailMetrics.Tv.topPadding(showBack = false)).isEqualTo(72.dp)
+    }
+
+    @Test
+    fun boxGeometryConstants() {
+        assertThat(RailMetrics.GAP).isEqualTo(8.dp)
+        assertThat(RailMetrics.INSET).isEqualTo(12.dp)
+        assertThat(RailMetrics.Tv.width).isEqualTo(RailMetrics.Tv.item + RailMetrics.INSET * 2)
     }
 
     @Test
     fun railFitsTheCanvas() {
+        val inset = MobileInsets.vertical.value
+        fun stack(m: RailMetrics) = inset + m.itemsTop.value + 4 * m.item.value + 3 * RailMetrics.GAP.value
+        // Phones draw on the compact canvas; its 540 dp height is the design floor.
         for (h in compactHeights) {
             val m = RailMetrics.of(mobile = true, heightDp = h)
-            assertThat(16f + m.itemsTop.value + 4 * m.item.value + 3 * 8f).isAtMost(540f - 16f)
+            assertThat(stack(m)).isAtMost(CompactCanvas.HEIGHT_DP - inset)
         }
+        // Tablets draw unscaled: pin the shortest tablet window (480 dp).
+        val tabletFloor = LayoutClass.COMPACT_MAX_HEIGHT_DP
+        assertThat(stack(RailMetrics.of(mobile = true, heightDp = tabletFloor))).isAtMost(tabletFloor - inset)
     }
 
     @Test
