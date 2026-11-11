@@ -65,6 +65,37 @@ object RailNavigation {
      */
     fun next(stack: List<Screen>, destination: RailDestination): List<Screen>? =
         stackFor(destination).takeIf { it != stack }
+
+    /**
+     * The rail item to highlight over [stack]: the destination of the root-most screen that belongs
+     * to one (Home and a Programme belong to none, so they fall back to Home). Null in the player,
+     * which has no rail.
+     */
+    fun destinationFor(stack: List<Screen>): RailDestination? {
+        if (stack.lastOrNull() is Screen.Player) return null
+        return stack.firstNotNullOfOrNull { screen ->
+            when (screen) {
+                is Screen.Genres, is Screen.GenreGrid -> RailDestination.GENRES
+                is Screen.Search -> RailDestination.SEARCH
+                is Screen.Settings, is Screen.SubtitleSettings, is Screen.ProviderDetail, is Screen.About ->
+                    RailDestination.SETTINGS
+                is Screen.Home, is Screen.ShowDetail, is Screen.Player -> null
+            }
+        } ?: RailDestination.HOME
+    }
+
+    /** The back arrow shows wherever the rail does, except on the Home root. */
+    fun showsBack(stack: List<Screen>): Boolean =
+        destinationFor(stack) != null && stack != listOf(Screen.Home)
+
+    /**
+     * True when [destination]'s root is a strict prefix of [stack]: tapping it returns to that root
+     * with its state (Back from a Programme opened from Recherche), not a fresh visit.
+     */
+    fun keepsState(stack: List<Screen>, destination: RailDestination): Boolean {
+        val root = stackFor(destination)
+        return stack.size > root.size && stack.subList(0, root.size) == root
+    }
 }
 
 /**

@@ -84,11 +84,13 @@ class MainActivity : ComponentActivity() {
                 backStack.add(Screen.GenreGrid(genre))
             }
             // The rail (Home; on mobile also Recherche, Genres, Paramètres): a fresh visit on top of
-            // Home. From Home the stack is [Home], so this is the former add.
+            // Home, or back to the destination's root with its state. From Home the stack is [Home],
+            // so this is the former add.
             fun navigate(destination: RailDestination) {
                 // The destination already on screen: nothing moves, its state stays.
                 val next = RailNavigation.next(backStack.toList(), destination) ?: return
-                when (destination) {
+                // Reset only for a fresh visit; back to the destination's root keeps its state.
+                if (!RailNavigation.keepsState(backStack.toList(), destination)) when (destination) {
                     RailDestination.GENRES -> genresState = GenresUiState()
                     RailDestination.SEARCH -> searchState = SearchUiState()
                     RailDestination.HOME, RailDestination.SETTINGS -> Unit
