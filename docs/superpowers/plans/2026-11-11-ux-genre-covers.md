@@ -26,10 +26,10 @@
 
 ## Review Focus
 
-1. Cold start with an empty cache: 9 text tiles, then covers fade in when the first refresh ticks `catalog.updates`; focus stays on Séries. Tests: `GenreCoversTest.emptyCacheGivesNoCovers`; Pixel check after `pm clear` (Task 5).
-2. The same Programme listed on two Chaînes (two ids, one title) in Séries and Policier & Thriller covers one tile only. Test: `GenreCoversTest.sameTitleOnTwoChannelsIsOneProgramme`.
-3. A Provider sending `""` as an image URL: treated as no image, the next Programme is used. Test: `GenreCoversTest.blankUrlCountsAsNoImage`.
-4. The tile cover is exactly the first imaged poster the « Tout voir » grid shows (recency order, Chaîne order, a Chaîne outside the list ignored). Test: `GenreCoversTest.coversFollowTheToutVoirGrid`.
+1. Cold start with an empty cache. The background refresh runs in Home's `LaunchedEffect`, so it stops when Genres replaces Home on screen and nothing ticks `catalog.updates` during a Genres visit (known debt: hoisting `refreshListings` to an application scope is out of PR C). (a) Genres opened during Home's refresh: text tiles, or covers only for the Chaînes already refreshed; focus stays on Séries and no tile moves. (b) Back to Home, the refresh finishes (all Home rails filled), Genres again: the covers fade in. Each visit reads the cache as it stands. Tests: `GenreCoversTest.emptyCacheGivesNoCovers`, `GenreCoversTest.aRefreshChangesTheCover`; Pixel check after `pm clear` (Task 5).
+2. The same Programme listed on two Chaînes (two ids, one title) in Séries and Policier & Thriller covers one tile only, accents and case included; two Programmes sharing one image front one tile only. Tests: `GenreCoversTest.sameTitleOnTwoChannelsIsOneProgramme`, `GenreCoversTest.accentAndCaseVariantsAreOneProgramme`, `GenreCoversTest.anImageAlreadyShownIsSkipped`.
+3. A Provider sending `""` as an image URL: treated as no image: a blank backdrop falls back to the poster, else the next Programme is used. Tests: `GenreCoversTest.blankUrlCountsAsNoImage`, `GenreCoversTest.blankBackdropFallsBackToThePoster`.
+4. The tile cover is the first Programme of the « Tout voir » grid with key art or a poster (the grid may draw it as a title plate), skipping a Programme an earlier tile already shows (recency order, Chaîne order, a Chaîne outside the list ignored). Tests: `GenreCoversTest.coversFollowTheToutVoirGrid`, `GenreCoversTest.theGridsCopyDecidesNotAnotherChannelsImage`.
 5. An image URL that fails to load (404, offline) leaves today's text tile, not a darkened plate. Covered by the Task 3 layering rule (scrim tied to Coil success); checked offline on the Pixel (Task 5).
 
 ---
@@ -127,13 +127,13 @@
 
 - [ ] **Step 1: Install.** adb at `$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe`, `adb connect <box-ip>:5555` (was `192.168.1.182`; scan `arp -a` if it moved), `install -r app/build/outputs/apk/debug/app-debug.apk`, cold start. Before **every** scripted key press: `dumpsys window | grep mCurrentFocus` must contain `com.replaybox`, else stop (wake with `KEYCODE_WAKEUP`, relaunch). Screencap before every OK; strip the bytes before `\x89PNG`.
 - [ ] **Step 2: Genres page.** Rail → Genres: 9 tiles keep their size and grid; tiles with a cover show art + scrim, name readable at rest and at 1.1 focus, ring intact; no image repeated across tiles; focus on Séries at arrival and not moved while covers appear.
-- [ ] **Step 3: Grid match and return.** OK on Policier & Thriller → its first imaged poster is the tile's Programme; Back → focus on the Policier & Thriller tile, covers shown at once (no fade, no flash). Repeat for one more Genre.
+- [ ] **Step 3: Grid match and return.** OK on Policier & Thriller → the tile's Programme is the first Programme of the grid with key art or a poster (the grid may draw it as a title plate), skipping a Programme an earlier tile already shows; Back → focus on the Policier & Thriller tile, covers shown at once (no fade, no flash). Repeat for one more Genre.
 - [ ] **Step 4: A/B.** Same D-pad script on `main` APK and branch APK (Home, a « Tout voir » grid, Search, Paramètres): PIL `ImageChops` diff bbox `None` for every capture outside the Genres page; a text-only tile (if any) identical too. Undo any side effect (pin, Progression).
 - [ ] **Step 5: Tick ROADMAP** item; commit `docs: tick Genre covers in ROADMAP`
 
 ### Task 5: Pixel 7 verification
 
-- [ ] **Step 1: Install** on serial `2B151FDH2002RZ` (`svc power stayon usb` already on; if locked, ask Arnaud). `pm clear com.replaybox` (test data only), launch, open Genres from the rail right away: text tiles first, covers fade in once the refresh lands, nothing moves, no tile changes size (Review Focus 1).
+- [ ] **Step 1: Install** on serial `2B151FDH2002RZ` (`svc power stayon usb` already on; if locked, ask Arnaud). `pm clear com.replaybox` (test data only), launch. (a) Open Genres from the rail during Home's refresh: text tiles, or covers only for the Chaînes refreshed before leaving Home; focus on Séries, nothing moves, no tile changes size. (b) Back to Home, let the refresh finish (all Home rails filled), re-enter Genres: the covers fade in (Review Focus 1). No fade-in is expected while Genres stays on screen.
 - [ ] **Step 2: Compact canvas.** Screenshots: 3 × 3 tiles fit the 411 dp canvas as on `main` (scroll unchanged), names readable over art, tap a tile → grid, PR A back arrow → Genres with covers in place.
 - [ ] **Step 3: Offline load failure.** Keep the Room cache, drop only Coil's images: `am force-stop com.replaybox`, `run-as com.replaybox rm -rf cache/image_cache`, then cut the network. The Pixel is Arnaud's personal phone: never toggle airplane mode, Wi-Fi or any global setting (`svc`, `settings put`, `cmd connectivity`) without his explicit OK; ask him to switch airplane mode himself, or skip this step and say so in the PR. Relaunch → Genres: tiles show today's plate + name, no dark scrim (Review Focus 5). Network back; covers fade in on the next visit. Never touch the launcher.
 - [ ] **Step 4:** tablet class not checked on the Pixel (no `wm density`); emulator only if the lead asks.
