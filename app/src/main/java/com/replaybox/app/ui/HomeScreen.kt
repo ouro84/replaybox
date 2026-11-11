@@ -33,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -106,6 +107,9 @@ class HomeUiState {
     private val rows = HashMap<String, TvLazyListState>()
     private val requesters = HashMap<String, FocusRequester>()
     var focusedKey: String? = null
+
+    /** Written by the screen each composition; MainActivity reads it to decide whether Back asks to leave. */
+    var atTop by mutableStateOf(true)
     var data: HomeData? = null
     var refreshed = false
 
@@ -288,6 +292,7 @@ fun HomeScreen(
         state.focusedKey == KEY_PRIMARY ||
         state.focusedKey == KEY_SECONDARY ||
         (billboard == null && state.focusedKey == firstCardKey && state.rails.firstVisibleItemIndex == 0)
+    SideEffect { state.atTop = atTop }
     BackHandler(enabled = !atTop) {
         scope.launch {
             state.rails.scrollToItem(0)

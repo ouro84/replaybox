@@ -19,9 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.replaybox.R
 import com.replaybox.app.ReplayboxApplication
 import com.replaybox.core.model.Episode
 import com.replaybox.core.model.EpisodeId
@@ -99,6 +101,10 @@ class MainActivity : ComponentActivity() {
                 backStack.addAll(next)
             }
             BackHandler(enabled = backStack.size > 1) { backStack.removeAt(backStack.lastIndex) }
+            // Mutually exclusive with the two above: Home's own Back (scroll to top) is enabled
+            // when Home is not at its top, this one only when it is.
+            var exitAsked by remember { mutableStateOf(false) }
+            BackHandler(enabled = ExitConfirm.shows(backStack.toList(), homeState.atTop)) { exitAsked = true }
             ReplayboxThemeSurface { CompactDensity(mobile) {
                 // One Box for every screen: the mobile rail draws over any of them.
                 Box(Modifier.fillMaxSize()) {
@@ -182,6 +188,12 @@ class MainActivity : ComponentActivity() {
                 }
                 // Mobile safety net: the window is portrait anyway (split screen, override).
                 if (portraitBlocked()) RotatePrompt()
+                if (exitAsked) ActionDialog(
+                    title = stringResource(R.string.exit_title),
+                    hint = null,
+                    actions = listOf(DialogAction(stringResource(R.string.exit_confirm)) { finish() }),
+                    onDismiss = { exitAsked = false },
+                )
             } }
         } }
     }
