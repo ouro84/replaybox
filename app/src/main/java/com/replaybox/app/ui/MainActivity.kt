@@ -100,66 +100,65 @@ class MainActivity : ComponentActivity() {
             }
             BackHandler(enabled = backStack.size > 1) { backStack.removeAt(backStack.lastIndex) }
             ReplayboxThemeSurface { CompactDensity(mobile) {
-                when (val current = backStack.last()) {
-                    is Screen.Home -> HomeScreen(
-                        state = homeState,
-                        onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
-                        onPlay = { id, title, progressContext ->
-                            backStack.add(Screen.Player(id, title, progressContext, autoResume = true))
-                        },
-                        onNavigate = ::navigate,
-                        onOpenGenre = ::openGrid,
-                    )
-                    is Screen.ShowDetail -> ShowScreen(
-                        showId = current.showId,
-                        title = current.title,
-                        state = showStates.getOrPut(current.showId.value) { ShowUiState() },
-                        onOpenEpisode = { episode, progressContext, autoResume ->
-                            backStack.add(Screen.Player(episode.id, episode.title, progressContext, autoResume))
-                        },
-                    )
-                    // Keyed by Épisode: Épisode suivant swaps the entry in place, and the
-                    // player state (Flux, ExoPlayer) must start over, not stay on the ended one.
-                    is Screen.Player -> key(current.episodeId) { PlayerScreen(
-                        episodeId = current.episodeId,
-                        title = current.title,
-                        progressContext = current.progressContext,
-                        autoResume = current.autoResume,
-                        onPlayNext = { next ->
-                            // Back from the player lands on the Épisode now playing, in its Saison.
-                            current.progressContext?.showId?.let { showId ->
-                                showStates[showId.value]?.focusEpisode(next)
-                            }
-                            // Replaces the ended Épisode: Back returns to the Programme page.
-                            backStack[backStack.lastIndex] = current.copy(
-                                episodeId = next.id,
-                                title = next.title,
-                                progressContext = current.progressContext?.copy(
-                                    episodeTitle = next.title,
-                                    thumbnailUrl = next.thumbnailUrl,
-                                ),
-                                autoResume = false,
-                            )
-                        },
-                        onFinished = {
-                            // The Épisode ended with nothing to play next: back where it was opened.
-                            if (backStack.size > 1 && backStack.last() == current) backStack.removeAt(backStack.lastIndex)
-                        },
-                    ) }
-                    Screen.Settings -> Box(Modifier.fillMaxSize()) {
-                        SettingsScreen(
+                // One Box for every screen: the mobile rail draws over any of them.
+                Box(Modifier.fillMaxSize()) {
+                    val current = backStack.last()
+                    when (current) {
+                        is Screen.Home -> HomeScreen(
+                            state = homeState,
+                            onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
+                            onPlay = { id, title, progressContext ->
+                                backStack.add(Screen.Player(id, title, progressContext, autoResume = true))
+                            },
+                            onNavigate = ::navigate,
+                            onOpenGenre = ::openGrid,
+                        )
+                        is Screen.ShowDetail -> ShowScreen(
+                            showId = current.showId,
+                            title = current.title,
+                            state = showStates.getOrPut(current.showId.value) { ShowUiState() },
+                            onOpenEpisode = { episode, progressContext, autoResume ->
+                                backStack.add(Screen.Player(episode.id, episode.title, progressContext, autoResume))
+                            },
+                        )
+                        // Keyed by Épisode: Épisode suivant swaps the entry in place, and the
+                        // player state (Flux, ExoPlayer) must start over, not stay on the ended one.
+                        is Screen.Player -> key(current.episodeId) { PlayerScreen(
+                            episodeId = current.episodeId,
+                            title = current.title,
+                            progressContext = current.progressContext,
+                            autoResume = current.autoResume,
+                            onPlayNext = { next ->
+                                // Back from the player lands on the Épisode now playing, in its Saison.
+                                current.progressContext?.showId?.let { showId ->
+                                    showStates[showId.value]?.focusEpisode(next)
+                                }
+                                // Replaces the ended Épisode: Back returns to the Programme page.
+                                backStack[backStack.lastIndex] = current.copy(
+                                    episodeId = next.id,
+                                    title = next.title,
+                                    progressContext = current.progressContext?.copy(
+                                        episodeTitle = next.title,
+                                        thumbnailUrl = next.thumbnailUrl,
+                                    ),
+                                    autoResume = false,
+                                )
+                            },
+                            onFinished = {
+                                // The Épisode ended with nothing to play next: back where it was opened.
+                                if (backStack.size > 1 && backStack.last() == current) backStack.removeAt(backStack.lastIndex)
+                            },
+                        ) }
+                        Screen.Settings -> SettingsScreen(
                             state = settingsState,
                             onOpenSubtitles = { backStack.add(Screen.SubtitleSettings) },
                             onOpenProvider = { groupId -> backStack.add(Screen.ProviderDetail(groupId)) },
                             onOpenAbout = { backStack.add(Screen.About) },
                         )
-                        MobileRail(RailDestination.SETTINGS, ::navigate)
-                    }
-                    Screen.About -> AboutScreen()
-                    Screen.SubtitleSettings -> SubtitleSettingsScreen()
-                    is Screen.ProviderDetail -> key(current.groupId) { ProviderScreen(groupId = current.groupId) }
-                    Screen.Search -> Box(Modifier.fillMaxSize()) {
-                        SearchScreen(
+                        Screen.About -> AboutScreen()
+                        Screen.SubtitleSettings -> SubtitleSettingsScreen()
+                        is Screen.ProviderDetail -> key(current.groupId) { ProviderScreen(groupId = current.groupId) }
+                        Screen.Search -> SearchScreen(
                             state = searchState,
                             onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
                             // « Reprendre » on the best result resumes at once, like Home.
@@ -167,18 +166,16 @@ class MainActivity : ComponentActivity() {
                                 backStack.add(Screen.Player(id, title, progressContext, autoResume = true))
                             },
                         )
-                        MobileRail(RailDestination.SEARCH, ::navigate)
+                        Screen.Genres -> GenresScreen(state = genresState, onOpenGenre = ::openGrid)
+                        is Screen.GenreGrid -> key(current.genre) {
+                            GenreGridScreen(
+                                state = remember { gridState?.takeIf { it.genre == current.genre } ?: GenreGridUiState(current.genre) },
+                                onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
+                            )
+                        }
                     }
-                    Screen.Genres -> Box(Modifier.fillMaxSize()) {
-                        GenresScreen(state = genresState, onOpenGenre = ::openGrid)
-                        MobileRail(RailDestination.GENRES, ::navigate)
-                    }
-                    is Screen.GenreGrid -> key(current.genre) {
-                        GenreGridScreen(
-                            state = remember { gridState?.takeIf { it.genre == current.genre } ?: GenreGridUiState(current.genre) },
-                            onOpenShow = { id, title -> backStack.add(Screen.ShowDetail(id, title)) },
-                        )
-                    }
+                    // Home draws its own rail (expand and dim on the box); the player has none.
+                    if (current !is Screen.Home) MobileRail(backStack.toList(), ::navigate)
                 }
                 // Mobile safety net: the window is portrait anyway (split screen, override).
                 if (portraitBlocked()) RotatePrompt()

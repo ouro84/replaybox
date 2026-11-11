@@ -317,6 +317,7 @@ A 4 dp pill, amber fill over the track, always paired with the remaining time in
 - **Focused:** white pill, ink icon and label, scaled 1.06 over 200 ms (same lift as panel buttons), so focus never relies on color alone.
 - **Entry:** focus entering the rail always lands on the current destination.
 - **Mobile (`RailMetrics.mobile`):** items reach at least 48 real dp: 48 / canvas scale rounded up to 8 dp, icon half the item, rail = item + 2 × 12 dp, first item one item + 8 dp below the top (room for the back arrow), content-start = rail + 32 dp. Pixel 7 landscape (383 dp window, scale 0.709): 72 dp items (51 real dp), 36 dp icons, 96 dp rail, content at 128 dp.
+- **Back (mobile, every screen but Home and the player):** a « Retour » arrow (system Back) in the slot above Accueil, same pill size, Mist icon on the ground, never selected nor the focus entry. No pressed state (like the destinations, the screen change answers the tap) and no hairline: the 8 dp rail-stack gap and the glyph set it apart; the destinations never move for it.
 
 ### Status line and chips
 - **Stale notice:** Meta in Mist on an 85 % ground pill, 12 dp x 4 dp padding, top right. Copy: "Catalogue du 05/11 · TF1 injoignable" (plural "injoignables"). It is not focusable.

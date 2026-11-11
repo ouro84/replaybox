@@ -1,5 +1,6 @@
 package com.replaybox.app.ui
 
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
@@ -99,18 +101,24 @@ object RailNavigation {
 }
 
 /**
- * The rail on Recherche, Genres and Paramètres, on mobile only: there is no D-pad LEFT back to
- * Home there. Collapsed for good (touch never focuses it). On the box these screens stay as they are.
+ * The rail on every screen but Home (which draws its own) and the player, on mobile only: there is
+ * no D-pad LEFT back to Home there, and the back arrow stands in for the hidden navigation bar.
+ * Collapsed for good (touch never focuses it). On the box these screens stay as they are.
  */
 @Composable
-fun BoxScope.MobileRail(current: RailDestination, onNavigate: (RailDestination) -> Unit) {
-    if (LocalMobile.current) NavRail(current, onNavigate, Modifier.align(Alignment.CenterStart))
+fun BoxScope.MobileRail(stack: List<Screen>, onNavigate: (RailDestination) -> Unit) {
+    if (!LocalMobile.current) return
+    RailNavigation.destinationFor(stack)?.let {
+        NavRail(it, onNavigate, Modifier.align(Alignment.CenterStart), showBack = RailNavigation.showsBack(stack))
+    }
 }
 
 /**
  * Left navigation rail (Google TV / Netflix pattern): icons only while the
  * content has focus, expanded with labels over a solid panel once focus
  * moves left into it. Entering always lands on the current destination.
+ * With [showBack] a « Retour » arrow (system Back) sits in the slot above Accueil; the destinations
+ * stay where they are without it.
  */
 @OptIn(ExperimentalComposeUiApi::class, androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
@@ -119,6 +127,7 @@ fun NavRail(
     onNavigate: (RailDestination) -> Unit,
     modifier: Modifier = Modifier,
     onExpandedChange: (Boolean) -> Unit = {},
+    showBack: Boolean = false,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val width by animateDpAsState(
@@ -138,9 +147,28 @@ fun NavRail(
             }
             .focusProperties { enter = { currentRequester } }
             .focusGroup()
-            .padding(top = Rb.safeVertical + LocalRail.current.itemsTop, start = 12.dp, end = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            // The back slot (one item + the 8 dp gap) comes out of the top space, so the
+            // destinations sit at the same height with or without it.
+            .padding(
+                top = Rb.safeVertical + LocalRail.current.itemsTop -
+                    if (showBack) LocalRail.current.item + RAIL_GAP else 0.dp,
+                start = 12.dp,
+                end = 12.dp,
+            ),
+        verticalArrangement = Arrangement.spacedBy(RAIL_GAP),
     ) {
+        if (showBack) {
+            val dispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+            // Never selected and never the focus entry: Mist icon on the ground, no pill.
+            RailItem(
+                icon = Icons.Filled.ArrowBack,
+                label = stringResource(R.string.back),
+                selected = false,
+                expanded = expanded,
+                modifier = Modifier,
+                onClick = { dispatcher?.onBackPressed() },
+            )
+        }
         val items = listOf(
             Triple(RailDestination.HOME, Icons.Filled.Home, R.string.nav_home),
             Triple(RailDestination.GENRES, GenresIcon, R.string.nav_genres),
@@ -159,6 +187,9 @@ fun NavRail(
         }
     }
 }
+
+/** Space between rail items (DESIGN.md spacing rail-stack). */
+private val RAIL_GAP = 8.dp
 
 @Composable
 private fun RailItem(
