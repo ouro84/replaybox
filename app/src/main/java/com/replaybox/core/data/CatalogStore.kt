@@ -515,7 +515,7 @@ class CatalogStore(
      * shows what its cached listings hold.
      */
     suspend fun genreGrid(genre: Genre, channelIds: List<String>): List<ChannelShow> {
-        val all = channelIds.flatMap { channelId -> listing(channelId).map { ChannelShow(it, channelId) } }
+        val all = channelShows(channelIds)
         return GenreGrid.arrange(all, genre, channelIds = null, now = clock())
     }
 
@@ -525,9 +525,26 @@ class CatalogStore(
      * title), the same title on two Chaînes kept once.
      */
     suspend fun browse(channelIds: List<String>, genre: Genre?): List<ChannelShow> {
-        val all = channelIds.flatMap { channelId -> listing(channelId).map { ChannelShow(it, channelId) } }
+        val all = channelShows(channelIds)
         return GenreGrid.arrange(all, genre, channelIds = null, now = clock())
     }
+
+    /**
+     * One cover image per Genre for the Genres page, cache only (ADR 0002, no new query): the
+     * first Programme with an image of each Genre's « Tout voir » grid, arranged exactly as
+     * [genreGrid] does, a Programme covering one Genre only ([GenreCovers.pick]). A Genre
+     * with no cover is absent.
+     */
+    suspend fun genreCovers(channelIds: List<String>): Map<Genre, String> {
+        val all = channelShows(channelIds)
+        val now = clock()
+        val grids = Genre.values().associateWith { GenreGrid.arrange(all, it, channelIds = null, now = now) }
+        return GenreCovers.pick(Genre.values().toList(), grids)
+    }
+
+    /** Every cached Programme of [channelIds] with its Chaîne, in listing order (the memo makes a repeat free). */
+    private suspend fun channelShows(channelIds: List<String>): List<ChannelShow> =
+        channelIds.flatMap { channelId -> listing(channelId).map { ChannelShow(it, channelId) } }
 
     /** Favorites with the Chaîne they are listed on, most recently pinned first. */
     suspend fun favoriteChannelShows(channelIds: List<String>): List<ChannelShow> {

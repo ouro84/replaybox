@@ -121,4 +121,49 @@ class GenreCoversTest {
         assertThat(covers[Genre.SERIES]).isEqualTo("x-bd")
         assertThat(covers).doesNotContainKey(Genre.CRIME_THRILLER)
     }
+
+    private val now = 1_800_000_000_000L
+
+    @Test
+    fun coversFollowTheToutVoirGrid() {
+        blocking {
+            val dao = FakeCatalogDao()
+            dao.putListing(
+                "tf1",
+                listOf(show("abeille", "Abeille", Genre.SERIES).copy(backdropUrl = "abeille-bd", posterUrl = "abeille-po")),
+                now,
+            )
+            dao.putListing(
+                "france-2",
+                listOf(show("zebre", "Zèbre", Genre.SERIES).copy(posterUrl = "zebre-po", recencyAt = now)),
+                now,
+            )
+            dao.putListing(
+                "m6",
+                listOf(
+                    show("alpha", "Alpha", Genre.SERIES)
+                        .copy(backdropUrl = "alpha-bd", posterUrl = "alpha-po", recencyAt = now),
+                ),
+                now,
+            )
+            val catalog = CatalogStore(dao, clock = { now })
+
+            val covers = catalog.genreCovers(listOf("tf1", "france-2"))
+
+            // The recent Programme leads the grid even with a poster only; m6 is not asked for.
+            assertThat(covers[Genre.SERIES]).isEqualTo("zebre-po")
+            val first = catalog.genreGrid(Genre.SERIES, listOf("tf1", "france-2"))
+                .first { GenreCovers.imageOf(it.show) != null }
+            assertThat(covers[Genre.SERIES]).isEqualTo(GenreCovers.imageOf(first.show))
+        }
+    }
+
+    @Test
+    fun emptyCacheGivesNoCovers() {
+        blocking {
+            val catalog = CatalogStore(FakeCatalogDao(), clock = { now })
+
+            assertThat(catalog.genreCovers(listOf("tf1"))).isEmpty()
+        }
+    }
 }
