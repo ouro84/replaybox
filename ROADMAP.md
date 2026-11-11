@@ -193,7 +193,7 @@ en 1.0.1. Une case se coche quand l'item est vérifié sur la box (et sur le Pix
 - [x] Mobile : un tap met en pause ; icône pause/lecture au centre (box aussi) ; bouton Pause/Lecture retiré de la barre (box aussi).
 - [x] Mobile : barre de lecture glissable.
 - [x] Box et mobile : les sous-titres suivent le dernier choix (activés ou non, et leur type).
-- [ ] Box et mobile : une image de Programme sur chaque tuile Genre.
+- [x] Box et mobile : une image de Programme sur chaque tuile Genre.
 
 ## V2 (décisions prises, exécution repoussée)
 

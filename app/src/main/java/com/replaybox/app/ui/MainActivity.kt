@@ -94,7 +94,7 @@ class MainActivity : ComponentActivity() {
                 // Reset only for a fresh visit; back to the destination's root keeps its state.
                 if (!RailNavigation.keepsState(backStack.toList(), destination)) {
                     when (destination) {
-                        RailDestination.GENRES -> genresState = GenresUiState()
+                        RailDestination.GENRES -> genresState = GenresUiState(covers = genresState.covers)
                         RailDestination.SEARCH -> searchState = SearchUiState()
                         RailDestination.HOME, RailDestination.SETTINGS -> Unit
                     }

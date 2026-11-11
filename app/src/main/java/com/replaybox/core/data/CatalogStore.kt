@@ -198,6 +198,7 @@ class CatalogStore(
 
     private suspend fun forget(channelId: String) {
         listingMutex.withLock { listingMemo.remove(channelId) }
+        coversMemo = null
     }
 
     // ---- Progress (device-local, never synchronized — glossary) ----
@@ -515,7 +516,7 @@ class CatalogStore(
      * shows what its cached listings hold.
      */
     suspend fun genreGrid(genre: Genre, channelIds: List<String>): List<ChannelShow> {
-        val all = channelIds.flatMap { channelId -> listing(channelId).map { ChannelShow(it, channelId) } }
+        val all = channelShows(channelIds)
         return GenreGrid.arrange(all, genre, channelIds = null, now = clock())
     }
 
@@ -525,9 +526,45 @@ class CatalogStore(
      * title), the same title on two Chaînes kept once.
      */
     suspend fun browse(channelIds: List<String>, genre: Genre?): List<ChannelShow> {
-        val all = channelIds.flatMap { channelId -> listing(channelId).map { ChannelShow(it, channelId) } }
+        val all = channelShows(channelIds)
         return GenreGrid.arrange(all, genre, channelIds = null, now = clock())
     }
+
+    /**
+     * One cover image per Genre for the Genres page, cache only (ADR 0002, no new query): the
+     * first Programme with an image of each Genre's « Tout voir » grid, arranged exactly as
+     * [genreGrid] does, a Programme covering one Genre only ([GenreCovers.pick]). A Genre
+     * with no cover is absent.
+     */
+    suspend fun genreCovers(channelIds: List<String>): Map<Genre, String> {
+        val now = clock()
+        val key = CoversKey(channelIds.toList(), channelIds.map { dao.listingAt(it) }, GenreGrid.parisDay(now))
+        coversMemo?.takeIf { it.first == key }?.let { return it.second }
+        val all = channelShows(channelIds)
+        val grids = Genre.values().associateWith { GenreGrid.arrange(all, it, channelIds = null, now = now) }
+        val covers = GenreCovers.pick(Genre.values().toList(), grids)
+        coversMemo = key to covers
+        return covers
+    }
+
+    /**
+     * What the covers depend on: the Chaînes asked for, each listing's date, and the Paris day
+     * recency ranks by. A repeat visit of the Genres page (or Back from a grid) then costs one
+     * `listingAt` per Chaîne instead of 9 arrangements of the whole Index; every write through
+     * this store drops the memo too ([forget]), so a refresh written within the same millisecond
+     * still shows. A write behind this store's back with the same `listingAt` would not be seen;
+     * none exists (every listing write goes through [CatalogStore]). A run still in flight when
+     * [forget] fires may store its result after the reset; its key holds the old `listingAt`,
+     * so the next call misses and recomputes.
+     */
+    private data class CoversKey(val channelIds: List<String>, val listingAts: List<Long?>, val day: Long)
+
+    @Volatile
+    private var coversMemo: Pair<CoversKey, Map<Genre, String>>? = null
+
+    /** Every cached Programme of [channelIds] with its Chaîne, in listing order (the memo makes a repeat free). */
+    private suspend fun channelShows(channelIds: List<String>): List<ChannelShow> =
+        channelIds.flatMap { channelId -> listing(channelId).map { ChannelShow(it, channelId) } }
 
     /** Favorites with the Chaîne they are listed on, most recently pinned first. */
     suspend fun favoriteChannelShows(channelIds: List<String>): List<ChannelShow> {
