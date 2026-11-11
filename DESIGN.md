@@ -317,7 +317,7 @@ A 4 dp pill, amber fill over the track, always paired with the remaining time in
 - **Focused:** white pill, ink icon and label, scaled 1.06 over 200 ms (same lift as panel buttons), so focus never relies on color alone.
 - **Entry:** focus entering the rail always lands on the current destination.
 - **Mobile (`RailMetrics.mobile`):** items reach at least 48 real dp: 48 / canvas scale rounded up to 8 dp, icon half the item, rail = item + 2 × 12 dp, first item one item + 8 dp below the top (room for the back arrow), content-start = rail + 32 dp. Pixel 7 landscape (383 dp window, scale 0.709): 72 dp items (51 real dp), 36 dp icons, 96 dp rail, content at 128 dp.
-- **Back (mobile, every screen but Home and the player):** a « Retour » arrow (system Back) in the slot above Accueil, same pill size, Mist icon on the ground, never selected nor the focus entry. No pressed state (like the destinations, the screen change answers the tap) and no hairline: the 8 dp rail-stack gap and the glyph set it apart; the destinations never move for it.
+- **Back (mobile, every screen but Home and the player):** a « Retour » arrow (system Back) in the slot above Accueil, same pill size, Mist icon on the ground, never selected nor the focus entry. No pressed state (like the destinations, the screen change answers the tap) and no hairline: the 8 dp rail-stack gap and the glyph set it apart; the destinations never move for it. Expanded (D-pad on mobile): label « Retour », Body Strong Mist like an unselected destination; never the focus entry.
 
 ### Status line and chips
 - **Stale notice:** Meta in Mist on an 85 % ground pill, 12 dp x 4 dp padding, top right. Copy: "Catalogue du 05/11 · TF1 injoignable" (plural "injoignables"). It is not focusable.
@@ -328,6 +328,7 @@ The remote's Options key (MENU) opens a dialog on an « À suivre » card or on 
 - **Panel:** 440 dp slate surface, 10 dp corners, 24 dp padding. Title in Rail Title (2 lines), an optional hint in Body Mist (2 lines), then the panel buttons 24 dp below, 12 dp apart.
 - **Order and focus:** « Annuler » comes first and takes the initial focus. One action sits in a row next to it. Two or more actions do not fit the 392 dp row, so all the buttons stack full width.
 - **« À suivre » card:** title = the Programme, hint = the Épisode title. Buttons « Annuler », « Marquer comme vu », « Retirer d'À suivre ». Both actions take the card off the rail (a pinned series then offers its following Épisode). « Retirer d'À suivre » forgets the Progression of an Épisode in progress, and on any card records the Épisode as dismissed for its Programme (stored on the box), so the same Épisode is not offered again; a newer one is. Focus then goes back to the billboard, as after a removal.
+- **Exit dialog:** Back from the top of Home reuses the panel with no hint: title « Quitter Replaybox ? », buttons « Annuler » and « Quitter ».
 - **Épisode row:** title = the Épisode. Buttons « Annuler » and « Marquer comme vu », or « Marquer comme non vu » on a watched row. Focus returns to the row.
 - **Marquer comme vu** stores the Progression at 100 %. The Épisode leaves « À suivre » and its row reads « ✓ Vu » with the full Mist bar. **Marquer comme non vu** forgets the Progression. There is no Saison-wide marking.
 
@@ -431,7 +432,7 @@ The keyboard on the left, the results on the right. No system IME, no voice.
 The video owns the screen. Every overlay sits at the bottom over a ground scrim (transparent to 92–94 % ground), inside the 48 dp safe frame, and one Back closes it.
 - **Keys with nothing shown.** Left/Right seek 10 s and show the controls, OK plays or pauses, Up/Down show the controls, CC toggles subtitles, MENU opens Options.
 - **Controls.** Programme title in Rail Title, Épisode title in Meta Mist, then the timeline: tabular clocks either side of a 6 dp track with the amber Progression fill (One Amber Rule). Below, panel buttons: Pause/Lecture (initial focus), −10 s, +10 s, Recommencer, Sous-titres (check or cross: state by shape), Options. They hide 5 s after the last key while playing and stay while paused.
-- **Back arrow (mobile).** With the controls only, top left inside the safe frame: the rail's back arrow at the rail item size, Paper White on a ground 60 % circle (the seek flash backing), one tap leaves. Never over Options, the resume prompt or Épisode suivant; absent on the box.
+- **Back arrow (mobile).** With the controls, while the Flux resolves (over the loading ring) and on the error panel, top left inside the safe frame: the rail's back arrow at the rail item size, Paper White on a ground 60 % circle (the seek flash backing), one tap leaves, no pressed state. Never over Options, the resume prompt or Épisode suivant; absent on the box.
 - **Options panel.** Takes the controls' place. Title « Options », then one row per setting (Audio, Sous-titres, Taille du texte and Fond du texte when the Flux has subtitles, Qualité, Vitesse): label in Body Strong Mist on a 180 dp column, choices as panel buttons with a check on the selected one. Rows come only from the tracks the player has; a row with nothing to choose is left out. Initial focus is the selected choice of the first row.
 - **Captions.** While controls or Options are shown, the caption layer lifts (34 % and 62 % of its height) so no cue sits under an overlay.
 - **Resume prompt, Épisode suivant, error.** Slate panels with panel buttons, bottom left for the prompt and bottom right for Épisode suivant. The error reuses Display Compact with a focused « Réessayer ».
@@ -460,13 +461,14 @@ Every screen's initial focus, Back target and focus on return, checked on the Bb
 
 | Screen | Initial focus | Back | Focus on return |
 |---|---|---|---|
-| Home | Billboard primary (« Reprendre » / « Lecture »), else the first card | Scrolled down: back to the top; at the top: leaves the app | The card or button that opened the next screen |
-| Nav rail | Current destination (entering it) | As Home | — |
+| Home | Billboard primary (« Reprendre » / « Lecture »), else the first card | Scrolled down: back to the top; at the top: « Quitter Replaybox ? » | The card or button that opened the next screen |
+| Nav rail | Current destination (entering it) | As Home (on Home); elsewhere on mobile, the screen's own Back | — |
 | Genres | First tile (Séries) | Home | The tile that opened the grid |
 | Tout voir | First poster (selected chip when empty) | Genres page (tile) or Home (« Tout voir » card) | The poster, filter and scroll |
 | Programme page | Primary button | From the list: the hero; from the hero: leaves | The Épisode just watched |
 | Épisode row dialog | « Annuler » | Closes, focus on the row | — |
 | À suivre card dialog | « Annuler » | Closes, focus on the card | Billboard after the card leaves |
+| Exit dialog | « Annuler » | Closes, focus back where it was | — |
 | Player controls | Pause / Lecture | Hides the controls | — |
 | Options panel | Selected choice of the first row | Back to the controls | — |
 | Resume prompt (code) | « Reprendre » | Leaves the player | — |
