@@ -511,9 +511,12 @@ The Home update chip stays; « À propos » is where to look when it is not show
 
 ### Genres
 The nav rail's « Genres » destination.
-- **Layout:** title « Genres » in Display Compact at 104 dp, then 28 dp below, the 9 canonical Genres in glossary order (Séries, Films, Policier & Thriller / Comédie, Drame, Documentaire / Jeunesse, Divertissement, Sport & Info) as a 3 × 3 grid of text tiles, 20 dp apart, from 104 dp to the 48 dp safe edge (256 x 112 dp each).
-- **Tile:** Raised Slate plate with 10 dp corners, the Genre name in Rail Title, Paper White, bottom left with a 20 x 16 dp inset. No image, no count.
-- **Focus:** the card idiom, a 1.1 lift plus the concentric white ring 3 dp outside. The plate stays Raised Slate.
+- **Layout:** title « Genres » in Display Compact at 104 dp, then 28 dp below, the 9 canonical Genres in glossary order (Séries, Films, Policier & Thriller / Comédie, Drame, Documentaire / Jeunesse, Divertissement, Sport & Info) as a 3 × 3 grid of tiles, 20 dp apart, from 104 dp to the 48 dp safe edge (256 x 112 dp each).
+- **Tile:** Raised Slate plate with 10 dp corners, the Genre name in Rail Title, Paper White, bottom left with a 20 x 16 dp inset. No count. A Genre with no imaged Programme keeps this plain text tile.
+- **Cover:** the key art of the first imaged Programme its « Tout voir » grid shows on the « Tout » chip (backdrop, else poster), from the cache only. It fills the plate under `ContentScale.Crop`. A landscape image (backdrop) stays centred. A portrait image (poster) is held high (vertical bias −0.6), on the faces and above the title block posters carry at the bottom.
+- **Cover scrim:** one ground gradient, top to bottom, keyed to the measured top of the name: transparent at the top edge, ground 35 % at 32 dp above the name, ground 92 % at 8 dp above it, ground 100 % at the bottom edge. The art reads in the upper part; the name sits on 92 % ground or more on one or two lines and at any font scale (The Contrast Floor Rule). No horizontal scrim, since a name can span the tile width. No shadow.
+- **Cover arrival:** the art crossfades in over 200 ms and its scrim fades in with it, drawn only once the image has loaded. A pending or failed cover therefore leaves the plain text tile, never a darkened empty plate. A cover already in memory (Back from a grid) shows at once with its scrim. Covers never delay the initial focus or move a tile, and they follow each catalogue refresh.
+- **Focus:** the card idiom, a 1.1 lift plus the concentric white ring 3 dp outside. The plate, cover and scrim do not change.
 - **OK** opens the « Tout voir » grid of that Genre.
 - **Focus line:** initial focus is the first tile (Séries) on each entry from the rail; Back goes to Home, on the card that had focus; on return from a grid, focus is on the tile that opened it.
 
