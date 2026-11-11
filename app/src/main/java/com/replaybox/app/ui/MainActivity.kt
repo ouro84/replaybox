@@ -148,6 +148,9 @@ class MainActivity : ComponentActivity() {
                                 // The Épisode ended with nothing to play next: back where it was opened.
                                 if (backStack.size > 1 && backStack.last() == current) backStack.removeAt(backStack.lastIndex)
                             },
+                            onBack = {
+                                if (backStack.size > 1 && backStack.last() == current) backStack.removeAt(backStack.lastIndex)
+                            },
                         ) }
                         Screen.Settings -> SettingsScreen(
                             state = settingsState,

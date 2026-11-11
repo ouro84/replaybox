@@ -24,6 +24,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -101,6 +106,8 @@ fun PlayerScreen(
     onPlayNext: (Episode) -> Unit = {},
     /** The Épisode ended with no Épisode suivant to play (none, or cancelled): leave the player. */
     onFinished: () -> Unit = {},
+    /** Mobile back arrow in the controls: leaves the player at once. */
+    onBack: () -> Unit = {},
 ) {
     val provider = Providers.resolveEpisode(episodeId.value)
     val context = LocalContext.current
@@ -218,6 +225,7 @@ fun PlayerScreen(
             next = next,
             onPlayNext = onPlayNext,
             onFinished = onFinished,
+            onBack = onBack,
             onPlaying = { recovery.onPlaying() },
             onPlaybackError = { positionMs ->
                 when (recovery.onError(positionMs)) {
@@ -246,6 +254,7 @@ private fun PlayerSurface(
     next: SeasonEpisode?,
     onPlayNext: (Episode) -> Unit,
     onFinished: () -> Unit,
+    onBack: () -> Unit,
     onPlaying: () -> Unit,
     /** Position to resume at, or null while the resume prompt is still pending. */
     onPlaybackError: (positionMs: Long?) -> Unit,
@@ -802,7 +811,33 @@ private fun PlayerSurface(
                 onOptions = { openOptions() },
                 modifier = Modifier.align(Alignment.BottomStart),
             )
+            // Mobile only, with the controls: not over Options, the resume prompt or Épisode suivant.
+            if (mobile) PlayerBackArrow(onBack, Modifier.align(Alignment.TopStart))
         }
+    }
+}
+
+/**
+ * Mobile « Retour » over the video: the rail's back arrow at the same size, on a ground 60 %
+ * circle like the seek flash so it reads over any frame. One tap leaves the player.
+ */
+@Composable
+private fun PlayerBackArrow(onBack: () -> Unit, modifier: Modifier) {
+    val rail = LocalRail.current
+    Box(
+        modifier
+            .padding(start = Rb.safeHorizontal, top = Rb.safeVertical)
+            .size(rail.item)
+            .background(Rb.ground.copy(alpha = 0.6f), CircleShape)
+            .clickable(role = Role.Button, onClick = onBack),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = Icons.Filled.ArrowBack,
+            contentDescription = stringResource(R.string.back),
+            tint = Rb.text,
+            modifier = Modifier.size(rail.icon),
+        )
     }
 }
 
