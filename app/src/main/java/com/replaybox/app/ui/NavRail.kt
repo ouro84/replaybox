@@ -190,7 +190,7 @@ private fun RailItem(
             .onFocusChanged { focused = it.isFocused }
             .tvClickable(onClick)
             .then(if (background != null) Modifier.background(background, Rb.pillShape) else Modifier)
-            .padding(horizontal = 12.dp),
+            .padding(start = LocalRail.current.iconStart, end = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val iconSize = LocalRail.current.icon

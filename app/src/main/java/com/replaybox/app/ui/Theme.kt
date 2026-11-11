@@ -90,6 +90,12 @@ val LocalInsets = staticCompositionLocalOf { TvInsets }
  * the offset of the first destination below [Rb.safeVertical], [contentStart] the text column.
  */
 data class RailMetrics(val item: Dp, val icon: Dp, val width: Dp, val itemsTop: Dp, val contentStart: Dp) {
+    /**
+     * Start padding of the icon inside its pill: centres it in the collapsed pill, which is [item]
+     * wide (the rail minus its 12 dp insets). 12 dp on the box (24 in 48); labels follow it when expanded.
+     */
+    val iconStart: Dp get() = (item - icon) / 2
+
     companion object {
         /** Material minimum touch target, in real (unscaled) dp. */
         const val MIN_TOUCH_DP = 48f

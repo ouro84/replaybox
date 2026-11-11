@@ -60,6 +60,12 @@ class RailMetricsTest {
     }
 
     @Test
+    fun iconSitsCentredInThePill() {
+        assertThat(RailMetrics.Tv.iconStart).isEqualTo(12.dp)
+        for (m in mobileCases) assertThat(m.iconStart * 2 + m.icon).isEqualTo(m.item)
+    }
+
+    @Test
     fun pixel7Metrics() {
         // Full 1080 px height (411 dp).
         assertThat(RailMetrics.of(mobile = true, heightDp = 411))
