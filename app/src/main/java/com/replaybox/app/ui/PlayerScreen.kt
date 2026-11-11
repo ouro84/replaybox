@@ -823,6 +823,8 @@ private fun PlayerSurface(
                                     now.prompt,
                                     press.movedPx,
                                     press.heldMs,
+                                    press.firstMovedPx,
+                                    press.firstHeldMs,
                                     slop,
                                     longPress,
                                 )
@@ -960,7 +962,15 @@ private class PressTrack {
     var heldMs = 0L
         private set
 
+    /** The press before this one: the first of a double-tap, read while the second is the last press. */
+    var firstMovedPx = 0f
+        private set
+    var firstHeldMs = 0L
+        private set
+
     fun down(position: Offset, uptimeMs: Long) {
+        firstMovedPx = movedPx
+        firstHeldMs = heldMs
         start = position
         downAt = uptimeMs
         movedPx = 0f

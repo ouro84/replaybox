@@ -11,8 +11,19 @@ class PlayerTouchTest {
     private fun tap(optionsOpen: Boolean, prompt: Boolean, movedPx: Float = 0f, heldMs: Long = 100L) =
         PlayerTouch.tap(optionsOpen, prompt, movedPx = movedPx, heldMs = heldMs, slopPx = SLOP, longPressMs = LONG_PRESS)
 
-    private fun doubleTap(x: Float, optionsOpen: Boolean = false, prompt: Boolean = false, movedPx: Float = 0f, heldMs: Long = 100L) =
-        PlayerTouch.doubleTap(x, width = 100f, optionsOpen, prompt, movedPx = movedPx, heldMs = heldMs, slopPx = SLOP, longPressMs = LONG_PRESS)
+    private fun doubleTap(
+        x: Float,
+        optionsOpen: Boolean = false,
+        prompt: Boolean = false,
+        movedPx: Float = 0f,
+        heldMs: Long = 100L,
+        firstMovedPx: Float = 0f,
+        firstHeldMs: Long = 100L,
+    ) = PlayerTouch.doubleTap(
+        x, width = 100f, optionsOpen, prompt,
+        movedPx = movedPx, heldMs = heldMs, firstMovedPx = firstMovedPx, firstHeldMs = firstHeldMs,
+        slopPx = SLOP, longPressMs = LONG_PRESS,
+    )
 
     @Test
     fun tapTogglesPlayback() {
@@ -63,6 +74,14 @@ class PlayerTouchTest {
     fun aSwipeOrHoldAsTheSecondTapDoesNotSeek() {
         assertThat(doubleTap(x = 90f, movedPx = SLOP + 1f)).isEqualTo(Seek.NONE)
         assertThat(doubleTap(x = 10f, heldMs = LONG_PRESS + 1)).isEqualTo(Seek.NONE)
+    }
+
+    @Test
+    fun aSwipeOrHoldAsTheFirstTapDoesNotSeek() {
+        // A swipe followed within the double-tap window by a still tap is no double-tap.
+        assertThat(doubleTap(x = 90f, firstMovedPx = SLOP + 1f)).isEqualTo(Seek.NONE)
+        assertThat(doubleTap(x = 10f, firstHeldMs = LONG_PRESS + 1)).isEqualTo(Seek.NONE)
+        assertThat(doubleTap(x = 90f, firstMovedPx = SLOP, firstHeldMs = LONG_PRESS)).isEqualTo(Seek.FORWARD)
     }
 
     private companion object {

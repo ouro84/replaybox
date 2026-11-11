@@ -128,7 +128,10 @@ object PlayerTouch {
         else -> Tap.TOGGLE_PLAY
     }
 
-    /** [movedPx] and [heldMs] are those of the second press. */
+    /**
+     * Both presses of a double-tap must be still: [movedPx] and [heldMs] are those of the second
+     * press, [firstMovedPx] and [firstHeldMs] those of the first. A swipe then a quick tap seeks nothing.
+     */
     fun doubleTap(
         x: Float,
         width: Float,
@@ -136,10 +139,13 @@ object PlayerTouch {
         prompt: Boolean,
         movedPx: Float,
         heldMs: Long,
+        firstMovedPx: Float,
+        firstHeldMs: Long,
         slopPx: Float,
         longPressMs: Long,
     ): Seek = when {
-        prompt || optionsOpen || !still(movedPx, heldMs, slopPx, longPressMs) -> Seek.NONE
+        prompt || optionsOpen -> Seek.NONE
+        !still(movedPx, heldMs, slopPx, longPressMs) || !still(firstMovedPx, firstHeldMs, slopPx, longPressMs) -> Seek.NONE
         x < width / 2 -> Seek.BACK
         else -> Seek.FORWARD
     }
