@@ -190,9 +190,9 @@ en 1.0.1. Une case se coche quand l'item est vérifié sur la box (et sur le Pix
 - [x] Mobile : menu de gauche visible sur tous les écrans sauf le player, icônes agrandies (48 dp réels).
 - [x] Mobile : flèche retour en haut du menu, et dans les contrôles du player.
 - [x] Box et mobile : confirmation « Quitter Replaybox ? » avant de quitter avec Retour.
-- [ ] Mobile : un tap met en pause ; icône pause/lecture au centre (box aussi) ; bouton Pause/Lecture retiré de la barre (box aussi).
-- [ ] Mobile : barre de lecture glissable.
-- [ ] Box et mobile : les sous-titres suivent le dernier choix (activés ou non, et leur type).
+- [x] Mobile : un tap met en pause ; icône pause/lecture au centre (box aussi) ; bouton Pause/Lecture retiré de la barre (box aussi).
+- [x] Mobile : barre de lecture glissable.
+- [x] Box et mobile : les sous-titres suivent le dernier choix (activés ou non, et leur type).
 - [ ] Box et mobile : une image de Programme sur chaque tuile Genre.
 
 ## V2 (décisions prises, exécution repoussée)
