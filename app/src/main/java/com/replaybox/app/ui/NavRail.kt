@@ -1,5 +1,6 @@
 package com.replaybox.app.ui
 
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -10,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -23,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
@@ -44,6 +47,7 @@ import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.replaybox.R
@@ -65,21 +69,58 @@ object RailNavigation {
      */
     fun next(stack: List<Screen>, destination: RailDestination): List<Screen>? =
         stackFor(destination).takeIf { it != stack }
+
+    /**
+     * The rail item to highlight over [stack]: the destination of the root-most screen that belongs
+     * to one (Home and a Programme belong to none, so they fall back to Home). Null in the player,
+     * which has no rail.
+     */
+    fun destinationFor(stack: List<Screen>): RailDestination? {
+        if (stack.lastOrNull() is Screen.Player) return null
+        return stack.firstNotNullOfOrNull { screen ->
+            when (screen) {
+                is Screen.Genres, is Screen.GenreGrid -> RailDestination.GENRES
+                is Screen.Search -> RailDestination.SEARCH
+                is Screen.Settings, is Screen.SubtitleSettings, is Screen.ProviderDetail, is Screen.About ->
+                    RailDestination.SETTINGS
+                is Screen.Home, is Screen.ShowDetail, is Screen.Player -> null
+            }
+        } ?: RailDestination.HOME
+    }
+
+    /** The back arrow shows wherever the rail does, except on the Home root. */
+    fun showsBack(stack: List<Screen>): Boolean =
+        destinationFor(stack) != null && stack != listOf(Screen.Home)
+
+    /**
+     * True when [destination]'s root is a strict prefix of [stack]: tapping it returns to that root
+     * with its state (Back from a Programme opened from Recherche), not a fresh visit.
+     */
+    fun keepsState(stack: List<Screen>, destination: RailDestination): Boolean {
+        val root = stackFor(destination)
+        return stack.size > root.size && stack.subList(0, root.size) == root
+    }
 }
 
 /**
- * The rail on Recherche, Genres and Paramètres, on mobile only: there is no D-pad LEFT back to
- * Home there. Collapsed for good (touch never focuses it). On the box these screens stay as they are.
+ * The rail on every screen but Home (which draws its own) and the player, on mobile only: there is
+ * no D-pad LEFT back to Home there, and the back arrow stands in for the hidden navigation bar.
+ * Collapsed for good (touch never focuses it). On the box these screens stay as they are.
  */
 @Composable
-fun BoxScope.MobileRail(current: RailDestination, onNavigate: (RailDestination) -> Unit) {
-    if (LocalMobile.current) NavRail(current, onNavigate, Modifier.align(Alignment.CenterStart))
+fun BoxScope.MobileRail(stack: List<Screen>, onNavigate: (RailDestination) -> Unit) {
+    if (!LocalMobile.current) return
+    RailNavigation.destinationFor(stack)?.let {
+        NavRail(it, onNavigate, Modifier.align(Alignment.CenterStart), showBack = RailNavigation.showsBack(stack))
+    }
 }
 
 /**
  * Left navigation rail (Google TV / Netflix pattern): icons only while the
  * content has focus, expanded with labels over a solid panel once focus
  * moves left into it. Entering always lands on the current destination.
+ * With [showBack] a « Retour » arrow (system Back) sits in the slot above Accueil; the destinations
+ * stay where they are without it.
  */
 @OptIn(ExperimentalComposeUiApi::class, androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
@@ -88,6 +129,7 @@ fun NavRail(
     onNavigate: (RailDestination) -> Unit,
     modifier: Modifier = Modifier,
     onExpandedChange: (Boolean) -> Unit = {},
+    showBack: Boolean = false,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val width by animateDpAsState(
@@ -107,9 +149,29 @@ fun NavRail(
             }
             .focusProperties { enter = { currentRequester } }
             .focusGroup()
-            .padding(top = Rb.safeVertical + 72.dp, start = 12.dp, end = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            // Mobile: the opaque rail takes the taps between and below its items; content scrolled
+            // under it (a Programme's Saison pills) stays out of reach. Items still take their own.
+            .then(if (LocalMobile.current) Modifier.pointerInput(Unit) { detectTapGestures { } } else Modifier)
+            // The back slot comes out of the top padding: the destinations never move.
+            .padding(
+                top = Rb.safeVertical + LocalRail.current.topPadding(showBack),
+                start = RailMetrics.INSET,
+                end = RailMetrics.INSET,
+            ),
+        verticalArrangement = Arrangement.spacedBy(RailMetrics.GAP),
     ) {
+        if (showBack) {
+            val dispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+            // Never selected and never the focus entry: Mist icon on the ground, no pill.
+            RailItem(
+                icon = Icons.Filled.ArrowBack,
+                label = stringResource(R.string.back),
+                selected = false,
+                expanded = expanded,
+                modifier = Modifier,
+                onClick = { dispatcher?.onBackPressed() },
+            )
+        }
         val items = listOf(
             Triple(RailDestination.HOME, Icons.Filled.Home, R.string.nav_home),
             Triple(RailDestination.GENRES, GenresIcon, R.string.nav_genres),
@@ -154,16 +216,22 @@ private fun RailItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(48.dp)
+            .height(LocalRail.current.item)
             .scale(scale)
             .onFocusChanged { focused = it.isFocused }
             .tvClickable(onClick)
             .then(if (background != null) Modifier.background(background, Rb.pillShape) else Modifier)
-            .padding(horizontal = 12.dp),
+            .padding(start = LocalRail.current.iconStart, end = RailMetrics.INSET),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(Modifier.size(24.dp), contentAlignment = Alignment.Center) {
-            Icon(imageVector = icon, contentDescription = if (expanded) null else label, tint = tint)
+        val iconSize = LocalRail.current.icon
+        Box(Modifier.size(iconSize), contentAlignment = Alignment.Center) {
+            Icon(
+                imageVector = icon,
+                contentDescription = if (expanded) null else label,
+                tint = tint,
+                modifier = Modifier.size(iconSize),
+            )
         }
         AnimatedVisibility(visible = expanded, enter = fadeIn(tween(Rb.FOCUS_MS)), exit = fadeOut(tween(100))) {
             Row {

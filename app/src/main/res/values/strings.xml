@@ -76,6 +76,8 @@
     <string name="season_numbering">Saison %1$d</string>
     <string name="season_watched">Saison vue</string>
     <string name="cancel">Annuler</string>
+    <string name="exit_title">Quitter Replaybox ?</string>
+    <string name="exit_confirm">Quitter</string>
     <string name="action_play">Lecture</string>
     <string name="episode_watched">Vu</string>
     <string name="mark_watched">Marquer comme vu</string>

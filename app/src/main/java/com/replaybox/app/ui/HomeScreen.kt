@@ -183,6 +183,8 @@ fun HomeScreen(
     onPlay: (EpisodeId, String, ProgressContext) -> Unit,
     onNavigate: (RailDestination) -> Unit,
     onOpenGenre: (Genre) -> Unit,
+    /** Back from the top of Home: MainActivity asks « Quitter Replaybox ? ». */
+    onExitRequest: () -> Unit,
 ) {
     val catalog = Providers.catalog
     val updates by catalog.updates.collectAsState()
@@ -283,18 +285,23 @@ fun HomeScreen(
         candidates.firstOrNull { key -> runCatching { state.requester(key).requestFocus() }.isSuccess }
     }
 
-    // Back: from anywhere but the top of Home, return to the top; from the top, leave.
+    // Back: from anywhere but the top of Home, return to the top; from the top, ask
+    // « Quitter Replaybox ? ». Home is composed only when the stack is [Home], so the root
+    // BackHandler (stack size > 1) is off here and this one, always on, owns Back.
     val atTop = state.focusedKey == null ||
         state.focusedKey == KEY_PRIMARY ||
         state.focusedKey == KEY_SECONDARY ||
         (billboard == null && state.focusedKey == firstCardKey && state.rails.firstVisibleItemIndex == 0)
-    BackHandler(enabled = !atTop) {
-        scope.launch {
-            state.rails.scrollToItem(0)
-            state.resetRows()
-            focused = null
-            state.focusedKey = null
-            refocus++
+    BackHandler {
+        when (ExitConfirm.onHomeBack(atTop)) {
+            HomeBack.SCROLL_TO_TOP -> scope.launch {
+                state.rails.scrollToItem(0)
+                state.resetRows()
+                focused = null
+                state.focusedKey = null
+                refocus++
+            }
+            HomeBack.ASK -> onExitRequest()
         }
     }
 

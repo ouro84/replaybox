@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,8 +25,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,6 +53,7 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.input.pointer.pointerInput
@@ -101,6 +107,8 @@ fun PlayerScreen(
     onPlayNext: (Episode) -> Unit = {},
     /** The Épisode ended with no Épisode suivant to play (none, or cancelled): leave the player. */
     onFinished: () -> Unit = {},
+    /** Mobile back arrow in the controls: leaves the player at once. */
+    onBack: () -> Unit = {},
 ) {
     val provider = Providers.resolveEpisode(episodeId.value)
     val context = LocalContext.current
@@ -161,14 +169,16 @@ fun PlayerScreen(
     when (val current = state) {
         is PlayerState.Resolving -> Box(Modifier.fillMaxSize().background(Rb.ground)) {
             LoadingRing(Modifier.align(Alignment.Center))
+            // Mobile: a way out while the Flux resolves (no controls yet, no navigation bar).
+            if (LocalMobile.current) PlayerBackArrow(onBack, Modifier.align(Alignment.TopStart))
         }
-        is PlayerState.Error -> {
+        is PlayerState.Error -> Box(Modifier.fillMaxSize()) {
             val retry = remember { FocusRequester() }
             LaunchedEffect(current) { runCatching { retry.requestFocus() } }
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = Rb.contentStart, end = Rb.safeHorizontal, top = Rb.safeVertical + 72.dp),
+                    .padding(start = RailMetrics.Tv.contentStart, end = Rb.safeHorizontal, top = Rb.safeVertical + 72.dp),
             ) {
                 Text(title, style = RbType.bodyStrong, color = Rb.textSecondary, maxLines = 1)
                 Text(
@@ -201,6 +211,8 @@ fun PlayerScreen(
                     )
                 }
             }
+            // Mobile: « Retour » next to « Réessayer », where the controls' arrow would be.
+            if (LocalMobile.current) PlayerBackArrow(onBack, Modifier.align(Alignment.TopStart))
         }
         is PlayerState.Ready -> PlayerSurface(
             episodeId = episodeId,
@@ -218,6 +230,7 @@ fun PlayerScreen(
             next = next,
             onPlayNext = onPlayNext,
             onFinished = onFinished,
+            onBack = onBack,
             onPlaying = { recovery.onPlaying() },
             onPlaybackError = { positionMs ->
                 when (recovery.onError(positionMs)) {
@@ -246,6 +259,7 @@ private fun PlayerSurface(
     next: SeasonEpisode?,
     onPlayNext: (Episode) -> Unit,
     onFinished: () -> Unit,
+    onBack: () -> Unit,
     onPlaying: () -> Unit,
     /** Position to resume at, or null while the resume prompt is still pending. */
     onPlaybackError: (positionMs: Long?) -> Unit,
@@ -802,9 +816,45 @@ private fun PlayerSurface(
                 onOptions = { openOptions() },
                 modifier = Modifier.align(Alignment.BottomStart),
             )
+            // Mobile only, with the controls: not over Options, the resume prompt or Épisode suivant.
+            if (mobile) PlayerBackArrow(onBack, Modifier.align(Alignment.TopStart))
         }
     }
 }
+
+/**
+ * Mobile « Retour » with the controls, while the Flux resolves and on the error page: the rail's
+ * back arrow at the same size, on a ground 60 % circle like the seek flash so it reads over any
+ * frame. One tap leaves the player; no pressed state.
+ */
+@Composable
+private fun PlayerBackArrow(onBack: () -> Unit, modifier: Modifier) {
+    val rail = LocalRail.current
+    Box(
+        modifier
+            .padding(start = Rb.safeHorizontal, top = Rb.safeVertical)
+            .size(rail.item)
+            .background(VideoScrim, CircleShape)
+            // No pressed state (DESIGN.md): no square ripple around the circle.
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                role = Role.Button,
+                onClick = onBack,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = Icons.Filled.ArrowBack,
+            contentDescription = stringResource(R.string.back),
+            tint = Rb.text,
+            modifier = Modifier.size(rail.icon),
+        )
+    }
+}
+
+/** Ground at 60 %: the seek flash and the back arrow read over any frame. */
+private val VideoScrim = Rb.ground.copy(alpha = 0.6f)
 
 /** What a tap on the video needs to decide (read through rememberUpdatedState). */
 private data class TouchState(val controlsVisible: Boolean, val optionsOpen: Boolean, val prompt: Boolean)
@@ -815,14 +865,14 @@ private const val SEEK_FLASH_MS = 600L
 @Composable
 private fun SeekFlash(seek: PlayerTouch.Seek, modifier: Modifier) {
     if (seek == PlayerTouch.Seek.NONE) return
-    Box(modifier.padding(horizontal = Rb.contentStart)) {
+    Box(modifier.padding(horizontal = RailMetrics.Tv.contentStart)) {
         Text(
             text = stringResource(if (seek == PlayerTouch.Seek.BACK) R.string.control_back10 else R.string.control_fwd10),
             style = RbType.displayCompact,
             color = Rb.text,
             modifier = Modifier
                 .align(if (seek == PlayerTouch.Seek.BACK) Alignment.CenterStart else Alignment.CenterEnd)
-                .background(Rb.ground.copy(alpha = 0.6f), Rb.pillShape)
+                .background(VideoScrim, Rb.pillShape)
                 .padding(horizontal = 24.dp, vertical = 12.dp),
         )
     }
