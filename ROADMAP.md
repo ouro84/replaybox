@@ -195,6 +195,86 @@ en 1.0.1. Une case se coche quand l'item est vérifié sur la box (et sur le Pix
 - [x] Box et mobile : les sous-titres suivent le dernier choix (activés ou non, et leur type).
 - [x] Box et mobile : une image de Programme sur chaque tuile Genre.
 
+## Profils et synchro (1.1.0)
+
+Issue #70, grilling du 2026-11-13. Cible : avant le 2026-12-08. Prérequis : ADR 0003. Si l'échéance
+glisse, 1.1.0 livre la clé de signature et les Profils, et 1.1.1 la Synchro.
+
+Décisions :
+
+- **Profils** : les données actuelles deviennent le Profil « Foyer » (renommable) ; 5 Profils au plus ;
+  avatar = initiale sur une couleur, sans PIN ni restriction de contenu (profils enfants : V2). Écran de
+  choix au démarrage à froid, seulement à partir de deux Profils ; changement depuis le menu de gauche ;
+  chaque appareil retient son dernier Profil, sans le synchroniser. Par Profil : Progression et vus,
+  épingles, retraits de « À suivre », sous-titres (activés, type, taille, fond), piste audio. Communs à
+  l'appareil : qualité max, identifiants des diffuseurs, Téléchargements, Santé.
+- **Synchro** : opt-in, un compte Google par foyer, un fichier dans `appDataFolder` (scope
+  `drive.appdata`) qui contient tous les Profils, format versionné. La dernière modification gagne
+  (`updatedAt`), avec des traces datées pour désépingler, « non vu » et la suppression d'un Profil.
+  Lecture au démarrage et au retour au premier plan ; écriture en sortant du lecteur, à chaque épingle
+  ou retrait et à chaque réglage ; rien pendant la lecture ; hors réseau, l'écriture attend. Première
+  connexion = fusion sans rien effacer ; se déconnecter garde les données locales ; bouton « Effacer
+  les données synchronisées ». Box : connexion par code ; téléphone : sélecteur de compte (repli : le
+  code partout). Les identifiants des diffuseurs ne se synchronisent jamais.
+- **Paramètres** : Sous-titres, Profils, Synchronisation, TF1+, France TV, M6+, À propos.
+- **Vérification des développeurs Android** : vraie clé de release avec rotation (APK Signature
+  Scheme v3) depuis la clé debug actuelle, keystore hors du repo ; `com.replaybox` enregistré sur un
+  compte « distribution limitée » ; appareils autorisés par QR code.
+
+- [ ] Clé de signature de release, rotation depuis la clé debug, mise à jour sans désinstaller sur la
+  box et le Pixel
+- [ ] Données des Profils et migration Room (Profil « Foyer »)
+- [ ] Écran de choix du Profil et Paramètres > Profils (focus D-pad vérifié sur la box)
+- [ ] Connexion Google (code sur la box, sélecteur de compte sur le téléphone)
+- [ ] Client Drive `appDataFolder`
+- [ ] Moteur de fusion (fixtures de conflits et de suppressions)
+- [ ] Paramètres > Synchronisation
+
+**Critère** : un Épisode commencé sur la box reprend à la bonne position sur le Pixel, et inversement,
+dans deux Profils distincts qui ne se mélangent pas.
+
+## Lecteur mobile (1.2.0)
+
+Issues #59 et #60, grilling du 2026-11-13. Téléphone et tablette seulement ; la box ne change pas.
+
+- **PiP** : entrée automatique en quittant l'app pendant la lecture (`setAutoEnterEnabled` sur Android
+  12+, `onUserLeaveHint` sur Android 8 à 11) et bouton PiP dans les contrôles. Actions lecture/pause et
+  ±10 s. Progression sauvegardée sur `ON_STOP` et à la fermeture du PiP. Écran « Tourne l'appareil »
+  inactif en PiP. Pas de réglage dans l'app.
+- **Son écran éteint** : le player passe dans un `MediaSessionService` (service foreground) avec une
+  notification média système, seule exception mobile à la règle « jamais de notification système ».
+  Actif par défaut. Fermer le PiP arrête la lecture.
+- Un Provider qui refuse l'audio sans surface vidéo est exclu du son écran éteint, sans message.
+
+- [ ] Spike DRM consigné au `SPEC.md` : audio sans surface (TF1+, M6+), licence persistante (TF1+,
+  M6+), champ `downloadable` de France TV
+- [ ] Picture-in-picture et bouton PiP
+- [ ] Player dans un `MediaSessionService`, notification média et son écran éteint
+
+**Critère** : sur le Pixel, un Épisode passe en PiP au bouton Home, puis continue au son écran éteint ;
+la box est inchangée.
+
+## Hors-ligne (1.3.0)
+
+Issue #62, grilling du 2026-11-13. Téléphone et tablette seulement.
+
+- **Trois niveaux par Provider**, fixés par le spike de 1.2.0 : hors-ligne complet (licence
+  persistante, ou flux en clair comme France TV) ; « Téléchargé, connexion requise au lancement »
+  (segments chiffrés, licence de streaming demandée à chaque lecture) ; aucun Téléchargement. Aucune
+  licence n'est contournée.
+- `DownloadService` Media3, stockage privé de l'app, 720p, Wi-Fi et réseau mobile sans confirmation
+  (taille estimée sur le bouton), sous-titres WebVTT France TV téléchargés avec l'Épisode, entrée
+  « Téléchargements » dans le menu mobile.
+- Suppression automatique à l'expiration du replay, ou quand l'Épisode devient « vu » pour le Profil
+  qui l'a téléchargé (en quittant le lecteur ou au passage à l'Épisode suivant).
+
+- [ ] Téléchargement France TV (`DownloadService`, sous-titres)
+- [ ] TF1+ et M6+ selon leur niveau
+- [ ] Écran « Téléchargements » et suppression automatique
+
+**Critère** : un Épisode France TV lu en mode avion sur le Pixel ; un Épisode TF1+ ou M6+ lu selon son
+niveau ; un Épisode vu disparaît des Téléchargements.
+
 ## V2 (décisions prises, exécution repoussée)
 
 - Live TV (réévaluer la promesse zéro pub : le live des chaînes est SSAI)

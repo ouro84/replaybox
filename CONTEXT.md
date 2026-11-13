@@ -30,8 +30,25 @@ _Éviter_: lien, URL vidéo
 ## Usage
 
 **Progression** (code: `Progress`):
-Position de lecture d'un épisode, stockée localement sur le boîtier. Ne quitte jamais l'appareil.
+Position de lecture d'un épisode pour un Profil, stockée localement sur l'appareil. Ne le quitte
+que si la Synchro est activée (ADR 0003).
 _Éviter_: historique, watchlist
+
+**Profil** (code: `Profile`):
+Une personne ou un usage du foyer (« Foyer », pour regarder à deux). Porte sa Progression, ses
+épingles, ses retraits de « À suivre » et ses réglages de sous-titres et de piste audio. Les
+identifiants des diffuseurs et la qualité max restent communs à l'appareil.
+_Éviter_: utilisateur, compte (le compte est celui du diffuseur ou de Google)
+
+**Synchro** (code: `Sync`):
+Copie facultative des Profils et de leurs données dans le dossier `appDataFolder` du Google Drive de
+l'utilisateur, pour les retrouver sur ses autres appareils. La dernière modification gagne.
+_Éviter_: backup, cloud, compte Replaybox
+
+**Téléchargement** (code: `Download`):
+Un Épisode stocké sur un téléphone ou une tablette pour être lu sans réseau, ou avec seulement une
+licence demandée au lancement, selon ce que le Provider autorise. Appartient à l'appareil.
+_Éviter_: hors-ligne (désigne aussi le cache catalogue), cache
 
 **Genre** (code: `Genre`):
 Catégorie canonique replaybox (Séries, Films, Policier & Thriller, Comédie, Drame, Documentaire,

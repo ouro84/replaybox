@@ -32,13 +32,37 @@ avec une interface rapide et sans publicité — par architecture, pas par bloca
 ## Hors périmètre V1
 
 M6+ (V2, DRM+compte), live TV, extraits/bonus des chaînes, profils enfants,
-Chromecast, tout backend hébergé, tout compte utilisateur.
+Chromecast, tout backend hébergé par nous.
+
+Chromecast reste hors périmètre (décision du 2026-11-13, issue #61 fermée) : un receiver custom exige
+l'inscription payante Google Cast, et le receiver par défaut ne lit pas le Widevine de TF1+ et M6+.
+Sur une TV équipée d'un Chromecast avec Google TV, on installe Replaybox directement.
 
 ## Après la V1 — mobile et tablette
 
 Décision d'Arnaud du 2026-11-10 : la V1/MVP est livrée. Mobile et tablette sortent du hors-périmètre :
 la même APK s'installe sur un téléphone ou une tablette Android 8+ et s'utilise au doigt, en paysage.
 Sur la box, rien ne change. Jalon livré en version 1.0.0.
+
+## Après la 1.0 — profils, synchro, lecteur mobile, hors-ligne
+
+Décision d'Arnaud du 2026-11-13 (grilling des issues #59, #60, #61, #62, #70). Le compte utilisateur
+entre dans le périmètre sous la forme d'une synchro facultative via le Google Drive de l'utilisateur,
+sans serveur à nous (ADR 0003). Les identifiants des diffuseurs ne quittent jamais l'appareil. Aucune
+fonction ne contourne la politique de licence d'un diffuseur : une fonction qu'un Provider refuse est
+absente pour ses Épisodes.
+
+9. En tant que membre du foyer, je veux mon propre Profil (Progression, épingles, sous-titres), pour
+   que ce que je regarde seul ne se mélange pas à ce que l'on regarde à deux.
+10. En tant que spectateur, je veux retrouver mes épingles, ma Progression et mes réglages sur la box,
+    sur mon téléphone et sur une autre TV équipée de Replaybox, pour reprendre où que je sois.
+11. En tant que spectateur sur téléphone, je veux que la vidéo continue en picture-in-picture quand je
+    quitte l'app, et que le son continue quand l'écran s'éteint.
+12. En tant que spectateur sur téléphone, je veux télécharger un Épisode pour le regarder dans le
+    train, et qu'il disparaisse une fois vu.
+
+Releases visées : 1.1.0 (Profils et synchro), 1.2.0 (lecteur mobile), 1.3.0 (hors-ligne). Le détail
+est dans `ROADMAP.md`.
 
 ## Definition of Done (V1)
 
