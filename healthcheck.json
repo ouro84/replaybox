@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2026-11-14T08:31:57Z",
+  "runUrl": "https://github.com/ouro84/replaybox/actions/runs/43576068636",
+  "providers": [
+    {
+      "provider": "tf1",
+      "label": "TF1+ — Le 20h (anonyme)",
+      "ok": true,
+      "step": null,
+      "error": null,
+      "checkedAt": "2026-11-14T08:31:30Z"
+    },
+    {
+      "provider": "francetv",
+      "label": "France TV — france-2 (anonyme)",
+      "ok": false,
+      "step": "seasons",
+      "error": "no playable Épisode in the first 10 Programmes; last failure: FtvHttpException: HTTP 500 for https://api-mobile.yatta.francetv.fr/apps/program/france-2_a-l-instinct?platform=apps&size=250&page=0",
+      "checkedAt": "2026-11-14T08:31:37Z"
+    },
+    {
+      "provider": "m6",
+      "label": "M6+ (anonyme)",
+      "ok": true,
+      "step": null,
+      "error": null,
+      "checkedAt": "2026-11-14T08:31:51Z"
+    }
+  ]
+}
